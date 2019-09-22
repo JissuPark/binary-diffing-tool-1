@@ -22,9 +22,16 @@ class Exract_Feature:
         flag = pe2idb.create_idb(PATH, IDB_PATH)  # idb 변환
         return flag
 
+    def export_pe(self):
+        print('hello')
+
 if __name__ == "__main__":
     PATH = r"D:\JungJaeho\STUDY\self\BOB\BoB_Project\Team_Breakers\Training\Study\sample\mid_GandCrab_exe"
     IDB_PATH = r"D:\JungJaeho\STUDY\self\BOB\BoB_Project\Team_Breakers\Training\Study\sample\mid_idb"
+
+    '''
+        idb 변환 및 pe 추출을 멀티 프로세싱을 돌리는 로직 추가
+    '''
 
     Features = Exract_Feature(PATH,IDB_PATH)
     flag = Features.export_idb()
