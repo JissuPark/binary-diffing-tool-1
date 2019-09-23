@@ -7,7 +7,9 @@ import timeit
 import subprocess
 import shutil
 
-
+'''
+    Developed by seonaelee
+'''
 
 # idat.exe / idat64.exe 구분하여 실행하기 위함.
 IDAT   = 0
