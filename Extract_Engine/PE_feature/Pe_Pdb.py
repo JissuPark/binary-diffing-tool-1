@@ -55,4 +55,5 @@ class PDB_analyze():
 def result_all(filename, output_data):
     pe_anal = PDB_analyze(filename)
     output_data = pe_anal.run(output_data)
+    print("NamHoon Git Test04")
     return output_data
