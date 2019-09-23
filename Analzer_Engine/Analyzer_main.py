@@ -110,3 +110,4 @@ if __name__ == "__main__":
     Analyzer = AnalyzeSimilarity(path_stand,path_target)
     Analyzer.analyze_parser()
     Analyzer.calculate_heuristic()
+    print("초코 아이스크림")
