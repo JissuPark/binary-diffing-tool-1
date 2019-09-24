@@ -1,5 +1,5 @@
-from PE_analyze import analyze_pe
-from Flowchart_analyze import analyze_flowchart
+from Analzer_Engine.PE_analyze import analyze_pe
+from Analzer_Engine.Flowchart_analyze import analyze_flowchart
 
 
 class AnalyzeSimilarity:

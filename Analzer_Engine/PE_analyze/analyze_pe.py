@@ -1,4 +1,9 @@
-import Analyzer_main as AM
+from ngram import NGram
+
+import Analzer_Engine.Analyzer_main as AM
+from Extract_Engine.PE_feature import Pe_Pdb
+from Analzer_Engine.Flowchart_analyze import func_ngram
+
 
 
 class AnalyzePE:
@@ -24,7 +29,6 @@ class AnalyzePE:
         *hash 값 하나짜리라 cmp_hash를 쓸 필요가 없음
         :return: score with weight
         '''
-
 
     def analyze_auth(self):
         '''

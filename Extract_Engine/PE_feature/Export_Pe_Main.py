@@ -89,22 +89,41 @@ class Pe_Feature:
 
 
 if __name__ == "__main__":
-    PATH = r"C:\Windows\System32\notepad.exe"
-    ppe = Pe_Feature(PATH)
+    PATH = r"C:\Windows\System32"
+    FILE = "notepad.exe"
+    ppe = Pe_Feature(PATH+"\\"+FILE)
 
+    file_type = ppe.filetypes()
     func_list = ppe.ImportDll()
     imphash = ppe.imphash_data()
     auto = ppe.Autoninfo()
+    rich_info = ppe.extract_rich()
+    pdb_info = ppe.extract_pdb()
+    rsrc_info = ppe.extract_rsrc()
 
-    print("filetype  :: ", ppe.filetypes())
+    merge_PE = {}
+    merge_PE[FILE] = {
+        'file_type':file_type,
+        'func_list':func_list,
+        'imp_hash':imphash,
+        'auto':auto,
+        'rich_info':rich_info,
+        'pdb_info':pdb_info,
+        'rsrc_info':rsrc_info
+    }
+    print(json.dumps(merge_PE,indent=4))
+
+    '''
+    print("filetype  :: ", file_type)
     print("function list :: ", json.dumps(func_list, indent=4))
     print("imphash_data :: ", imphash)
     print("section data :: ", json.dumps(ppe.cmp_section_data(), indent=4))
     print("authentication data :: ", auto)
 
-    print(f'pe rich header info : {ppe.extract_rich()}')
-    print(f'pe pdb  header info : {ppe.extract_pdb()}')
-    print(f'pe resource info : {ppe.extract_rsrc()}')
+    print(f'pe rich header info : {rich_info}')
+    print(f'pe pdb  header info : {pdb_info}')
+    print(f'pe resource info : {rsrc_info}')
     #print("Test :: ", ppe.ex_auth())
+    '''
 
 
