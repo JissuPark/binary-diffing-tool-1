@@ -7,17 +7,6 @@ class PDB_analyze():
         self.filename = filename
         self.pe = pefile.PE(self.filename)
 
-    def run(self, pe_info_json):
-
-        pdb_data = self.pdb_data()  #
-        pe_info_json['pe_pdb_Name'] = pdb_data['Name']
-        pe_info_json['pe_pdb_GUID'] = pdb_data['GUID']  # pdb(컴파일된 정보 중 하나)컴파일된 환경(프로젝트)의 아이디
-        pe_info_json['pe_pdb_Age'] = pdb_data['Age']  # 코드의 빌드 횟수
-        pe_info_json['pe_pdb_pdbPath'] = pdb_data['Pdbpath']  # 중요***      pdb파일이 있는 경로
-
-        self.pe.close()
-        return pe_info_json
-
     def pdb_data(self):  # pdb 추출하는 함수
         if hasattr(self.pe, u"DIRECTORY_ENTRY_DEBUG"):
             for i in self.pe.DIRECTORY_ENTRY_DEBUG:
@@ -37,23 +26,25 @@ class PDB_analyze():
                                                     int.from_bytes(entry.Signature_Data4, "little")
                                                     )
                     Age = entry.Age
-
-                    return {"Name": name, "GUID": GUID, "Age": Age, "Pdbpath": entry.PdbFileName.decode()}
+                    self.pe.close()
+                    return {"pe_pdb_Name": name, "pe_pdb_GUID": GUID, "pe_pdb_Age": Age, "pe_pdb_Pdbpath": entry.PdbFileName.decode()}
 
                 elif hasattr(entry, "CvHeaderSignature"):  # NB10
                     name = entry.name
                     GUID = hex(entry.Signature)
                     Age = entry.Age
                     Pdbpath = entry.PdbFileName.decode()
-                    return {"Name": name, "GUID": GUID, "Age": Age, "Pdbpath": Pdbpath}
+                    self.pe.close()
+                    return {"pe_pdb_Name": name, "pe_pdb_GUID": GUID, "pe_pdb_Age": Age, "pe_pdb_Pdbpath": Pdbpath}
 
                 else:
-                    return {"Name": np.nan, "GUID": np.nan, "Age": np.nan, "Pdbpath": np.nan}
+                    self.pe.close()
+                    return {"pe_pdb_Name": np.nan, "pe_pdb_GUID": np.nan, "pe_pdb_Age": np.nan, "pe_pdb_Pdbpath": np.nan}
         else:
-            return {"Name": np.nan, "GUID": np.nan, "Age": np.nan, "Pdbpath": np.nan}
+            self.pe.close()
+            return {"pe_pdb_Name": np.nan, "pe_pdb_GUID": np.nan, "pe_pdb_Age": np.nan, "pe_pdb_Pdbpath": np.nan}
 
-def result_all(filename, output_data):
+def result_all(filename):
     pe_anal = PDB_analyze(filename)
-    output_data = pe_anal.run(output_data)
-    print("NamHoon Git Test07")
+    output_data = pe_anal.pdb_data()
     return output_data
