@@ -1,5 +1,3 @@
-from Analzer_Engine.PE_analyze import analyze_pe
-from Analzer_Engine.Flowchart_analyze import analyze_flowchart
 
 
 class AnalyzeSimilarity:
@@ -13,18 +11,15 @@ class AnalyzeSimilarity:
         디비로 받든 json으로 받던지 하나의 input이 들어오면 각 class를 불러서 객체를 만들어 주는 함수
         :return: none
         '''
-        # 파일이든 디비든 열어서 가져오기
-        stand_data = open(self.stand_path, 'rb')
-        target_data = open(self.target_path, 'rb')
 
         ############################
-        #   PE랑 flowchart로 나누기  #
+        #   PE랑 flowchart로 나누기  #       => 각각 다른 파일로 줄거라서 필요 없어짐
         ############################
 
         # 나눈 애들 각 클래스에 인자로 넣어서 객체 만들어서 반환하기
-        self.P = analyze_pe.AnalyzePE()
-        self.F = analyze_flowchart.AnalyzeFlowchart()
-
+        # self.P = analyze_pe.AnalyzePE()
+        # self.F = analyze_flowchart.AnalyzeFlowchart()
+        print('[+] Json file parsing complete!')
 
     def calculate_heuristic(self):
         '''
@@ -104,9 +99,8 @@ def cmp_data(self, stand_data, target_data):
 
 # 이대로 완성된다면 main 코드는 이게 전부임
 if __name__ == "__main__":
-    print('=============START MAIN=============')
-    path_stand = "기준이 되는 파일이 있는 경로"
-    path_target = "대상이 되는 파일이 있는 경로"
-    Analyzer = AnalyzeSimilarity(path_stand,path_target)
-    Analyzer.analyze_parser()
-    Analyzer.calculate_heuristic()
+    print('==========================START MAIN==========================')
+
+    # Analyzer = AnalyzeSimilarity(path_stand,path_target)
+    # Analyzer.analyze_parser()
+    # Analyzer.calculate_heuristic()
