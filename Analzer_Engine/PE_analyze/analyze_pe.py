@@ -1,9 +1,4 @@
-from ngram import NGram
-
 import Analzer_Engine.Analyzer_main as AM
-from Extract_Engine.PE_feature import Pe_Pdb
-from Analzer_Engine.Flowchart_analyze import func_ngram
-
 
 
 class AnalyzePE:

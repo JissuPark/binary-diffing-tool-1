@@ -145,7 +145,7 @@ def exe_to_idb(exe_q): ### Multiprocessing할 때, target의 인자로 넘길 �
             # exec_idat을 실행하고 해당 자식프로세스가 끝날 때까지 기다린다.
             # 기다렸다가 idat 실행 후, 생성되는 파일을 정리해야하기 때문에
             # idat 실행이 종료될 때까지 기다린다.
-            p=exec_idat(f_path, pe_flag)
+            p = exec_idat(f_path, pe_flag)
             p.wait()
 
 
@@ -160,12 +160,16 @@ def exe_to_idb(exe_q): ### Multiprocessing할 때, target의 인자로 넘길 �
 '''
 def clear_folder(EXE_F_PATH, IDA_F_PATH):
     exe_list = os.listdir(EXE_F_PATH)
-    for f in exe_list:
-        if os.path.splitext(f)[-1] == ".idb" or os.path.splitext(f)[-1] == ".i64":
-            shutil.copy(os.path.join(EXE_F_PATH,f), os.path.join(IDA_F_PATH,f))
-            os.remove(EXE_F_PATH+"\\"+f)
-        elif '.' in f:
-            os.remove(EXE_F_PATH+"\\"+f)
+    try:
+        for f in exe_list:
+            if os.path.splitext(f)[-1] == ".idb" or os.path.splitext(f)[-1] == ".i64":
+                shutil.copy(os.path.join(EXE_F_PATH,f), os.path.join(IDA_F_PATH,f))
+                os.remove(EXE_F_PATH+"\\"+f)
+            elif '.' in f:
+                os.remove(EXE_F_PATH+"\\"+f)
+        return True
+    except:
+        return False
 
 
 
@@ -238,7 +242,7 @@ def create_idb(PATH,IDB_PATH):
     ### time
     print(f"[+]time : {timeit.default_timer() - s}")
 
-    clear_folder(PATH,IDB_PATH)    
+    return clear_folder(PATH,IDB_PATH)
 
 # if __name__=="__main__":
 #
