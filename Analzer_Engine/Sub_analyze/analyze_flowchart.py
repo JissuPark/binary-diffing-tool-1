@@ -1,5 +1,7 @@
 import json
-from Analzer_Engine import Analyzer_main
+import time
+from Analzer_Engine.Algorithm import all_algo as algo
+
 
 class AnalyzeFlowchart:
     def __init__(self, S_FLOW, T_FLOW):
@@ -55,16 +57,24 @@ class AnalyzeFlowchart:
 
     def analyze_bbh(self):
         '''
+        가중치 : 0.56
         basic block hash(함수 대표값)을 비교해서 점수에 가중치를 매겨 반환하는 함수
         :return: score with weight
         '''
 
+        bbh_score = algo.get_func_similarity(self.s_hash_dict, self.t_hash_dict)
+        return bbh_score
 
     def analyze_constant(self):
         '''
-        상수값을 비교해주는 함수
+        가중치 : 0.24
+        상수값을 비교해서 점수에 가중치를 매겨 반환하는 함수
         :return: score with weight
         '''
+
+        const_score = algo.get_string_similarity(self.s_constant, self.t_constant)
+        return const_score
+
 
 
 
@@ -83,3 +93,8 @@ if __name__ == '__main__':
     print(f'[+]Standard File\' constant value : {a.s_constant}')
     print(f'[+]Target File\' constant value : {a.t_constant}')
     print('-----------------------------END PARSER-----------------------------')
+    print('---------------------------START ANALYZE----------------------------')
+    print(f'[+]Analyze basic block hash similarity : {a.analyze_bbh()}')
+    print(f'[+]Analyze constant similarity : {a.analyze_constant()}')
+    print('----------------------------END ANALYZE-----------------------------')
+    print('===========================END FLOWCHART============================')
