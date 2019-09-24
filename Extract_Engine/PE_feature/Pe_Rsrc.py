@@ -278,19 +278,37 @@ class RsrcParser:
         known_sections = set(
             ['.text', '.data', '.rdata', '.idata', '.edata', '.rsrc', '.bss', '.crt', '.tls', '.rsrc', '.crt', '.reloc',
              '.edata', '.sdata', '.ndata', '.itext', '.code', 'code'])
+
+        Authority_set = set(
+            ['IMAGE_SCN_TYPE_REG', 'IMAGE_SCN_TYPE_COPY', 'IMAGE_SCN_CNT_CODE', 'IMAGE_SCN_CNT_INITIALIZED_DATA',
+             'IMAGE_SCN_CNT_UNINITIALIZED_DATA', 'IMAGE_SCN_LNK_OTHER', 'IMAGE_SCN_LNK_INFO', 'IMAGE_SCN_LNK_OVER',
+             'IMAGE_SCN_LNK_REMOVE', 'IMAGE_SCN_LNK_COMDAT', 'IMAGE_SCN_MEM_PROTECTED', 'IMAGE_SCN_NO_DEFER_SPEC_EXC',
+             'IMAGE_SCN_MEM_LOCKED', 'IMAGE_SCN_LNK_NRELOC_OVFL', 'IMAGE_SCN_MEM_DISCARDABLE', 'IMAGE_SCN_MEM_SHARED',
+             'IMAGE_SCN_MEM_EXECUTE', 'IMAGE_SCN_MEM_READ', 'IMAGE_SCN_MEM_WRITE']
+        )
         for section in self.pe.sections:
             try:
-                #섹션 이름 추출
+                # change meaningless parts like '\x00' into empty char
+                hash_256 = section.get_hash_sha256()
+                section_addr = hex(section.PointerToRawData)
+            except:
+                sname = section.Name.decode('latin-1').encode('utf-8').decode('utf-8').replace('\x00', '')
+                sname = list(sname)
+                # if name doesn't start with '.' then delete that part
+                if sname[0] != '.':
+                    del (sname[0])
+                # if name start with '.' then return sah256 hash value and section's start address
+                hash_256 = section.get_hash_sha256()
+                section_addr = hex(section.PointerToRawData)
+        for section in self.pe.sections:
+            try:
+                # 섹션 이름 추출
                 section_name = section.Name.decode().split('\x00')[0]
             except:
                 continue
-
             ####################################
-            #           권한 확인 시작            #
+            #           권한 확인 시작           #
             ####################################
-
-            if section_name not in known_sections: continue
-
             if section.IMAGE_SCN_TYPE_REG == True:
                 IMAGE_SCN_TYPE_REG = '0'
             else:
@@ -369,11 +387,12 @@ class RsrcParser:
                 IMAGE_SCN_MEM_WRITE = '1'
 
             ####################################
-            #           권한 확인 종료            #
+            #           권한 확인 종료           #
             ####################################
-
             section_dict[section_name] = [section.get_entropy(),
-                                          section.Characteristics,
+                                          hash_256,
+                                          section_addr,
+                                          hex(section.Characteristics)[2:],
                                           IMAGE_SCN_TYPE_REG,
                                           IMAGE_SCN_TYPE_COPY,
                                           IMAGE_SCN_CNT_CODE,
@@ -392,11 +411,11 @@ class RsrcParser:
                                           IMAGE_SCN_MEM_SHARED,
                                           IMAGE_SCN_MEM_EXECUTE,
                                           IMAGE_SCN_MEM_READ,
-                                          IMAGE_SCN_MEM_WRITE]
-
+                                          IMAGE_SCN_MEM_WRITE
+                                          ]
         # non_sus_sections = len(set(tmp).intersection(sections))
         # result = [len(tmp) - non_sus_sections, non_sus_sections]
-        #return json.dumps(section_dict, indent=4)
+        # return json.dumps(section_dict, indent=4)
         return section_dict
 
     def extractPKCS7(self):
