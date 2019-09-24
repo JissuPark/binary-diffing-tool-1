@@ -1,4 +1,4 @@
-import Analyzer_main as AM
+import Analzer_Engine.Analyzer_main as AM
 
 
 class AnalyzePE:

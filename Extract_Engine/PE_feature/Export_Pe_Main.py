@@ -87,24 +87,54 @@ class Pe_Feature:
             return np.nan
         return ImportDlldict
 
+    def all(self):
+        test= dict()
+        func_list = self.ImportDll()
+        file_type = self.filetypes()
+        imphash = self.imphash_data()
+        cmp_section_data = self.cmp_section_data()
+        auto = self.Autoninfo()
+        rich_info = self.extract_rich()
+        pdb_info = self.extract_pdb()
+        rsrc_info = self.extract_rsrc()
 
-if __name__ == "__main__":
-    PATH = r"C:\Windows\System32\notepad.exe"
-    ppe = Pe_Feature(PATH)
+        test2= {
+            'file_type':file_type,
+            'func_list':func_list,
+            'imp_hash':imphash,
+            'cmp_section' : cmp_section_data,
+            'auto':auto,
+            'rich_info':rich_info,
+            'pdb_info':pdb_info,
+            'rsrc_info':rsrc_info
+        }
+        test[self.file_name] = test2
 
-    func_list = ppe.ImportDll()
-    imphash = ppe.imphash_data()
-    auto = ppe.Autoninfo()
+        return test
 
-    print("filetype  :: ", ppe.filetypes())
-    print("function list :: ", json.dumps(func_list, indent=4))
-    print("imphash_data :: ", imphash)
-    print("section data :: ", json.dumps(ppe.cmp_section_data(), indent=4))
-    print("authentication data :: ", auto)
 
-    print(f'pe rich header info : {ppe.extract_rich()}')
-    print(f'pe pdb  header info : {ppe.extract_pdb()}')
-    print(f'pe resource info : {ppe.extract_rsrc()}')
-    #print("Test :: ", ppe.ex_auth())
+# if __name__ == "__main__":
+#     PATH = r"C:\Windows\System32\notepad.exe"
+#     ppe = Pe_Feature(PATH)
+#
+#     func_list = ppe.ImportDll()
+#     file_type = ppe.filetypes()
+#     imphash = ppe.imphash_data()
+#     cmp_section_data = ppe.cmp_section_data()
+#     auto = ppe.Autoninfo()
+#     rich = ppe.extract_rich()
+#     pdb = ppe.extract_pdb()
+#     rsrc = ppe.extract_rsrc()
+#
+#     print("filetype  :: ", ppe.filetypes())
+#     print("function list :: ", json.dumps(func_list, indent=4))
+#     print("imphash_data :: ", imphash)
+#     print("section data :: ", json.dumps(ppe.cmp_section_data(), indent=4))
+#     print("authentication data :: ", auto)
+#
+#     print(f'pe rich header info : {ppe.extract_rich()}')
+#     print(f'pe pdb  header info : {ppe.extract_pdb()}')
+#     print(f'pe resource info : {ppe.extract_rsrc()}')
+#     #print("Test :: ", ppe.ex_auth())
 
 
