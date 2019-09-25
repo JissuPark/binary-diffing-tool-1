@@ -1,5 +1,4 @@
 import json
-import time
 from Analzer_Engine.Algorithm import all_algo as algo
 
 
@@ -57,7 +56,7 @@ class AnalyzeFlowchart:
 
     def analyze_bbh(self):
         '''
-        가중치 : 0.56
+
         basic block hash(함수 대표값)을 비교해서 점수에 가중치를 매겨 반환하는 함수
         :return: score with weight
         '''
@@ -67,13 +66,13 @@ class AnalyzeFlowchart:
 
     def analyze_constant(self):
         '''
-        가중치 : 0.24
+
         상수값을 비교해서 점수에 가중치를 매겨 반환하는 함수
         :return: score with weight
         '''
 
         const_score = algo.get_string_similarity(self.s_constant, self.t_constant)
-        return const_score
+        return const_score['2-Gram']
 
 
 
