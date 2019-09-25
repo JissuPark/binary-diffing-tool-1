@@ -53,10 +53,13 @@ class AnalyzePE:
         *hash 값 하나짜리라 cmp_hash를 쓸 필요가 없음
         :return: score with weight
         '''
+
         if self.s_imp_hash == self.t_imp_hash:
             return 1
         else:
             return 0
+
+
 
     def analyze_auth(self):
         '''
@@ -91,6 +94,7 @@ class AnalyzePE:
         *값이 다 작은 거라서 비교 알고리즘을 쓰기도 모호하고.. 훈이랑 얘기해봐야 할듯
         :return: score with weight
         '''
+
         total_cnt = len(self.s_section_hash)
         cnt = 0
         for s in self.s_section_hash:
@@ -98,4 +102,6 @@ class AnalyzePE:
                 if s == t:
                     cnt += 1
         return cnt/total_cnt
+
+
 

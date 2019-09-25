@@ -251,6 +251,7 @@ class RsrcParser:
                     rsrc_entry = dict()
                     country = match_language(resource_lang.id)
                     #print(f'Resource Language is {resource_lang.id} : {country}')#{resource_lang.struct}')
+
                     rsrc_entry['Resource Type'] = resource_type.id
                     rsrc_entry['Resource NameID'] = resource_id.id
                     rsrc_entry['Resource Language'] = country
