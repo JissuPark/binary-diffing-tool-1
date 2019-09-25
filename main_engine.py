@@ -1,3 +1,4 @@
+import hashlib
 import json
 import timeit
 import os
@@ -40,7 +41,8 @@ class Pe_Files_Check:
         exe_list = os.listdir(self.pe_dir_path)
         for f in exe_list:
             f_path = os.path.join(self.pe_dir_path, f)
-            f_hash = pe2idb.file_to_hash(f_path)
+            #f_hash = pe2idb.file_to_hash(f_path)
+            f_hash = hashlib.sha256(open(f_path, 'rb').read()).hexdigest()
 
             # file hash 중복 = 완전히 같은 파일
             # 해당 파일은 삭제(이미 diffing할 동일 파일이 존재하므로)
