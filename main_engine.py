@@ -128,13 +128,13 @@ if __name__ == "__main__":
 
     ########################### pe 특징 추출 로직 #####################################
     kkk=dict()
-    TMP_Filter_PE_PATH=r"D:\JungJaeho\STUDY\self\BOB\BoB_Project\Team_Breakers\Training\Study\sample\mid_GandCrab_exe"
-    TMP_Filter_PE_PATH2=r"D:\JungJaeho\STUDY\self\BOB\BoB_Project\Team_Breakers\Training\Study\sample\mid_GandCrab_exe\2cb5cfdc436638575323eac73ed36acd84b4694c144a754772c67167b99d574c"
+    TMP_Filter_PE_PATH= r"D:\JungJaeho\STUDY\self\BOB\BoB_Project\Team_Breakers\Training\Study\sample\mid_GandCrab_exe"
+    TMP_Filter_PE_PATH2= r"D:\JungJaeho\STUDY\self\BOB\BoB_Project\Team_Breakers\Training\Study\sample\mid_GandCrab_exe\2cb5cfdc436638575323eac73ed36acd84b4694c144a754772c67167b99d574c"
     count = 0
     for pe in os.listdir(TMP_Filter_PE_PATH):
-        a = Export_All_Pe_Feature(TMP_Filter_PE_PATH+ '\\' + pe)
-        kkk[count]=a
-        count=count+1
+        a = Export_All_Pe_Feature(TMP_Filter_PE_PATH + '\\' + pe)
+        kkk[count] = a
+        count = count+1
 
     kkk['count'] = count
 
@@ -160,3 +160,4 @@ if __name__ == "__main__":
     # 1. idb
 
     ##################################################################################
+
