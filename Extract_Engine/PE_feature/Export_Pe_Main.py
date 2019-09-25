@@ -113,28 +113,3 @@ class Pe_Feature:
         return test
 
 
-# if __name__ == "__main__":
-#     PATH = r"C:\Windows\System32\notepad.exe"
-#     ppe = Pe_Feature(PATH)
-#
-#     func_list = ppe.ImportDll()
-#     file_type = ppe.filetypes()
-#     imphash = ppe.imphash_data()
-#     cmp_section_data = ppe.cmp_section_data()
-#     auto = ppe.Autoninfo()
-#     rich = ppe.extract_rich()
-#     pdb = ppe.extract_pdb()
-#     rsrc = ppe.extract_rsrc()
-#
-#     print("filetype  :: ", ppe.filetypes())
-#     print("function list :: ", json.dumps(func_list, indent=4))
-#     print("imphash_data :: ", imphash)
-#     print("section data :: ", json.dumps(ppe.cmp_section_data(), indent=4))
-#     print("authentication data :: ", auto)
-#
-#     print(f'pe rich header info : {ppe.extract_rich()}')
-#     print(f'pe pdb  header info : {ppe.extract_pdb()}')
-#     print(f'pe resource info : {ppe.extract_rsrc()}')
-#     #print("Test :: ", ppe.ex_auth())
-
-
