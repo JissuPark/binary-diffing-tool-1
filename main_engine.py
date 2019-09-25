@@ -9,6 +9,8 @@ from Extract_Engine.PE_feature import Export_Pe_Main
 import pefile
 import idb
 
+import csv
+
 class Pe_Files_Check:
     '''
         * get_unique_pe_list
@@ -91,8 +93,20 @@ def Export_All_Pe_Feature(TMP_Filter_PE_PATH):
     test = ppe.all()
     return test
     #print(json.dumps(ppe.all(),indent=4))
-
-
+'''
+    total score to the csv file
+'''
+def out_csv(csv_path, score_dict):
+    with open(csv_path, 'w',  newline="") as csv_f:
+        csv_w=csv.writer(csv_f)
+        i=1
+        for key, score_row in score_dict.items():
+            score_row.append(f"=sum(C{i}, D{i}, E{i}, F{i}, G{i})")
+            i+=1
+            result_row = [key]
+            for v in score_row:
+                result_row.append(v)
+            csv_w.writerow(result_row)
 
 if __name__ == "__main__":
 
@@ -160,5 +174,16 @@ if __name__ == "__main__":
 
     # 1. idb
 
+
+    ##################################################################################
+
+
+#     dict ={"file1":["0x123",1, 2, 3, 4, 5, 6],
+#            "file2":["0x456",1, 2, 3, 4, 5, 6],
+#            "file3":["0x789",1, 2, 3, 4, 5, 6],
+#            "file4":["0x012",1, 2, 3, 4, 5, 6],
+#            "file5":["0x345",1, 2, 3, 4, 5, 6],
+#         }
+    out_csv(r"D:\JungJaeho\STUDY\self\BOB\BoB_Project\Team_Breakers\Training\Study\sample\result\test.csv", dict)
     ##################################################################################
 
