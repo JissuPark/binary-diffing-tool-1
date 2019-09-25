@@ -88,7 +88,9 @@ class Exract_Feature:
 
 def Export_All_Pe_Feature(TMP_Filter_PE_PATH):
     ppe = Export_Pe_Main.Pe_Feature(TMP_Filter_PE_PATH)
-    print(json.dumps(ppe.all(),indent=4))
+    test = ppe.all()
+    return test
+    #print(json.dumps(ppe.all(),indent=4))
 
 
 
@@ -124,12 +126,40 @@ if __name__ == "__main__":
 
 
 
-
-
-
     ########################### pe 특징 추출 로직 #####################################
+    kkk=dict()
+    TMP_Filter_PE_PATH=r"D:\JungJaeho\STUDY\self\BOB\BoB_Project\Team_Breakers\Training\Study\sample\mid_GandCrab_exe"
+    TMP_Filter_PE_PATH2=r"D:\JungJaeho\STUDY\self\BOB\BoB_Project\Team_Breakers\Training\Study\sample\mid_GandCrab_exe\2cb5cfdc436638575323eac73ed36acd84b4694c144a754772c67167b99d574c"
+    count = 0
+    for pe in os.listdir(TMP_Filter_PE_PATH):
+        a = Export_All_Pe_Feature(TMP_Filter_PE_PATH+ '\\' + pe)
+        kkk[count]=a
+        count=count+1
 
-    TMP_Filter_PE_PATH=r"D:\JungJaeho\STUDY\self\BOB\BoB_Project\Team_Breakers\Training\Study\sample\mid_GandCrab_exe\2cb5cfdc436638575323eac73ed36acd84b4694c144a754772c67167b99d574c"
-    Export_All_Pe_Feature(TMP_Filter_PE_PATH)
+    kkk['count'] = count
 
+    print(json.dumps(kkk, indent=4))
+
+    ##################################################################################
+
+
+
+    ########################### 모든 특징 분석 로직 #####################################
+
+    #1. idb
+
+
+<<<<<<< HEAD
+=======
+    ##################################################################################
+
+
+
+
+
+    ########################### 최종 결과물 csv 추출 ###################################
+
+    # 1. idb
+
+>>>>>>> upstream/master
     ##################################################################################
