@@ -7,6 +7,7 @@ from Analzer_Engine import Analyzer_main
 from Extract_Engine import pe2idb
 from Extract_Engine.Flowchart_feature import extract_asm_and_const
 from Extract_Engine.PE_feature import Export_Pe_Main
+from Analzer_Engine import Analyzer_main
 import pefile
 import idb
 
@@ -103,7 +104,7 @@ def out_csv(csv_path, score_dict):
         csv_w=csv.writer(csv_f)
         i=1
         for key, score_row in score_dict.items():
-            score_row.append(f"=sum(C{i}, D{i}, E{i}, F{i}, G{i})")
+            score_row.append(f"=sum(C{i}, D{i}, E{i}, F{i})")
             i+=1
             result_row = [key]
             for v in score_row:
@@ -161,8 +162,9 @@ if __name__ == "__main__":
 
 
     ########################### 모든 특징 분석 로직 #####################################
-
-    #1. idb
+    Analyzer = Analyzer_main.AnalyzeSimilarity(kkk)
+    Analyzer.analyze_parser()
+    ttt = Analyzer.calculate_heuristic()
 
 
 
@@ -186,6 +188,6 @@ if __name__ == "__main__":
 #            "file4":["0x012",1, 2, 3, 4, 5, 6],
 #            "file5":["0x345",1, 2, 3, 4, 5, 6],
 #         }
-    out_csv(r"D:\JungJaeho\STUDY\self\BOB\BoB_Project\Team_Breakers\Training\Study\sample\result\test.csv", dict)
+    out_csv(r"D:\JungJaeho\STUDY\self\BOB\BoB_Project\Team_Breakers\Training\Study\sample\result\test.csv", ttt)
     ##################################################################################
 

@@ -3,8 +3,9 @@ from Analzer_Engine.Sub_analyze import analyze_pe as pe
 from Analzer_Engine.Sub_analyze import analyze_flowchart as fc
 
 class AnalyzeSimilarity:
-    def __init__(self):
+    def __init__(self, kkk):
         print("분석 엔진 생성!")
+        self.kkk = kkk
 
     def analyze_parser(self):
         '''
@@ -18,8 +19,8 @@ class AnalyzeSimilarity:
         ############################
 
         # 나눈 애들 각 클래스에 인자로 넣어서 객체 만들어서 반환하기
-        path_stand = r"C:\Users\qkrwl\PycharmProjects\Breakers\binary-diffing-tool\test_01.txt"
-        path_target = r"C:\Users\qkrwl\PycharmProjects\Breakers\binary-diffing-tool\test_02.txt"
+        path_stand = r"D:\JungJaeho\STUDY\self\BOB\BoB_Project\Team_Breakers\code\binary-diffing-tool\test_01.txt"
+        path_target = r"D:\JungJaeho\STUDY\self\BOB\BoB_Project\Team_Breakers\code\binary-diffing-tool\test_02.txt"
         self.P = pe.AnalyzePE()
         self.F = fc.AnalyzeFlowchart(path_stand, path_target)
         print('[+] Json file parsing complete!')
@@ -33,6 +34,7 @@ class AnalyzeSimilarity:
         # 최종 휴리스틱 스코어
         self.final_score = list()
         semifinal = dict()
+        self.final_score.append('0x1234')
         # Flowchart 점수 추가 (가중치 포함)
 
         self.F.Flow_parser()
@@ -46,7 +48,7 @@ class AnalyzeSimilarity:
         #     return final_score
 
         # PE 점수 추가 (가중치 포함)
-        self.P.PE_parser(r'C:\Users\qkrwl\PycharmProjects\Breakers\binary-diffing-tool\result.txt')
+        self.P.PE_parser(self.kkk)
         #self.final_score += self.P.analyze_auth()
         self.final_score.append(self.P.analyze_imphash() * 0.05)
         #self.final_score['section'] = self.P.analyze_section() * 0.05
@@ -70,9 +72,9 @@ class AnalyzeSimilarity:
 
 
 # 이대로 완성된다면 main 코드는 이게 전부임
-if __name__ == "__main__":
-    print('==========================START MAIN==========================')
-
-    Analyzer = AnalyzeSimilarity()
-    Analyzer.analyze_parser()
-    print(Analyzer.calculate_heuristic())
+# if __name__ == "__main__":
+#     print('==========================START MAIN==========================')
+#
+#     Analyzer = AnalyzeSimilarity()
+#     Analyzer.analyze_parser()
+#     print(Analyzer.calculate_heuristic())

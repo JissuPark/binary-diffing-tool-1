@@ -19,13 +19,13 @@ class AnalyzePE:
         *파싱만 잘해서 넘겨주면 각 함수는 크게 할 일이 없고 cmp함수 호출해서 나오는 결과에 따라 가중치만 부여해주면 됨
         :return: none
         '''
-        with open(RESULT) as result_json:
-            self.result_data = json.load(result_json)
+        #with open(RESULT) as result_json:
+         #   self.result_data = json.load(result_json)
 
         # 전체에 대한 dictionary 받아옴
         self.result_list = list()
-        print(self.result_data)
-        for i in self.result_data.values():
+        print(RESULT)
+        for i in RESULT.values():
             self.result_list.append(i)
         for j in self.result_list:
             print(j)
