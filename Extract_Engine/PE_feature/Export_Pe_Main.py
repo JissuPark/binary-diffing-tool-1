@@ -22,7 +22,7 @@ class Pe_Feature:
             prodid_name = Pe_Rich.PRODID_MAP[prodid] if prodid in Pe_Rich.PRODID_MAP else "<unknown>"
             # print('%6d   %-15s %5d' % (prodid, prodid_name, count))
 
-        return json.dumps(rich.info_list, indent=4)
+        return json.dumps(xor_key, indent=4)
 
     def extract_pdb(self):
         output_data = {}
@@ -89,27 +89,25 @@ class Pe_Feature:
 
     def all(self):
         test= dict()
-        func_list = self.ImportDll()
-        file_type = self.filetypes()
+        #func_list = self.ImportDll()
+        #file_type = self.filetypes()
         imphash = self.imphash_data()
         cmp_section_data = self.cmp_section_data()
-        auto = self.Autoninfo()
+        #auto = self.Autoninfo()
         rich_info = self.extract_rich()
-        pdb_info = self.extract_pdb()
+        #pdb_info = self.extract_pdb()
         rsrc_info = self.extract_rsrc()
 
         test2= {
-            'file_type':file_type,
-            'func_list':func_list,
+            #'file_type':file_type,
+            #'func_list':func_list,
             'imp_hash':imphash,
             'cmp_section' : cmp_section_data,
-            'auto':auto,
-            'rich_info':rich_info,
-            'pdb_info':pdb_info,
+            #'auto':auto,
+            'rich_info(xor_key)':rich_info,
+            #'pdb_info':pdb_info,
             'rsrc_info':rsrc_info
         }
         test[self.file_name] = test2
 
         return test
-
-

@@ -25,7 +25,6 @@ class AnalyzePE:
         :return: score with weight
         '''
 
-
     def analyze_auth(self):
         '''
         인증서의 data 자체를 ssdeep으로 비교해서 얼마나 같은지 계산해 반환하는 함수
