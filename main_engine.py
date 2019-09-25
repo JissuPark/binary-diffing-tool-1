@@ -18,7 +18,6 @@ class Pe_Files_Check:
         -. Check the completely same PE file.
         -. make a dictionary of filename(key) and hashvalue(value)
         -. And then remove the same PE file.
-
         # exe_q에 idb로 변환할 exe파일을 쌓는다
         exe_q=Queue()
         * Return value
