@@ -61,21 +61,6 @@ def pe_check(PE_F_PATH):
 
 
 '''
- * file_to_hash                                                                        
-                                                                                     
-  -. 파일의 바이너리를 입력값으로 sha256한 값을 반환한다.
-  -. Return the sha256 hash digest value of the PE_F_PATH
-
-    (보통 악성코드 분석시 해당 파일의 해시값을 파일명으로 지정하는 경우가 많다고         
-      현목이가 그래서 일단 시간도 별로 안걸리는 부분이라 넣었어요) 
-
-'''
-def file_to_hash(PE_F_PATH):
-    return hashlib.sha256(open(PE_F_PATH,'rb').read()).hexdigest()
-
-
-
-'''
  * exe_list_to_queue                                                                   
                                                                                      
   -. idb로 변환하려는 PE파일의 디렉토리의 모든 파일들의 이름을 hash로 변경하고 큐에 삽입.
@@ -87,11 +72,7 @@ def exe_list_to_queue(PE_D_PATH, q):
     exe_list = os.listdir(PE_D_PATH)
     for f in exe_list:
         f_path = os.path.join(PE_D_PATH, f)
-        h = file_to_hash(f_path)
-        h_path = os.path.join(PE_D_PATH, h)
-
-        os.rename(f_path,os. path.join(f_path,os.path.join(PE_D_PATH, h)))        
-        q.put(h_path)
+        q.put(f_path)
 
 
 
@@ -165,7 +146,7 @@ def clear_folder(EXE_F_PATH, IDA_F_PATH):
             if os.path.splitext(f)[-1] == ".idb" or os.path.splitext(f)[-1] == ".i64":
                 shutil.copy(os.path.join(EXE_F_PATH,f), os.path.join(IDA_F_PATH,f))
                 os.remove(EXE_F_PATH+"\\"+f)
-            elif '.' in f:
+            elif '.asm' in f:
                 os.remove(EXE_F_PATH+"\\"+f)
         return True
     except:
@@ -205,7 +186,7 @@ def convert_pe_to_idb(IDB_PATH, PE_PATH):
         p.join()
     ###################### END - Multiprocessing #######################
 
-    clear_folder(PE_PATH,IDB_PATH)    
+    clear_folder(PE_PATH, IDB_PATH)
     print(f"[=]TERMINATE")
     ### time
     print(f"[+]time : {timeit.default_timer() - s}")
@@ -244,14 +225,14 @@ def create_idb(PATH,IDB_PATH):
 
     return clear_folder(PATH,IDB_PATH)
 
-# if __name__=="__main__":
-#
-#     # PATH : idb로 변환할 pe 파일이 위치한 디렉토리 경로
-#     # IDB_PATH : 변환된 idb파일을 저장할 디렉토리 경로
-#
-#     PATH = r"D:\Breakers\test_exe_sample"
-#     IDB_PATH = r"D:\Breakers\idb_sample"
-#
-#     create_idb(PATH,IDB_PATH)
+if __name__=="__main__":
+
+    # PATH : idb로 변환할 pe 파일이 위치한 디렉토리 경로
+    # IDB_PATH : 변환된 idb파일을 저장할 디렉토리 경로
+
+    PATH = r"C:\Users\secur\Downloads\PEview"
+    IDB_PATH = r"C:\Users\secur\Downloads\idb"
+
+    create_idb(PATH, IDB_PATH)
 
 
