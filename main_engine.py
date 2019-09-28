@@ -1,3 +1,4 @@
+import hashlib
 import json
 import timeit
 import os
@@ -6,8 +7,11 @@ from Analzer_Engine import Analyzer_main
 from Extract_Engine import pe2idb
 from Extract_Engine.Flowchart_feature import extract_asm_and_const
 from Extract_Engine.PE_feature import Export_Pe_Main
+from Analzer_Engine import Analyzer_main
 import pefile
 import idb
+
+import csv
 
 class Pe_Files_Check:
     '''
@@ -37,7 +41,8 @@ class Pe_Files_Check:
         exe_list = os.listdir(self.pe_dir_path)
         for f in exe_list:
             f_path = os.path.join(self.pe_dir_path, f)
-            f_hash = pe2idb.file_to_hash(f_path)
+            #f_hash = pe2idb.file_to_hash(f_path)
+            f_hash = hashlib.sha256(open(f_path, 'rb').read()).hexdigest()
 
             # file hash 중복 = 완전히 같은 파일
             # 해당 파일은 삭제(이미 diffing할 동일 파일이 존재하므로)
@@ -90,8 +95,20 @@ def Export_All_Pe_Feature(TMP_Filter_PE_PATH):
     test = ppe.all()
     return test
     #print(json.dumps(ppe.all(),indent=4))
-
-
+'''
+    total score to the csv file
+'''
+def out_csv(csv_path, score_dict):
+    with open(csv_path, 'w',  newline="") as csv_f:
+        csv_w=csv.writer(csv_f)
+        i=1
+        for key, score_row in score_dict.items():
+            score_row.append(f"=sum(C{i}, D{i}, E{i}, F{i})")
+            i+=1
+            result_row = [key]
+            for v in score_row:
+                result_row.append(v)
+            csv_w.writerow(result_row)
 
 if __name__ == "__main__":
 
@@ -127,13 +144,13 @@ if __name__ == "__main__":
 
     ########################### pe 특징 추출 로직 #####################################
     kkk=dict()
-    TMP_Filter_PE_PATH=r"D:\JungJaeho\STUDY\self\BOB\BoB_Project\Team_Breakers\Training\Study\sample\mid_GandCrab_exe"
-    TMP_Filter_PE_PATH2=r"D:\JungJaeho\STUDY\self\BOB\BoB_Project\Team_Breakers\Training\Study\sample\mid_GandCrab_exe\2cb5cfdc436638575323eac73ed36acd84b4694c144a754772c67167b99d574c"
+    TMP_Filter_PE_PATH= r"D:\JungJaeho\STUDY\self\BOB\BoB_Project\Team_Breakers\Training\Study\sample\mid_GandCrab_exe"
+    TMP_Filter_PE_PATH2= r"D:\JungJaeho\STUDY\self\BOB\BoB_Project\Team_Breakers\Training\Study\sample\mid_GandCrab_exe\2cb5cfdc436638575323eac73ed36acd84b4694c144a754772c67167b99d574c"
     count = 0
     for pe in os.listdir(TMP_Filter_PE_PATH):
-        a = Export_All_Pe_Feature(TMP_Filter_PE_PATH+ '\\' + pe)
-        kkk[count]=a
-        count=count+1
+        a = Export_All_Pe_Feature(TMP_Filter_PE_PATH + '\\' + pe)
+        kkk[count] = a
+        count = count+1
 
     kkk['count'] = count
 
@@ -144,8 +161,9 @@ if __name__ == "__main__":
 
 
     ########################### 모든 특징 분석 로직 #####################################
-
-    #1. idb
+    Analyzer = Analyzer_main.AnalyzeSimilarity(kkk)
+    Analyzer.analyze_parser()
+    ttt = Analyzer.calculate_heuristic()
 
 
 
@@ -159,4 +177,16 @@ if __name__ == "__main__":
 
     # 1. idb
 
+
     ##################################################################################
+
+
+#     dict ={"file1":["0x123",1, 2, 3, 4, 5, 6],
+#            "file2":["0x456",1, 2, 3, 4, 5, 6],
+#            "file3":["0x789",1, 2, 3, 4, 5, 6],
+#            "file4":["0x012",1, 2, 3, 4, 5, 6],
+#            "file5":["0x345",1, 2, 3, 4, 5, 6],
+#         }
+    out_csv(r"D:\JungJaeho\STUDY\self\BOB\BoB_Project\Team_Breakers\Training\Study\sample\result\test.csv", ttt)
+    ##################################################################################
+

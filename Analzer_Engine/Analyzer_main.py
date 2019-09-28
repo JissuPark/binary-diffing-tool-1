@@ -1,9 +1,11 @@
-
+import json
+from Analzer_Engine.Sub_analyze import analyze_pe as pe
+from Analzer_Engine.Sub_analyze import analyze_flowchart as fc
 
 class AnalyzeSimilarity:
-    def __init__(self, S_PATH, T_PATH):
-        self.stand_path = S_PATH                #기준이 되는 데이터의 경로
-        self.target_path = T_PATH               #대상이 되는 데이터의 경로
+    def __init__(self, kkk):
+        print("분석 엔진 생성!")
+        self.kkk = kkk
 
     def analyze_parser(self):
         '''
@@ -17,8 +19,10 @@ class AnalyzeSimilarity:
         ############################
 
         # 나눈 애들 각 클래스에 인자로 넣어서 객체 만들어서 반환하기
-        # self.P = analyze_pe.AnalyzePE()
-        # self.F = analyze_flowchart.AnalyzeFlowchart()
+        path_stand = r"D:\JungJaeho\STUDY\self\BOB\BoB_Project\Team_Breakers\code\binary-diffing-tool\test_01.txt"
+        path_target = r"D:\JungJaeho\STUDY\self\BOB\BoB_Project\Team_Breakers\code\binary-diffing-tool\test_02.txt"
+        self.P = pe.AnalyzePE()
+        self.F = fc.AnalyzeFlowchart(path_stand, path_target)
         print('[+] Json file parsing complete!')
 
     def calculate_heuristic(self):
@@ -28,13 +32,15 @@ class AnalyzeSimilarity:
         :return: final score
         '''
         # 최종 휴리스틱 스코어
-        final_score = 0
-
+        self.final_score = list()
+        semifinal = dict()
+        self.final_score.append('0x1234')
         # Flowchart 점수 추가 (가중치 포함)
+
         self.F.Flow_parser()
-        final_score += self.F.analyze_filehash()
-        final_score += self.F.analyze_bbh()
-        final_score += self.F.analyze_constant()
+        #self.final_score += self.F.analyze_filehash()
+        self.final_score.append(self.F.analyze_bbh() * 0.56)
+        self.final_score.append(self.F.analyze_constant() * 0.24)
 
         # 이건 파일 해쉬가 같으면 같은 파일이니까 넘기는 부분인데 여기 있으면 효율 개떨어지는데?
         # if 100 is self.F.analyze_filehash():
@@ -42,19 +48,20 @@ class AnalyzeSimilarity:
         #     return final_score
 
         # PE 점수 추가 (가중치 포함)
-        self.P.PE_parser()
-        final_score += self.P.analyze_auth()
-        final_score += self.P.analyze_imphash()
-        final_score += self.P.analyze_pdb()
-        final_score += self.P.analyze_rich()
-        final_score += self.P.analyze_rsrc()
+        self.P.PE_parser(self.kkk)
+        #self.final_score += self.P.analyze_auth()
+        self.final_score.append(self.P.analyze_imphash() * 0.05)
+        #self.final_score['section'] = self.P.analyze_section() * 0.05
+        self.final_score.append(self.P.analyze_rich() * 0.05)
+        #self.final_score['rsrc'] = self.P.analyze_rsrc() * 0.05
 
-        # 최종 점수가 0이상 100이하인지 확인
-        if not 0<= final_score <=100:
-            print('There is something wrong, buddy!')
-            exit(-1)
+        # # 최종 점수가 0이상 100이하인지 확인
+        # if not 0<= final_score <=100:
+        #     print('There is something wrong, buddy!')
+        #     exit(-1)
         # 확인됐으면 반환
-        return final_score
+        semifinal['파일이름'] = self.final_score
+        return semifinal
 
 #############################################################
 #   전역 비교 함수                                             #
@@ -65,9 +72,9 @@ class AnalyzeSimilarity:
 
 
 # 이대로 완성된다면 main 코드는 이게 전부임
-if __name__ == "__main__":
-    print('==========================START MAIN==========================')
-
-    # Analyzer = AnalyzeSimilarity(path_stand,path_target)
-    # Analyzer.analyze_parser()
-    # Analyzer.calculate_heuristic()
+# if __name__ == "__main__":
+#     print('==========================START MAIN==========================')
+#
+#     Analyzer = AnalyzeSimilarity()
+#     Analyzer.analyze_parser()
+#     print(Analyzer.calculate_heuristic())
