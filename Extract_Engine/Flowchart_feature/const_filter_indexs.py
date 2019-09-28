@@ -12,21 +12,22 @@ registers = ['rax', 'eax', 'ax', 'al', 'rbx', 'ebx', 'bx', 'bl', 'rcx', 'ecx', '
 
 pointer = ['esp', 'esi', 'ebp']
 
+logic = ['0xffffffff', '0xffff0000', '0xfffffff0', '0xfffffffe']
 
 
 '''
 
---------- operand 2개일 때 --------- 
+--------- operand 2���� �� --------- 
 	operand1		operand2
-	조건 1 operand1 에 (esp, esi, ebp) 등이 없어야 입장한다.
-		조건 2 operand2 에 "ptr"이 없어야 입장한다.
-			조건 3 operand2는 const_opcode_indexs.registers 에 존재하지 않아야 입장한다.
-				조건 4 operand2 != 0 and [정규식 0x123456자리] 가 아니여야 입장한다.
+	���� 1 operand1 �� (esp, esi, ebp) ���� ����� �����Ѵ�.
+		���� 2 operand2 �� "ptr"�� ����� �����Ѵ�.
+			���� 3 operand2�� const_opcode_indexs.registers �� �������� �ʾƾ� �����Ѵ�.
+				���� 4 operand2 != 0 and [���Խ� 0x123456�ڸ�] �� �ƴϿ��� �����Ѵ�.
 
 
 
---------- operand 1개일 때 --------- 
-	조건 1 operand[0]에 "ptr"이 없어야 입장한다 (and) const_opcode_index.registers에 존재하지 않아야한다. (and) operand[0] != '0' (and) len(operand[0]) !=8
+--------- operand 1���� �� --------- 
+	���� 1 operand[0]�� "ptr"�� ����� �����Ѵ� (and) const_opcode_index.registers�� �������� �ʾƾ��Ѵ�. (and) operand[0] != '0' (and) len(operand[0]) !=8
 
 
 '''

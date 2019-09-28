@@ -2,7 +2,6 @@ import idb
 import hashlib
 from Extract_Engine.Flowchart_feature import const_filter_indexs  # const_filter_indexs.py
 
-
 glo_list = list()  # PE 전체의 constant 값을 담을 global list
 
 
@@ -37,6 +36,7 @@ class basic_block(idb_info):
             opcodes = []
             hex_opcodes = []
             disasms = []
+            block_constant = []  # block 단위의 상수 (ascii string 뽑기)
             function_dicts[hex(curaddr)] = {}
 
             # 베이직 블록 내 어셈블리어 추출
@@ -53,20 +53,20 @@ class basic_block(idb_info):
                         operand_2 = unpack_2.strip()
                         # print(f'01 ::: {operand_1}, 02::: {operand_2}') # 테스트코드
                         if operand_1 not in const_filter_indexs.pointer:  # esp, esi, ebp가 아니여야 입장
-                            if "ptr" not in operand_2 and "0xffffffff" not in operand_2 and "0xffff0000" not in operand_2:  # ptr 없어야 입장
+                            if "ptr" not in operand_2 and operand_2 not in const_filter_indexs.logic:  # ptr, 0xffffffff 등 없어야 입장
                                 if operand_2 not in const_filter_indexs.registers:  # 레지스터가 없어야 입장
-                                    if operand_2 != '0' and len(operand_2) != 8 and "[" not in operand_2 and "]" not in operand_2:
-                                        glo_list.append(operand_2)
+                                    if operand_2 != '0' and len(
+                                            operand_2) != 8 and "[" not in operand_2 and "]" not in operand_2:
+                                        glo_list.append(operand_2)  # append file total constant
+                                        block_constant.append(operand_2)  # append block constant
                     else:  # operand가 1개일 때 조건입장
-                        if operand[0] not in const_filter_indexs.registers and "ptr" not in operand[0] and "0xffffffff" not in operand[0] and "0xffff0000" not in operand[0]:  # 레지가아니고 ptr도 없어야 입장
-                            if operand[0] != '0' and len(operand[0]) != 8:
+                        if operand[0] not in const_filter_indexs.registers and "ptr" not in operand[0] and operand[
+                            0] not in const_filter_indexs.logic:  # 레지가아니고 ptr도 없어야 입장
+                            if operand[0] != '0':
                                 glo_list.append(operand[0])
+                                block_constant.append(operand[0])
                 '''--- 상수값 추출 끝 ---'''
-                # 3주소 명령도 있음? 그러면 위에 else로 빠져서 쓸모없는 값 뽑을 수 있음
-                # 0이 아니고, '[]'가 없어야 입장, len 8이 아닌거만 입장(정규식 고쳐야할 듯)
-                # 조건식 수정해야함. 0xffffffff, 0xffff0000, 0xfffffff0 같은거 리스트로 만들어서 필터해야할 듯
-                # const_filter_indexs에 추가하면 됨.(일단은 빈도수 높은거부터 하드코딩)
-
+                # 3주소 명령도 있음? 그러면 위에 else로 빠져서 쓸모없는 값 뽑을 수 있음....
                 opcodes.append(opcode)
                 hex_opcodes.append(int(opcode.encode("utf-8").hex(), 16))
                 disasms.append(disasm)
@@ -85,14 +85,15 @@ class basic_block(idb_info):
                 'disasms': disasms,
                 'block_sha256': hashlib.sha256(hex(sum(hex_opcodes)).encode()).hexdigest(),  # add my codes
                 'start_address': hex(basicblock.startEA),
-                'end_address': hex(basicblock.endEA)
+                'end_address': hex(basicblock.endEA),
+                'block_constant': ' '.join(block_constant)
             }
             opcode_flow.append(mutex_opcode)
             function_dicts[hex(basicblock.startEA)] = basicblock_dics
         ''' ================================ END ONE Flowchart ================================'''
         func_name_dicts[self.func_name] = function_dicts
         if len(func_name_dicts[self.func_name]) == 0:
-            del func_name_dicts[self.func_name]
+            del func_name_dicts[self.func_name]  # del 안하면 비어있는 딕셔너리 생김
         else:
             func_name_dicts[self.func_name].update({'flow_opString': ' '.join(opcode_flow)})
         return func_name_dicts
@@ -125,7 +126,7 @@ def basicblock_idb_info_extraction(FROM_FILE):
     idb_sub_function_info = main(api)
     # 여기서 상수값 붙임. json 맨 아래에 통쨰로 붙이기 위함.
     idb_sub_function_info.update({'constant': ' '.join(glo_list)})
-
+    # END
     return idb_sub_function_info
 
 
