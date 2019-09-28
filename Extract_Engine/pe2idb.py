@@ -19,7 +19,7 @@ PE_CHECK_ERROR = -1
 
 STR_SIG_MZ = '0x4550'
 HEX_M_32 = 0x14c
-HEX_M_64 = 0x200
+HEX_M_64 = 0x2008
 
 # IDAT_PATH
 # 나중에 자동으로 받아올지 생각해보기
