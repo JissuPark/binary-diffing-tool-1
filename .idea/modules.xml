@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/binary-diffing-tool.iml" filepath="$PROJECT_DIR$/.idea/binary-diffing-tool.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/binary-diffing-tool-hoon.iml" filepath="$PROJECT_DIR$/.idea/binary-diffing-tool-hoon.iml" />
     </modules>
   </component>
 </project>
