@@ -167,7 +167,7 @@ def clear_folder(EXE_F_PATH, IDA_F_PATH):
 def convert_pe_to_idb(IDB_PATH, PE_PATH):
     
     ### time idb로 파일을 변환하는 시간 측정을 위한 코드
-    s = timeit.default_timer()
+    #s = timeit.default_timer()
     
     # exe_q에 idb로 변환할 exe파일을 쌓는다
     exe_q=Queue()
@@ -189,7 +189,7 @@ def convert_pe_to_idb(IDB_PATH, PE_PATH):
     clear_folder(PE_PATH, IDB_PATH)
     print(f"[=]TERMINATE")
     ### time
-    print(f"[+]time : {timeit.default_timer() - s}")
+    #print(f"[+]time : {timeit.default_timer() - s}")
 
     return True
 
@@ -201,7 +201,7 @@ def convert_pe_to_idb(IDB_PATH, PE_PATH):
 def create_idb(PATH,IDB_PATH):
     
     ### time idb로 파일을 변환하는 시간 측정을 위한 코드
-    s = timeit.default_timer()
+    #s = timeit.default_timer()
     
     # exe_q에 idb로 변환할 exe파일을 쌓는다
     exe_q=Queue()
@@ -221,18 +221,18 @@ def create_idb(PATH,IDB_PATH):
     ###################### END - Multiprocessing #######################
 
     ### time
-    print(f"[+]time : {timeit.default_timer() - s}")
+    #print(f"[+]time : {timeit.default_timer() - s}")
 
     return clear_folder(PATH,IDB_PATH)
 
-if __name__=="__main__":
-
-    # PATH : idb로 변환할 pe 파일이 위치한 디렉토리 경로
-    # IDB_PATH : 변환된 idb파일을 저장할 디렉토리 경로
-
-    PATH = r"C:\Users\secur\Downloads\PEview"
-    IDB_PATH = r"C:\Users\secur\Downloads\idb"
-
-    create_idb(PATH, IDB_PATH)
+# if __name__=="__main__":
+#
+#     # PATH : idb로 변환할 pe 파일이 위치한 디렉토리 경로
+#     # IDB_PATH : 변환된 idb파일을 저장할 디렉토리 경로
+#
+#     PATH = r"C:\Users\secur\Downloads\PEview"
+#     IDB_PATH = r"C:\Users\secur\Downloads\idb"
+#
+#     create_idb(PATH, IDB_PATH)
 
 

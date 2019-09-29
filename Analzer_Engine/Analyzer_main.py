@@ -3,9 +3,10 @@ from Analzer_Engine.Sub_analyze import analyze_pe as pe
 from Analzer_Engine.Sub_analyze import analyze_flowchart as fc
 
 class AnalyzeSimilarity:
-    def __init__(self, kkk):
+    def __init__(self, all_pe_info, all_idb_info):
         print("분석 엔진 생성!")
-        self.kkk = kkk
+        self.all_pe_info = all_pe_info
+        self.all_idb_info = all_idb_info
 
     def analyze_parser(self):
         '''
@@ -21,8 +22,12 @@ class AnalyzeSimilarity:
         # 나눈 애들 각 클래스에 인자로 넣어서 객체 만들어서 반환하기
         path_stand = r"D:\JungJaeho\STUDY\self\BOB\BoB_Project\Team_Breakers\code\binary-diffing-tool\test_01.txt"
         path_target = r"D:\JungJaeho\STUDY\self\BOB\BoB_Project\Team_Breakers\code\binary-diffing-tool\test_02.txt"
-        self.P = pe.AnalyzePE()
+
         self.F = fc.AnalyzeFlowchart(path_stand, path_target)
+        #flow_chart
+        self.P = pe.AnalyzePE()
+        #pe_info
+
         print('[+] Json file parsing complete!')
 
     def calculate_heuristic(self):
@@ -32,15 +37,15 @@ class AnalyzeSimilarity:
         :return: final score
         '''
         # 최종 휴리스틱 스코어
-        self.final_score = list()
+        final_score = list()
         semifinal = dict()
-        self.final_score.append('0x1234')
+        final_score.append('0x1234')
         # Flowchart 점수 추가 (가중치 포함)
 
         self.F.Flow_parser()
         #self.final_score += self.F.analyze_filehash()
-        self.final_score.append(self.F.analyze_bbh() * 0.56)
-        self.final_score.append(self.F.analyze_constant() * 0.24)
+        final_score.append(self.F.analyze_bbh() * 0.56)
+        final_score.append(self.F.analyze_constant() * 0.24)
 
         # 이건 파일 해쉬가 같으면 같은 파일이니까 넘기는 부분인데 여기 있으면 효율 개떨어지는데?
         # if 100 is self.F.analyze_filehash():
@@ -48,7 +53,7 @@ class AnalyzeSimilarity:
         #     return final_score
 
         # PE 점수 추가 (가중치 포함)
-        self.P.PE_parser(self.kkk)
+        pe_info = self.P.PE_parser(self.all_pe_info)
         #self.final_score += self.P.analyze_auth()
         self.final_score.append(self.P.analyze_imphash() * 0.05)
         #self.final_score['section'] = self.P.analyze_section() * 0.05
