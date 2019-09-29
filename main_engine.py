@@ -102,7 +102,9 @@ def Export_All_Pe_Feature(TMP_Filter_PE_PATH):
 def out_csv(csv_path, score_dict):
     with open(csv_path, 'w',  newline="") as csv_f:
         csv_w=csv.writer(csv_f)
+        title = ['FILE NAME', 'FILE HASH', 'BB HASH', 'CONSTANT', 'IMPORT HASH','RICH', 'TOTAL SCORE']
         i=1
+        csv_w.writerow(title)
         for key, score_row in score_dict.items():
             score_row.append(f"=sum(C{i}, D{i}, E{i}, F{i})")
             i+=1
