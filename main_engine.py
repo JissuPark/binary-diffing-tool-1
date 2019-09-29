@@ -25,7 +25,6 @@ class Pe_Files_Check:
         -. Check the completely same PE file.
         -. make a dictionary of filename(key) and hashvalue(value)
         -. And then remove the same PE file.
-
         # exe_q에 idb로 변환할 exe파일을 쌓는다
         exe_q=Queue()
         * Return value
@@ -173,7 +172,7 @@ if __name__ == "__main__":
     ########################### pe 체크 ######################################
     test = Pe_Files_Check(PATH)
     test.get_unique_pe_list()
-
+    print("for slack/git test")
 
     # 해당 로직의 최종 결과물로 필터링된 pe 파일들이 담긴 경로가 저장됨
     ##########################################################################
