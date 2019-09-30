@@ -8,7 +8,7 @@ from Extract_Engine.PE_feature import Pe_Rich, Pe_Rsrc, Pe_Pdb
 class Pe_Feature:
     def __init__(self, file_name):
         self.file_name = file_name
-        self.pe=pefile.PE(self.file_name)
+        self.pe = pefile.PE(self.file_name)
 
     def extract_rich(self):
         rich = Pe_Rich.ParseRichHeader(self.file_name)
