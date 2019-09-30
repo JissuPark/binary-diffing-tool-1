@@ -27,7 +27,7 @@ function global:deactivate ([switch]$NonDestructive) {
 
 deactivate -nondestructive
 
-$env:VIRTUAL_ENV="D:\JungJaeho\STUDY\self\BOB\BoB_Project\Team_Breakers\code\Engine\venv"
+$env:VIRTUAL_ENV="C:\Users\vm\Desktop\Breackers\binary-diffing-tool\venv"
 
 if (! $env:VIRTUAL_ENV_DISABLE_PROMPT) {
     # Set the prompt to include the env name

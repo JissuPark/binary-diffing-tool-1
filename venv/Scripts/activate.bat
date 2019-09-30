@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set "VIRTUAL_ENV=D:\JungJaeho\STUDY\self\BOB\BoB_Project\Team_Breakers\code\Engine\venv"
+set "VIRTUAL_ENV=C:\Users\vm\Desktop\Breackers\binary-diffing-tool\venv"
 
 if not defined PROMPT (
     set "PROMPT=$P$G"
