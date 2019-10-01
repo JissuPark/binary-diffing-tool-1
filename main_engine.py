@@ -15,6 +15,7 @@ from Analzer_Engine import Analyzer_main
 import pefile
 import idb
 import csv
+from openpyxl import load_workbook, Workbook
 
 class Pe_Files_Check:
     '''
@@ -146,7 +147,7 @@ class Exract_Feature:
 
 '''
     total score to the csv file
-'''
+
 def out_csv(csv_path, score_dict):
     with open(csv_path, 'w',  newline="") as csv_f:
         csv_w=csv.writer(csv_f)
@@ -160,6 +161,42 @@ def out_csv(csv_path, score_dict):
             for v in score_row:
                 result_row.append(v)
             csv_w.writerow(result_row)
+'''
+
+def out_xlsx(result_dict):
+    try:
+        wb = load_workbook(r"C:\malware\result.xlsx")
+    except:
+        wb = Workbook()
+    ws = wb.create_sheet()
+    ws = wb.active
+
+    ws.title = 'csv_test'
+    title = ['BASE NAME','T NAME', 'T HASH', 'IMPORT HASH', 'RICH', 'SECTION', 'BB HASH', 'CONSTANT', 'TOTAL SCORE']
+    cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
+
+    for i in range(len(title)):
+        ws[f'{cols[i]}1'] = title[i]
+    target_count = len(result_dict) - 1
+    start_row_num = 2
+
+    for base, targets in result_dict.items():
+        current_row_num = start_row_num
+        ws[f'A{current_row_num}'] = base
+        for t_name, t_infos in targets.items():
+            ws[f'B{current_row_num}'] = t_name
+            current_info = 0
+            for t_info in t_infos:
+                ws[f'{cols[current_info + 2]}{current_row_num}'] = t_info
+                current_info += 1
+            current_row_num += 1
+        ws.merge_cells(f"A{start_row_num}:A{current_row_num - 1}")
+        current_row_num += 1
+        start_row_num = current_row_num
+
+    #    wb.remove(wb['Sheet1'])
+    wb.save(r"C:\malware\result.xlsx")
+
 
 if __name__ == "__main__":
 
@@ -213,6 +250,7 @@ if __name__ == "__main__":
 #            "file5":["0x345",1, 2, 3, 4, 5, 6],
 #         }
     #out_csv(r"D:\JungJaeho\STUDY\self\BOB\BoB_Project\Team_Breakers\Training\Study\sample\result\test.csv", result)
+    #out_xlsx(결과 딕셔너리)
     ##################################################################################
 
     print(f"[+]time : {timeit.default_timer() - s}")
