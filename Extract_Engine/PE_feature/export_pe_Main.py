@@ -3,7 +3,7 @@ import filetype
 import numpy as np
 
 import pefile
-from Extract_Engine.PE_feature import Pe_Rich, Pe_Rsrc, Pe_Pdb
+from Extract_Engine.PE_feature import pe_rich, pe_rsrc, pe_pdb
 
 class Pe_Feature:
     def __init__(self, file_name):
@@ -11,7 +11,7 @@ class Pe_Feature:
         self.pe = pefile.PE(self.file_name)
 
     def extract_rich(self):
-        rich = Pe_Rich.ParseRichHeader(self.file_name)
+        rich = pe_rich.ParseRichHeader(self.file_name)
         xor_key = rich.xorkey
         rich_dict = dict()
         print(f'XorKey : {xor_key}')
@@ -19,7 +19,7 @@ class Pe_Feature:
         for key in rich.info_list.keys():
             count = rich.info_list[key]
             prodid = (key >> 16)
-            prodid_name = Pe_Rich.PRODID_MAP[prodid] if prodid in Pe_Rich.PRODID_MAP else "<unknown>"
+            prodid_name = pe_rich.PRODID_MAP[prodid] if prodid in pe_rich.PRODID_MAP else "<unknown>"
             print('%6d   %-15s %5d' % (prodid, prodid_name, count))
             rich_dict[prodid_name] = count
 
@@ -27,15 +27,15 @@ class Pe_Feature:
 
     def extract_pdb(self):
         output_data = dict()
-        PDB_result = Pe_Pdb.result_all(self.file_name)
+        PDB_result = pe_pdb.result_all(self.file_name)
         return PDB_result
 
     def extract_rsrc(self):
-        rsrc = Pe_Rsrc.RsrcParser(self.file_name)
+        rsrc = pe_rsrc.RsrcParser(self.file_name)
         rsrc_result = rsrc.get_resource()
         return rsrc_result
     def ex_auth(self):
-        au = Pe_Rsrc.RsrcParser(self.file_name)
+        au = pe_rsrc.RsrcParser(self.file_name)
         return au.section_auth()
 
     def imphash_data(self):
@@ -60,11 +60,11 @@ class Pe_Feature:
         return {kind.extension: kind.mime}
 
     def cmp_section_data(self):
-        rsrc = Pe_Rsrc.RsrcParser(self.file_name)
+        rsrc = pe_rsrc.RsrcParser(self.file_name)
         return rsrc.extract_sections_privileges()
 
     def Autoninfo(self):
-        rsrc = Pe_Rsrc.RsrcParser(self.file_name)
+        rsrc = pe_rsrc.RsrcParser(self.file_name)
         #authentication = rsrc.extractPKCS7()
         return rsrc.extractPKCS7()
 

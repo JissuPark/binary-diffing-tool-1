@@ -7,11 +7,11 @@ from Extract_Engine import pe2idb
 import timeit
 import os
 
-from Analzer_Engine import Analyzer_main
+from Analzer_Engine import analyzer_main
 from Extract_Engine import pe2idb
 from Extract_Engine.Flowchart_feature import extract_asm_and_const
-from Extract_Engine.PE_feature import Export_Pe_Main
-from Analzer_Engine import Analyzer_main
+from Extract_Engine.PE_feature import export_pe_Main
+from Analzer_Engine import analyzer_main
 import pefile
 import idb
 import csv
@@ -81,7 +81,7 @@ def multiprocess_file(q, return_dict, flag):
         if flag == 'idb':
             info = extract_asm_and_const.basicblock_idb_info_extraction(f_path)  # 함수대표값 및 상수값 출력
         elif flag == 'pe':
-            info = Export_Pe_Main.Pe_Feature(f_path).all()  # pe 속성 출력
+            info = export_pe_Main.Pe_Feature(f_path).all()  # pe 속성 출력
 
         return_dict[f_path] = info
 

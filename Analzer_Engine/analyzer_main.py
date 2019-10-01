@@ -1,6 +1,5 @@
-import json
-from Analzer_Engine.Sub_analyze import analyze_pe as pe
-from Analzer_Engine.Sub_analyze import analyze_flowchart as fc
+from Analzer_Engine import analyze_flowchart as fc, analyze_pe as pe
+
 
 class AnalyzeSimilarity:
     def __init__(self, all_pe_info, all_idb_info):

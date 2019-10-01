@@ -1,4 +1,4 @@
-import Analzer_Engine.Analyzer_main as AM
+import Analzer_Engine.analyzer_main as AM
 import json
 from Analzer_Engine.Algorithm import all_algo as algo
 
