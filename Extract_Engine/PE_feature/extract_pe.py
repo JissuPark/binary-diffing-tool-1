@@ -99,7 +99,7 @@ class Pe_Feature:
         pdb_info = self.extract_pdb()
         rsrc_info = self.extract_rsrc()
 
-        test2= {
+        pe_features = {
             #'file_type':file_type,
             'func_list':func_list,
             'imp_hash':imphash,
@@ -109,6 +109,6 @@ class Pe_Feature:
             'pdb_info':pdb_info,
             'rsrc_info':rsrc_info
         }
-        test[self.file_name] = test2
 
-        return test
+
+        return pe_features
