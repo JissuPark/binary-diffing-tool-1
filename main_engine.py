@@ -1,20 +1,15 @@
 import hashlib
-from multiprocessing import Process, Queue, Manager
-import subprocess
-import shutil
 import json
-from Extract_Engine import pe2idb
 import timeit
 import os
-
-from Analzer_Engine import Analyzer_main
+import csv
+from multiprocessing import Process, Queue, Manager
+from collections import OrderedDict
 from Extract_Engine import pe2idb
 from Extract_Engine.Flowchart_feature import extract_asm_and_const
-from Extract_Engine.PE_feature import Export_Pe_Main
-from Analzer_Engine import Analyzer_main
-import pefile
-import idb
-import csv
+from Extract_Engine.PE_feature import extract_pe
+from Analzer_Engine import analyze_pe, analyze_flowchart
+
 
 class Pe_Files_Check:
     '''
@@ -44,7 +39,6 @@ class Pe_Files_Check:
         exe_list = os.listdir(self.pe_dir_path)
         for f in exe_list:
             f_path = os.path.join(self.pe_dir_path, f)
-            #f_hash = pe2idb.file_to_hash(f_path)
             f_hash = hashlib.sha256(open(f_path, 'rb').read()).hexdigest()
 
             # file hash 중복 = 완전히 같은 파일
@@ -81,7 +75,7 @@ def multiprocess_file(q, return_dict, flag):
         if flag == 'idb':
             info = extract_asm_and_const.basicblock_idb_info_extraction(f_path)  # 함수대표값 및 상수값 출력
         elif flag == 'pe':
-            info = Export_Pe_Main.Pe_Feature(f_path).all()  # pe 속성 출력
+            info = extract_pe.Pe_Feature(f_path).all()  # pe 속성 출력
 
         return_dict[f_path] = info
 
@@ -116,41 +110,96 @@ class Exract_Feature:
 
     def export_idb_info(self, flag):
 
-        tmp = self.export_by_multi(flag)
+        export_idb = self.export_by_multi(flag)
 
-        if tmp != False:
+        if export_idb != False:
             count = 1
             #print(return_dict)
-            for dict_list in tmp.values():
+            for dict_list in export_idb.values():
                 with open(r"C:\malware\result\idbfile_"+str(count)+".txt", 'w') as makefile:
                     json.dump(dict_list, makefile, ensure_ascii=False, indent='\t')
                 count = count + 1
-            return tmp
+            return export_idb
         else:
             return False
 
-    def export_pe(self, flag):
+    def export_pe_info(self, flag):
 
-        tmp = self.export_by_multi(flag)
+        export_pe = self.export_by_multi(flag)
 
-        if tmp != False:
+        if export_pe != False:
             count = 1
             # print(return_dict)
-            for dict_list in tmp.values():
+            for dict_list in export_pe.values():
                 with open(r"C:\malware\result\pefile_" + str(count) + ".txt", 'w') as makefile:
                     json.dump(dict_list, makefile, ensure_ascii=False, indent='\t')
                 count = count + 1
-            return tmp
+            return export_pe
         else:
             return False
 
 '''
     total score to the csv file
 '''
+
+class Analyze_files:
+    def __init__(self, all_idb_info, all_pe_info):
+        self.all_pe_info = all_pe_info
+        self.all_idb_info = all_idb_info
+
+    def calculate_heuristic(self,pe_result):
+        '''
+                가중치가 부여된 점수들을 더해서 반환해주는 함수
+                *다 더했을 때 최대나 최소안에 있는지 확인하는 로직을 넣어주고 예외처리 해주면 될 듯
+                :return: final score
+                '''
+        # 최종 휴리스틱 스코어
+        #semifinal = OrderedDict()
+        real_final = OrderedDict()
+        #final_score.append('0x1234')
+        # Flowchart 점수 추가 (가중치 포함)
+
+        for key_s, value_s in pe_result.items():
+            semifinal = OrderedDict()
+            for key_t, value_t in value_s.items():
+                #self.F.Flow_parser()
+                # self.final_score += self.F.analyze_filehash()
+                #final_score.append(self.F.analyze_bbh() * 0.56)
+                #final_score.append(self.F.analyze_constant() * 0.24)
+
+                final_score = list()
+                #final_score.append(value.key('hash'))
+                # PE 점수 추가 (가중치 포함)
+                final_score.append(value_t['filehash'])
+                final_score.append(value_t['imphash'])
+                # self.final_score['section'] = self.P.analyze_section() * 0.05
+                final_score.append(value_t['rich'])
+               # final_score.append(value.key('rsrc'))
+                # self.final_score['rsrc'] = self.P.analyze_rsrc() * 0.05
+                semifinal[key_t] = final_score
+            real_final[key_s] = semifinal
+        return real_final
+
+    def analyze_idb(self):
+        idb = analyze_flowchart.AnalyzeFlowchart(self.all_idb_info)
+        idb_split = idb.flow_parser()
+
+        idb_result = idb.analyze_all(idb_split)
+
+        return idb_result
+
+    def analyze_pe(self):
+        pe = analyze_pe.AnalyzePE(self.all_pe_info)
+        pe_split = pe.pe_parser()
+
+        pe_result = pe.analyze_all(pe_split)
+
+        return pe_result
+
 def out_csv(csv_path, score_dict):
     with open(csv_path, 'w',  newline="") as csv_f:
         csv_w=csv.writer(csv_f)
-        title = ['FILE NAME', 'FILE HASH', 'BB HASH', 'CONSTANT', 'IMPORT HASH','RICH', 'TOTAL SCORE']
+        title = ['FILE NAME', 'FILE HASH', 'IMPORT HASH','RICH', 'SECTION', 'BB HASH', 'CONSTANT', 'TOTAL SCORE']
         i=1
         csv_w.writerow(title)
         for key, score_row in score_dict.items():
@@ -168,51 +217,59 @@ if __name__ == "__main__":
     PATH = r"C:\malware\mid_GandCrab_exe"
     IDB_PATH = r"C:\malware\mid_idb"
 
-
-    ########################### pe 체크 ######################################
-    test = Pe_Files_Check(PATH)
-    test.get_unique_pe_list()
-
-
-    # 해당 로직의 최종 결과물로 필터링된 pe 파일들이 담긴 경로가 저장됨
-    ##########################################################################
-
-    ########################### idb의 정보 추출 로직################################
-
+    pe_check = Pe_Files_Check(PATH)
+    file_hash_dict = pe_check.get_unique_pe_list()
     flag = Convert_idb(PATH, IDB_PATH)
-
     Features = Exract_Feature(PATH, IDB_PATH)
 
     if flag == True:
         all_idb_info = Features.export_idb_info('idb')
-        all_pe_info = Features.export_pe('pe')
+        all_pe_info = Features.export_pe_info('pe')
     else:
-        print('dd')
+        print('error fuck')
 
+    analyze = Analyze_files(all_idb_info, all_pe_info)
 
-    if all_idb_info == False:
-        print('예외처리 로직')
-    else:
-        print('정상')
-    ##############################################################################
+    result_idb = analyze.analyze_idb()
+    result_pe = analyze.analyze_pe()
 
+    all_result = analyze.calculate_heuristic(result_idb, result_pe)
 
-    ########################### 모든 특징 분석 로직 #####################################
-    # Analyzer = Analyzer_main.AnalyzeSimilarity(all_idb_info, all_pe_info)
-    # Analyzer.analyze_parser()
-    # result = Analyzer.calculate_heuristic()
-    ##################################################################################
+    out_csv(r"C:\malware\result\test.csv", all_result)
 
+    print(f"[+]time : {timeit.default_timer() - s}")
 
     ########################### 최종 결과물 csv 추출 ###################################
 
-#     dict ={"file1":["0x123",1, 2, 3, 4, 5, 6],
-#            "file2":["0x456",1, 2, 3, 4, 5, 6],
-#            "file3":["0x789",1, 2, 3, 4, 5, 6],
-#            "file4":["0x012",1, 2, 3, 4, 5, 6],
-#            "file5":["0x345",1, 2, 3, 4, 5, 6],
-#         }
-    #out_csv(r"D:\JungJaeho\STUDY\self\BOB\BoB_Project\Team_Breakers\Training\Study\sample\result\test.csv", result)
-    ##################################################################################
-
-    print(f"[+]time : {timeit.default_timer() - s}")
+    # dict = {
+    #           "file1" : {
+    #                        "file2":["0x456",1, 2, 3, 4, 5, 6],
+    #                        "file3":["0x789",1, 2, 3, 4, 5, 6],
+    #                        "file4":["0x012",1, 2, 3, 4, 5, 6],
+    #                        "file5":["0x345",1, 2, 3, 4, 5, 6]
+    #                     }
+    #           "file2" : {
+    #                        "file1":["0x456",1, 2, 3, 4, 5, 6],
+    #                        "file3":["0x789",1, 2, 3, 4, 5, 6],
+    #                        "file4":["0x012",1, 2, 3, 4, 5, 6],
+    #                        "file5":["0x345",1, 2, 3, 4, 5, 6]
+    #                     }
+    #           "file3" : {
+    #                        "file1":["0x456",1, 2, 3, 4, 5, 6],
+    #                        "file2":["0x789",1, 2, 3, 4, 5, 6],
+    #                        "file4":["0x012",1, 2, 3, 4, 5, 6],
+    #                        "file5":["0x345",1, 2, 3, 4, 5, 6]
+    #                     }
+    #           "file4" : {
+    #                        "file1":["0x456",1, 2, 3, 4, 5, 6],
+    #                        "file2":["0x789",1, 2, 3, 4, 5, 6],
+    #                        "file3":["0x012",1, 2, 3, 4, 5, 6],
+    #                        "file5":["0x345",1, 2, 3, 4, 5, 6]
+    #                     }
+    #           "file5" : {
+    #                        "file2":["0x456",1, 2, 3, 4, 5, 6],
+    #                        "file3":["0x789",1, 2, 3, 4, 5, 6],
+    #                        "file4":["0x012",1, 2, 3, 4, 5, 6],
+    #                        "file5":["0x345",1, 2, 3, 4, 5, 6]
+    #                     }
+    #        }
