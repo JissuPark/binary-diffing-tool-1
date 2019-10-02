@@ -114,7 +114,6 @@ class Exract_Feature:
 
         if export_idb != False:
             count = 1
-            #print(return_dict)
             for dict_list in export_idb.values():
                 with open(r"C:\malware\result\idbfile_"+str(count)+".txt", 'w') as makefile:
                     json.dump(dict_list, makefile, ensure_ascii=False, indent='\t')
@@ -183,9 +182,7 @@ class Analyze_files:
     def analyze_idb(self):
         idb = analyze_flowchart.AnalyzeFlowchart(self.all_idb_info)
         idb_split = idb.flow_parser()
-
         idb_result = idb.analyze_all(idb_split)
-
         return idb_result
 
     def analyze_pe(self):
@@ -227,7 +224,7 @@ if __name__ == "__main__":
         all_pe_info = Features.export_pe_info('pe')
     else:
         print('error fuck')
-
+    print(type(all_idb_info))
     analyze = Analyze_files(all_idb_info, all_pe_info)
 
     result_idb = analyze.analyze_idb()

@@ -23,7 +23,7 @@ class Pe_Feature:
             print('%6d   %-15s %5d' % (prodid, prodid_name, count))
             rich_dict[prodid_name] = count
 
-        return rich_dict
+        return xor_key
 
     def extract_pdb(self):
         output_data = dict()
@@ -100,14 +100,15 @@ class Pe_Feature:
         rsrc_info = self.extract_rsrc()
 
         pe_features = {
+            'file_name': self.file_name,
             #'file_type':file_type,
-            'func_list':func_list,
+            #'func_list':func_list,
             'imp_hash':imphash,
-            'cmp_section' : cmp_section_data,
-            'auto':auto,
-            'rich_info(xor_key)':rich_info,
-            'pdb_info':pdb_info,
-            'rsrc_info':rsrc_info
+            #'cmp_section' : cmp_section_data,
+            #'auto':auto,
+            'rich_info':rich_info,
+            #'pdb_info':pdb_info,
+            #'rsrc_info':rsrc_info
         }
 
 
