@@ -3,7 +3,7 @@ import filetype
 import numpy as np
 
 import pefile
-from Extract_Engine.PE_feature import Pe_Rich, Pe_Rsrc, Pe_Pdb
+from Extract_Engine.PE_feature import pe_rich, pe_rsrc, pe_pdb
 
 class Pe_Feature:
     def __init__(self, file_name):
@@ -11,30 +11,31 @@ class Pe_Feature:
         self.pe = pefile.PE(self.file_name)
 
     def extract_rich(self):
-        rich = Pe_Rich.ParseRichHeader(self.file_name)
+        rich = pe_rich.ParseRichHeader(self.file_name)
         xor_key = rich.xorkey
-
+        rich_dict = dict()
         print(f'XorKey : {xor_key}')
         print("ProID    name              count")
         for key in rich.info_list.keys():
             count = rich.info_list[key]
             prodid = (key >> 16)
-            prodid_name = Pe_Rich.PRODID_MAP[prodid] if prodid in Pe_Rich.PRODID_MAP else "<unknown>"
-            # print('%6d   %-15s %5d' % (prodid, prodid_name, count))
+            prodid_name = pe_rich.PRODID_MAP[prodid] if prodid in pe_rich.PRODID_MAP else "<unknown>"
+            print('%6d   %-15s %5d' % (prodid, prodid_name, count))
+            rich_dict[prodid_name] = count
 
-        return json.dumps(xor_key, indent=4)
+        return rich_dict
 
     def extract_pdb(self):
-        output_data = {}
-        PDB_result = Pe_Pdb.result_all(self.file_name)
-        return json.dumps(PDB_result, indent=4)
+        output_data = dict()
+        PDB_result = pe_pdb.result_all(self.file_name)
+        return PDB_result
 
     def extract_rsrc(self):
-        rsrc = Pe_Rsrc.RsrcParser(self.file_name)
-        rsrc.get_resource()
-        return json.dumps(rsrc.resource,indent=4)
+        rsrc = pe_rsrc.RsrcParser(self.file_name)
+        rsrc_result = rsrc.get_resource()
+        return rsrc_result
     def ex_auth(self):
-        au = Pe_Rsrc.RsrcParser(self.file_name)
+        au = pe_rsrc.RsrcParser(self.file_name)
         return au.section_auth()
 
     def imphash_data(self):
@@ -59,13 +60,13 @@ class Pe_Feature:
         return {kind.extension: kind.mime}
 
     def cmp_section_data(self):
-        rsrc = Pe_Rsrc.RsrcParser(self.file_name)
+        rsrc = pe_rsrc.RsrcParser(self.file_name)
         return rsrc.extract_sections_privileges()
 
     def Autoninfo(self):
-        rsrc = Pe_Rsrc.RsrcParser(self.file_name)
-        authentication = rsrc.extractPKCS7()
-        return json.dumps(authentication, indent=4)
+        rsrc = pe_rsrc.RsrcParser(self.file_name)
+        #authentication = rsrc.extractPKCS7()
+        return rsrc.extractPKCS7()
 
     def ImportDll(self):
         '''
@@ -89,25 +90,25 @@ class Pe_Feature:
 
     def all(self):
         test= dict()
-        #func_list = self.ImportDll()
+        func_list = self.ImportDll()
         #file_type = self.filetypes()
         imphash = self.imphash_data()
         cmp_section_data = self.cmp_section_data()
-        #auto = self.Autoninfo()
+        auto = self.Autoninfo()
         rich_info = self.extract_rich()
-        #pdb_info = self.extract_pdb()
+        pdb_info = self.extract_pdb()
         rsrc_info = self.extract_rsrc()
 
-        test2= {
+        pe_features = {
             #'file_type':file_type,
-            #'func_list':func_list,
+            'func_list':func_list,
             'imp_hash':imphash,
             'cmp_section' : cmp_section_data,
-            #'auto':auto,
+            'auto':auto,
             'rich_info(xor_key)':rich_info,
-            #'pdb_info':pdb_info,
+            'pdb_info':pdb_info,
             'rsrc_info':rsrc_info
         }
-        test[self.file_name] = test2
 
-        return test
+
+        return pe_features

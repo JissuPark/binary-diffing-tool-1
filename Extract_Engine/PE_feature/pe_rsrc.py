@@ -1,6 +1,9 @@
 import pefile, os
 import json
 from hashlib import sha256
+import ssdeep
+import array
+import math
 
 COUNTRY_MAP = {
     0: "Unicode",
@@ -219,6 +222,22 @@ class RsrcParser:
         self.filename = filename
         self.pe = pefile.PE(self.filename)
 
+    def get_entropy(self,data):
+        if len(data) == 0:
+            return 0.0
+
+        occurences = array.array('L', [0] * 256)
+        for x in data:
+            occurences[x if isinstance(x, int) else ord(x)] += 1
+
+        entropy = 0
+        for x in occurences:
+            if x:
+                p_x = float(x) / len(data)
+                entropy -= p_x * math.log(p_x, 2)
+
+        return entropy
+
     def get_resource(self):
         #리소스 정보를 저장할 리스트
         self.resource = []
@@ -261,18 +280,20 @@ class RsrcParser:
                                            resource_lang.data.struct.Size)
 
                     #이 시부레 새끼도 ssdeep 조져야함 중요한 건 ssdeep 조져야 하는 애들이 byte type이라 json에 넣을 수 없단거임
-                    #rsrc_entry['data'] = data
+                    #resouce 데이터(해시화) 출력 성공
+                    data = data.decode('Latin-1').replace(u"\u0000", u"").replace(u"\u000B", u"")
+                    rsrc_entry['hashed data'] = ssdeep.hash(data)
                     #print(f'data : {data}')
                     size = resource_lang.data.struct.Size
                     rsrc_entry['size'] = size
                     #print(f'size : {size}')
-                    '''
-                    entropy = get_entropy(data)
-                    print(f'entropy : {entropy}')
-                    resource.append([data, size])
-                    
-                    '''
+
+                    #resource 엔트로피 출력 성공
+                    entropy = self.get_entropy(data)
+                    #print(f'entropy : {entropy}')
+                    rsrc_entry['entropy'] = entropy
                     self.resource.append(rsrc_entry)
+        return self.resource
 
     def extract_sections_privileges(self):
         section_dict = {}
@@ -285,116 +306,22 @@ class RsrcParser:
             try:
                 # 섹션 이름 추출
                 section_name = section.Name.decode().split('\x00')[0]
+                entropy = section.get_entropy()
+                hash_256 = section.get_hash_sha256()
+                hash_ssdeep = ssdeep.hash(section.get_data())
+                offset = hex(section.PointerToRawData)
+                character = hex(section.Characteristics)[2:]
             except:
                 continue
-            ####################################
-            #           권한 확인 시작           #
-            ####################################
-            if section.IMAGE_SCN_TYPE_REG == True:
-                IMAGE_SCN_TYPE_REG = '0'
-            else:
-                IMAGE_SCN_TYPE_REG = '1'
-            if section.IMAGE_SCN_TYPE_COPY == True:
-                IMAGE_SCN_TYPE_COPY = '0'
-            else:
-                IMAGE_SCN_TYPE_COPY = '1'
-            if section.IMAGE_SCN_CNT_CODE == True:
-                IMAGE_SCN_CNT_CODE = '0'
-            else:
-                IMAGE_SCN_CNT_CODE = '1'
-            if section.IMAGE_SCN_CNT_INITIALIZED_DATA == True:
-                IMAGE_SCN_CNT_INITIALIZED_DATA = '0'
-            else:
-                IMAGE_SCN_CNT_INITIALIZED_DATA = '1'
-            if section.IMAGE_SCN_CNT_UNINITIALIZED_DATA == True:
-                IMAGE_SCN_CNT_UNINITIALIZED_DATA = '0'
-            else:
-                IMAGE_SCN_CNT_UNINITIALIZED_DATA = '1'
-            if section.IMAGE_SCN_LNK_OTHER == True:
-                IMAGE_SCN_LNK_OTHER = '0'
-            else:
-                IMAGE_SCN_LNK_OTHER = '1'
-            if section.IMAGE_SCN_LNK_INFO == True:
-                IMAGE_SCN_LNK_INFO = '0'
-            else:
-                IMAGE_SCN_LNK_INFO = '1'
-            if section.IMAGE_SCN_LNK_OVER == True:
-                IMAGE_SCN_LNK_OVER = '0'
-            else:
-                IMAGE_SCN_LNK_OVER = '1'
-            if section.IMAGE_SCN_LNK_REMOVE == True:
-                IMAGE_SCN_LNK_REMOVE = '0'
-            else:
-                IMAGE_SCN_LNK_REMOVE = '1'
-            if section.IMAGE_SCN_LNK_COMDAT == True:
-                IMAGE_SCN_LNK_COMDAT = '0'
-            else:
-                IMAGE_SCN_LNK_COMDAT = '1'
-            if section.IMAGE_SCN_MEM_PROTECTED == True:
-                IMAGE_SCN_MEM_PROTECTED = '0'
-            else:
-                IMAGE_SCN_MEM_PROTECTED = '1'
-            if section.IMAGE_SCN_NO_DEFER_SPEC_EXC == True:
-                IMAGE_SCN_NO_DEFER_SPEC_EXC = '0'
-            else:
-                IMAGE_SCN_NO_DEFER_SPEC_EXC = '1'
-            if section.IMAGE_SCN_MEM_LOCKED == True:
-                IMAGE_SCN_MEM_LOCKED = '0'
-            else:
-                IMAGE_SCN_MEM_LOCKED = '1'
-            if section.IMAGE_SCN_LNK_NRELOC_OVFL == True:
-                IMAGE_SCN_LNK_NRELOC_OVFL = '0'
-            else:
-                IMAGE_SCN_LNK_NRELOC_OVFL = '1'
-            if section.IMAGE_SCN_MEM_DISCARDABLE == True:
-                IMAGE_SCN_MEM_DISCARDABLE = '0'
-            else:
-                IMAGE_SCN_MEM_DISCARDABLE = '1'
-            if section.IMAGE_SCN_MEM_SHARED == True:
-                IMAGE_SCN_MEM_SHARED = '0'
-            else:
-                IMAGE_SCN_MEM_SHARED = '1'
-            if section.IMAGE_SCN_MEM_EXECUTE == True:
-                IMAGE_SCN_MEM_EXECUTE = '0'
-            else:
-                IMAGE_SCN_MEM_EXECUTE = '1'
-            if section.IMAGE_SCN_MEM_READ == True:
-                IMAGE_SCN_MEM_READ = '0'
-            else:
-                IMAGE_SCN_MEM_READ = '1'
-            if section.IMAGE_SCN_MEM_WRITE == True:
-                IMAGE_SCN_MEM_WRITE = '0'
-            else:
-                IMAGE_SCN_MEM_WRITE = '1'
-
-            ####################################
-            #           권한 확인 종료           #
-            ####################################
+            #권한 확인 부분 삭제
             #각 섹션별 데이터 해시와 섹션 시작 offset주소부분이 중복되어 출력되서 다음과 같이 수정
-            section_dict[section_name] = [section.get_entropy(),
-                                          section.get_hash_sha256(),
-                                          hex(section.PointerToRawData),
-                                          hex(section.Characteristics)[2:],
-                                          IMAGE_SCN_TYPE_REG,
-                                          IMAGE_SCN_TYPE_COPY,
-                                          IMAGE_SCN_CNT_CODE,
-                                          IMAGE_SCN_CNT_INITIALIZED_DATA,
-                                          IMAGE_SCN_CNT_UNINITIALIZED_DATA,
-                                          IMAGE_SCN_LNK_OTHER,
-                                          IMAGE_SCN_LNK_INFO,
-                                          IMAGE_SCN_LNK_OVER,
-                                          IMAGE_SCN_LNK_REMOVE,
-                                          IMAGE_SCN_LNK_COMDAT,
-                                          IMAGE_SCN_MEM_PROTECTED,
-                                          IMAGE_SCN_NO_DEFER_SPEC_EXC,
-                                          IMAGE_SCN_MEM_LOCKED,
-                                          IMAGE_SCN_LNK_NRELOC_OVFL,
-                                          IMAGE_SCN_MEM_DISCARDABLE,
-                                          IMAGE_SCN_MEM_SHARED,
-                                          IMAGE_SCN_MEM_EXECUTE,
-                                          IMAGE_SCN_MEM_READ,
-                                          IMAGE_SCN_MEM_WRITE
-                                          ]
+            section_dict[section_name] = {
+                'entropy': entropy,
+                'hash 256': hash_256,
+                'hash ssdeep': hash_ssdeep,
+                'offset': offset,
+                'character': character
+            }
         # non_sus_sections = len(set(tmp).intersection(sections))
         # result = [len(tmp) - non_sus_sections, non_sus_sections]
         # return json.dumps(section_dict, indent=4)
@@ -433,7 +360,9 @@ class RsrcParser:
                     pkcs_dict['Size'] = siglen
 
                     #이 새끼는 ssdeep으로 조져서 hash값 구해야 돼 근데 내 컴이 ssdeep이 안돼 아주 드러워
-                    #pkcs_dict['hash'] = sha256(thesig).hexdigest()
+                    #인증서 해시화 성공
+                    thesig = ssdeep.hash(thesig)
+                    pkcs_dict['hash'] = thesig
                     return pkcs_dict
                 else:
                     return pkcs_dict

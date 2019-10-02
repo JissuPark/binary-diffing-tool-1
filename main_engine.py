@@ -3,6 +3,7 @@ import json
 import timeit
 import os
 import csv
+import ssdeep
 from multiprocessing import Process, Queue, Manager
 from collections import OrderedDict
 from Extract_Engine import pe2idb
@@ -10,6 +11,8 @@ from Extract_Engine.Flowchart_feature import extract_asm_and_const
 from Extract_Engine.PE_feature import extract_pe
 from Analzer_Engine import analyze_pe, analyze_flowchart
 from openpyxl import load_workbook, Workbook
+
+
 
 class Pe_Files_Check:
     '''
@@ -194,6 +197,62 @@ class Analyze_files:
         pe_result = pe.analyze_all(pe_split)
 
         return pe_result
+
+
+class Analyze_files:
+    def __init__(self, all_idb_info, all_pe_info):
+        self.all_pe_info = all_pe_info
+        self.all_idb_info = all_idb_info
+
+    def calculate_heuristic(self,pe_result):
+        '''
+                가중치가 부여된 점수들을 더해서 반환해주는 함수
+                *다 더했을 때 최대나 최소안에 있는지 확인하는 로직을 넣어주고 예외처리 해주면 될 듯
+                :return: final score
+                '''
+        # 최종 휴리스틱 스코어
+        #semifinal = OrderedDict()
+        real_final = OrderedDict()
+        #final_score.append('0x1234')
+        # Flowchart 점수 추가 (가중치 포함)
+
+        for key_s, value_s in pe_result.items():
+            semifinal = OrderedDict()
+            for key_t, value_t in value_s.items():
+                #self.F.Flow_parser()
+                # self.final_score += self.F.analyze_filehash()
+                #final_score.append(self.F.analyze_bbh() * 0.56)
+                #final_score.append(self.F.analyze_constant() * 0.24)
+
+                final_score = list()
+                #final_score.append(value.key('hash'))
+                # PE 점수 추가 (가중치 포함)
+                final_score.append(value_t['filehash'])
+                final_score.append(value_t['imphash'])
+                # self.final_score['section'] = self.P.analyze_section() * 0.05
+                final_score.append(value_t['rich'])
+               # final_score.append(value.key('rsrc'))
+                # self.final_score['rsrc'] = self.P.analyze_rsrc() * 0.05
+                semifinal[key_t] = final_score
+            real_final[key_s] = semifinal
+        return real_final
+
+    def analyze_idb(self):
+        idb = analyze_flowchart.AnalyzeFlowchart(self.all_idb_info)
+        idb_split = idb.flow_parser()
+
+        idb_result = idb.analyze_all(idb_split)
+
+        return idb_result
+
+    def analyze_pe(self):
+        pe = analyze_pe.AnalyzePE(self.all_pe_info)
+        pe_split = pe.pe_parser()
+
+        pe_result = pe.analyze_all(pe_split)
+
+        return pe_result
+
 '''
 def out_csv(csv_path, score_dict):
     with open(csv_path, 'w',  newline="") as csv_f:
@@ -273,7 +332,10 @@ if __name__ == "__main__":
 
     all_result = analyze.calculate_heuristic(result_idb, result_pe)
 
+
     out_xlsx(r"C:\malware\result\test.xlsx", all_result)
+
+#    out_csv(r"C:\malware\result\test.csv", all_result)
 
     print(f"[+]time : {timeit.default_timer() - s}")
 

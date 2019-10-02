@@ -8,6 +8,7 @@ class PDB_analyze():
         self.pe = pefile.PE(self.filename)
 
     def pdb_data(self):  # pdb 추출하는 함수
+        PDB_dict = dict()
         if hasattr(self.pe, u"DIRECTORY_ENTRY_DEBUG"):
             for i in self.pe.DIRECTORY_ENTRY_DEBUG:
                 entry = i.entry
@@ -19,30 +20,48 @@ class PDB_analyze():
                     guid_data1 = struct.pack('<I', entry.Signature_Data1)
                     guid_data2 = struct.pack('<H', entry.Signature_Data2)
                     guid_data3 = struct.pack('<H', entry.Signature_Data3)
+                    guid_data4 = struct.pack('<8s', entry.Signature_Data4)
                     #little엔디안으로 int형으로 바꿈
                     GUID = "%x-%x-%x-%x".upper() % (int.from_bytes(guid_data1, "little"),
                                                     int.from_bytes(guid_data2, "little"),
                                                     int.from_bytes(guid_data3, "little"),
-                                                    int.from_bytes(entry.Signature_Data4, "little")
+                                                    int.from_bytes(guid_data4, "little")
                                                     )
                     Age = entry.Age
+                    Pdbpath = entry.PdbFileName.decode().replace("\u0000", "")
+                    PDB_dict["pe_pdb_Name"] = name
+                    PDB_dict["pe_pdb_GUID"] = GUID
+                    PDB_dict["pe_pdb_Age"] = Age
+                    PDB_dict["pe_pdb_Pdbpath"] = Pdbpath
                     self.pe.close()
-                    return {"pe_pdb_Name": name, "pe_pdb_GUID": GUID, "pe_pdb_Age": Age, "pe_pdb_Pdbpath": entry.PdbFileName.decode()}
+                    return PDB_dict
 
                 elif hasattr(entry, "CvHeaderSignature"):  # NB10
                     name = entry.name
                     GUID = hex(entry.Signature)
                     Age = entry.Age
-                    Pdbpath = entry.PdbFileName.decode()
+                    Pdbpath = entry.PdbFileName.decode().replace("\u0000", "")
+                    PDB_dict["pe_pdb_Name"] = name
+                    PDB_dict["pe_pdb_GUID"] = GUID
+                    PDB_dict["pe_pdb_Age"] = Age
+                    PDB_dict["pe_pdb_Pdbpath"] = Pdbpath
                     self.pe.close()
-                    return {"pe_pdb_Name": name, "pe_pdb_GUID": GUID, "pe_pdb_Age": Age, "pe_pdb_Pdbpath": Pdbpath}
+                    return PDB_dict
 
                 else:
+                    PDB_dict["pe_pdb_Name"] = np.nan
+                    PDB_dict["pe_pdb_GUID"] = np.nan
+                    PDB_dict["pe_pdb_Age"] = np.nan
+                    PDB_dict["pe_pdb_Pdbpath"] = np.nan
                     self.pe.close()
-                    return {"pe_pdb_Name": np.nan, "pe_pdb_GUID": np.nan, "pe_pdb_Age": np.nan, "pe_pdb_Pdbpath": np.nan}
+                    return PDB_dict
         else:
+            PDB_dict["pe_pdb_Name"] = np.nan
+            PDB_dict["pe_pdb_GUID"] = np.nan
+            PDB_dict["pe_pdb_Age"] = np.nan
+            PDB_dict["pe_pdb_Pdbpath"] = np.nan
             self.pe.close()
-            return {"pe_pdb_Name": np.nan, "pe_pdb_GUID": np.nan, "pe_pdb_Age": np.nan, "pe_pdb_Pdbpath": np.nan}
+            return PDB_dict
 
 def result_all(filename):
     pe_anal = PDB_analyze(filename)
