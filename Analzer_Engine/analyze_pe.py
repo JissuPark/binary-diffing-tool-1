@@ -109,7 +109,7 @@ class AnalyzePE:
         else:
             path_score += NGram.compare(dict_s['pe_pdb_Pdbpath'], dict_t['pe_pdb_Pdbpath'], N=2)
 
-        score = (guid_score + path_score) * 0.5
+        score = (guid_score + path_score)
 
         return score
 
@@ -144,7 +144,7 @@ class AnalyzePE:
         for key in dict_s.keys() and dict_t.keys():
             #print(s_key, ":", dict_s[s_key]['hash_ssdeep'])
             score = ssdeep.compare(dict_s[key]['hash_ssdeep'], dict_t[key]['hash_ssdeep'])
-            comp += score * 0.2
+            comp += score
         return comp
 
     def analyze_all(self, pe_list):
