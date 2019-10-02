@@ -131,8 +131,13 @@ class AnalyzePE:
         *문자열로 뽑아서 한다면 ngram을, 데이터 자체를 뽑아서 한다며 data를 사용.. 재호랑 얘기해서하기
         :return: score with weight
         '''
-        print(json.dumps(standard, indent=4))
-        print(json.dumps(target, indent=4))
+
+        if standard == target:
+            return 1
+        else:
+            return 0
+        #print(json.dumps(standard, indent=4))
+        #print(json.dumps(target, indent=4))
 
     def analyze_section(self, dict_s, dict_t):
         '''
@@ -161,9 +166,10 @@ class AnalyzePE:
                 #pe_t['hash'] = pe_info_s.keys()
                 #for value in pe_info_s.values() if value == ''
                 pe_t['filehash'] = hashlib.sha256(open(pe_info_t['file_name'], 'rb').read()).hexdigest()
+                print("imp_score : ", self.analyze_imphash(pe_info_s, pe_info_t))
                 pe_t['imphash'] = self.analyze_imphash(pe_info_s, pe_info_t)
                 print("rich header : ", self.analyze_rich(pe_info_s['rich_info'], pe_info_t['rich_info']))
-                #pe_t['rich'] = self.analyze_rich(pe_info_s, pe_info_t)
+                pe_t['rich'] = self.analyze_rich(pe_info_s['rich_info'], pe_info_t['rich_info'])
                 print("section_hash_score : ", self.analyze_section(pe_info_s['cmp_section'], pe_info_t['cmp_section']))
                 pe_t['section_score'] = self.analyze_section(pe_info_s['cmp_section'], pe_info_t['cmp_section'])
                 print("authentication score : ", self.analyze_auth(pe_info_s['auto'], pe_info_t['auto']))

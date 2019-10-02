@@ -25,7 +25,7 @@ class Pe_Feature:
             print('%6d   %-15s %5d     %6d' % (prodid, prodid_name, count, mcv))
             rich_dict[key] = count
 
-        return rich_dict
+        return xor_key
 
     def extract_pdb(self):
         output_data = dict()
