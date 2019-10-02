@@ -239,8 +239,8 @@ def get_rich_section(file_name):
 
     data=fp.read()
 
-    if data == '' : raise RichHeaderNotFoundException()     # exception no rich
-    end=struct.unpack('<I', data[0x3c:0x40])[0]             # find start address of pe_header
+    if data == '': raise RichHeaderNotFoundException()     # exception no rich
+    end = struct.unpack('<I', data[0x3c:0x40])[0]             # find start address of pe_header
     data = data[0x80:end]                                   # read 0x00 ~ end(pe header)
     fp.close()
 

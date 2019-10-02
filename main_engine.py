@@ -143,9 +143,9 @@ class Exract_Feature:
 '''
 
 class Analyze_files:
-    def __init__(self, all_idb_info, all_pe_info):
+    def __init__(self,all_pe_info):
         self.all_pe_info = all_pe_info
-        self.all_idb_info = all_idb_info
+        #self.all_idb_info = all_idb_info
 
     def calculate_heuristic(self,pe_result):
         '''
@@ -173,7 +173,7 @@ class Analyze_files:
                 final_score.append(value_t['filehash'])
                 final_score.append(value_t['imphash'])
                 # self.final_score['section'] = self.P.analyze_section() * 0.05
-                final_score.append(value_t['rich'])
+                #final_score.append(value_t['rich'])
                # final_score.append(value.key('rsrc'))
                 # self.final_score['rsrc'] = self.P.analyze_rsrc() * 0.05
                 semifinal[key_t] = final_score
@@ -223,19 +223,19 @@ if __name__ == "__main__":
     Features = Exract_Feature(PATH, IDB_PATH)
 
     if flag == True:
-        all_idb_info = Features.export_idb_info('idb')
+        #all_idb_info = Features.export_idb_info('idb')
         all_pe_info = Features.export_pe_info('pe')
     else:
         print('error fuck')
 
-    analyze = Analyze_files(all_idb_info, all_pe_info)
+    analyze = Analyze_files(all_pe_info)
 
-    result_idb = analyze.analyze_idb()
+    #result_idb = analyze.analyze_idb()
     result_pe = analyze.analyze_pe()
 
-    all_result = analyze.calculate_heuristic(result_idb, result_pe)
+    all_result = analyze.calculate_heuristic(result_pe)
 
-    out_csv(r"C:\malware\result\test.csv", all_result)
+    #out_csv(r"C:\malware\result\test.csv", all_result)
 
     print(f"[+]time : {timeit.default_timer() - s}")
 
