@@ -55,6 +55,7 @@ class Pe_Files_Check:
             # 추후 시각화할 때 정보 필요
             self.pe_hash_dict[f_path] = f_hash
 
+
         # 이후에는 DB에 저장.
         # dictionary로 넘겨서 self.pe_hash_dict.value()의 유니크한 값들만 idb로 변환.
         # 나중에 서버에 올린 후에는 받은 파일 중 완전히 같은 파일은 서버 파일시스템에 저장하지 않는게 좋을 것 같다.
@@ -140,100 +141,47 @@ class Exract_Feature:
         else:
             return False
 
-
-
-
 class Analyze_files:
     def __init__(self, all_idb_info, all_pe_info):
         self.all_pe_info = all_pe_info
         self.all_idb_info = all_idb_info
 
-    def calculate_heuristic(self,pe_result):
+    def calculate_heuristic(self, idb_result, pe_result):
         '''
                 가중치가 부여된 점수들을 더해서 반환해주는 함수
                 *다 더했을 때 최대나 최소안에 있는지 확인하는 로직을 넣어주고 예외처리 해주면 될 듯
                 :return: final score
                 '''
         # 최종 휴리스틱 스코어
-        #semifinal = OrderedDict()
+
         real_final = OrderedDict()
+        #semifinal = [0, 0, 0, 0, 0]
+        pe_real_final = OrderedDict()
+
+        #semifinal = [0,0,0,0,0]
+
         #final_score.append('0x1234')
-        # Flowchart 점수 추가 (가중치 포함)
+        #Flowchart 점수 추가 (가중치 포함)
 
-        for key_s, value_s in pe_result.items():
-            semifinal = OrderedDict()
-            for key_t, value_t in value_s.items():
-                #self.F.Flow_parser()
-                # self.final_score += self.F.analyze_filehash()
-                #final_score.append(self.F.analyze_bbh() * 0.56)
-                #final_score.append(self.F.analyze_constant() * 0.24)
+        for key_i, key_pe in zip(idb_result.items(), pe_result.items()):
+            idb_final_score = OrderedDict()
+            pe_final_score = OrderedDict()
+            for value_i, value_pe in zip(key_i[1].items(), key_pe[1].items()):
 
-                final_score = list()
-                #final_score.append(value.key('hash'))
-                # PE 점수 추가 (가중치 포함)
-                final_score.append(value_t['filehash'])
-                final_score.append(value_t['imphash'])
-                # self.final_score['section'] = self.P.analyze_section() * 0.05
-                final_score.append(value_t['rich'])
-               # final_score.append(value.key('rsrc'))
-                # self.final_score['rsrc'] = self.P.analyze_rsrc() * 0.05
-                semifinal[key_t] = final_score
-            real_final[key_s] = semifinal
-        return real_final
+                # semifinal = list()
+                semifinal = [0, 0, 0, 0, 0]
+                semifinal[1] = (value_i[1]['bbh'])
+                semifinal[2] = (value_i[1]['const_value'])
+                semifinal[3] = (value_pe[1]['imphash'])
+                semifinal[4] = (value_pe[1]['rich'])
 
-    def analyze_idb(self):
-        idb = analyze_flowchart.AnalyzeFlowchart(self.all_idb_info)
-        idb_split = idb.flow_parser()
+                idb_final_score[value_i[0]] = semifinal
+                pe_final_score[value_pe[0]] = semifinal
 
-        idb_result = idb.analyze_all(idb_split)
-
-        return idb_result
-
-    def analyze_pe(self):
-        pe = analyze_pe.AnalyzePE(self.all_pe_info)
-        pe_split = pe.pe_parser()
-
-        pe_result = pe.analyze_all(pe_split)
-
-        return pe_result
+            real_final[key_i[0]] = idb_final_score
+            real_final[key_pe[0]] = pe_final_score
 
 
-class Analyze_files:
-    def __init__(self, all_idb_info, all_pe_info):
-        self.all_pe_info = all_pe_info
-        self.all_idb_info = all_idb_info
-
-    def calculate_heuristic(self,pe_result):
-        '''
-                가중치가 부여된 점수들을 더해서 반환해주는 함수
-                *다 더했을 때 최대나 최소안에 있는지 확인하는 로직을 넣어주고 예외처리 해주면 될 듯
-                :return: final score
-                '''
-        # 최종 휴리스틱 스코어
-        #semifinal = OrderedDict()
-        real_final = OrderedDict()
-        #final_score.append('0x1234')
-        # Flowchart 점수 추가 (가중치 포함)
-
-        for key_s, value_s in pe_result.items():
-            semifinal = OrderedDict()
-            for key_t, value_t in value_s.items():
-                #self.F.Flow_parser()
-                # self.final_score += self.F.analyze_filehash()
-                #final_score.append(self.F.analyze_bbh() * 0.56)
-                #final_score.append(self.F.analyze_constant() * 0.24)
-
-                final_score = list()
-                #final_score.append(value.key('hash'))
-                # PE 점수 추가 (가중치 포함)
-                final_score.append(value_t['filehash'])
-                final_score.append(value_t['imphash'])
-                # self.final_score['section'] = self.P.analyze_section() * 0.05
-                final_score.append(value_t['rich'])
-               # final_score.append(value.key('rsrc'))
-                # self.final_score['rsrc'] = self.P.analyze_rsrc() * 0.05
-                semifinal[key_t] = final_score
-            real_final[key_s] = semifinal
         return real_final
 
     def analyze_idb(self):
@@ -249,22 +197,6 @@ class Analyze_files:
         pe_result = pe.analyze_all(pe_split)
 
         return pe_result
-
-'''
-def out_csv(csv_path, score_dict):
-    with open(csv_path, 'w',  newline="") as csv_f:
-        csv_w=csv.writer(csv_f)
-        title = ['FILE NAME', 'FILE HASH', 'IMPORT HASH','RICH', 'SECTION', 'BB HASH', 'CONSTANT', 'TOTAL SCORE']
-        i=1
-        csv_w.writerow(title)
-        for key, score_row in score_dict.items():
-            score_row.append(f"=sum(C{i}, D{i}, E{i}, F{i})")
-            i+=1
-            result_row = [key]
-            for v in score_row:
-                result_row.append(v)
-            csv_w.writerow(result_row)
-'''
 
 '''
     total score to the excel file
@@ -278,8 +210,8 @@ def out_xlsx(path,result_dict):
     ws = wb.active
 
     ws.title = 'result_xlsx'
-    title = ['BASE NAME','T NAME', 'T HASH', 'IMPORT HASH', 'RICH', 'SECTION', 'BB HASH', 'CONSTANT', 'TOTAL SCORE']
-    cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
+    title = ['BASE_FILE', 'COMP_FILE', 'FILE HASH', 'BB HASH', 'CONSTANT', 'IMPORT HASH', 'RICH']
+    cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']
 
     for i in range(len(title)):
         ws[f'{cols[i]}1'] = title[i]
@@ -325,10 +257,13 @@ if __name__ == "__main__":
     analyze = Analyze_files(all_idb_info, all_pe_info)
 
     result_idb = analyze.analyze_idb()
+    # with open(r"C:\malware\result\idbtest.txt", 'w') as makefile:
+    #     json.dump(result_idb, makefile, ensure_ascii=False, indent='\t')
     result_pe = analyze.analyze_pe()
+    # with open(r"C:\malware\result\petest.txt", 'w') as makefile:
+    #     json.dump(result_pe, makefile, ensure_ascii=False, indent='\t')
 
     all_result = analyze.calculate_heuristic(result_idb, result_pe)
-
 
     out_xlsx(r"C:\malware\result\test.xlsx", all_result)
 

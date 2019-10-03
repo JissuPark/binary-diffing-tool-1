@@ -27,7 +27,7 @@ def get_func_similarity(stand_hash_dict, target_hash_dict):
     '''
 
     for i in stand_hash_dict:
-        for j in stand_hash_dict:
+        for j in target_hash_dict:
             if i == j:
                 stand_hash_dict[j] = True
                 target_hash_dict[i] = True
