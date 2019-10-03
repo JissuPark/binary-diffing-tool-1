@@ -111,7 +111,7 @@ class AnalyzePE:
 
         score = (guid_score + path_score)
 
-        return score
+        return guid_score, path_score
 
     def analyze_rsrc(self, standard, target):
         '''
@@ -165,7 +165,7 @@ class AnalyzePE:
                 print(f"compare {index_1} with {index_2}")
                 #pe_t['hash'] = pe_info_s.keys()
                 #for value in pe_info_s.values() if value == ''
-                pe_t['filehash'] = hashlib.sha256(open(pe_info_t['file_name'], 'rb').read()).hexdigest()
+                #pe_t['filehash'] = hashlib.sha256(open(pe_info_t['file_name'], 'rb').read()).hexdigest()
                 print("imp_score : ", self.analyze_imphash(pe_info_s, pe_info_t))
                 pe_t['imphash'] = self.analyze_imphash(pe_info_s, pe_info_t)
                 print("rich header : ", self.analyze_rich(pe_info_s['rich_info'], pe_info_t['rich_info']))
