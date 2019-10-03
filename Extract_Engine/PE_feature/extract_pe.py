@@ -18,10 +18,12 @@ class Pe_Feature:
         print("ProID    name              count")
         for key in rich.info_list.keys():
             count = rich.info_list[key]
+            mcv = (key << 16)
             prodid = (key >> 16)
+
             prodid_name = pe_rich.PRODID_MAP[prodid] if prodid in pe_rich.PRODID_MAP else "<unknown>"
-            print('%6d   %-15s %5d' % (prodid, prodid_name, count))
-            rich_dict[prodid_name] = count
+            print('%6d   %-15s %5d     %6d' % (prodid, prodid_name, count, mcv))
+            rich_dict[key] = count
 
         return xor_key
 
@@ -102,13 +104,13 @@ class Pe_Feature:
         pe_features = {
             'file_name': self.file_name[28:],
             #'file_type':file_type,
-            #'func_list':func_list,
-            'imp_hash':imphash,
-            #'cmp_section' : cmp_section_data,
-            #'auto':auto,
-            'rich_info':rich_info,
-            #'pdb_info':pdb_info,
-            #'rsrc_info':rsrc_info
+            #'func_list': func_list,
+            'imp_hash': imphash,
+            'cmp_section': cmp_section_data,
+            'auto': auto,
+            'rich_info': rich_info,
+            'pdb_info': pdb_info,
+            #'rsrc_info': rsrc_info
         }
 
 

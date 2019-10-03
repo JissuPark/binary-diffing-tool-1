@@ -317,8 +317,8 @@ class RsrcParser:
             #각 섹션별 데이터 해시와 섹션 시작 offset주소부분이 중복되어 출력되서 다음과 같이 수정
             section_dict[section_name] = {
                 'entropy': entropy,
-                'hash 256': hash_256,
-                'hash ssdeep': hash_ssdeep,
+                'hash_256': hash_256,
+                'hash_ssdeep': hash_ssdeep,
                 'offset': offset,
                 'character': character
             }

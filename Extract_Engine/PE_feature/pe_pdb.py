@@ -49,17 +49,17 @@ class PDB_analyze():
                     return PDB_dict
 
                 else:
-                    PDB_dict["pe_pdb_Name"] = np.nan
-                    PDB_dict["pe_pdb_GUID"] = np.nan
-                    PDB_dict["pe_pdb_Age"] = np.nan
-                    PDB_dict["pe_pdb_Pdbpath"] = np.nan
+                    PDB_dict["pe_pdb_Name"] = ""
+                    PDB_dict["pe_pdb_GUID"] = ""
+                    PDB_dict["pe_pdb_Age"] = ""
+                    PDB_dict["pe_pdb_Pdbpath"] = ""
                     self.pe.close()
                     return PDB_dict
         else:
-            PDB_dict["pe_pdb_Name"] = np.nan
-            PDB_dict["pe_pdb_GUID"] = np.nan
-            PDB_dict["pe_pdb_Age"] = np.nan
-            PDB_dict["pe_pdb_Pdbpath"] = np.nan
+            PDB_dict["pe_pdb_Name"] = ""
+            PDB_dict["pe_pdb_GUID"] = ""
+            PDB_dict["pe_pdb_Age"] = ""
+            PDB_dict["pe_pdb_Pdbpath"] = ""
             self.pe.close()
             return PDB_dict
 
