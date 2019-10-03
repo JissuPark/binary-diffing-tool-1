@@ -109,9 +109,10 @@ class AnalyzePE:
         else:
             path_score += NGram.compare(dict_s['pe_pdb_Pdbpath'], dict_t['pe_pdb_Pdbpath'], N=2)
 
-        score = (guid_score + path_score)
+        #score = (guid_score + path_score)
+        score = str(guid_score)+','+str(path_score)
 
-        return guid_score, path_score
+        return score
 
     def analyze_rsrc(self, standard, target):
         '''
@@ -165,7 +166,7 @@ class AnalyzePE:
                 #for value in pe_info_s.values() if value == ''
                 #pe_t['filehash'] = hashlib.sha256(open(pe_info_t['file_name'], 'rb').read()).hexdigest()
                 pe_t['imphash'] = self.analyze_imphash(pe_info_s, pe_info_t)
-                pe_t['rich'] = self.analyze_rich(pe_info_s['rich_info'], pe_info_t['rich_info'])
+                pe_t['rich'] = self.analyze_rich(pe_info_s, pe_info_t)
                 pe_t['section_score'] = self.analyze_section(pe_info_s['cmp_section'], pe_info_t['cmp_section'])
                 pe_t['auth_score'] = self.analyze_auth(pe_info_s['auto'], pe_info_t['auto'])
                 pe_t['pdb_score'] = self.analyze_pdb(pe_info_s['pdb_info'], pe_info_t['pdb_info'])
