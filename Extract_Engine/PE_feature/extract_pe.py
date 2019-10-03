@@ -102,7 +102,7 @@ class Pe_Feature:
         rsrc_info = self.extract_rsrc()
 
         pe_features = {
-            'file_name': self.file_name,
+            'file_name': self.file_name[28:],
             #'file_type':file_type,
             #'func_list': func_list,
             'imp_hash': imphash,
