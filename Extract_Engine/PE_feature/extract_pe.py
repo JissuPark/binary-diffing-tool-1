@@ -1,3 +1,4 @@
+import hashlib
 import json
 import filetype
 import numpy as np
@@ -103,8 +104,7 @@ class Pe_Feature:
 
         pe_features = {
             'file_name': self.file_name[28:],
-            #'file_type':file_type,
-            #'func_list': func_list,
+            'file_hash': hashlib.sha256(open(self.file_name, 'rb').read()).hexdigest(),
             'imp_hash': imphash,
             'cmp_section': cmp_section_data,
             'auto': auto,

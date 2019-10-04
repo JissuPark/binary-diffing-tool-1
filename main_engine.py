@@ -49,7 +49,8 @@ class Pe_Files_Check:
             if f_hash in self.pe_hash_dict.values():
                 os.remove(f_path)
             else:
-                os.rename(f_path, os.path.join(self.pe_dir_path, f_hash))
+                #os.rename(f_path, os.path.join(self.pe_dir_path, f_hash))
+                print('a')
 
                 # 파일은 삭제하지만 해당 파일명(절대경로)와 해시정보는 DB에 있어야함.
             # 추후 시각화할 때 정보 필요
@@ -155,21 +156,13 @@ class Analyze_files:
         # 최종 휴리스틱 스코어
 
         real_final = OrderedDict()
-        #semifinal = [0, 0, 0, 0, 0]
-        pe_real_final = OrderedDict()
-
-        #semifinal = [0,0,0,0,0]
-
-        #final_score.append('0x1234')
-        #Flowchart 점수 추가 (가중치 포함)
 
         for key_i, key_pe in zip(idb_result.items(), pe_result.items()):
             idb_final_score = OrderedDict()
             pe_final_score = OrderedDict()
             for value_i, value_pe in zip(key_i[1].items(), key_pe[1].items()):
-
-                # semifinal = list()
-                semifinal = [0, 0, 0, 0, 0, 0, 0 ,0]
+                semifinal = [0, 0, 0, 0, 0, 0, 0, 0]
+                semifinal[0] = (value_pe[1]['file_hash'])
                 semifinal[1] = (value_i[1]['bbh'])
                 semifinal[2] = (value_i[1]['const_value'])
                 semifinal[3] = (value_pe[1]['section_score'])
@@ -183,7 +176,6 @@ class Analyze_files:
 
             real_final[key_i[0]] = idb_final_score
             real_final[key_pe[0]] = pe_final_score
-
 
         return real_final
 
@@ -204,7 +196,7 @@ class Analyze_files:
 '''
     total score to the excel file
 '''
-def out_xlsx(path,result_dict):
+def out_xlsx(path, result_dict):
     try:
         wb = load_workbook(path)
     except:
@@ -248,6 +240,7 @@ if __name__ == "__main__":
 
     pe_check = Pe_Files_Check(PATH)
     file_hash_dict = pe_check.get_unique_pe_list()
+
     flag = Convert_idb(PATH, IDB_PATH)
     Features = Exract_Feature(PATH, IDB_PATH)
 

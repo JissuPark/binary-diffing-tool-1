@@ -31,7 +31,7 @@ class basic_block(idb_info):
             curaddr = basicblock.startEA
             endaddr = basicblock.endEA
 
-            if (endaddr - curaddr) < 50:  # 최소 바이트 50이상 할것
+            if (endaddr - curaddr) < 30:  # 최소 바이트 50이상 할것
                 continue
 
             opcodes = []

@@ -111,33 +111,8 @@ class AnalyzeFlowchart:
                 idb_t = dict()
                 if index_1 == index_2:
                     continue
-                #idb_t['filehash'] = hashlib.sha256(open(idb_info_t['file_name'], 'rb').read()).hexdigest()
                 idb_t['bbh'] = self.analyze_bbh(idb_info_s, idb_info_t)
                 idb_t['const_value'] = self.analyze_constant(idb_info_s, idb_info_t)
                 idb_s[idb_info_t['file_name']] = idb_t
             idb_all[idb_info_s['file_name']] = idb_s
         return idb_all
-
-
-
-
-# if __name__ == '__main__':
-#     print('==========================START FLOWCHART==========================')
-#     print('-------------------------------------------------------------------')
-#     path_stand = r"C:\Users\qkrwl\PycharmProjects\Breakers\binary-diffing-tool\test_01.txt"
-#     path_target = r"C:\Users\qkrwl\PycharmProjects\Breakers\binary-diffing-tool\test_02.txt"
-#     a = AnalyzeFlowchart(path_stand, path_target)
-#     print('--------------------------START PARSING----------------------------')
-#     a.Flow_parser()
-#     print(f'[+]Standard File\' function list : {a.s_func_list}')
-#     print(f'[+]Target File\' function list : {a.t_func_list}')
-#     print(f'[+]Standard File\' hash dictionary : {a.s_hash_dict}')
-#     print(f'[+]Target File\' hash dictionary : {a.t_hash_dict}')
-#     print(f'[+]Standard File\' constant value : {a.s_constant}')
-#     print(f'[+]Target File\' constant value : {a.t_constant}')
-#     print('-----------------------------END PARSER-----------------------------')
-#     print('---------------------------START ANALYZE----------------------------')
-#     print(f'[+]Analyze basic block hash similarity : {a.analyze_bbh()}')
-#     print(f'[+]Analyze constant similarity : {a.analyze_constant()}')
-#     print('----------------------------END ANALYZE-----------------------------')
-#     print('===========================END FLOWCHART============================')

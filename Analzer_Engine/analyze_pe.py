@@ -28,32 +28,6 @@ class AnalyzePE:
 
         return pe_list
 
-        # # 전체에 대한 dictionary 받아옴
-        # self.result_list = list()
-        #
-        # print(result)
-        # for i in result.values():
-        #     self.result_list.append(i)
-        # for j in self.result_list:
-        #     print(j)
-        #
-        # # data 파싱
-        # for rs_value in self.result_list[0].values():
-        #     for rs_key in rs_value:
-        #         if rs_key == 'imp_hash':
-        #             self.s_imp_hash = rs_value['imp_hash']
-        #         elif rs_key == 'rich_info(xor_key)':
-        #             self.s_xor_key = rs_value['rich_info(xor_key)']
-        #         elif rs_key == 'cmp_section':
-        #             print(rs_value['cmp_section'])
-        #
-        # for rs_value in self.result_list[1].values():
-        #     for rs_key in rs_value:
-        #         if rs_key == 'imp_hash':
-        #             self.t_imp_hash = rs_value['imp_hash']
-        #         elif rs_key == 'rich_info(xor_key)':
-        #             self.t_xor_key = rs_value['rich_info(xor_key)']
-
     def analyze_imphash(self, standard, target):
         '''
         PE에서 imphash를 뽑아서 비교해 참/거짓에 따라 점수를 반환하는 함수
@@ -162,18 +136,17 @@ class AnalyzePE:
                 pe_t = OrderedDict()
                 if index_1 == index_2:
                     continue
-                #pe_t['hash'] = pe_info_s.keys()
-                #for value in pe_info_s.values() if value == ''
                 #pe_t['filehash'] = hashlib.sha256(open(pe_info_t['file_name'], 'rb').read()).hexdigest()
+                pe_t['file_hash'] = pe_info_t['file_hash']
                 pe_t['imphash'] = self.analyze_imphash(pe_info_s, pe_info_t)
                 pe_t['rich'] = self.analyze_rich(pe_info_s, pe_info_t)
                 pe_t['section_score'] = self.analyze_section(pe_info_s['cmp_section'], pe_info_t['cmp_section'])
                 pe_t['auth_score'] = self.analyze_auth(pe_info_s['auto'], pe_info_t['auto'])
                 pe_t['pdb_score'] = self.analyze_pdb(pe_info_s['pdb_info'], pe_info_t['pdb_info'])
-                #print("rsrc_score : ", self.analyze_rsrc(pe_info_s['rsrc_info'], pe_info_t['rsrc_info']))
                 #pe_t['rsrc'] = self.analyze_rsrc(pe_info_s['rsrc_info'], pe_info_t['rsrc_info'])
                 pe_s[pe_info_t['file_name']] = pe_t
             pe_all[pe_info_s['file_name']] = pe_s
+
         return pe_all
 
 
