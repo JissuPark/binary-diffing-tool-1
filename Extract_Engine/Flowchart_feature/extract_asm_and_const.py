@@ -1,7 +1,7 @@
 import idb
 import hashlib
 from Extract_Engine.Flowchart_feature import const_filter_indexs  # const_filter_indexs.py
-
+from collections import OrderedDict
 glo_list = list()  # PE 전체의 constant 값을 담을 global list
 
 
@@ -17,10 +17,11 @@ class basic_block(idb_info):
         super(basic_block, self).__init__(api, fva)
         self.func_name = func_name
 
-    def bbs(self, func_name_dicts):
+    def bbs(self, func_name_dicts, file_name):
         mutex_opcode_list = []
         opcode_flow = []
         function_dicts = {}
+        idb_info = {}
         func_name_dicts[self.func_name] = {}
         # 함수 내에서 플로우 차트 추출
         function_flowchart = self.api.idaapi.FlowChart(self.function)
@@ -30,7 +31,7 @@ class basic_block(idb_info):
             curaddr = basicblock.startEA
             endaddr = basicblock.endEA
 
-            if (endaddr - curaddr) < 50:  # 최소 바이트 50이상 할것
+            if (endaddr - curaddr) < 30:  # 최소 바이트 50이상 할것
                 continue
 
             opcodes = []
@@ -90,16 +91,24 @@ class basic_block(idb_info):
             }
             opcode_flow.append(mutex_opcode)
             function_dicts[hex(basicblock.startEA)] = basicblock_dics
+            #function_name['funct_name'] = function_dicts
         ''' ================================ END ONE Flowchart ================================'''
         func_name_dicts[self.func_name] = function_dicts
+
         if len(func_name_dicts[self.func_name]) == 0:
             del func_name_dicts[self.func_name]  # del 안하면 비어있는 딕셔너리 생김
         else:
             func_name_dicts[self.func_name].update({'flow_opString': ' '.join(opcode_flow)})
-        return func_name_dicts
+
+        idb_info['file_name'] = file_name
+        idb_info['func_name'] = func_name_dicts
+        #idb_info['func_name'] = func_name_dicts
+        #idb_info['func_name'] = func_name_dicts
+
+        return idb_info
 
 
-def main(api, ):
+def main(api,file_name):
     function_dicts = {}
 
     for fva in api.idautils.Functions():
@@ -109,7 +118,7 @@ def main(api, ):
             # main or start or sub_***** function. not library function
             basicblock = basic_block(api, fva, fname)
             # 베이직 블록 정보 추출 함수 실행
-            basicblock_function_dicts = basicblock.bbs(function_dicts)
+            basicblock_function_dicts = basicblock.bbs(function_dicts, file_name)
 
     return basicblock_function_dicts
 
@@ -122,11 +131,13 @@ def open_idb(FROM_FILE):
 
 
 def basicblock_idb_info_extraction(FROM_FILE):
+
     api = open_idb(FROM_FILE)
-    idb_sub_function_info = main(api)
+    idb_sub_function_info = main(api, FROM_FILE[19:-4])
     # 여기서 상수값 붙임. json 맨 아래에 통쨰로 붙이기 위함.
     idb_sub_function_info.update({'constant': ' '.join(glo_list)})
     # END
+
     return idb_sub_function_info
 
 

@@ -73,7 +73,11 @@ def exe_list_to_queue(PE_D_PATH, q):
     exe_list = os.listdir(PE_D_PATH)
     for f in exe_list:
         f_path = os.path.join(PE_D_PATH, f)
+        print(f_path)
         q.put(f_path)
+    # for index in PE_D_PATH:
+    #     f_path = index
+    #     q.put(f_path)
     return q
 
 
