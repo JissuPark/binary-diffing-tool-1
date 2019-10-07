@@ -4,6 +4,8 @@ Extract_Engine/Flowchart_feature/__pycache__/
 Analzer_Engine/__pycache__/
 Analzer_Engine/Algorithm/__pycache__/
 Analzer_Engine/Sub_analyze/__pycache__/
+Check_Packing/__pycache__/
+Unpacking/__pycache__/
 venv/
 .idea/
-venv/
+referrence/
