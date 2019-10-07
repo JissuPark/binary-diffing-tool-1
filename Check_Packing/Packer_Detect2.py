@@ -4,23 +4,24 @@ import os
 
 
 #####################################################
-yara_path="./peid.yara"
-Sample_dir_Full_path=r"D:\etc\upx394w\aa"
+yara_path="Check_Packing/peid.yara"
+#Sample_dir_Full_path=r"D:\JungJaeho\STUDY\self\BOB\BoB_Project\Team_Breakers\Document\sample\malware\malware\Scarcruft"
 rules = yara.compile(filepath=yara_path)
-result_csv_path="./File_Packer_Type.csv"
-result_csv_count_path="./File_Packer_Count.csv"
+result_csv_path="Check_Packing/File_Packer_Type.csv"
+result_csv_count_path="Check_Packing/File_Packer_Count.csv"
 #####################################################
 
 
 
 
-def sample_packer_type_detect():
+def sample_packer_type_detect(Sample_dir_Full_path):
     Sample_List=os.listdir(Sample_dir_Full_path)
     packer_dict_count={}
+
     # CSV Write DATA
     with open(result_csv_path, 'w+', newline='', encoding='utf-8') as csv_file:
         for sample in Sample_List:
-            count = 0
+            count = 1
             print(sample)
 
             sample_full_path=os.path.join(Sample_dir_Full_path,sample)
@@ -30,16 +31,18 @@ def sample_packer_type_detect():
             read_mal.close()
 
             matches_list = rules.match(data=read_data)
-            if matches_list == {} : continue
-            for matches in matches_list:
+            if matches_list == {} :
+                continue
+            else:
+                #packer_dict_count[ matches_list['main'][count]['rule'] ] += 1
+                #packer_dict_count.update({matches_list['main'][0]['rule'] : count})
                 try:
-                    packer_dict_count[matches]+=1
+                    packer_dict_count[matches_list['main'][0]['rule']]+=1
                 except:
-                    packer_dict_count[matches]=0
-
+                    packer_dict_count[matches_list['main'][0]['rule']]=0
                 writer = csv.writer(csv_file, delimiter=',')
-                writer.writerow([sample]+[matches_list['main'][count]['rule']])
-                count = count +1
+                writer.writerow([sample]+[matches_list['main'][0]['rule']])
+
 
     # CSV File Count Write DATA
     with open(result_csv_count_path, 'w+', newline='', encoding='utf-8') as csv_file:
@@ -48,5 +51,5 @@ def sample_packer_type_detect():
         for key, values in packer_dict_count.items():
             writer.writerow([key]+[values])
 
-if __name__=="__main__":
-    sample_packer_type_detect()
+# if __name__=="__main__":
+#     sample_packer_type_detect()

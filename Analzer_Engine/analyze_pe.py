@@ -2,9 +2,7 @@ import hashlib
 from collections import OrderedDict
 import ssdeep
 from ngram import NGram
-import Analzer_Engine.analyzer_main as AM
-import json
-from Analzer_Engine.Algorithm import all_algo as algo
+
 
 
 class AnalyzePE:
