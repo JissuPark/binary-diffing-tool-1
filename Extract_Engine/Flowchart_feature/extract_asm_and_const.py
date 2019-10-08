@@ -56,13 +56,11 @@ class basic_block(idb_info):
                         if operand_1 not in const_filter_indexs.pointer:  # esp, esi, ebp가 아니여야 입장
                             if "ptr" not in operand_2 and operand_2 not in const_filter_indexs.logic:  # ptr, 0xffffffff 등 없어야 입장
                                 if operand_2 not in const_filter_indexs.registers:  # 레지스터가 없어야 입장
-                                    if operand_2 != '0' and len(
-                                            operand_2) != 8 and "[" not in operand_2 and "]" not in operand_2:
+                                    if operand_2 != '0' and len(operand_2) != 8 and "[" not in operand_2 and "]" not in operand_2:
                                         glo_list.append(operand_2)  # append file total constant
                                         block_constant.append(operand_2)  # append block constant
                     else:  # operand가 1개일 때 조건입장
-                        if operand[0] not in const_filter_indexs.registers and "ptr" not in operand[0] and operand[
-                            0] not in const_filter_indexs.logic:  # 레지가아니고 ptr도 없어야 입장
+                        if operand[0] not in const_filter_indexs.registers and "ptr" not in operand[0] and operand[0] not in const_filter_indexs.logic:  # 레지가아니고 ptr도 없어야 입장
                             if operand[0] != '0':
                                 glo_list.append(operand[0])
                                 block_constant.append(operand[0])

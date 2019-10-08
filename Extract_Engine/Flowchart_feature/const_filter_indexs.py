@@ -13,21 +13,4 @@ registers = ['rax', 'eax', 'ax', 'al', 'rbx', 'ebx', 'bx', 'bl', 'rcx', 'ecx', '
 pointer = ['esp', 'esi', 'ebp']
 
 logic = ['0xffffffff', '0xffff0000', '0xfffffff0', '0xfffffffe']
-
-
-'''
-
---------- operand 2���� �� --------- 
-	operand1		operand2
-	���� 1 operand1 �� (esp, esi, ebp) ���� ����� �����Ѵ�.
-		���� 2 operand2 �� "ptr"�� ����� �����Ѵ�.
-			���� 3 operand2�� const_opcode_indexs.registers �� �������� �ʾƾ� �����Ѵ�.
-				���� 4 operand2 != 0 and [���Խ� 0x123456�ڸ�] �� �ƴϿ��� �����Ѵ�.
-
-
-
---------- operand 1���� �� --------- 
-	���� 1 operand[0]�� "ptr"�� ����� �����Ѵ� (and) const_opcode_index.registers�� �������� �ʾƾ��Ѵ�. (and) operand[0] != '0' (and) len(operand[0]) !=8
-
-
-'''
+#logic 부분 더 추가해야함.

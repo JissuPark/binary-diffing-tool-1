@@ -4,7 +4,6 @@ import ssdeep
 from ngram import NGram
 
 
-
 class AnalyzePE:
     def __init__(self, pe_all):
         self.pe_all = pe_all

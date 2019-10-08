@@ -31,36 +31,18 @@ class AnalyzeFlowchart:
 
         return idb_list
 
-        # # flow json 파일 가져와서 읽기
-        # with open(self.stand_flow) as s_flow_json:
-        #     s_flow_data = json.load(s_flow_json)
-        # with open(self.target_flow) as t_flow_json:
-        #     t_flow_data = json.load(t_flow_json)
-        #
-        # # 함수 이름 추출
-        # self.s_func_list = [key for key in s_flow_data if key != 'constant']
-        # self.t_func_list = [key for key in t_flow_data if key != 'constant']
-        #
-        # # hash & constant value 추출
-        # for func in s_flow_data:
-        #     # constant value
-        #     if func == 'constant':
-        #         self.s_constant = s_flow_data[func]
-        #         continue
-        #     for basic_block in s_flow_data[func]:
-        #         if basic_block == 'flow_opString':
-        #             continue
-        #         self.s_hash_dict.update({s_flow_data[func][basic_block]['block_sha256']: False})
-        #
-        # for func in t_flow_data:
-        #     # except constant value
-        #     if func == 'constant':
-        #         self.t_constant = t_flow_data[func]
-        #         continue
-        #     for basic_block in t_flow_data[func]:
-        #         if basic_block == 'flow_opString':
-        #             continue
-        #         self.t_hash_dict.update({t_flow_data[func][basic_block]['block_sha256']: False})
+    def block_hash_parser(self, bloc_dict):
+        block_hash_dic = dict()
+
+        for x in bloc_dict["func_name"]:
+            block_hash_dic[x] = {}
+            for y in bloc_dict["func_name"][x]:
+                if y != "flow_opString":
+                    # 화이트 리스트 처리는 이 부분에서..?
+                    block_hash_dic[x].update({y: {bloc_dict["func_name"][x][y]['block_sha256']: False}})
+
+        return block_hash_dic
+
 
     def analyze_bbh(self, s_flow_data, t_flow_data):
         '''
@@ -69,28 +51,25 @@ class AnalyzeFlowchart:
         :return: score with weight
         '''
 
-        s_hash_dict = dict()
-        t_hash_dict = dict()
+        s_hash_dict = self.block_hash_parser(s_flow_data)
+        t_hash_dict = self.block_hash_parser(t_flow_data)
+        stand_hash_count = 0
 
-        for func in s_flow_data:
-            # constant value
-            if func != 'constant' and func != 'file_name':
-                for basic_block in s_flow_data[func]:
-                    for basic_block2 in s_flow_data[func][basic_block]:
-                        if basic_block2 != 'flow_opString':
-                            s_hash_dict.update({s_flow_data[func][basic_block][basic_block2]['block_sha256']: False})
+        for s_fname, s_valueSet in s_hash_dict.items():
+            for s_sAddr, s_hashSet in s_valueSet.items():
+                for s_hash in s_hashSet:
+                    stand_hash_count += 1
+                    for t_fname, t_valueSet in t_hash_dict.items():
+                        for t_tAddr, t_hashSet in t_valueSet.items():
+                            for t_hash in t_hashSet:
+                                if s_hash == t_hash:
+                                    s_hashSet[s_hash] = True
+                                    t_hashSet[t_hash] = True
+        # pprint.pprint(stand)
+        # print('-----------------------------------------------------------------------')
+        # pprint.pprint(tar)
 
-        for func in t_flow_data:
-            # except constant value
-            if func != 'constant' and func != 'file_name':
-                for basic_block in t_flow_data[func]:
-                    for basic_block2 in t_flow_data[func][basic_block]:
-                        if basic_block2 != 'flow_opString':
-                            t_hash_dict.update({t_flow_data[func][basic_block][basic_block2]['block_sha256']: False})
-
-        bbh_score = algo.get_func_similarity(s_hash_dict, t_hash_dict)
-
-        return bbh_score
+        return algo.get_func_similaridty(s_hash_dict, t_hash_dict, stand_hash_count)
 
     def analyze_constant(self,standard, target):
         '''
