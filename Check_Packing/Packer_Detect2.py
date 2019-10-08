@@ -5,7 +5,6 @@ import os
 
 #####################################################
 yara_path="Check_Packing/peid.yara"
-#Sample_dir_Full_path=r"D:\JungJaeho\STUDY\self\BOB\BoB_Project\Team_Breakers\Document\sample\malware\malware\Scarcruft"
 rules = yara.compile(filepath=yara_path)
 result_csv_path="Check_Packing/File_Packer_Type.csv"
 result_csv_count_path="Check_Packing/File_Packer_Count.csv"

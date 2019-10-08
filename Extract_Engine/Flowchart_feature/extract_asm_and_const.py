@@ -1,3 +1,6 @@
+import json
+import timeit
+
 import idb
 import hashlib
 from Extract_Engine.Flowchart_feature import const_filter_indexs  # const_filter_indexs.py
@@ -25,6 +28,7 @@ class basic_block(idb_info):
         func_name_dicts[self.func_name] = {}
         # 함수 내에서 플로우 차트 추출
         function_flowchart = self.api.idaapi.FlowChart(self.function)
+
         # 플로우 차트에서 반복문 돌려 각 베이직 블록 추출
 
         for basicblock in function_flowchart:
@@ -139,13 +143,13 @@ def basicblock_idb_info_extraction(FROM_FILE):
     return idb_sub_function_info
 
 
-# if __name__ == "__main__":
-#     s = timeit.default_timer()  # start time
-#     PATH = r"D:\out_idb\b95da5ebb4d2df062210ebd39673806f3b8b50d87658a007da6578b2a5454f2d.idb"
-#     idb_sub_function_info = basicblock_idb_info_extraction(PATH)
-#
-#     with open(r"D:\out_idb\test.txt", 'w') as makefile:
-#         json.dump(idb_sub_function_info, makefile, ensure_ascii=False, indent='\t')
-#
-#     print(f"[+]running : {timeit.default_timer() - s}")  # end time
-#     print("-----END-----")
+if __name__ == "__main__":
+    s = timeit.default_timer()  # start time
+    PATH = r"C:\malware\mid_idb\4a034846e581d0b7a0309a5047859b437ed91718e00254b0206adda2f920b447.idb"
+    idb_sub_function_info = basicblock_idb_info_extraction(PATH)
+
+    with open(r"C:\malware\result\test.txt", 'w') as makefile:
+        json.dump(idb_sub_function_info, makefile, ensure_ascii=False, indent='\t')
+
+    print(f"[+]running : {timeit.default_timer() - s}")  # end time
+    print("-----END-----")

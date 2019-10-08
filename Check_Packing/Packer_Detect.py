@@ -29,7 +29,7 @@ def sample_packer_type_detect():
             read_data = read_mal.read()
             read_mal.close()
 
-            matches_list = rules.match(data=read_data)
+            matches_list = list(rules.match(data=read_data))
             if matches_list == {} : continue
             for matches in matches_list:
                 try:
