@@ -1,3 +1,4 @@
+import hashlib
 import json
 import filetype
 import numpy as np
@@ -12,18 +13,25 @@ class Pe_Feature:
 
     def extract_rich(self):
         rich = pe_rich.ParseRichHeader(self.file_name)
-        xor_key = rich.xorkey
-        rich_dict = dict()
-        print(f'XorKey : {xor_key}')
-        print("ProID    name              count")
-        for key in rich.info_list.keys():
-            count = rich.info_list[key]
-            prodid = (key >> 16)
-            prodid_name = pe_rich.PRODID_MAP[prodid] if prodid in pe_rich.PRODID_MAP else "<unknown>"
-            print('%6d   %-15s %5d' % (prodid, prodid_name, count))
-            rich_dict[prodid_name] = count
+        flag = rich.parse()
 
-        return rich_dict
+        if flag != False:
+            xor_key = rich.xorkey
+            rich_dict = dict()
+            print(f'XorKey : {xor_key}')
+            print("ProID    name              count")
+            for key in rich.info_list.keys():
+                count = rich.info_list[key]
+                mcv = (key << 16)
+                prodid = (key >> 16)
+
+                prodid_name = pe_rich.PRODID_MAP[prodid] if prodid in pe_rich.PRODID_MAP else "<unknown>"
+                print('%6d   %-15s %5d     %6d' % (prodid, prodid_name, count, mcv))
+                rich_dict[key] = count
+
+            return xor_key
+        else:
+            return ""
 
     def extract_pdb(self):
         output_data = dict()
@@ -100,14 +108,14 @@ class Pe_Feature:
         rsrc_info = self.extract_rsrc()
 
         pe_features = {
-            #'file_type':file_type,
-            'func_list':func_list,
-            'imp_hash':imphash,
-            'cmp_section' : cmp_section_data,
-            'auto':auto,
-            'rich_info(xor_key)':rich_info,
-            'pdb_info':pdb_info,
-            'rsrc_info':rsrc_info
+            'file_name': self.file_name[28:],
+            'file_hash': hashlib.sha256(open(self.file_name, 'rb').read()).hexdigest(),
+            'imp_hash': imphash,
+            'cmp_section': cmp_section_data,
+            'auto': auto,
+            'rich_info': rich_info,
+            'pdb_info': pdb_info,
+            #'rsrc_info': rsrc_info
         }
 
 

@@ -1,6 +1,9 @@
+import hashlib
 import json
-from Analzer_Engine.Algorithm import all_algo as algo
 
+from Analzer_Engine.Algorithm import all_algo as algo
+from Analzer_Engine.whitelist_bbhs import while_lists
+from collections import OrderedDict
 
 class AnalyzeFlowchart:
     def __init__(self, idb_all):
@@ -30,80 +33,101 @@ class AnalyzeFlowchart:
 
         return idb_list
 
-        # # flow json 파일 가져와서 읽기
-        # with open(self.stand_flow) as s_flow_json:
-        #     s_flow_data = json.load(s_flow_json)
-        # with open(self.target_flow) as t_flow_json:
-        #     t_flow_data = json.load(t_flow_json)
-        #
-        # # 함수 이름 추출
-        # self.s_func_list = [key for key in s_flow_data if key != 'constant']
-        # self.t_func_list = [key for key in t_flow_data if key != 'constant']
-        #
-        # # hash & constant value 추출
-        # for func in s_flow_data:
-        #     # constant value
-        #     if func == 'constant':
-        #         self.s_constant = s_flow_data[func]
-        #         continue
-        #     for basic_block in s_flow_data[func]:
-        #         if basic_block == 'flow_opString':
-        #             continue
-        #         self.s_hash_dict.update({s_flow_data[func][basic_block]['block_sha256']: False})
-        #
-        # for func in t_flow_data:
-        #     # except constant value
-        #     if func == 'constant':
-        #         self.t_constant = t_flow_data[func]
-        #         continue
-        #     for basic_block in t_flow_data[func]:
-        #         if basic_block == 'flow_opString':
-        #             continue
-        #         self.t_hash_dict.update({t_flow_data[func][basic_block]['block_sha256']: False})
+    def block_hash_parser(self, bloc_dict):
+        block_hash_dic = dict()
 
-    def analyze_bbh(self):
+        for x in bloc_dict["func_name"]:
+            block_hash_dic[x] = {}
+            for y in bloc_dict["func_name"][x]:
+                if y != "flow_opString":
+                    # 화이트 리스트 처리는 이 부분에서..?
+                    if bloc_dict["func_name"][x][y]['block_sha256'] in while_lists:
+                        continue
+                    block_hash_dic[x].update({y: {bloc_dict["func_name"][x][y]['block_sha256']: False}})
+
+        return block_hash_dic
+
+
+    def analyze_bbh(self, s_flow_data, t_flow_data):
         '''
 
         basic block hash(함수 대표값)을 비교해서 점수에 가중치를 매겨 반환하는 함수
         :return: score with weight
         '''
 
-        bbh_score = algo.get_func_similarity(self.s_hash_dict, self.t_hash_dict)
-        return bbh_score
+        s_hash_dict = self.block_hash_parser(s_flow_data)
+        t_hash_dict = self.block_hash_parser(t_flow_data)
+        stand_hash_count = 0
+        cmp_dict = dict()
+        target_dict = dict()
+        stand_dict = dict()
+        cmp_func_all = list()
+        cmp_straddr_all = list()
+        cmp_func_list = list()
+        cmp_straddr_list = list()
 
-    def analyze_constant(self):
+        for s_fname, s_valueSet in s_hash_dict.items():
+            for s_sAddr, s_hashSet in s_valueSet.items():
+                for s_hash in s_hashSet:
+                    stand_hash_count += 1
+                    for t_fname, t_valueSet in t_hash_dict.items():
+                        for t_tAddr, t_hashSet in t_valueSet.items():
+                            for t_hash in t_hashSet:
+                                if s_hash == t_hash:
+                                    s_hashSet[s_hash] = True
+                                    t_hashSet[t_hash] = True
+
+                                    cmp_func_list.append(s_fname)
+                                    cmp_func_list.append(t_fname)
+                                    cmp_func_all.append(cmp_func_list)
+                                    cmp_straddr_list.append(s_sAddr)
+                                    cmp_straddr_list.append(t_tAddr)
+                                    cmp_straddr_all.append(cmp_straddr_list)
+        #             cmp_dict['func_name'] = cmp_func_list
+        #             cmp_dict['start_addr'] = cmp_straddr_list
+        #             target_dict[t_flow_data['file_name']] = cmp_dict
+        # stand_dict[s_flow_data['file_name']] = target_dict
+        #
+        # with open(r"C:\malware\result\cm_test.txt", 'a') as makefile:
+        #     json.dump(stand_dict, makefile, ensure_ascii=False, indent='\t')
+        # pprint.pprint(stand)
+        # print('-----------------------------------------------------------------------')
+        # pprint.pprint(tar)
+        print(json.dumps(s_hash_dict, indent=4))
+        print('-----------------------------------------------------------------------')
+        print(json.dumps(t_hash_dict, indent=4))
+        return algo.get_func_similarity(s_hash_dict, t_hash_dict, stand_hash_count), cmp_func_list, cmp_straddr_list
+
+    def analyze_constant(self,standard, target):
         '''
 
         상수값을 비교해서 점수에 가중치를 매겨 반환하는 함수
         :return: score with weight
         '''
 
-        const_score = algo.get_string_similarity(self.s_constant, self.t_constant)
+        const_score = algo.get_string_similarity(standard['constant'], target['constant'])
         return const_score['2-Gram']
 
-    def analyze_all(self,idb_list):
-        print('a')
+    def analyze_all(self, idb_list):
+        idb_all = OrderedDict()
+        test_all = OrderedDict()
+        for index_1, idb_info_s in enumerate(idb_list):
+            idb_s = dict()
+            test_s = dict()
+            for index_2, idb_info_t in enumerate(idb_list):
+                idb_t = dict()
+                test_d = dict()
+                tmp = idb_info_t['file_name']
+                if index_1 == index_2:
+                    continue
+                idb_t['bbh'], test_d['func_name'], test_d['start_addr'] = self.analyze_bbh(idb_info_s, idb_info_t)
+                idb_t['const_value'] = self.analyze_constant(idb_info_s, idb_info_t)
+                test_s[idb_info_t['file_name']] = test_d
+                idb_s[idb_info_t['file_name']] = idb_t
+            test_all[idb_info_s['file_name']] = test_s
+            idb_all[idb_info_s['file_name']] = idb_s
 
+        with open(r"C:\malware\result\cm_test.txt", 'w') as makefile:
+            json.dump(test_all, makefile, ensure_ascii=False, indent='\t')
 
-
-
-# if __name__ == '__main__':
-#     print('==========================START FLOWCHART==========================')
-#     print('-------------------------------------------------------------------')
-#     path_stand = r"C:\Users\qkrwl\PycharmProjects\Breakers\binary-diffing-tool\test_01.txt"
-#     path_target = r"C:\Users\qkrwl\PycharmProjects\Breakers\binary-diffing-tool\test_02.txt"
-#     a = AnalyzeFlowchart(path_stand, path_target)
-#     print('--------------------------START PARSING----------------------------')
-#     a.Flow_parser()
-#     print(f'[+]Standard File\' function list : {a.s_func_list}')
-#     print(f'[+]Target File\' function list : {a.t_func_list}')
-#     print(f'[+]Standard File\' hash dictionary : {a.s_hash_dict}')
-#     print(f'[+]Target File\' hash dictionary : {a.t_hash_dict}')
-#     print(f'[+]Standard File\' constant value : {a.s_constant}')
-#     print(f'[+]Target File\' constant value : {a.t_constant}')
-#     print('-----------------------------END PARSER-----------------------------')
-#     print('---------------------------START ANALYZE----------------------------')
-#     print(f'[+]Analyze basic block hash similarity : {a.analyze_bbh()}')
-#     print(f'[+]Analyze constant similarity : {a.analyze_constant()}')
-#     print('----------------------------END ANALYZE-----------------------------')
-#     print('===========================END FLOWCHART============================')
+        return idb_all

@@ -1,6 +1,5 @@
 from ngram import NGram
 
-
 def get_string_similarity(standard, target):  # input json path string 1, 2
     '''
     문자열을 넣어주면 비교해서 얼마나 같은지 점수로 반환해주는 함수
@@ -18,23 +17,21 @@ def get_string_similarity(standard, target):  # input json path string 1, 2
     return result
 
 
-def get_func_similarity(stand_hash_dict, target_hash_dict):
+def get_func_similarity(s_dict, t_dict, stand_hash_count):
     '''
     해쉬값을 넣어주면 비교해서 얼마나 같은지 점수로 반환해주는 함수
     :param stand_hash_dict: stand value for compare
     :param target_hash_dict: target value for compare
-    :return: score calculated by comparing True or False statement between standard and target data
+    :return: score callated by comparing True or False statement between standard and target data
+    @ 스코어 산출에 target dict은 사용하지 않으나, 일단 가지고 있음.
     '''
 
-    for i in stand_hash_dict:
-        for j in stand_hash_dict:
-            if i == j:
-                stand_hash_dict[j] = True
-                target_hash_dict[i] = True
-            else:
-                pass
+    true_count = ([s_dict[fname][fAddr][hashSet] for fname in s_dict for fAddr in s_dict[fname] for hashSet in s_dict[fname][fAddr]]).count(True)
+    #print(f'true_count ::: {true_count}')
+    #print(f'stand_hash_count ::: {stand_hash_count}')
 
-    return (list((stand_hash_dict.values())).count(True)/len(stand_hash_dict))
+
+    return (true_count/stand_hash_count)
 
 
 def get_data_similarity(self, stand_data, target_data):

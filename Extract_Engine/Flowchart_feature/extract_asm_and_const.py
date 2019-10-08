@@ -1,7 +1,10 @@
+import json
+import timeit
+
 import idb
 import hashlib
 from Extract_Engine.Flowchart_feature import const_filter_indexs  # const_filter_indexs.py
-
+from collections import OrderedDict
 glo_list = list()  # PE 전체의 constant 값을 담을 global list
 
 
@@ -17,20 +20,22 @@ class basic_block(idb_info):
         super(basic_block, self).__init__(api, fva)
         self.func_name = func_name
 
-    def bbs(self, func_name_dicts):
+    def bbs(self, func_name_dicts, file_name):
         mutex_opcode_list = []
         opcode_flow = []
         function_dicts = {}
+        idb_info = {}
         func_name_dicts[self.func_name] = {}
         # 함수 내에서 플로우 차트 추출
         function_flowchart = self.api.idaapi.FlowChart(self.function)
+
         # 플로우 차트에서 반복문 돌려 각 베이직 블록 추출
 
         for basicblock in function_flowchart:
             curaddr = basicblock.startEA
             endaddr = basicblock.endEA
 
-            if (endaddr - curaddr) < 50:  # 최소 바이트 50이상 할것
+            if (endaddr - curaddr) < 30:  # 최소 바이트 50이상 할것
                 continue
 
             opcodes = []
@@ -55,13 +60,11 @@ class basic_block(idb_info):
                         if operand_1 not in const_filter_indexs.pointer:  # esp, esi, ebp가 아니여야 입장
                             if "ptr" not in operand_2 and operand_2 not in const_filter_indexs.logic:  # ptr, 0xffffffff 등 없어야 입장
                                 if operand_2 not in const_filter_indexs.registers:  # 레지스터가 없어야 입장
-                                    if operand_2 != '0' and len(
-                                            operand_2) != 8 and "[" not in operand_2 and "]" not in operand_2:
+                                    if operand_2 != '0' and len(operand_2) != 8 and "[" not in operand_2 and "]" not in operand_2:
                                         glo_list.append(operand_2)  # append file total constant
                                         block_constant.append(operand_2)  # append block constant
                     else:  # operand가 1개일 때 조건입장
-                        if operand[0] not in const_filter_indexs.registers and "ptr" not in operand[0] and operand[
-                            0] not in const_filter_indexs.logic:  # 레지가아니고 ptr도 없어야 입장
+                        if operand[0] not in const_filter_indexs.registers and "ptr" not in operand[0] and operand[0] not in const_filter_indexs.logic:  # 레지가아니고 ptr도 없어야 입장
                             if operand[0] != '0':
                                 glo_list.append(operand[0])
                                 block_constant.append(operand[0])
@@ -90,16 +93,24 @@ class basic_block(idb_info):
             }
             opcode_flow.append(mutex_opcode)
             function_dicts[hex(basicblock.startEA)] = basicblock_dics
+            #function_name['funct_name'] = function_dicts
         ''' ================================ END ONE Flowchart ================================'''
         func_name_dicts[self.func_name] = function_dicts
+
         if len(func_name_dicts[self.func_name]) == 0:
             del func_name_dicts[self.func_name]  # del 안하면 비어있는 딕셔너리 생김
         else:
             func_name_dicts[self.func_name].update({'flow_opString': ' '.join(opcode_flow)})
-        return func_name_dicts
+
+        idb_info['file_name'] = file_name
+        idb_info['func_name'] = func_name_dicts
+        #idb_info['func_name'] = func_name_dicts
+        #idb_info['func_name'] = func_name_dicts
+
+        return idb_info
 
 
-def main(api, ):
+def main(api,file_name):
     function_dicts = {}
 
     for fva in api.idautils.Functions():
@@ -109,7 +120,7 @@ def main(api, ):
             # main or start or sub_***** function. not library function
             basicblock = basic_block(api, fva, fname)
             # 베이직 블록 정보 추출 함수 실행
-            basicblock_function_dicts = basicblock.bbs(function_dicts)
+            basicblock_function_dicts = basicblock.bbs(function_dicts, file_name)
 
     return basicblock_function_dicts
 
@@ -122,21 +133,23 @@ def open_idb(FROM_FILE):
 
 
 def basicblock_idb_info_extraction(FROM_FILE):
+
     api = open_idb(FROM_FILE)
-    idb_sub_function_info = main(api)
+    idb_sub_function_info = main(api, FROM_FILE[19:-4])
     # 여기서 상수값 붙임. json 맨 아래에 통쨰로 붙이기 위함.
     idb_sub_function_info.update({'constant': ' '.join(glo_list)})
     # END
+
     return idb_sub_function_info
 
 
-# if __name__ == "__main__":
-#     s = timeit.default_timer()  # start time
-#     PATH = r"D:\out_idb\b95da5ebb4d2df062210ebd39673806f3b8b50d87658a007da6578b2a5454f2d.idb"
-#     idb_sub_function_info = basicblock_idb_info_extraction(PATH)
-#
-#     with open(r"D:\out_idb\test.txt", 'w') as makefile:
-#         json.dump(idb_sub_function_info, makefile, ensure_ascii=False, indent='\t')
-#
-#     print(f"[+]running : {timeit.default_timer() - s}")  # end time
-#     print("-----END-----")
+if __name__ == "__main__":
+    s = timeit.default_timer()  # start time
+    PATH = r"C:\malware\mid_idb\4a034846e581d0b7a0309a5047859b437ed91718e00254b0206adda2f920b447.idb"
+    idb_sub_function_info = basicblock_idb_info_extraction(PATH)
+
+    with open(r"C:\malware\result\test.txt", 'w') as makefile:
+        json.dump(idb_sub_function_info, makefile, ensure_ascii=False, indent='\t')
+
+    print(f"[+]running : {timeit.default_timer() - s}")  # end time
+    print("-----END-----")
