@@ -11,7 +11,8 @@ from Extract_Engine.Flowchart_feature import extract_asm_and_const
 from Extract_Engine.PE_feature import extract_pe
 from Analzer_Engine import analyze_pe, analyze_flowchart
 from openpyxl import load_workbook, Workbook
-
+from Check_Packing import Packer_Detect2
+from Unpacking import unpack_module
 
 
 class Pe_Files_Check:
@@ -49,11 +50,13 @@ class Pe_Files_Check:
             if f_hash in self.pe_hash_dict.values():
                 os.remove(f_path)
             else:
-                os.rename(f_path, os.path.join(self.pe_dir_path, f_hash))
+                #os.rename(f_path, os.path.join(self.pe_dir_path, f_hash))
+                print('a')
 
                 # 파일은 삭제하지만 해당 파일명(절대경로)와 해시정보는 DB에 있어야함.
             # 추후 시각화할 때 정보 필요
             self.pe_hash_dict[f_path] = f_hash
+
 
         # 이후에는 DB에 저장.
         # dictionary로 넘겨서 self.pe_hash_dict.value()의 유니크한 값들만 idb로 변환.
@@ -67,7 +70,31 @@ class Pe_Files_Check:
 
         return self.pe_hash_dict
 
-def Convert_idb(PATH,IDB_PATH):
+    def unpack_pe(self):
+        Packer_Detect2.sample_packer_type_detect(self.pe_dir_path)
+
+        sample_folder_path = self.pe_dir_path
+        save_folder_path = r"C:\malware\packing_info"
+        pack_path = os.path.join(save_folder_path, 'packed')
+        unpack_path = os.path.join(save_folder_path, 'unpacked')
+        if not (os.path.isdir(save_folder_path)): os.makedirs(save_folder_path)
+        if not (os.path.isdir(pack_path)): os.makedirs(pack_path)
+        if not (os.path.isdir(unpack_path)): os.makedirs(unpack_path)
+
+        queue = unpack_module.mains(sample_folder_path)
+        # start Multi Process
+        # packer_check(queue, pack_path, unpack_path)
+
+        proc_list = []
+        for _ in range(0, 5):
+            proc = Process(target=unpack_module.packer_check, args=(queue, pack_path, unpack_path,))
+            proc_list.append(proc)
+        for proc in proc_list:
+            proc.start()
+        for proc in proc_list:
+            proc.join()
+
+def convert_idb(PATH,IDB_PATH):
     # idb 변환
     return pe2idb.create_idb(PATH, IDB_PATH)
 
@@ -117,7 +144,6 @@ class Exract_Feature:
 
         if export_idb != False:
             count = 1
-            #print(return_dict)
             for dict_list in export_idb.values():
                 with open(r"C:\malware\result\idbfile_"+str(count)+".txt", 'w') as makefile:
                     json.dump(dict_list, makefile, ensure_ascii=False, indent='\t')
@@ -141,53 +167,47 @@ class Exract_Feature:
         else:
             return False
 
-
-
-
 class Analyze_files:
     def __init__(self, all_idb_info, all_pe_info):
         self.all_pe_info = all_pe_info
         self.all_idb_info = all_idb_info
 
-    def calculate_heuristic(self,pe_result):
+    def calculate_heuristic(self, idb_result, pe_result):
         '''
                 가중치가 부여된 점수들을 더해서 반환해주는 함수
                 *다 더했을 때 최대나 최소안에 있는지 확인하는 로직을 넣어주고 예외처리 해주면 될 듯
                 :return: final score
                 '''
         # 최종 휴리스틱 스코어
-        #semifinal = OrderedDict()
+
         real_final = OrderedDict()
-        #final_score.append('0x1234')
-        # Flowchart 점수 추가 (가중치 포함)
 
-        for key_s, value_s in pe_result.items():
-            semifinal = OrderedDict()
-            for key_t, value_t in value_s.items():
-                #self.F.Flow_parser()
-                # self.final_score += self.F.analyze_filehash()
-                #final_score.append(self.F.analyze_bbh() * 0.56)
-                #final_score.append(self.F.analyze_constant() * 0.24)
+        for key_i, key_pe in zip(idb_result.items(), pe_result.items()):
+            idb_final_score = OrderedDict()
+            pe_final_score = OrderedDict()
+            for value_i, value_pe in zip(key_i[1].items(), key_pe[1].items()):
+                semifinal = [0, 0, 0, 0, 0, 0, 0, 0]
+                semifinal[0] = (value_pe[1]['file_hash'])
+                semifinal[1] = (value_i[1]['bbh'])
+                semifinal[2] = (value_i[1]['const_value'])
+                semifinal[3] = (value_pe[1]['section_score'])
+                semifinal[4] = (value_pe[1]['auth_score'])
+                semifinal[5] = (value_pe[1]['pdb_score'])
+                semifinal[6] = (value_pe[1]['imphash'])
+                semifinal[7] = (value_pe[1]['rich'])
 
-                final_score = list()
-                #final_score.append(value.key('hash'))
-                # PE 점수 추가 (가중치 포함)
-                final_score.append(value_t['filehash'])
-                final_score.append(value_t['imphash'])
-                # self.final_score['section'] = self.P.analyze_section() * 0.05
-                final_score.append(value_t['rich'])
-               # final_score.append(value.key('rsrc'))
-                # self.final_score['rsrc'] = self.P.analyze_rsrc() * 0.05
-                semifinal[key_t] = final_score
-            real_final[key_s] = semifinal
+                idb_final_score[value_i[0]] = semifinal
+                pe_final_score[value_pe[0]] = semifinal
+
+            real_final[key_i[0]] = idb_final_score
+            real_final[key_pe[0]] = pe_final_score
+
         return real_final
 
     def analyze_idb(self):
         idb = analyze_flowchart.AnalyzeFlowchart(self.all_idb_info)
         idb_split = idb.flow_parser()
-
         idb_result = idb.analyze_all(idb_split)
-
         return idb_result
 
     def analyze_pe(self):
@@ -197,82 +217,11 @@ class Analyze_files:
         pe_result = pe.analyze_all(pe_split)
 
         return pe_result
-
-
-class Analyze_files:
-    def __init__(self, all_idb_info, all_pe_info):
-        self.all_pe_info = all_pe_info
-        self.all_idb_info = all_idb_info
-
-    def calculate_heuristic(self,pe_result):
-        '''
-                가중치가 부여된 점수들을 더해서 반환해주는 함수
-                *다 더했을 때 최대나 최소안에 있는지 확인하는 로직을 넣어주고 예외처리 해주면 될 듯
-                :return: final score
-                '''
-        # 최종 휴리스틱 스코어
-        #semifinal = OrderedDict()
-        real_final = OrderedDict()
-        #final_score.append('0x1234')
-        # Flowchart 점수 추가 (가중치 포함)
-
-        for key_s, value_s in pe_result.items():
-            semifinal = OrderedDict()
-            for key_t, value_t in value_s.items():
-                #self.F.Flow_parser()
-                # self.final_score += self.F.analyze_filehash()
-                #final_score.append(self.F.analyze_bbh() * 0.56)
-                #final_score.append(self.F.analyze_constant() * 0.24)
-
-                final_score = list()
-                #final_score.append(value.key('hash'))
-                # PE 점수 추가 (가중치 포함)
-                final_score.append(value_t['filehash'])
-                final_score.append(value_t['imphash'])
-                # self.final_score['section'] = self.P.analyze_section() * 0.05
-                final_score.append(value_t['rich'])
-               # final_score.append(value.key('rsrc'))
-                # self.final_score['rsrc'] = self.P.analyze_rsrc() * 0.05
-                semifinal[key_t] = final_score
-            real_final[key_s] = semifinal
-        return real_final
-
-    def analyze_idb(self):
-        idb = analyze_flowchart.AnalyzeFlowchart(self.all_idb_info)
-        idb_split = idb.flow_parser()
-
-        idb_result = idb.analyze_all(idb_split)
-
-        return idb_result
-
-    def analyze_pe(self):
-        pe = analyze_pe.AnalyzePE(self.all_pe_info)
-        pe_split = pe.pe_parser()
-
-        pe_result = pe.analyze_all(pe_split)
-
-        return pe_result
-
-'''
-def out_csv(csv_path, score_dict):
-    with open(csv_path, 'w',  newline="") as csv_f:
-        csv_w=csv.writer(csv_f)
-        title = ['FILE NAME', 'FILE HASH', 'IMPORT HASH','RICH', 'SECTION', 'BB HASH', 'CONSTANT', 'TOTAL SCORE']
-        i=1
-        csv_w.writerow(title)
-        for key, score_row in score_dict.items():
-            score_row.append(f"=sum(C{i}, D{i}, E{i}, F{i})")
-            i+=1
-            result_row = [key]
-            for v in score_row:
-                result_row.append(v)
-            csv_w.writerow(result_row)
-'''
 
 '''
     total score to the excel file
 '''
-def out_xlsx(path,result_dict):
+def out_xlsx(path, result_dict):
     try:
         wb = load_workbook(path)
     except:
@@ -281,8 +230,8 @@ def out_xlsx(path,result_dict):
     ws = wb.active
 
     ws.title = 'result_xlsx'
-    title = ['BASE NAME','T NAME', 'T HASH', 'IMPORT HASH', 'RICH', 'SECTION', 'BB HASH', 'CONSTANT', 'TOTAL SCORE']
-    cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
+    title = ['BASE_FILE', 'COMP_FILE', 'FILE HASH', 'BB HASH', 'CONSTANT', 'SECTION', 'AUTH', 'PDB', 'IMPORT HASH', 'RICH']
+    cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
 
     for i in range(len(title)):
         ws[f'{cols[i]}1'] = title[i]
@@ -314,24 +263,35 @@ if __name__ == "__main__":
     PATH = r"C:\malware\mid_GandCrab_exe"
     IDB_PATH = r"C:\malware\mid_idb"
 
+    # 1. pe 해시 체크 (동일한 파일 필터), 2.패킹 체크
     pe_check = Pe_Files_Check(PATH)
     file_hash_dict = pe_check.get_unique_pe_list()
-    flag = Convert_idb(PATH, IDB_PATH)
+    pe_check.unpack_pe()
+
+    # 3. pe파일 -> idb 변환
+    flag = convert_idb(PATH, IDB_PATH)
     Features = Exract_Feature(PATH, IDB_PATH)
 
+    # 4. 정보 추출(idb,pe)
     if flag == True:
         all_idb_info = Features.export_idb_info('idb')
         all_pe_info = Features.export_pe_info('pe')
     else:
         print('error fuck')
+    print(type(all_idb_info))
 
+    # 5. 분석 하기
     analyze = Analyze_files(all_idb_info, all_pe_info)
 
     result_idb = analyze.analyze_idb()
+    # with open(r"C:\malware\result\idbtest.txt", 'w') as makefile:
+    #     json.dump(result_idb, makefile, ensure_ascii=False, indent='\t')
     result_pe = analyze.analyze_pe()
+    # with open(r"C:\malware\result\petest.txt", 'w') as makefile:
+    #     json.dump(result_pe, makefile, ensure_ascii=False, indent='\t')
 
+    # 6. 결과 csv 저장 (임시)
     all_result = analyze.calculate_heuristic(result_idb, result_pe)
-
 
     out_xlsx(r"C:\malware\result\test.xlsx", all_result)
 
