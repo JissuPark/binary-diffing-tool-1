@@ -61,38 +61,51 @@ class AnalyzeFlowchart:
         cmp_dict = dict()
         target_dict = dict()
         stand_dict = dict()
+
+        stand_f = OrderedDict()
+        target_f = OrderedDict()
         cmp_func_all = list()
         cmp_straddr_all = list()
         cmp_func_list = list()
         cmp_straddr_list = list()
 
         for s_fname, s_valueSet in s_hash_dict.items():
+            stand_list = list()
             for s_sAddr, s_hashSet in s_valueSet.items():
+
                 for s_hash in s_hashSet:
                     stand_hash_count += 1
                     for t_fname, t_valueSet in t_hash_dict.items():
+                        target_list = list()
                         for t_tAddr, t_hashSet in t_valueSet.items():
+
                             for t_hash in t_hashSet:
                                 if s_hash == t_hash:
                                     s_hashSet[s_hash] = True
                                     t_hashSet[t_hash] = True
 
-                                    cmp_func_list.append(s_fname)
-                                    cmp_func_list.append(t_fname)
-                                    cmp_func_all.append(cmp_func_list)
-                                    cmp_straddr_list.append(s_sAddr)
-                                    cmp_straddr_list.append(t_tAddr)
-                                    cmp_straddr_all.append(cmp_straddr_list)
-        #             cmp_dict['func_name'] = cmp_func_list
-        #             cmp_dict['start_addr'] = cmp_straddr_list
-        #             target_dict[t_flow_data['file_name']] = cmp_dict
-        # stand_dict[s_flow_data['file_name']] = target_dict
+                                    # cmp_func_list.append(s_fname)
+                                    # cmp_func_list.append(t_fname)
+                                    # cmp_func_all.append(cmp_func_list)
+                                    # cmp_straddr_list.append(s_sAddr)
+                                    # cmp_straddr_list.append(t_tAddr)
+                                    # cmp_straddr_all.append(cmp_straddr_list)
+                                    stand_list.append(s_sAddr)
+                                    stand_dict[s_fname] = stand_list
+                                    target_list.append(t_tAddr)
+                                    target_dict[t_fname] = target_list
+        stand_f[s_flow_data['file_name']] = stand_dict
+        target_f[t_flow_data['file_name']] = target_dict
+
+        stand_f.update(target_f)
+
         #
-        # with open(r"C:\malware\result\cm_test.txt", 'a') as makefile:
-        #     json.dump(stand_dict, makefile, ensure_ascii=False, indent='\t')
+        with open(r"C:\malware\result\dict_test.txt", 'a') as makefile:
+            json.dump(stand_f, makefile, ensure_ascii=False, indent='\t')
         # pprint.pprint(stand)
         # print('-----------------------------------------------------------------------')
         # pprint.pprint(tar)
+        print('=================================================================================')
         print(json.dumps(s_hash_dict, indent=4))
         print('-----------------------------------------------------------------------')
         print(json.dumps(t_hash_dict, indent=4))
@@ -127,7 +140,7 @@ class AnalyzeFlowchart:
             test_all[idb_info_s['file_name']] = test_s
             idb_all[idb_info_s['file_name']] = idb_s
 
-        with open(r"C:\malware\result\cm_test.txt", 'w') as makefile:
-            json.dump(test_all, makefile, ensure_ascii=False, indent='\t')
+        # with open(r"C:\malware\result\cm_test.txt", 'w') as makefile:
+        #     json.dump(test_all, makefile, ensure_ascii=False, indent='\t')
 
         return idb_all
