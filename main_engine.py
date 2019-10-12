@@ -11,7 +11,8 @@ from Extract_Engine.Flowchart_feature import extract_asm_and_const
 from Extract_Engine.PE_feature import extract_pe
 from Analzer_Engine import analyze_pe, analyze_flowchart
 from openpyxl import load_workbook, Workbook
-
+from Check_Packing import Packer_Detect2
+from Unpacking import unpack_module
 
 
 class Pe_Files_Check:
@@ -69,7 +70,31 @@ class Pe_Files_Check:
 
         return self.pe_hash_dict
 
-def Convert_idb(PATH,IDB_PATH):
+    def unpack_pe(self):
+        Packer_Detect2.sample_packer_type_detect(self.pe_dir_path)
+
+        sample_folder_path = self.pe_dir_path
+        save_folder_path = r"C:\malware\packing_info"
+        pack_path = os.path.join(save_folder_path, 'packed')
+        unpack_path = os.path.join(save_folder_path, 'unpacked')
+        if not (os.path.isdir(save_folder_path)): os.makedirs(save_folder_path)
+        if not (os.path.isdir(pack_path)): os.makedirs(pack_path)
+        if not (os.path.isdir(unpack_path)): os.makedirs(unpack_path)
+
+        queue = unpack_module.mains(sample_folder_path)
+        # start Multi Process
+        # packer_check(queue, pack_path, unpack_path)
+
+        proc_list = []
+        for _ in range(0, 5):
+            proc = Process(target=unpack_module.packer_check, args=(queue, pack_path, unpack_path,))
+            proc_list.append(proc)
+        for proc in proc_list:
+            proc.start()
+        for proc in proc_list:
+            proc.join()
+
+def convert_idb(PATH,IDB_PATH):
     # idb 변환
     return pe2idb.create_idb(PATH, IDB_PATH)
 
@@ -235,21 +260,27 @@ if __name__ == "__main__":
 
     s = timeit.default_timer()
 
-    PATH = r"C:\malware\mid_GandCrab_exe"
+    PATH = r"C:\malware\Andariel"
     IDB_PATH = r"C:\malware\mid_idb"
 
+    # 1. pe 해시 체크 (동일한 파일 필터), 2.패킹 체크
     pe_check = Pe_Files_Check(PATH)
     file_hash_dict = pe_check.get_unique_pe_list()
+    pe_check.unpack_pe()
 
-    flag = Convert_idb(PATH, IDB_PATH)
+    # 3. pe파일 -> idb 변환
+    flag = convert_idb(PATH, IDB_PATH)
     Features = Exract_Feature(PATH, IDB_PATH)
 
+    # 4. 정보 추출(idb,pe)
     if flag == True:
         all_idb_info = Features.export_idb_info('idb')
         all_pe_info = Features.export_pe_info('pe')
     else:
         print('error fuck')
     print(type(all_idb_info))
+
+    # 5. 분석 하기
     analyze = Analyze_files(all_idb_info, all_pe_info)
 
     result_idb = analyze.analyze_idb()
@@ -259,6 +290,7 @@ if __name__ == "__main__":
     # with open(r"C:\malware\result\petest.txt", 'w') as makefile:
     #     json.dump(result_pe, makefile, ensure_ascii=False, indent='\t')
 
+    # 6. 결과 csv 저장 (임시)
     all_result = analyze.calculate_heuristic(result_idb, result_pe)
 
     out_xlsx(r"C:\malware\result\test.xlsx", all_result)

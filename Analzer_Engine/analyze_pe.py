@@ -2,9 +2,6 @@ import hashlib
 from collections import OrderedDict
 import ssdeep
 from ngram import NGram
-import Analzer_Engine.analyzer_main as AM
-import json
-from Analzer_Engine.Algorithm import all_algo as algo
 
 
 class AnalyzePE:
@@ -106,10 +103,13 @@ class AnalyzePE:
         *문자열로 뽑아서 한다면 ngram을, 데이터 자체를 뽑아서 한다며 data를 사용.. 재호랑 얘기해서하기
         :return: score with weight
         '''
-        if standard['rich_info'] == target['rich_info']:
-            return 1
-        else:
+        if standard['rich_info'] == {} or target['rich_info'] == {}:
             return 0
+        else:
+            if standard['rich_info'] == target['rich_info']:
+                return 1
+            else:
+                return 0
         #print(json.dumps(standard, indent=4))
         #print(json.dumps(target, indent=4))
 

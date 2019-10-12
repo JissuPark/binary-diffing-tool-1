@@ -13,20 +13,25 @@ class Pe_Feature:
 
     def extract_rich(self):
         rich = pe_rich.ParseRichHeader(self.file_name)
-        xor_key = rich.xorkey
-        rich_dict = dict()
-        print(f'XorKey : {xor_key}')
-        print("ProID    name              count")
-        for key in rich.info_list.keys():
-            count = rich.info_list[key]
-            mcv = (key << 16)
-            prodid = (key >> 16)
+        flag = rich.parse()
 
-            prodid_name = pe_rich.PRODID_MAP[prodid] if prodid in pe_rich.PRODID_MAP else "<unknown>"
-            print('%6d   %-15s %5d     %6d' % (prodid, prodid_name, count, mcv))
-            rich_dict[key] = count
+        if flag != False:
+            xor_key = rich.xorkey
+            rich_dict = dict()
+            print(f'XorKey : {xor_key}')
+            print("ProID    name              count")
+            for key in rich.info_list.keys():
+                count = rich.info_list[key]
+                mcv = (key << 16)
+                prodid = (key >> 16)
 
-        return xor_key
+                prodid_name = pe_rich.PRODID_MAP[prodid] if prodid in pe_rich.PRODID_MAP else "<unknown>"
+                print('%6d   %-15s %5d     %6d' % (prodid, prodid_name, count, mcv))
+                rich_dict[key] = count
+
+            return xor_key
+        else:
+            return ""
 
     def extract_pdb(self):
         output_data = dict()

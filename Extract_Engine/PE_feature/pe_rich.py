@@ -255,15 +255,17 @@ class ParseRichHeader:
     '''
     def __init__(self, file_name):
         self.file_name=file_name
-        self.parse(file_name)
+       # self.parse(file_name)
         # processing pe file for extract rich header
         # parse function return riche_header data section from file_name
 
-    def parse(self, file_name):
-        data = get_rich_section(file_name)
+    def parse(self):
+        data = get_rich_section(self.file_name)
         rich_identifi_addr = data.find(b'Rich')
 
-        if rich_identifi_addr == -1 : raise RichHeaderNotFoundException()       # if rich_header no exit
+        if rich_identifi_addr == -1 :
+            #raise RichHeaderNotFoundException()       # if rich_header no exit
+            return False
 
         rich_offset = rich_identifi_addr + 4
         checksum_text = data[rich_offset : rich_offset+4]
