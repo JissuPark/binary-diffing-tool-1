@@ -1,5 +1,6 @@
 import hashlib
 import json
+import operator
 
 from Analzer_Engine.Algorithm import all_algo as algo
 from Analzer_Engine.whitelist_bbhs import while_lists
@@ -28,7 +29,9 @@ class AnalyzeFlowchart:
         '''
 
         idb_list = list()
-        for f_name, f_info in self.idb_all.items():
+
+        idb_dict = sorted(self.idb_all.items(), key=operator.itemgetter(0))
+        for f_name, f_info in idb_dict:
             idb_list.append(f_info)
 
         return idb_list
@@ -105,10 +108,10 @@ class AnalyzeFlowchart:
         # pprint.pprint(stand)
         # print('-----------------------------------------------------------------------')
         # pprint.pprint(tar)
-        print('=================================================================================')
-        print(json.dumps(s_hash_dict, indent=4))
-        print('-----------------------------------------------------------------------')
-        print(json.dumps(t_hash_dict, indent=4))
+        # print('=================================================================================')
+        # print(json.dumps(s_hash_dict, indent=4))
+        # print('-----------------------------------------------------------------------')
+        # print(json.dumps(t_hash_dict, indent=4))
         return algo.get_func_similarity(s_hash_dict, t_hash_dict, stand_hash_count), cmp_func_list, cmp_straddr_list
 
     def analyze_constant(self,standard, target):

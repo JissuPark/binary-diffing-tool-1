@@ -2,6 +2,7 @@ import hashlib
 from collections import OrderedDict
 import ssdeep
 from ngram import NGram
+import operator
 
 
 class AnalyzePE:
@@ -20,9 +21,11 @@ class AnalyzePE:
         :return: none
         '''
         pe_list = list()
-        for f_name, f_info in self.pe_all.items():
-            pe_list.append(f_info)
+        pe_all_dict = OrderedDict()
 
+        pe_all_dict = sorted(self.pe_all.items(), key=operator.itemgetter(0))
+        for f_name, f_info in pe_all_dict:
+            pe_list.append(f_info)
         return pe_list
 
     def analyze_imphash(self, standard, target):
