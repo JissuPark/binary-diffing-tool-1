@@ -258,7 +258,8 @@ if __name__ == "__main__":
 
     s = timeit.default_timer()
 
-    PATH = r"C:\malware\에러나는거"
+
+    PATH = r"C:\malware\mid_GandCrab_exe"
     IDB_PATH = r"C:\malware\mid_idb"
 
     # 1. pe 해시 체크 (동일한 파일 필터), 2.패킹 체크
