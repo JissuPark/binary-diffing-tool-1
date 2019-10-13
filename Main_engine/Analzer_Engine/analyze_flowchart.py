@@ -43,9 +43,12 @@ class AnalyzeFlowchart:
             for y in bloc_dict["func_name"][x]:
                 if y != "flow_opString":
                     # 화이트 리스트 처리는 이 부분에서..?
-                    if bloc_dict["func_name"][x][y]['block_sha256'] in while_lists:
+                    try:
+                        if bloc_dict["func_name"][x][y]['block_sha256'] in while_lists:
+                            continue
+                        block_hash_dic[x].update({y: {bloc_dict["func_name"][x][y]['block_sha256']: False}})
+                    except:
                         continue
-                    block_hash_dic[x].update({y: {bloc_dict["func_name"][x][y]['block_sha256']: False}})
 
         return block_hash_dic
 

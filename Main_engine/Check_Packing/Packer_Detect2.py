@@ -1,13 +1,19 @@
+# -*- coding: utf-8 -*-
 import yara
 import csv
 import os
 
 
 #####################################################
-yara_path="Check_Packing/peid.yara"
+yara_path="Main_engine/Check_Packing/peid.yara"
 rules = yara.compile(filepath=yara_path)
-result_csv_path="Check_Packing/File_Packer_Type.csv"
-result_csv_count_path="Check_Packing/File_Packer_Count.csv"
+result_csv_path="Main_engine/Check_Packing/File_Packer_Type.csv"
+result_csv_count_path="Main_engine/Check_Packing/File_Packer_Count.csv"
+
+# yara_path="./peid.yara"
+# rules = yara.compile(filepath=yara_path)
+# result_csv_path="./File_Packer_Type.csv"
+# result_csv_count_path="./File_Packer_Count.csv"
 #####################################################
 
 
@@ -50,5 +56,5 @@ def sample_packer_type_detect(Sample_dir_Full_path):
         for key, values in packer_dict_count.items():
             writer.writerow([key]+[values])
 
-# if __name__=="__main__":
-#     sample_packer_type_detect()
+if __name__=="__main__":
+    sample_packer_type_detect()
