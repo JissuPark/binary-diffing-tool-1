@@ -1,10 +1,10 @@
 import json
 import timeit
-
+import asyncio
 import idb
 import hashlib
-from Extract_Engine.Flowchart_feature import const_filter_indexs  # const_filter_indexs.py
-from collections import OrderedDict
+from Main_engine.Extract_Engine.Flowchart_feature import const_filter_indexs
+
 glo_list = list()  # PE 전체의 constant 값을 담을 global list
 
 
@@ -107,10 +107,22 @@ class basic_block(idb_info):
         #idb_info['func_name'] = func_name_dicts
         #idb_info['func_name'] = func_name_dicts
 
+
+        # del(opcodes)
+        # del(hex_opcodes)
+        # del(disasms)
+        # del(block_constant)
+        # del(function_dicts)
+        # del(mutex_opcode_list)
+        # del(opcode_flow)
+        # del(function_dicts)
+        # del(func_name_dicts)
+
+
         return idb_info
 
 
-def main(api,file_name):
+async def main(api, file_name):
     function_dicts = {}
 
     for fva in api.idautils.Functions():
@@ -121,6 +133,8 @@ def main(api,file_name):
             basicblock = basic_block(api, fva, fname)
             # 베이직 블록 정보 추출 함수 실행
             basicblock_function_dicts = basicblock.bbs(function_dicts, file_name)
+            await asyncio.sleep(5)
+            continue
 
     return basicblock_function_dicts
 

@@ -1,8 +1,7 @@
-import hashlib
 import json
 
-from Analzer_Engine.Algorithm import all_algo as algo
-from Analzer_Engine.whitelist_bbhs import while_lists
+from Main_engine.Analzer_Engine.Algorithm import all_algo as algo
+from Main_engine.Analzer_Engine.whitelist_bbhs import while_lists
 from collections import OrderedDict
 
 class AnalyzeFlowchart:
@@ -72,7 +71,6 @@ class AnalyzeFlowchart:
         for s_fname, s_valueSet in s_hash_dict.items():
             stand_list = list()
             for s_sAddr, s_hashSet in s_valueSet.items():
-
                 for s_hash in s_hashSet:
                     stand_hash_count += 1
                     for t_fname, t_valueSet in t_hash_dict.items():
@@ -94,6 +92,7 @@ class AnalyzeFlowchart:
                                     stand_dict[s_fname] = stand_list
                                     target_list.append(t_tAddr)
                                     target_dict[t_fname] = target_list
+
         stand_f[s_flow_data['file_name']] = stand_dict
         target_f[t_flow_data['file_name']] = target_dict
 
@@ -135,9 +134,9 @@ class AnalyzeFlowchart:
                     continue
                 idb_t['bbh'], test_d['func_name'], test_d['start_addr'] = self.analyze_bbh(idb_info_s, idb_info_t)
                 idb_t['const_value'] = self.analyze_constant(idb_info_s, idb_info_t)
-                test_s[idb_info_t['file_name']] = test_d
+                #test_s[idb_info_t['file_name']] = test_d
                 idb_s[idb_info_t['file_name']] = idb_t
-            test_all[idb_info_s['file_name']] = test_s
+            #test_all[idb_info_s['file_name']] = test_s
             idb_all[idb_info_s['file_name']] = idb_s
 
         # with open(r"C:\malware\result\cm_test.txt", 'w') as makefile:
