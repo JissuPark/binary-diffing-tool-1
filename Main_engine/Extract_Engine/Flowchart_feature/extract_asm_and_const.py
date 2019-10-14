@@ -148,7 +148,7 @@ def open_idb(FROM_FILE):
 def basicblock_idb_info_extraction(FROM_FILE):
 
     api = open_idb(FROM_FILE)
-    idb_sub_function_info = main(api, FROM_FILE[19:-4])
+    idb_sub_function_info = main(api, FROM_FILE[(FROM_FILE.rfind('\\'))+1:-4])
     # 여기서 상수값 붙임. json 맨 아래에 통쨰로 붙이기 위함.
     idb_sub_function_info.update({'constant': ' '.join(glo_list)})
     # END
