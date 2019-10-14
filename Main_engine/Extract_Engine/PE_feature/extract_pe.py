@@ -1,10 +1,10 @@
 import hashlib
-import json
 import filetype
 import numpy as np
 
 import pefile
-from Extract_Engine.PE_feature import pe_rich, pe_rsrc, pe_pdb
+from Main_engine.Extract_Engine.PE_feature import pe_pdb, pe_rsrc, pe_rich
+
 
 class Pe_Feature:
     def __init__(self, file_name):
