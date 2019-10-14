@@ -15,11 +15,16 @@ import shutil
 IDAT = 0
 IDAT64 = 1
 
-PE_CHECK_ERROR = -1
+PE_CHECK_ERROR = -2
 
-STR_SIG_MZ = '0x4550'
+STR_SIG_MZ = '0x5A4D'
+STR_SIG_PE = '0x4550'
+BYTES_SIG_IDB = b'IDA1'  # '0x31414449'
+BYTES_SIG_I64 = b'IDA2'  # '0x32414449'
+
 HEX_M_32 = 0x14c
 HEX_M_64 = 0x2008
+IDB_FLAG = -1
 
 # IDAT_PATH
 # 나중에 자동으로 받아올지 생각해보기
@@ -45,18 +50,30 @@ IDAT_PATH = [
 
 def pe_check(PE_F_PATH):
     try:
-        pe = pefile.PE(PE_F_PATH, fast_load=True)
-        m_bit = pe.FILE_HEADER.Machine
-        signature_hex = hex(pe.NT_HEADERS.Signature)
-        pe.close()
-        if signature_hex == STR_SIG_MZ:
-            if m_bit == HEX_M_32:
-                return IDAT
-            elif m_bit == HEX_M_64:
-                return IDAT64
+        f = open(PE_F_PATH, 'rb')
+        f_data = f.read()
+        f.close()
+        if f_data[0:4] == BYTES_SIG_IDB or f_data[0:4] == BYTES_SIG_I64:
+            return IDB_FLAG
         else:
-            return PE_CHECK_ERROR
+            pe = pefile.PE(PE_F_PATH, fast_load=True)
+            magic_hex = hex(pe.DOS_HEADER.e_magic)
+            if magic_hex == STR_SIG_MZ:
+                signature_hex = hex(pe.NT_HEADERS.Signature)
+                if signature_hex in f_data[2:203]:
+                    m_bit = pe.FILE_HEADER.Machine
+                    pe.close()
+                    if signature_hex == STR_SIG_PE:
+                        if m_bit == HEX_M_32:
+                            return IDAT
+                        elif m_bit == HEX_M_64:
+                            return IDAT64
+            else:
+                pe.close()
+                return PE_CHECK_ERROR
+
     except:
+        pe.close()
         return PE_CHECK_ERROR
 
 
@@ -136,6 +153,8 @@ def exe_to_idb(exe_q):  ### Multiprocessing할 때, target의 인자로 넘길 �
 
         # 만약 PE 포맷이라면
         # exec_idat을 호출해서 diat을 실행하고
+        if pe_flag == IDB_FLAG:
+            continue
         if pe_flag != PE_CHECK_ERROR:
             # exec_idat을 실행하고 해당 자식프로세스가 끝날 때까지 기다린다.
             # 기다렸다가 idat 실행 후, 생성되는 파일을 정리해야하기 때문에
@@ -205,15 +224,16 @@ def create_idb(PE_PATH, IDB_PATH):
     #print(f"[+]PE2IDB time : {timeit.default_timer() - s}")
 
     return clear_folder(PE_PATH, IDB_PATH)
-# if __name__=="__main__":
-#
-#     # PATH : idb로 변환할 pe 파일이 위치한 디렉토리 경로
-#     # IDB_PATH : 변환된 idb파일을 저장할 디렉토리 경로
-#
-#     PATH = r"C:\Users\secur\Downloads\PEview"
-#     IDB_PATH = r"C:\Users\secur\Downloads\idb"
-#
-#     create_idb(PATH, IDB_PATH)
+
+if __name__=="__main__":
+
+    # PATH : idb로 변환할 pe 파일이 위치한 디렉토리 경로
+    # IDB_PATH : 변환된 idb파일을 저장할 디렉토리 경로
+
+    PATH = r"C:\malware\mid_GandCrab_exe"
+    IDB_PATH = r"C:\malware\mid_idb"
+
+    create_idb(PATH, IDB_PATH)
 
 
 
