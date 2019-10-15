@@ -1,6 +1,6 @@
 from django.urls import path, include
 from . import views
-from polls import main_engine
+from Main_engine import main_engine
 
 # app이 여러개일 경우 구분짓기위해 해당앱을 나타내는 변수
 # app_name = 'Main_engine'
