@@ -2,17 +2,15 @@ import hashlib
 import json
 import timeit
 import os
-import csv
-import ssdeep
 from multiprocessing import Process, Queue, Manager
 from collections import OrderedDict
-from Extract_Engine import pe2idb
-from Extract_Engine.Flowchart_feature import extract_asm_and_const
-from Extract_Engine.PE_feature import extract_pe
-from Analzer_Engine import analyze_pe, analyze_flowchart
+from Main_engine.Extract_Engine import pe2idb
+from Main_engine.Extract_Engine.Flowchart_feature import extract_asm_and_const
+from Main_engine.Extract_Engine.PE_feature import extract_pe
+from Main_engine.Analzer_Engine import analyze_pe, analyze_flowchart
 from openpyxl import load_workbook, Workbook
-from Check_Packing import Packer_Detect2
-from Unpacking import unpack_module
+from Main_engine.Check_Packing import Packer_Detect2
+from Main_engine.Unpacking import unpack_module
 
 
 class Pe_Files_Check:
@@ -259,6 +257,7 @@ def out_xlsx(path, result_dict):
 if __name__ == "__main__":
 
     s = timeit.default_timer()
+
 
     PATH = r"C:\malware\mid_GandCrab_exe"
     IDB_PATH = r"C:\malware\mid_idb"

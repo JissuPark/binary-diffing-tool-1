@@ -1,8 +1,8 @@
-import hashlib
 import json
+import operator
 
-from Analzer_Engine.Algorithm import all_algo as algo
-from Analzer_Engine.whitelist_bbhs import while_lists
+from Main_engine.Analzer_Engine.Algorithm import all_algo as algo
+from Main_engine.Analzer_Engine.whitelist_bbhs import while_lists
 from collections import OrderedDict
 
 class AnalyzeFlowchart:
@@ -28,7 +28,9 @@ class AnalyzeFlowchart:
         '''
 
         idb_list = list()
-        for f_name, f_info in self.idb_all.items():
+
+        idb_dict = sorted(self.idb_all.items(), key=operator.itemgetter(0))
+        for f_name, f_info in idb_dict:
             idb_list.append(f_info)
 
         return idb_list
@@ -41,9 +43,12 @@ class AnalyzeFlowchart:
             for y in bloc_dict["func_name"][x]:
                 if y != "flow_opString":
                     # 화이트 리스트 처리는 이 부분에서..?
-                    if bloc_dict["func_name"][x][y]['block_sha256'] in while_lists:
+                    try:
+                        if bloc_dict["func_name"][x][y]['block_sha256'] in while_lists:
+                            continue
+                        block_hash_dic[x].update({y: {bloc_dict["func_name"][x][y]['block_sha256']: False}})
+                    except:
                         continue
-                    block_hash_dic[x].update({y: {bloc_dict["func_name"][x][y]['block_sha256']: False}})
 
         return block_hash_dic
 
@@ -61,41 +66,54 @@ class AnalyzeFlowchart:
         cmp_dict = dict()
         target_dict = dict()
         stand_dict = dict()
+
+        stand_f = OrderedDict()
+        target_f = OrderedDict()
         cmp_func_all = list()
         cmp_straddr_all = list()
         cmp_func_list = list()
         cmp_straddr_list = list()
 
         for s_fname, s_valueSet in s_hash_dict.items():
+            stand_list = list()
             for s_sAddr, s_hashSet in s_valueSet.items():
                 for s_hash in s_hashSet:
                     stand_hash_count += 1
                     for t_fname, t_valueSet in t_hash_dict.items():
+                        target_list = list()
                         for t_tAddr, t_hashSet in t_valueSet.items():
+
                             for t_hash in t_hashSet:
                                 if s_hash == t_hash:
                                     s_hashSet[s_hash] = True
                                     t_hashSet[t_hash] = True
 
-                                    cmp_func_list.append(s_fname)
-                                    cmp_func_list.append(t_fname)
-                                    cmp_func_all.append(cmp_func_list)
-                                    cmp_straddr_list.append(s_sAddr)
-                                    cmp_straddr_list.append(t_tAddr)
-                                    cmp_straddr_all.append(cmp_straddr_list)
-        #             cmp_dict['func_name'] = cmp_func_list
-        #             cmp_dict['start_addr'] = cmp_straddr_list
-        #             target_dict[t_flow_data['file_name']] = cmp_dict
-        # stand_dict[s_flow_data['file_name']] = target_dict
+                                    # cmp_func_list.append(s_fname)
+                                    # cmp_func_list.append(t_fname)
+                                    # cmp_func_all.append(cmp_func_list)
+                                    # cmp_straddr_list.append(s_sAddr)
+                                    # cmp_straddr_list.append(t_tAddr)
+                                    # cmp_straddr_all.append(cmp_straddr_list)
+                                    stand_list.append(s_sAddr)
+                                    stand_dict[s_fname] = stand_list
+                                    target_list.append(t_tAddr)
+                                    target_dict[t_fname] = target_list
+
+        stand_f[s_flow_data['file_name']] = stand_dict
+        target_f[t_flow_data['file_name']] = target_dict
+
+        stand_f.update(target_f)
+
         #
-        # with open(r"C:\malware\result\cm_test.txt", 'a') as makefile:
-        #     json.dump(stand_dict, makefile, ensure_ascii=False, indent='\t')
+        with open(r"C:\malware\result\dict_test.txt", 'a') as makefile:
+            json.dump(stand_f, makefile, ensure_ascii=False, indent='\t')
         # pprint.pprint(stand)
         # print('-----------------------------------------------------------------------')
         # pprint.pprint(tar)
-        print(json.dumps(s_hash_dict, indent=4))
-        print('-----------------------------------------------------------------------')
-        print(json.dumps(t_hash_dict, indent=4))
+        # print('=================================================================================')
+        # print(json.dumps(s_hash_dict, indent=4))
+        # print('-----------------------------------------------------------------------')
+        # print(json.dumps(t_hash_dict, indent=4))
         return algo.get_func_similarity(s_hash_dict, t_hash_dict, stand_hash_count), cmp_func_list, cmp_straddr_list
 
     def analyze_constant(self,standard, target):
@@ -122,12 +140,12 @@ class AnalyzeFlowchart:
                     continue
                 idb_t['bbh'], test_d['func_name'], test_d['start_addr'] = self.analyze_bbh(idb_info_s, idb_info_t)
                 idb_t['const_value'] = self.analyze_constant(idb_info_s, idb_info_t)
-                test_s[idb_info_t['file_name']] = test_d
+                #test_s[idb_info_t['file_name']] = test_d
                 idb_s[idb_info_t['file_name']] = idb_t
-            test_all[idb_info_s['file_name']] = test_s
+            #test_all[idb_info_s['file_name']] = test_s
             idb_all[idb_info_s['file_name']] = idb_s
 
-        with open(r"C:\malware\result\cm_test.txt", 'w') as makefile:
-            json.dump(test_all, makefile, ensure_ascii=False, indent='\t')
+        # with open(r"C:\malware\result\cm_test.txt", 'w') as makefile:
+        #     json.dump(test_all, makefile, ensure_ascii=False, indent='\t')
 
         return idb_all
