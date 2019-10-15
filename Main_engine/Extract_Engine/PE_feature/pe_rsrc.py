@@ -1,6 +1,6 @@
 import pefile, os
 import json
-from hashlib import sha256
+import hashlib
 import ssdeep
 import array
 import math
@@ -361,7 +361,8 @@ class RsrcParser:
 
                     #이 새끼는 ssdeep으로 조져서 hash값 구해야 돼 근데 내 컴이 ssdeep이 안돼 아주 드러워
                     #인증서 해시화 성공
-                    thesig = ssdeep.hash(thesig)
+                    #thesig = ssdeep.hash(thesig)
+                    thesig = hashlib.md5(thesig).hexdigest().upper()
                     pkcs_dict['hash'] = thesig
                     return pkcs_dict
                 else:
