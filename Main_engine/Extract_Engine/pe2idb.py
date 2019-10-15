@@ -16,9 +16,9 @@ IDAT = 0
 IDAT64 = 1
 
 PE_CHECK_ERROR = -2
-
-STR_SIG_MZ = '0x5A4D'
-STR_SIG_PE = '0x4550'
+PE_UNKNOWN = -1
+BYTES_SIG_MZ = b'MZ'   #'0x5A4D'
+BYTES_SIG_PE = b'PE'   #'0x4550'
 BYTES_SIG_IDB = b'IDA1'  # '0x31414449'
 BYTES_SIG_I64 = b'IDA2'  # '0x32414449'
 
@@ -46,35 +46,41 @@ IDAT_PATH = [
      Error         -1                                                                    
 
 '''
-
-
 def pe_check(PE_F_PATH):
-    try:
-        f = open(PE_F_PATH, 'rb')
-        f_data = f.read()
-        f.close()
-        if f_data[0:4] == BYTES_SIG_IDB or f_data[0:4] == BYTES_SIG_I64:
-            return IDB_FLAG
-        else:
-            pe = pefile.PE(PE_F_PATH, fast_load=True)
-            magic_hex = hex(pe.DOS_HEADER.e_magic)
-            if magic_hex == STR_SIG_MZ:
-                signature_hex = hex(pe.NT_HEADERS.Signature)
-                if signature_hex in f_data[2:203]:
-                    m_bit = pe.FILE_HEADER.Machine
-                    pe.close()
-                    if signature_hex == STR_SIG_PE:
-                        if m_bit == HEX_M_32:
-                            return IDAT
-                        elif m_bit == HEX_M_64:
-                            return IDAT64
-            else:
-                pe.close()
-                return PE_CHECK_ERROR
 
-    except:
-        pe.close()
+    f = open(PE_F_PATH, 'rb')
+    f_data = f.read()
+    f.close()
+
+    # MZ signature & PE signature 확인
+    if f_data[0:2] == BYTES_SIG_MZ and f_data[2:512].find(BYTES_SIG_PE) != -1:
+        try:
+            # pe format인거 확인 후, pefile 열기
+            pe = pefile.PE(PE_F_PATH, fast_load=True)
+            m_bit = pe.FILE_HEADER.Machine
+            #print(m_bit)
+            pe.close()
+            if m_bit == HEX_M_32:
+                print(f"[32bit]{PE_F_PATH}")
+                return IDAT
+            
+            #elif m_bit == HEX_M_64:
+                #print(f"[64bit]{PE_F_PATH}")
+                #return IDAT64
+            else:
+                print(f"[64bit]{PE_F_PATH}")
+                return IDAT64
+
+        except:
+            # pe format인데, 패킹되어 있는 경우 except로 들어올 것임.
+            # pefile 모듈을 사용할 수 없기 때문
+            # 이 경우 일단 idat.exe 돌리고, exception나면 idat64.exe으로..!
+            print("PE_UNKNOWN - PACKING")
+            return PE_UNKNOWN
+    else:
+        print("PE_CHECK_ERROR")        
         return PE_CHECK_ERROR
+
 
 
 '''
