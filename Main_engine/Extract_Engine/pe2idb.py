@@ -24,7 +24,7 @@ BYTES_SIG_I64 = b'IDA2'  # '0x32414449'
 
 HEX_M_32 = 0x14c
 HEX_M_64 = 0x2008
-IDB_FLAG = -1
+#IDB_FLAG = -1
 
 # IDAT_PATH
 # 나중에 자동으로 받아올지 생각해보기
@@ -159,8 +159,8 @@ def exe_to_idb(exe_q):  ### Multiprocessing할 때, target의 인자로 넘길 �
 
         # 만약 PE 포맷이라면
         # exec_idat을 호출해서 diat을 실행하고
-        if pe_flag == IDB_FLAG:
-            continue
+        #if pe_flag == IDB_FLAG:
+        #    continue
         if pe_flag != PE_CHECK_ERROR:
             # exec_idat을 실행하고 해당 자식프로세스가 끝날 때까지 기다린다.
             # 기다렸다가 idat 실행 후, 생성되는 파일을 정리해야하기 때문에
