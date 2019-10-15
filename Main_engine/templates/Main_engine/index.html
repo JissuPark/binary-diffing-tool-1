@@ -1,0 +1,41 @@
+{% extends "polls/layout.html" %}
+
+{% block head %}
+{% load static %} <!-- static files are loaded -->
+<link rel="stylesheet" type="text/css" href="{% static 'polls/css/style.css' %}">
+<link rel="stylesheet" href="https://rawgit.com/enyo/dropzone/master/dist/dropzone.css">
+<script src="{% static 'polls/js/dropzone.js' %}">
+<!--<script>-->
+<!--    var myDropzone = new Dropzone("div#dZUpload",-->
+<!--                {   url: "/media/",-->
+<!--                    addRemoveLinks: true,-->
+<!--                    maxFiles: 4,-->
+<!--                    success: function(file, response){-->
+<!--                        var imgName = response.serFileNM;-->
+<!--                        var oriName = response.orgFileNM;-->
+<!--                        if(imgName != ''){-->
+<!--                            var adClass = imgName.replace('.',"");-->
+<!--                            file.previewElement.classList.add("dz-success");-->
+<!--                            file.previewElement.classList.add(adClass);-->
+<!--                            var html = '<input type="hidden" name="serverFileNM" value="'+imgName+'">';-->
+<!--                            html += '<input type="hidden" name="oriFileNM" value="'+oriName+'">';-->
+<!--                            $("."+adClass).append(html);-->
+<!--                        }-->
+<!--                    }-->
+<!--                },error : function(file, response){-->
+<!--                    file.previewElement.classList.add("dz-maxsize-error");-->
+<!--                    alert("파일은 최대 4개까지만 업로드 가능합니다.");-->
+<!--                    $(".dz-maxsize-error").empty();-->
+<!--                }-->
+<!--    );-->
+<!--</script>
+{% endblock %}
+
+
+{% block body %}
+<form action="{% url 'upload' %}" class="dropzone" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+</form>
+<input type="submit" value="start" onclick="location.href='{% url 'result' %}'">
+{% endblock %}
