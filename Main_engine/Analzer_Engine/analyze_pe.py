@@ -3,6 +3,8 @@ from collections import OrderedDict
 import ssdeep
 from ngram import NGram
 import operator
+import json
+from Analzer_Engine.Algorithm import all_algo as algo
 
 
 class AnalyzePE:
@@ -54,7 +56,12 @@ class AnalyzePE:
             #print("No Authentication")
             return score
         else:
-            score = ssdeep.compare(dict_s['hash'], dict_t['hash'])
+            if dict_s['hash'] == dict_t['hash']:
+                score = 1
+                return score
+            else:
+                score = 0
+                return score
             '''
             이 부분에 추가로 score에 가중치 주는 부분 이후에 추가
             '''
@@ -102,7 +109,7 @@ class AnalyzePE:
 
     def analyze_rich(self, standard, target):
         '''
-        리치 헤더 데이터의 comid, count, prodid를 비교하는 함수 
+        리치 헤더 데이터의 comid, count, prodid를 비교하는 함수
         *문자열로 뽑아서 한다면 ngram을, 데이터 자체를 뽑아서 한다며 data를 사용.. 재호랑 얘기해서하기
         :return: score with weight
         '''
@@ -125,12 +132,19 @@ class AnalyzePE:
         comp = 0
         for key in dict_s.keys() and dict_t.keys():                                 #키의 이름이 다를 때의 예외처리가 필요
             if key in dict_s and key in dict_t:
-                score = ssdeep.compare(dict_s[key]['hash_ssdeep'], dict_t[key]['hash_ssdeep'])
-                comp += score
+                if dict_s[key]['section_name'] == dict_t[key]['section_name']:
+                    print(f"{dict_s[key]['section_name']}, {dict_t[key]['section_name']}")
+                    score = ssdeep.compare(dict_s[key]['hash_ssdeep'], dict_t[key]['hash_ssdeep'])
+                    comp += score
+                # print(f"{key} :: {score}")
                 # 섹션 이름이 다르면 그 전까지의 섹션별 비교 수치는 버려야 하나 가져가야 하나?
+                # if key in dict_s == key in dict_t:
+                #     score = ssdeep.compare(dict_s[key]['hash_ssdeep'], dict_t[key]['hash_ssdeep'])
+                #     comp += score
+                # #print(f"{key} :: {score}")
+                # # 섹션 이름이 다르면 그 전까지의 섹션별 비교 수치는 버려야 하나 가져가야 하나?
             else:
-                #print(s_key, ":", dict_s[s_key]['hash_ssdeep'])
-                return comp
+                continue
         return comp
 
     def analyze_all(self, pe_list):
@@ -147,7 +161,9 @@ class AnalyzePE:
                 pe_t['file_hash'] = pe_info_t['file_hash']
                 pe_t['imphash'] = self.analyze_imphash(pe_info_s, pe_info_t)
                 pe_t['rich'] = self.analyze_rich(pe_info_s, pe_info_t)
+                #print(f"{pe_info_s['file_name']} vs {pe_info_t['file_name']}")
                 pe_t['section_score'] = self.analyze_section(pe_info_s['cmp_section'], pe_info_t['cmp_section'])
+                #print("")
                 pe_t['auth_score'] = self.analyze_auth(pe_info_s['auto'], pe_info_t['auto'])
                 pe_t['pdb_score'] = self.analyze_pdb(pe_info_s['pdb_info'], pe_info_t['pdb_info'])
                 #pe_t['rsrc'] = self.analyze_rsrc(pe_info_s['rsrc_info'], pe_info_t['rsrc_info'])

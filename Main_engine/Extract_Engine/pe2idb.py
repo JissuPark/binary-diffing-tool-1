@@ -166,6 +166,8 @@ def exe_to_idb(exe_q):  ### Multiprocessing할 때, target의 인자로 넘길 �
             # 기다렸다가 idat 실행 후, 생성되는 파일을 정리해야하기 때문에
             # idat 실행이 종료될 때까지 기다린다.
             p = exec_idat(f_path, pe_flag)
+        else:
+            print(f_path+'  '+'pe error')
 
 
 #            p.wait()
