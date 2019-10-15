@@ -64,7 +64,7 @@ class basic_block(idb_info):
                                             block_constant.append(operand_2)  # append block constant
                         else:  # operand가 1개일 때 조건입장
                             if operand[0] not in const_filter_indexs.registers and "ptr" not in operand[0] and operand[0] not in const_filter_indexs.logic:  # 레지가아니고 ptr도 없어야 입장
-                                if operand[0] != '0':
+                                if operand[0] != '0' and len(operand[0]) != 8:  # 8length 일단 하드코딩, 정규식으로 교채해야함
                                     glo_list.append(operand[0])
                                     block_constant.append(operand[0])
                     '''--- 상수값 추출 끝 ---'''
@@ -148,7 +148,7 @@ def open_idb(FROM_FILE):
 def basicblock_idb_info_extraction(FROM_FILE):
 
     api = open_idb(FROM_FILE)
-    idb_sub_function_info = main(api, FROM_FILE[19:-4])
+    idb_sub_function_info = main(api, FROM_FILE[(FROM_FILE.rfind('\\'))+1:-4])
     # 여기서 상수값 붙임. json 맨 아래에 통쨰로 붙이기 위함.
     idb_sub_function_info.update({'constant': ' '.join(glo_list)})
     # END

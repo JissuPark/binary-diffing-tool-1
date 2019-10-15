@@ -13,5 +13,6 @@ Main_engine/Check_Packing/File_Packer_Count.csv
 Main_engine/Check_Packing/File_Packer_Type.csv
 Mysite/__pycache__/
 Main_engine/migrations/__pycache__/
+Main_engine/__pycache__/
 
 
