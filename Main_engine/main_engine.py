@@ -257,6 +257,14 @@ def out_xlsx(path, result_dict):
     wb.save(path)
 
 
+def start_engine():
+    '''
+    웹 서버에서 메인 엔진을 호출하면 엔진을 돌리기위한 함수
+    * 백앤드 엔진에서는 사용되지 않음
+    * 지금은 서버 테스트만을 위해서 만든 것이므로 무시
+    '''
+    print('[+]back-end engine start!')
+
 if __name__ == "__main__":
 
     s = timeit.default_timer()

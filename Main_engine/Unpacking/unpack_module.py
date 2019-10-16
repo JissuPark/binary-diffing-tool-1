@@ -69,8 +69,8 @@ def get_file_entropy(filepath):
 
 #########################################################
 
-#yara_path="Main_engine/Unpacking/peid.yara"
-yara_path="./peid.yara"
+yara_path="Main_engine/Unpacking/peid.yara"
+# yara_path="./peid.yara"
 rules = yara.compile(filepath=yara_path)
 
 
