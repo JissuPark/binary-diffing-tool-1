@@ -4,7 +4,7 @@ import ssdeep
 from ngram import NGram
 import operator
 import json
-from Analzer_Engine.Algorithm import all_algo as algo
+from Main_engine.Analzer_Engine.Algorithm import all_algo as algo
 
 
 class AnalyzePE:
