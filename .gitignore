@@ -9,8 +9,12 @@ Main_engine/Unpacking/__pycache__/
 venv/
 .idea/
 Referrence/
-Main_engine/Check_Packing/File_Packer_Count.csv
-Main_engine/Check_Packing/File_Packer_Type.csv
+Main_engine/Check_Packing/
 Mysite/__pycache__/
 Main_engine/migrations/__pycache__/
+<<<<<<< HEAD
+=======
+Main_engine/__pycache__/
+
+>>>>>>> upstream/master
 
