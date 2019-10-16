@@ -1,5 +1,4 @@
 import pefile, os
-import json
 import hashlib
 import ssdeep
 import array
@@ -222,6 +221,14 @@ class RsrcParser:
         self.filename = filename
         self.pe = pefile.PE(self.filename)
 
+    def get_timestamp(self):
+        #print(f"TimeDateStamp : {self.pe.FILE_HEADER.dump_dict()['TimeDateStamp']['Value'].split('[')[1][:-1]}")
+        Time = self.pe.FILE_HEADER.dump_dict()['TimeDateStamp']['Value'].split('[')[1][:-1]
+        second = self.pe.FILE_HEADER.TimeDateStamp
+        print(type(second))
+        print(f"Time in second :: {second}")
+        return Time, second
+
     def get_entropy(self,data):
         if len(data) == 0:
             return 0.0
@@ -316,6 +323,7 @@ class RsrcParser:
             #권한 확인 부분 삭제
             #각 섹션별 데이터 해시와 섹션 시작 offset주소부분이 중복되어 출력되서 다음과 같이 수정
             section_dict[section_name] = {
+                'section_name': section_name,
                 'entropy': entropy,
                 'hash_256': hash_256,
                 'hash_ssdeep': hash_ssdeep,

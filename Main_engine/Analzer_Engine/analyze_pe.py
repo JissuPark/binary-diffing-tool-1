@@ -132,13 +132,19 @@ class AnalyzePE:
         comp = 0
         for key in dict_s.keys() and dict_t.keys():                                 #키의 이름이 다를 때의 예외처리가 필요
             if key in dict_s and key in dict_t:
-                score = ssdeep.compare(dict_s[key]['hash_ssdeep'], dict_t[key]['hash_ssdeep'])
-                comp += score
-                #print(f"{key} :: {score}")
+                if dict_s[key]['section_name'] == dict_t[key]['section_name']:
+                    print(f"{dict_s[key]['section_name']}, {dict_t[key]['section_name']}")
+                    score = ssdeep.compare(dict_s[key]['hash_ssdeep'], dict_t[key]['hash_ssdeep'])
+                    comp += score
+                # print(f"{key} :: {score}")
                 # 섹션 이름이 다르면 그 전까지의 섹션별 비교 수치는 버려야 하나 가져가야 하나?
+                # if key in dict_s == key in dict_t:
+                #     score = ssdeep.compare(dict_s[key]['hash_ssdeep'], dict_t[key]['hash_ssdeep'])
+                #     comp += score
+                # #print(f"{key} :: {score}")
+                # # 섹션 이름이 다르면 그 전까지의 섹션별 비교 수치는 버려야 하나 가져가야 하나?
             else:
-                #print(s_key, ":", dict_s[s_key]['hash_ssdeep'])
-                return comp
+                continue
         return comp
 
     def analyze_all(self, pe_list):

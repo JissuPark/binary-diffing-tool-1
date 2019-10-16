@@ -15,11 +15,16 @@ import shutil
 IDAT = 0
 IDAT64 = 1
 
-PE_CHECK_ERROR = -1
+PE_CHECK_ERROR = -2
+PE_UNKNOWN = -1
+BYTES_SIG_MZ = b'MZ'   #'0x5A4D'
+BYTES_SIG_PE = b'PE'   #'0x4550'
+BYTES_SIG_IDB = b'IDA1'  # '0x31414449'
+BYTES_SIG_I64 = b'IDA2'  # '0x32414449'
 
-STR_SIG_MZ = '0x4550'
 HEX_M_32 = 0x14c
 HEX_M_64 = 0x2008
+#IDB_FLAG = -1
 
 # IDAT_PATH
 # 나중에 자동으로 받아올지 생각해보기
@@ -41,23 +46,41 @@ IDAT_PATH = [
      Error         -1                                                                    
 
 '''
-
-
 def pe_check(PE_F_PATH):
-    try:
-        pe = pefile.PE(PE_F_PATH, fast_load=True)
-        m_bit = pe.FILE_HEADER.Machine
-        signature_hex = hex(pe.NT_HEADERS.Signature)
-        pe.close()
-        if signature_hex == STR_SIG_MZ:
+
+    f = open(PE_F_PATH, 'rb')
+    f_data = f.read()
+    f.close()
+
+    # MZ signature & PE signature 확인
+    if f_data[0:2] == BYTES_SIG_MZ and f_data[2:512].find(BYTES_SIG_PE) != -1:
+        try:
+            # pe format인거 확인 후, pefile 열기
+            pe = pefile.PE(PE_F_PATH, fast_load=True)
+            m_bit = pe.FILE_HEADER.Machine
+            #print(m_bit)
+            pe.close()
             if m_bit == HEX_M_32:
+                print(f"[32bit]{PE_F_PATH}")
                 return IDAT
-            elif m_bit == HEX_M_64:
+            
+            #elif m_bit == HEX_M_64:
+                #print(f"[64bit]{PE_F_PATH}")
+                #return IDAT64
+            else:
+                print(f"[64bit]{PE_F_PATH}")
                 return IDAT64
-        else:
-            return PE_CHECK_ERROR
-    except:
+
+        except:
+            # pe format인데, 패킹되어 있는 경우 except로 들어올 것임.
+            # pefile 모듈을 사용할 수 없기 때문
+            # 이 경우 일단 idat.exe 돌리고, exception나면 idat64.exe으로..!
+            print("PE_UNKNOWN - PACKING")
+            return PE_UNKNOWN
+    else:
+        print("PE_CHECK_ERROR")        
         return PE_CHECK_ERROR
+
 
 
 '''
@@ -136,11 +159,15 @@ def exe_to_idb(exe_q):  ### Multiprocessing할 때, target의 인자로 넘길 �
 
         # 만약 PE 포맷이라면
         # exec_idat을 호출해서 diat을 실행하고
+        #if pe_flag == IDB_FLAG:
+        #    continue
         if pe_flag != PE_CHECK_ERROR:
             # exec_idat을 실행하고 해당 자식프로세스가 끝날 때까지 기다린다.
             # 기다렸다가 idat 실행 후, 생성되는 파일을 정리해야하기 때문에
             # idat 실행이 종료될 때까지 기다린다.
             p = exec_idat(f_path, pe_flag)
+        else:
+            print(f_path+'  '+'pe error')
 
 
 #            p.wait()
@@ -205,15 +232,16 @@ def create_idb(PE_PATH, IDB_PATH):
     #print(f"[+]PE2IDB time : {timeit.default_timer() - s}")
 
     return clear_folder(PE_PATH, IDB_PATH)
-# if __name__=="__main__":
-#
-#     # PATH : idb로 변환할 pe 파일이 위치한 디렉토리 경로
-#     # IDB_PATH : 변환된 idb파일을 저장할 디렉토리 경로
-#
-#     PATH = r"C:\Users\secur\Downloads\PEview"
-#     IDB_PATH = r"C:\Users\secur\Downloads\idb"
-#
-#     create_idb(PATH, IDB_PATH)
+
+if __name__=="__main__":
+
+    # PATH : idb로 변환할 pe 파일이 위치한 디렉토리 경로
+    # IDB_PATH : 변환된 idb파일을 저장할 디렉토리 경로
+
+    PATH = r"C:\malware\mid_GandCrab_exe"
+    IDB_PATH = r"C:\malware\mid_idb"
+
+    create_idb(PATH, IDB_PATH)
 
 
 

@@ -33,9 +33,12 @@ class Pe_Files_Check:
         self.idat64 = 1
         self.pe_check_error = -1
         self.pe_hash_dict = {}
-        # STR_SIG_MZ = '0x4550'
-        # HEX_M_32 = 0x14c
-        # HEX_M_64 = 0x200
+        # self.STR_SIG_MZ = '0x5A4D'
+        # self.STR_SIG_PE = '0x4550'
+        # self.BYTES_SIG_IDB = b'IDA1'  #'0x31414449'
+        # self.BYTES_SIG_I64 = b'IDA2'  #'0x32414449'
+        self.HEX_M_32 = 0x14c
+        self.HEX_M_64 = 0x200
 
     def get_unique_pe_list(self):
         exe_list = os.listdir(self.pe_dir_path)
@@ -257,7 +260,6 @@ def out_xlsx(path, result_dict):
 if __name__ == "__main__":
 
     s = timeit.default_timer()
-
 
     PATH = r"C:\malware\mid_GandCrab_exe"
     IDB_PATH = r"C:\malware\mid_idb"

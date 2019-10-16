@@ -11,6 +11,10 @@ class Pe_Feature:
         self.file_name = file_name
         self.pe = pefile.PE(self.file_name)
 
+    def extract_time(self):
+        time = pe_rsrc.RsrcParser(self.file_name)
+        return time.get_timestamp()
+
     def extract_rich(self):
         rich = pe_rich.ParseRichHeader(self.file_name)
         flag = rich.parse()
@@ -106,6 +110,7 @@ class Pe_Feature:
         rich_info = self.extract_rich()
         pdb_info = self.extract_pdb()
         rsrc_info = self.extract_rsrc()
+        time_info = self.extract_time()
 
         pe_features = {
             'file_name': self.file_name[28:],
@@ -115,6 +120,7 @@ class Pe_Feature:
             'auto': auto,
             'rich_info': rich_info,
             'pdb_info': pdb_info,
+            'time_date_stamp': time_info
             #'rsrc_info': rsrc_info
         }
 
