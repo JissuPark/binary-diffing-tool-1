@@ -118,12 +118,16 @@ def exe_list_to_queue(PE_D_PATH, q):
 
 
 def exec_idat(EXE_F_PATH, pe_flag):
+    print(pe_flag)
     if pe_flag == IDAT or pe_flag == IDAT64:
         # -A :
         # -B : batch mode. IDA는 .IDB와 .ASM 파일을 자동 생성한다.
         # -P : 압축된 idb를 생성한다.
-        process = subprocess.Popen([IDAT_PATH[pe_flag], "-A", "-B", "-P+", EXE_F_PATH], shell=True)
-        process.wait()
+        try:
+            process = subprocess.Popen([IDAT_PATH[pe_flag], "-A", "-B", "-P+", EXE_F_PATH], shell=True)
+            process.wait()
+        except:
+            print('errorrrrrrrrrrrrrr')
         return pe_flag
     #        return process
     else:

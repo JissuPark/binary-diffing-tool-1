@@ -109,15 +109,15 @@ def packer_check(sample_path, pack_path, unpack_path):
             # print(pe_entropy[1])
             # if pe_entropy[1] > 6.3:
             #     flag = 1
-
+            print('ggggggggggggg')
             for section in pe.sections:
                 if section.get_entropy() > 6.3:
                     # 1. 알려지지 않은 패커로 패킹됨
                     flag = 1
-                    print('--------------------------------------')
+                    print('--------------------g--------------')
 
             if flag == 1:
-                print('--------------------------------------')
+                print('---g-----------------------------')
                 unknown_sample_path = os.path.join(pack_path, 'unknown', sample_basename)
                 unknown_folder_path = os.path.join(pack_path, 'unknown')
                 if not (os.path.isdir(unknown_folder_path)): os.makedirs(unknown_folder_path)

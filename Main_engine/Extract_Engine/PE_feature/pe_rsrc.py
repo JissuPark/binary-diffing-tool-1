@@ -387,3 +387,7 @@ print(get_resource(pe))
 print(extract_sections_privileges(pe))
 print(extractPKCS7(r'C\\Users\\qkrwl\\Downloads\\Notion Setup 1.0.8.exe'))
 '''
+
+# if __name__ == "__main__":
+#     t = RsrcParser(r"C:\malware\mid_GandCrab_exe\test (3)")
+#     print(t.get_timestamp())

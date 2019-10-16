@@ -106,7 +106,7 @@ def multiprocess_file(q, return_dict, flag):
         if flag == 'idb':
             info = extract_asm_and_const.basicblock_idb_info_extraction(f_path)  # 함수대표값 및 상수값 출력
         elif flag == 'pe':
-            info = extract_pe.Pe_Feature(f_path).all()  # pe 속성 출력
+            info = extract_pe.Pe_Feature(f_path).all(f_path)  # pe 속성 출력
 
         return_dict[f_path] = info
 
