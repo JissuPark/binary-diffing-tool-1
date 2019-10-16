@@ -126,3 +126,6 @@ class Pe_Feature:
 
 
         return pe_features
+
+if __name__ == "__main__":
+    pe = Pe_Feature(r"C:\malware\mid_GandCrab_exe\test")

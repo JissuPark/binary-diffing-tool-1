@@ -75,96 +75,94 @@ yara_path="Main_engine/Unpacking/peid.yara"
 rules = yara.compile(filepath=yara_path)
 
 
-def packer_check(queue, pack_path, unpack_path):
+def packer_check(sample_path, pack_path, unpack_path):
     # pack_path = C:\malware\unpack_exe\packed
     # unpack_path = C:\malware\unpack_exe\unpacked
 
-    while queue.empty() != True:
-        sample_path = queue.get()
+    #while queue.empty() != True:
+    #sample_path = queue.get()
 
-        print(sample_path)
+    print(sample_path)
+    print('jaehoajaehojaeho')
 
-        read_mal = open(sample_path, "rb")
-        read_data = read_mal.read()
-        read_mal.close()
+    read_mal = open(sample_path, "rb")
+    read_data = read_mal.read()
+    read_mal.close()
 
-        matches_list = rules.match(data=read_data)
+    matches_list = rules.match(data=read_data)
 
-        sample_basename = os.path.basename(sample_path)
-        sample_unpack_path = os.path.join(unpack_path, sample_basename)
+    sample_basename = os.path.basename(sample_path)
+    sample_unpack_path = os.path.join(unpack_path, sample_basename)
 
-        yara_match_result = ""
+    yara_match_result = ""
 
-        flag=0
-        if matches_list == {}:
-            # matches_list 딕셔너리가 비어있단 소리는 야라룰에 매칭되는 게 없다는 뜻이고
-            # 그 의미는 2가지로 나뉨
-            # 1. 알려지지 않은 패커로 패킹됨
-            # 2. 패킹이 안된 파일임
+    flag=0
+    if matches_list == {}:
+        # matches_list 딕셔너리가 비어있단 소리는 야라룰에 매칭되는 게 없다는 뜻이고
+        # 그 의미는 2가지로 나뉨
+        # 1. 알려지지 않은 패커로 패킹됨
+        # 2. 패킹이 안된 파일임
 
-            try:
-                pe = pefile.PE(sample_path)
-                # pe_entropy = get_file_entropy(sample_path)
-                # print(pe_entropy[1])
-                # if pe_entropy[1] > 6.3:
-                #     flag = 1
+        try:
+            pe = pefile.PE(sample_path)
+            # pe_entropy = get_file_entropy(sample_path)
+            # print(pe_entropy[1])
+            # if pe_entropy[1] > 6.3:
+            #     flag = 1
 
-                for section in pe.sections:
-                    if section.get_entropy() > 6.3 :
-                        # 1. 알려지지 않은 패커로 패킹됨
-                        flag = 1
-                        print('--------------------------------------')
-
-
-                if flag==1:
+            for section in pe.sections:
+                if section.get_entropy() > 6.3:
+                    # 1. 알려지지 않은 패커로 패킹됨
+                    flag = 1
                     print('--------------------------------------')
-                    unknown_sample_path = os.path.join(pack_path, 'unknown', sample_basename)
-                    unknown_folder_path = os.path.join(pack_path, 'unknown')
-                    if not (os.path.isdir(unknown_folder_path)): os.makedirs(unknown_folder_path)
-                    pe.close()
-                    shutil.copy(sample_path, unknown_sample_path)
-                    #os.remove(sample_path)
-                    continue
-                else:
-                    # 2. 패킹이 안된 파일임
-                    print('--------------------------------------')
-                    pe.close()
-                    shutil.copy(sample_path, sample_unpack_path)
-                    #os.remove(sample_path)
-                    continue
-            except:
-                print('asdjfksdfshfdfgdf')
+
+            if flag == 1:
+                print('--------------------------------------')
                 unknown_sample_path = os.path.join(pack_path, 'unknown', sample_basename)
                 unknown_folder_path = os.path.join(pack_path, 'unknown')
                 if not (os.path.isdir(unknown_folder_path)): os.makedirs(unknown_folder_path)
+                pe.close()
                 shutil.copy(sample_path, unknown_sample_path)
+                # os.remove(sample_path)
+                #continue
+            else:
+                # 2. 패킹이 안된 파일임
+                print('--------------------------------------')
+                pe.close()
+                shutil.copy(sample_path, sample_unpack_path)
+                # os.remove(sample_path)
+                #continue
+        except:
+            print('asdjfksdfshfdfgdf')
+            unknown_sample_path = os.path.join(pack_path, 'unknown', sample_basename)
+            unknown_folder_path = os.path.join(pack_path, 'unknown')
+            if not (os.path.isdir(unknown_folder_path)): os.makedirs(unknown_folder_path)
+            shutil.copy(sample_path, unknown_sample_path)
 
-        else:
-            #yara_match_result += str(matches_list['main'][0]['rule']).lower()+' '
-            yara_match_result = str(matches_list['main'][0]['rule']).lower()
-            print(yara_match_result)
-            print('=============================================')
+    else:
+        #yara_match_result += str(matches_list['main'][0]['rule']).lower()+' '
+        yara_match_result = str(matches_list['main'][0]['rule']).lower()
+        print(yara_match_result)
+        print('=============================================')
 
         File_Data = str(open(sample_path, 'rb').read(0x300)).lower()
-
-
 
         if 'fsg' in File_Data or 'fsg' in yara_match_result:
             print("FSG")
             Unpacks_sub_process(sample_path, 1, sample_unpack_path)
             #os.remove(sample_path)
-            continue
+            #continue
 
         elif 'upx' in yara_match_result:
             print("UPX")
             Unpacks_sub_process(sample_path, 2, sample_unpack_path, pack_path, sample_basename)
             #os.remove(sample_path)
-            continue
+            #continue
         elif 'aspack' in yara_match_result:
             print("ASPACK")
             Unpacks_sub_process(sample_path, 3, sample_unpack_path)
             #os.remove(sample_path)
-            continue
+            #continue
 
         else:
             yara_tag=os.path.join(pack_path, yara_match_result)[:-1]
@@ -175,7 +173,7 @@ def packer_check(queue, pack_path, unpack_path):
             shutil.copy(sample_path, yara_tag_sample_path)
             #os.remove(sample_path)
             print('aaaaaaaaaaaaaa')
-            continue
+            #continue
 
     return
 

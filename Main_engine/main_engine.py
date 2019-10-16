@@ -267,9 +267,9 @@ if __name__ == "__main__":
     # 1. pe 해시 체크 (동일한 파일 필터), 2.패킹 체크
     pe_check = Pe_Files_Check(PATH)
     file_hash_dict = pe_check.get_unique_pe_list()
-    pe_check.unpack_pe()
+    #pe_check.unpack_pe()
 
-    # 3. pe파일 -> idb 변환
+    # 3. pe파일(+패킹 체크) -> idb 변환
     flag = convert_idb(PATH, IDB_PATH)
     Features = Exract_Feature(PATH, IDB_PATH)
 
@@ -294,7 +294,7 @@ if __name__ == "__main__":
     # 6. 결과 csv 저장 (임시)
     all_result = analyze.calculate_heuristic(result_idb, result_pe)
 
-    out_xlsx(r"C:\malware\result\test.xlsx", all_result)
+    #out_xlsx(r"C:\malware\result\test.xlsx", all_result)
 
 #    out_csv(r"C:\malware\result\test.csv", all_result)
 
