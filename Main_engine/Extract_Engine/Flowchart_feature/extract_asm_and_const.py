@@ -42,25 +42,11 @@ class basic_block(idb_info):
                 disasms = []
                 block_constant = []  # block 단위의 상수 (ascii string 뽑기)
                 function_dicts[hex(curaddr)] = {}
-                basic_block_prime = dict() # block 단위의 소수 list
-                
+
                 # 베이직 블록 내 어셈블리어 추출
                 while curaddr < endaddr:
                     opcode = self.api.idc.GetMnem(curaddr)
                     disasm = self.api.idc.GetDisasm(curaddr)
-
-                    ''' opcode_prime 추출(임시면 BBP(basic block prime) '''
-                    opcode_prime = const_filter_indexs.prime_set[opcode]    # opcode에 해당하는 소수
-                    # 이미 있는 opcode면 +1해주고 없으면 0으로 세팅해서 +1
-                    basic_block_prime[opcode_prime] = basic_block_prime[opcode_prime]+1 if opcode_prime in basic_block_prime else 1
-                    ######################################################
-                    # Comprehension 이전 버전임                            #
-                    # if opcode_prime in basic_block_prime:              #
-                    #     prime_count = basic_block_prime[opcode_prime]  #
-                    # else:                                              #
-                    #     prime_count = 0                                #
-                    # basic_block_prime[opcode_prime] = prime_count+1    #
-                    ######################################################
 
                     '''--- 상수값 추출 시작 ---'''
                     if opcode in const_filter_indexs.indexs:  # instruction white list
@@ -100,7 +86,6 @@ class basic_block(idb_info):
                     'opcodes': opcodes,
                     'disasms': disasms,
                     'block_sha256': hashlib.sha256(hex(sum(hex_opcodes)).encode()).hexdigest(),  # add my codes
-                    'block_prime' : basic_block_prime,
                     'start_address': hex(basicblock.startEA),
                     'end_address': hex(basicblock.endEA),
                     'block_constant': ' '.join(block_constant)
@@ -173,9 +158,8 @@ def basicblock_idb_info_extraction(FROM_FILE):
 
 if __name__ == "__main__":
     s = timeit.default_timer()  # start time
-    PATH = r"C:\malware\mid_idb\0b3d0a3c4fdfd4fb0669216aea68376b5214490f8c4e76d6925de9a6c1a468d5.idb"
+    PATH = r"C:\malware\mid_idb\test_ (12).idb"
     idb_sub_function_info = basicblock_idb_info_extraction(PATH)
-
 
     with open(r"C:\malware\result\test.txt", 'w') as makefile:
         json.dump(idb_sub_function_info, makefile, ensure_ascii=False, indent='\t')
