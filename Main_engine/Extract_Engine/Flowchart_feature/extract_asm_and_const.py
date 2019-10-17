@@ -42,8 +42,8 @@ class basic_block(idb_info):
                 disasms = []
                 block_constant = []  # block 단위의 상수 (ascii string 뽑기)
                 function_dicts[hex(curaddr)] = {}
-                basic_block_prime = dict() # block 단위의 소수 list
-                
+                basic_block_prime = dict()
+
                 # 베이직 블록 내 어셈블리어 추출
                 while curaddr < endaddr:
                     opcode = self.api.idc.GetMnem(curaddr)
@@ -177,9 +177,8 @@ def basicblock_idb_info_extraction(FROM_FILE):
 
 if __name__ == "__main__":
     s = timeit.default_timer()  # start time
-    PATH = r"C:\malware\mid_idb\0b3d0a3c4fdfd4fb0669216aea68376b5214490f8c4e76d6925de9a6c1a468d5.idb"
+    PATH = r"C:\malware\mid_idb\test_ (12).idb"
     idb_sub_function_info = basicblock_idb_info_extraction(PATH)
-
 
     with open(r"C:\malware\result\test.txt", 'w') as makefile:
         json.dump(idb_sub_function_info, makefile, ensure_ascii=False, indent='\t')

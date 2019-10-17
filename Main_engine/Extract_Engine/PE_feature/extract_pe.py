@@ -5,18 +5,9 @@ import numpy as np
 import pefile
 from Main_engine.Extract_Engine.PE_feature import pe_pdb, pe_rsrc, pe_rich
 
-
-class Pe_Feature:
-    def __init__(self, file_name):
-        self.file_name = file_name
-        self.pe = pefile.PE(self.file_name)
-
-    def extract_time(self):
-        time = pe_rsrc.RsrcParser(self.file_name)
-        return time.get_timestamp()
-
-    def extract_rich(self):
-        rich = pe_rich.ParseRichHeader(self.file_name)
+def extract_rich(file_name):
+    rich = pe_rich.ParseRichHeader(file_name)
+    try:
         flag = rich.parse()
 
         if flag != False:
@@ -36,49 +27,84 @@ class Pe_Feature:
             return xor_key
         else:
             return ""
+    except:
+        return ""
+
+def filetypes(self):
+    '''
+    파일타입 추출
+    '.'을 기준으로 오른 쪽에 있는 것을 파일 타입으로 kind 변수에 저장
+    extension = 파일 타입, mime = 클라이언트에게 전송된 문서의 다양성을 알려주기 위한 메커니즘
+    '''
+    kind = filetype.guess(self.file_name)
+    if kind is None:
+        return np.nan
+    return {kind.extension: kind.mime}
+
+
+class Pe_Feature:
+    def __init__(self, file_name):
+        self.file_name = file_name
+        try:
+            self.pe = pefile.PE(self.file_name)
+        except:
+            print('this file can not use pefile module')
+    def extract_time(self):
+        try:
+            time = pe_rsrc.RsrcParser(self.file_name)
+            return time.get_timestamp()
+        except:
+            return []
 
     def extract_pdb(self):
         output_data = dict()
-        PDB_result = pe_pdb.result_all(self.file_name)
-        return PDB_result
+        try:
+            PDB_result = pe_pdb.result_all(self.file_name)
+            return PDB_result
+        except:
+            return {}
 
     def extract_rsrc(self):
-        rsrc = pe_rsrc.RsrcParser(self.file_name)
-        rsrc_result = rsrc.get_resource()
-        return rsrc_result
+        try:
+            rsrc = pe_rsrc.RsrcParser(self.file_name)
+            rsrc_result = rsrc.get_resource()
+            return rsrc_result
+        except:
+            return []
+
     def ex_auth(self):
-        au = pe_rsrc.RsrcParser(self.file_name)
-        return au.section_auth()
+        try:
+            au = pe_rsrc.RsrcParser(self.file_name)
+            return au.section_auth()
+        except:
+            return {}
 
     def imphash_data(self):
         '''
         imphash : import table의 모든 함수 목록을 하나의 해쉬로
         get_imphash()함수 : 함수 이름(.dll)을 찾아서 md5해시 후 리턴
         '''
-
-        if self.pe.get_imphash().upper() == "":
+        try:
+            if self.pe.get_imphash().upper() == "":
+                return np.nan
+            return self.pe.get_imphash().upper()
+        except:
             return np.nan
-        return self.pe.get_imphash().upper()
-
-    def filetypes(self):
-        '''
-        파일타입 추출
-        '.'을 기준으로 오른 쪽에 있는 것을 파일 타입으로 kind 변수에 저장
-        extension = 파일 타입, mime = 클라이언트에게 전송된 문서의 다양성을 알려주기 위한 메커니즘
-        '''
-        kind = filetype.guess(self.file_name)
-        if kind is None:
-            return np.nan
-        return {kind.extension: kind.mime}
 
     def cmp_section_data(self):
-        rsrc = pe_rsrc.RsrcParser(self.file_name)
-        return rsrc.extract_sections_privileges()
+        try:
+            rsrc = pe_rsrc.RsrcParser(self.file_name)
+            return rsrc.extract_sections_privileges()
+        except:
+            return {}
 
     def Autoninfo(self):
-        rsrc = pe_rsrc.RsrcParser(self.file_name)
-        #authentication = rsrc.extractPKCS7()
-        return rsrc.extractPKCS7()
+        try:
+            rsrc = pe_rsrc.RsrcParser(self.file_name)
+            #authentication = rsrc.extractPKCS7()
+            return rsrc.extractPKCS7()
+        except:
+            return {}
 
     def ImportDll(self):
         '''
@@ -100,14 +126,14 @@ class Pe_Feature:
             return np.nan
         return ImportDlldict
 
-    def all(self):
+    def all(self, f_path):
         test= dict()
         func_list = self.ImportDll()
-        #file_type = self.filetypes()
+        #file_type = filetypes()
         imphash = self.imphash_data()
         cmp_section_data = self.cmp_section_data()
         auto = self.Autoninfo()
-        rich_info = self.extract_rich()
+        rich_info = extract_rich(f_path)
         pdb_info = self.extract_pdb()
         rsrc_info = self.extract_rsrc()
         time_info = self.extract_time()
@@ -124,5 +150,7 @@ class Pe_Feature:
             #'rsrc_info': rsrc_info
         }
 
-
         return pe_features
+
+# if __name__ == "__main__":
+#     pe = Pe_Feature(r"C:\malware\mid_GandCrab_exe\test")
