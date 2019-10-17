@@ -54,7 +54,7 @@ class basic_block(idb_info):
                     # 이미 있는 opcode면 +1해주고 없으면 0으로 세팅해서 +1
                     basic_block_prime[opcode_prime] = basic_block_prime[opcode_prime]+1 if opcode_prime in basic_block_prime else 1
                     ######################################################
-                    # Comprehension 이전 버전임                            #
+                    # Comprehension 이전 버전임                           #
                     # if opcode_prime in basic_block_prime:              #
                     #     prime_count = basic_block_prime[opcode_prime]  #
                     # else:                                              #
