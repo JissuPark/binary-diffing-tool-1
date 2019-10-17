@@ -279,12 +279,13 @@ if __name__ == "__main__":
         all_pe_info = Features.export_pe_info('pe')
     else:
         print('error fuck')
-    print(type(all_idb_info))
+
 
     # 5. 분석 하기
     analyze = Analyze_files(all_idb_info, all_pe_info)
+    analyze = Analyze_files(all_pe_info)
 
-    result_idb = analyze.analyze_idb()
+   # result_idb = analyze.analyze_idb()
     # with open(r"C:\malware\result\idbtest.txt", 'w') as makefile:
     #     json.dump(result_idb, makefile, ensure_ascii=False, indent='\t')
     result_pe = analyze.analyze_pe()
