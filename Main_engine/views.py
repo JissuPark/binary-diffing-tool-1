@@ -9,9 +9,11 @@ from Main_engine import main_engine
 def showindex(request):
     return render(request, 'Main_engine/index.html')
 
+def showbootstrap(request):
+    return render(request, 'Main_engine/bootstrap.html')
 
 def call_main(request):
-    main_engine.main_engine2()
+    main_engine.start_engine()
     return render(request, 'Main_engine/result.html')
 
 

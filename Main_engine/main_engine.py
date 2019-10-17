@@ -263,6 +263,55 @@ def out_xlsx(path, result_dict):
     wb.save(path)
 
 
+def start_engine():
+    '''
+    웹 서버에서 메인 엔진을 호출하면 엔진을 돌리기위한 함수
+    * 백앤드 엔진에서는 사용되지 않음
+    * 지금은 서버 테스트만을 위해서 만든 것이므로 무시
+    '''
+    print('[+]back-end engine start!')
+    s = timeit.default_timer()
+
+    PATH = r"C:\malware\mid_GandCrab_exe"
+    IDB_PATH = r"C:\malware\mid_idb"
+
+    # 1. pe 해시 체크 (동일한 파일 필터), 2.패킹 체크
+    pe_check = Pe_Files_Check(PATH)
+    file_hash_dict = pe_check.get_unique_pe_list()
+    # pe_check.unpack_pe()
+
+    # 3. pe파일(+패킹 체크) -> idb 변환
+    flag = convert_idb(PATH, IDB_PATH)
+    Features = Exract_Feature(PATH, IDB_PATH)
+
+    # 4. 정보 추출(idb,pe)
+    if flag == True:
+        all_idb_info = Features.export_idb_info('idb')
+        all_pe_info = Features.export_pe_info('pe')
+    else:
+        print('error fuck')
+    print(type(all_idb_info))
+
+    # 5. 분석 하기
+    analyze = Analyze_files(all_idb_info, all_pe_info)
+
+    result_idb = analyze.analyze_idb()
+    # with open(r"C:\malware\result\idbtest.txt", 'w') as makefile:
+    #     json.dump(result_idb, makefile, ensure_ascii=False, indent='\t')
+    result_pe = analyze.analyze_pe()
+    # with open(r"C:\malware\result\petest.txt", 'w') as makefile:
+    #     json.dump(result_pe, makefile, ensure_ascii=False, indent='\t')
+
+    # 6. 결과 csv 저장 (임시)
+    all_result = analyze.calculate_heuristic(result_idb, result_pe)
+
+    # out_xlsx(r"C:\malware\result\test.xlsx", all_result)
+
+    #    out_csv(r"C:\malware\result\test.csv", all_result)
+
+    print(f"[+]time : {timeit.default_timer() - s}")
+    print('[+]back-end engine end')
+
 if __name__ == "__main__":
 
     s = timeit.default_timer()
