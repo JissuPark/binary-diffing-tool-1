@@ -7,10 +7,11 @@ import shutil
 import time
 
 import subprocess
-import yara
 import math, array
 import pefile
 from multiprocessing import Process, current_process ,Queue, Pool
+
+from yara import rules
 
 
 def cal_byteFrequency(byteArr, fileSize):
@@ -71,8 +72,9 @@ def get_file_entropy(filepath):
 #########################################################
 
 yara_path="Main_engine/Unpacking/peid.yara"
-#yara_path="./peid.yara"
-rules = yara.compile(filepath=yara_path)
+
+# yara_path="./peid.yara"
+
 
 
 def packer_check(queue, pack_path, unpack_path):
