@@ -163,32 +163,36 @@ def exe_to_idb(exe_q, pack_path, unpack_path,):  ### Multiprocessing할 때, tar
         # exe_q에 삽입된 PE 파일 디렉토리 경로를 가져와서
         # pe 포맷인지 확인(pe_check 호출)
         f_path = exe_q.get()
-        pe_flag = pe_check(f_path)
 
-        # 만약 PE 포맷이라면
-        # exec_idat을 호출해서 diat을 실행하고
-        #if pe_flag == IDB_FLAG:
-        #    continue
-        print(pe_flag)
-        if pe_flag != PE_CHECK_ERROR:
-            # exec_idat을 실행하고 해당 자식프로세스가 끝날 때까지 기다린다.
-            # 기다렸다가 idat 실행 후, 생성되는 파일을 정리해야하기 때문에
-            # idat 실행이 종료될 때까지 기다린다.
+        try:
+            # 정상파일인지 체크용
+            pefile.PE(f_path)
 
-            # 1. 파일 패킹 정보 저장 로직
-            tmp = sample_packer_type_detect(f_path)
-            print(tmp)
+            pe_flag = pe_check(f_path)
 
-            # 2. 파일 언팩 수행 로직
-            print('unpacke!!!!!!!!!!!!!!')
-            packer_check(f_path, pack_path, unpack_path)
+            # 만약 PE 포맷이라면
+            # exec_idat을 호출해서 diat을 실행하고
+            #if pe_flag == IDB_FLAG:
+            #    continue
+            print(pe_flag)
+            if pe_flag != PE_CHECK_ERROR:
+                # exec_idat을 실행하고 해당 자식프로세스가 끝날 때까지 기다린다.
+                # 기다렸다가 idat 실행 후, 생성되는 파일을 정리해야하기 때문에
+                # idat 실행이 종료될 때까지 기다린다.
 
-            p = exec_idat(f_path, pe_flag)
-        else:
-            print(f_path+'  '+'pe error')
+                # 1. 파일 패킹 정보 저장 로직
+                tmp = sample_packer_type_detect(f_path)
+                print(tmp)
 
+                # 2. 파일 언팩 수행 로직
+                print('unpacke!!!!!!!!!!!!!!')
+                packer_check(f_path, pack_path, unpack_path)
 
-#            p.wait()
+                p = exec_idat(f_path, pe_flag)
+            else:
+                print(f_path+'  '+'pe error')
+        except:
+            print('this pe is error pefile!!')
 
 
 '''
@@ -239,8 +243,9 @@ def create_idb(PE_PATH, IDB_PATH):
     if not (os.path.isdir(unpack_path)): os.makedirs(unpack_path)
 
     #packing ..
-    pack_q = Queue()
-    exe_list_to_queue(PE_PATH,pack_q)
+    # pack_q = Queue()
+    #
+    # exe_list_to_queue(PE_PATH, pack_q)
 
     # exe_q에 idb로 변환할 exe파일을 쌓는다
     exe_q = Queue()

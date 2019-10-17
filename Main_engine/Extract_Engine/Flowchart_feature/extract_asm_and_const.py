@@ -1,4 +1,5 @@
 import json
+import signal
 import timeit
 import idb
 import hashlib
@@ -122,9 +123,12 @@ def main(api, file_name):
             # main or start or sub_***** function. not library function
             s = timeit.default_timer()  # start time
             basicblock = basic_block(api, fva, fname)
+
             # 베이직 블록 정보 추출 함수 실행
 
             basicblock_function_dicts = basicblock.bbs(function_dicts, file_name)
+
+
             print(f"[+]sex_bbs : {timeit.default_timer() - s}")  # end time
             # 시그널 발생시켜야함함
     return basicblock_function_dicts
@@ -150,7 +154,7 @@ def basicblock_idb_info_extraction(FROM_FILE):
 
 if __name__ == "__main__":
     s = timeit.default_timer()  # start time
-    PATH = r"C:\malware\mid_idb\f4d38e2f43962ec50461b27a62b87fac2420d718066fbe59efb0e678ec36a70b.idb"
+    PATH = r"C:\malware\mid_idb\test1.idb"
     idb_sub_function_info = basicblock_idb_info_extraction(PATH)
 
     with open(r"C:\malware\result\test.txt", 'w') as makefile:

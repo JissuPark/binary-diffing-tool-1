@@ -4,6 +4,9 @@ import timeit
 import os
 from multiprocessing import Process, Queue, Manager
 from collections import OrderedDict
+
+import pefile
+
 from Main_engine.Extract_Engine import pe2idb
 from Main_engine.Extract_Engine.Flowchart_feature import extract_asm_and_const
 from Main_engine.Extract_Engine.PE_feature import extract_pe
@@ -106,8 +109,11 @@ def multiprocess_file(q, return_dict, flag):
         if flag == 'idb':
             info = extract_asm_and_const.basicblock_idb_info_extraction(f_path)  # 함수대표값 및 상수값 출력
         elif flag == 'pe':
-            info = extract_pe.Pe_Feature(f_path).all(f_path)  # pe 속성 출력
-
+            try:
+                pe = pefile.PE(f_path)
+                info = extract_pe.Pe_Feature(f_path, pe).all(f_path)  # pe 속성 출력
+            except:
+                continue
         return_dict[f_path] = info
 
 
@@ -267,7 +273,6 @@ if __name__ == "__main__":
     # 1. pe 해시 체크 (동일한 파일 필터), 2.패킹 체크
     pe_check = Pe_Files_Check(PATH)
     file_hash_dict = pe_check.get_unique_pe_list()
-    #pe_check.unpack_pe()
 
     # 3. pe파일(+패킹 체크) -> idb 변환
     flag = convert_idb(PATH, IDB_PATH)
@@ -283,9 +288,9 @@ if __name__ == "__main__":
 
     # 5. 분석 하기
     analyze = Analyze_files(all_idb_info, all_pe_info)
-    analyze = Analyze_files(all_pe_info)
 
-   # result_idb = analyze.analyze_idb()
+
+    result_idb = analyze.analyze_idb()
     # with open(r"C:\malware\result\idbtest.txt", 'w') as makefile:
     #     json.dump(result_idb, makefile, ensure_ascii=False, indent='\t')
     result_pe = analyze.analyze_pe()
