@@ -50,9 +50,13 @@ class basic_block(idb_info):
                     disasm = self.api.idc.GetDisasm(curaddr)
 
                     ''' opcode_prime 추출(임시면 BBP(basic block prime) '''
-                    opcode_prime = const_filter_indexs.prime_set[opcode]    # opcode에 해당하는 소수
-                    # 이미 있는 opcode면 +1해주고 없으면 0으로 세팅해서 +1
-                    basic_block_prime[opcode_prime] = basic_block_prime[opcode_prime]+1 if opcode_prime in basic_block_prime else 1
+                    if opcode in const_filter_indexs:
+                        opcode_prime = const_filter_indexs.prime_set[opcode]    # opcode에 해당하는 소수
+                        # 이미 있는 opcode면 +1해주고 없으면 0으로 세팅해서 +1
+                        basic_block_prime[opcode_prime] = basic_block_prime[opcode_prime]+1 if opcode_prime in basic_block_prime else 1
+                        ''' 요기 예외 처리 로직 넣어야함'''
+                    else:
+                        print(f'There is not prime number with {opcode}')
                     ######################################################
                     # Comprehension 이전 버전임                            #
                     # if opcode_prime in basic_block_prime:              #
