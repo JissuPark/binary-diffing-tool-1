@@ -7,10 +7,13 @@ import shutil
 import time
 
 import subprocess
-import yara
 import math, array
 import pefile
 from multiprocessing import Process, current_process ,Queue, Pool
+
+import yara
+from yara import rules
+
 
 def cal_byteFrequency(byteArr, fileSize):
     freqList = []
@@ -74,6 +77,7 @@ yara_path="Main_engine/Unpacking/peid.yara"
 rules = yara.compile(filepath=yara_path)
 
 
+
 def packer_check(queue, pack_path, unpack_path):
     # pack_path = C:\malware\unpack_exe\packed
     # unpack_path = C:\malware\unpack_exe\unpacked
@@ -101,34 +105,42 @@ def packer_check(queue, pack_path, unpack_path):
             # 1. 알려지지 않은 패커로 패킹됨
             # 2. 패킹이 안된 파일임
 
-            pe = pefile.PE(sample_path)
-            # pe_entropy = get_file_entropy(sample_path)
-            # print(pe_entropy[1])
-            # if pe_entropy[1] > 6.3:
-            #     flag = 1
-            for section in pe.sections:
-                if section.get_entropy() > 6.3 :
-                    # 1. 알려지지 않은 패커로 패킹됨
-                    flag = 1
+            try:
+                pe = pefile.PE(sample_path)
+                # pe_entropy = get_file_entropy(sample_path)
+                # print(pe_entropy[1])
+                # if pe_entropy[1] > 6.3:
+                #     flag = 1
+
+                for section in pe.sections:
+                    if section.get_entropy() > 6.3 :
+                        # 1. 알려지지 않은 패커로 패킹됨
+                        flag = 1
+                        print('--------------------------------------')
+
+
+                if flag==1:
                     print('--------------------------------------')
-
-
-            if flag==1:
-                print('--------------------------------------')
+                    unknown_sample_path = os.path.join(pack_path, 'unknown', sample_basename)
+                    unknown_folder_path = os.path.join(pack_path, 'unknown')
+                    if not (os.path.isdir(unknown_folder_path)): os.makedirs(unknown_folder_path)
+                    pe.close()
+                    shutil.copy(sample_path, unknown_sample_path)
+                    #os.remove(sample_path)
+                    continue
+                else:
+                    # 2. 패킹이 안된 파일임
+                    print('--------------------------------------')
+                    pe.close()
+                    shutil.copy(sample_path, sample_unpack_path)
+                    #os.remove(sample_path)
+                    continue
+            except:
+                print('asdjfksdfshfdfgdf')
                 unknown_sample_path = os.path.join(pack_path, 'unknown', sample_basename)
                 unknown_folder_path = os.path.join(pack_path, 'unknown')
                 if not (os.path.isdir(unknown_folder_path)): os.makedirs(unknown_folder_path)
-                pe.close()
                 shutil.copy(sample_path, unknown_sample_path)
-                #os.remove(sample_path)
-                continue
-            else:
-                # 2. 패킹이 안된 파일임
-                print('--------------------------------------')
-                pe.close()
-                shutil.copy(sample_path, sample_unpack_path)
-                #os.remove(sample_path)
-                continue
 
         else:
             #yara_match_result += str(matches_list['main'][0]['rule']).lower()+' '
@@ -177,7 +189,7 @@ def Unpacks_sub_process(sample_path, flags, sample_unpack_path, pack_path, sampl
     if flags==1:
         process_flag = subprocess.Popen(["MNM_Unpacker.exe", "a", sample_path], shell=True).wait()
         time.sleep(2)
-        if process_flag == 1:
+        if process_flag != 0:
             print("Process Not Run")
             mnm_error = os.path.join(pack_path, 'MNM')[:-1]
             if not (os.path.isdir(mnm_error)): os.makedirs(mnm_error)
@@ -193,21 +205,10 @@ def Unpacks_sub_process(sample_path, flags, sample_unpack_path, pack_path, sampl
 
     elif flags==2:
         process_flag = subprocess.Popen(["upx.exe", "-d", sample_path], shell=True).wait()
+        print(sample_path)
         print(process_flag)
         time.sleep(2)
-        if process_flag == 1:
-            print('aaaaaaaa')
-            process_flag2 = subprocess.Popen(["upx2.exe", "-d", sample_path], shell=True).wait()
-            if process_flag2 == 1:
-                process_flag3 = subprocess.Popen(["upx3.exe", "-d", sample_path], shell=True).wait()
-                if process_flag3 ==1:
-                    upx_error = os.path.join(pack_path, 'unknownn')[:-1]
-                    print(upx_error)
-                    if not (os.path.isdir(upx_error)): os.makedirs(upx_error)
-                    upx_tag_sample_path = os.path.join(upx_error, sample_basename)
-                    shutil.copy(sample_path, upx_tag_sample_path)
-                    return
-        elif process_flag == 2:
+        if process_flag != 0:
             upx_error = os.path.join(pack_path, 'unknownn')[:-1]
             print(upx_error)
             if not (os.path.isdir(upx_error)): os.makedirs(upx_error)
@@ -215,10 +216,6 @@ def Unpacks_sub_process(sample_path, flags, sample_unpack_path, pack_path, sampl
             shutil.copy(sample_path, upx_tag_sample_path)
             return
 
-
-        # if os.path.isfile(sample_path):
-        #     shutil.copy(sample_path , sample_unpack_path)
-        #     return
 
     elif flags==3:
         process_flag = subprocess.Popen(["MNM_Unpacker.exe", "f", sample_path], shell=True).wait()
