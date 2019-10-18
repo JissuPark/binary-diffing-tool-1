@@ -196,15 +196,16 @@ class Analyze_files:
             idb_final_score = OrderedDict()
             pe_final_score = OrderedDict()
             for value_i, value_pe in zip(key_i[1].items(), key_pe[1].items()):
-                semifinal = [0, 0, 0, 0, 0, 0, 0, 0]
+                semifinal = [0, 0, 0, 0, 0, 0, 0, 0, 0]
                 semifinal[0] = (value_pe[1]['file_hash'])
-                semifinal[1] = (value_i[1]['bbh'])
-                semifinal[2] = (value_i[1]['const_value'])
-                semifinal[3] = (value_pe[1]['section_score'])
-                semifinal[4] = (value_pe[1]['auth_score'])
-                semifinal[5] = (value_pe[1]['pdb_score'])
-                semifinal[6] = (value_pe[1]['imphash'])
-                semifinal[7] = (value_pe[1]['rich'])
+                semifinal[1] = (value_pe[1]['time_date_stamp'])
+                semifinal[2] = (value_i[1]['bbh'])
+                semifinal[3] = (value_i[1]['const_value'])
+                semifinal[4] = (value_pe[1]['section_score'])
+                semifinal[5] = (value_pe[1]['auth_score'])
+                semifinal[6] = (value_pe[1]['pdb_score'])
+                semifinal[7] = (value_pe[1]['imphash'])
+                semifinal[8] = (value_pe[1]['rich'])
 
                 idb_final_score[value_i[0]] = semifinal
                 pe_final_score[value_pe[0]] = semifinal
@@ -240,8 +241,8 @@ def out_xlsx(path, result_dict):
     ws = wb.active
 
     ws.title = 'result_xlsx'
-    title = ['BASE_FILE', 'COMP_FILE', 'FILE HASH', 'BB HASH', 'CONSTANT', 'SECTION', 'AUTH', 'PDB', 'IMPORT HASH', 'RICH']
-    cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
+    title = ['BASE_FILE', 'COMP_FILE', 'FILE HASH', 'TIME STAMP', 'BB HASH', 'CONSTANT', 'SECTION', 'AUTH', 'PDB', 'IMPORT HASH', 'RICH']
+    cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K']
 
     for i in range(len(title)):
         ws[f'{cols[i]}1'] = title[i]
