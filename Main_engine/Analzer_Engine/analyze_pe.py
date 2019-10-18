@@ -159,6 +159,7 @@ class AnalyzePE:
                     continue
                 #pe_t['filehash'] = hashlib.sha256(open(pe_info_t['file_name'], 'rb').read()).hexdigest()
                 pe_t['file_hash'] = pe_info_t['file_hash']
+                pe_t['time_date_stamp'] = pe_info_t['time_date_stamp']
                 pe_t['imphash'] = self.analyze_imphash(pe_info_s, pe_info_t)
                 pe_t['rich'] = self.analyze_rich(pe_info_s, pe_info_t)
                 #print(f"{pe_info_s['file_name']} vs {pe_info_t['file_name']}")
