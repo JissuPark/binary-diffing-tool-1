@@ -231,7 +231,7 @@ def clear_folder(EXE_F_PATH, IDA_F_PATH):
 
 def create_idb(PE_PATH, IDB_PATH):
     ### time idb로 파일을 변환하는 시간 측정을 위한 코드
-    #s = timeit.default_timer()
+    s = timeit.default_timer()
 
     # packing 관련
     sample_folder_path = PE_PATH
@@ -243,9 +243,9 @@ def create_idb(PE_PATH, IDB_PATH):
     if not (os.path.isdir(unpack_path)): os.makedirs(unpack_path)
 
     #packing ..
-    # pack_q = Queue()
-    #
-    # exe_list_to_queue(PE_PATH, pack_q)
+    pack_q = Queue()
+
+    exe_list_to_queue(PE_PATH, pack_q)
 
     # exe_q에 idb로 변환할 exe파일을 쌓는다
     exe_q = Queue()
@@ -263,15 +263,6 @@ def create_idb(PE_PATH, IDB_PATH):
     for p in procs:
         p.join()
     ###################### END - Multiprocessing #######################
-    #
-    # proc_list = []
-    # for _ in range(0, 5):
-    #     proc = Process(target=unpack_module.packer_check, args=(pack_q, pack_path, unpack_path,))
-    #     proc_list.append(proc)
-    # for proc in proc_list:
-    #     proc.start()
-    # for proc in proc_list:
-    #     proc.join()
 
     return clear_folder(PE_PATH, IDB_PATH)
 
@@ -280,8 +271,8 @@ if __name__=="__main__":
     # PATH : idb로 변환할 pe 파일이 위치한 디렉토리 경로
     # IDB_PATH : 변환된 idb파일을 저장할 디렉토리 경로
 
-    PATH = r"C:\malware\mid_GandCrab_exe"
-    IDB_PATH = r"C:\malware\mid_idb"
+    PATH = r"c/malware/mid_GandCrab_exe"
+    IDB_PATH = r"c/malware/mid_idb"
 
     create_idb(PATH, IDB_PATH)
 

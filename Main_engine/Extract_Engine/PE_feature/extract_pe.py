@@ -77,8 +77,8 @@ class Pe_Feature:
 
         return ImportDlldict
 
-    def extract_rich(file_name):
-        rich = pe_rich.ParseRichHeader(file_name)
+    def extract_rich(self):
+        rich = pe_rich.ParseRichHeader(self.file_name)
         try:
             flag = rich.parse()
 
@@ -113,14 +113,14 @@ class Pe_Feature:
             return np.nan
         return {kind.extension: kind.mime}
 
-    def all(self, f_path):
+    def all(self, ):
         test= dict()
         func_list = self.ImportDll()
         #file_type = filetypes()
         imphash = self.imphash_data()
         cmp_section_data = self.cmp_section_data()
         auto = self.Autoninfo()
-        rich_info = self.extract_rich(f_path)
+        rich_info = self.extract_rich()
         pdb_info = self.extract_pdb()
         rsrc_info = self.extract_rsrc()
         time_info = self.extract_time()

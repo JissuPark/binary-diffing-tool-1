@@ -1,13 +1,14 @@
+#coding:utf-8
 import hashlib
 import json
 import timeit
 import os
+import sys
 from multiprocessing import Process, Queue, Manager
 from collections import OrderedDict
-
 import pefile
-
 from Main_engine.Extract_Engine import pe2idb
+
 from Main_engine.Extract_Engine.Flowchart_feature import extract_asm_and_const
 from Main_engine.Extract_Engine.PE_feature import extract_pe
 from Main_engine.Analzer_Engine import analyze_pe, analyze_flowchart
@@ -111,8 +112,10 @@ def multiprocess_file(q, return_dict, flag):
         elif flag == 'pe':
             try:
                 pe = pefile.PE(f_path)
-                info = extract_pe.Pe_Feature(f_path, pe).all(f_path)  # pe 속성 출력
+                print('씨발')
+                info = extract_pe.Pe_Feature(f_path, pe).all()  # pe 속성 출력
             except:
+                print('pe error !!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
                 continue
         return_dict[f_path] = info
 
@@ -305,7 +308,7 @@ def start_engine():
     # 6. 결과 csv 저장 (임시)
     all_result = analyze.calculate_heuristic(result_idb, result_pe)
 
-    # out_xlsx(r"C:\malware\result\test.xlsx", all_result)
+    #out_xlsx(r"C:\malware\result\test.xlsx", all_result)
 
     #    out_csv(r"C:\malware\result\test.csv", all_result)
 
@@ -349,7 +352,7 @@ if __name__ == "__main__":
     # 6. 결과 csv 저장 (임시)
     all_result = analyze.calculate_heuristic(result_idb, result_pe)
 
-    #out_xlsx(r"C:\malware\result\test.xlsx", all_result)
+    out_xlsx(r"C:\malware\result\test.xlsx", all_result)
 
 #    out_csv(r"C:\malware\result\test.csv", all_result)
 
