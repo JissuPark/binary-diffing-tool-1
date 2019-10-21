@@ -5,7 +5,6 @@ import idb
 import hashlib
 
 import pefile
-from eventlet.timeout import Timeout
 from Main_engine.Extract_Engine.Flowchart_feature import const_filter_indexs
 
 glo_list = list()  # PE 전체의 constant 값을 담을 global list

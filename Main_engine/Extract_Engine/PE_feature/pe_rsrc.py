@@ -227,7 +227,7 @@ class RsrcParser:
         second = self.pe.FILE_HEADER.TimeDateStamp
         print(type(second))
         print(f"Time in second :: {second}")
-        return Time, second
+        return Time
 
     def get_entropy(self,data):
         if len(data) == 0:
