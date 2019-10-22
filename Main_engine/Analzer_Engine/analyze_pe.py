@@ -3,9 +3,6 @@ from collections import OrderedDict
 import ssdeep
 from ngram import NGram
 import operator
-import json
-from Main_engine.Analzer_Engine.Algorithm import all_algo as algo
-
 
 class AnalyzePE:
     def __init__(self, pe_all):
