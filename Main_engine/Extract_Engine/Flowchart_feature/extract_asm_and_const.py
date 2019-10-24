@@ -30,89 +30,8 @@ class basic_block(idb_info):
         func_name_dicts[self.func_name] = {}
         # 함수 내에서 플로우 차트 추출
         try:
-<<<<<<< HEAD
-            for basicblock in function_flowchart:
-                curaddr = basicblock.startEA
-                endaddr = basicblock.endEA
-
-                if (endaddr - curaddr) < 30:  # 최소 바이트 50이상 할것
-                    continue
-
-                opcodes = []
-                hex_opcodes = []
-                disasms = []
-                block_constant = []  # block 단위의 상수 (ascii string 뽑기)
-                function_dicts[hex(curaddr)] = {}
-                basic_block_prime = dict() # block 단위의 소수 list
-                
-                # 베이직 블록 내 어셈블리어 추출
-                while curaddr < endaddr:
-                    opcode = self.api.idc.GetMnem(curaddr)
-                    disasm = self.api.idc.GetDisasm(curaddr)
-
-                    ''' opcode_prime 추출(임시면 BBP(basic block prime) '''
-                    opcode_prime = const_filter_indexs.prime_set[opcode]    # opcode에 해당하는 소수
-                    # 이미 있는 opcode면 +1해주고 없으면 0으로 세팅해서 +1
-                    basic_block_prime[opcode_prime] = basic_block_prime[opcode_prime]+1 if opcode_prime in basic_block_prime else 1
-                    ######################################################
-                    # Comprehension 이전 버전임                           #
-                    # if opcode_prime in basic_block_prime:              #
-                    #     prime_count = basic_block_prime[opcode_prime]  #
-                    # else:                                              #
-                    #     prime_count = 0                                #
-                    # basic_block_prime[opcode_prime] = prime_count+1    #
-                    ######################################################
-
-                    '''--- 상수값 추출 시작 ---'''
-                    if opcode in const_filter_indexs.indexs:  # instruction white list
-                        operand = self.api.idc._disassemble(curaddr).op_str.split(',')
-                        if len(operand) == 2:  # operand가 2개일 때 조건입장
-                            unpack_1, unpack_2 = operand  # unpacking list
-                            operand_1 = unpack_1.strip()  # 공백제거
-                            operand_2 = unpack_2.strip()
-                            # print(f'01 ::: {operand_1}, 02::: {operand_2}') # 테스트코드
-                            if operand_1 not in const_filter_indexs.pointer:  # esp, esi, ebp가 아니여야 입장
-                                if "ptr" not in operand_2 and operand_2 not in const_filter_indexs.logic:  # ptr, 0xffffffff 등 없어야 입장
-                                    if operand_2 not in const_filter_indexs.registers:  # 레지스터가 없어야 입장
-                                        if operand_2 != '0' and len(operand_2) != 8 and "[" not in operand_2 and "]" not in operand_2:
-                                            glo_list.append(operand_2)  # append file total constant
-                                            block_constant.append(operand_2)  # append block constant
-                        else:  # operand가 1개일 때 조건입장
-                            if operand[0] not in const_filter_indexs.registers and "ptr" not in operand[0] and operand[0] not in const_filter_indexs.logic:  # 레지가아니고 ptr도 없어야 입장
-                                if operand[0] != '0' and len(operand[0]) != 8:  # 8length 일단 하드코딩, 정규식으로 교채해야함
-                                    glo_list.append(operand[0])
-                                    block_constant.append(operand[0])
-                    '''--- 상수값 추출 끝 ---'''
-                    # 3주소 명령도 있음? 그러면 위에 else로 빠져서 쓸모없는 값 뽑을 수 있음....
-                    opcodes.append(opcode)
-                    hex_opcodes.append(int(opcode.encode("utf-8").hex(), 16))
-                    disasms.append(disasm)
-                    curaddr = self.api.idc.NextHead(curaddr)
-                ''' ================================ END ONE BLOCK ================================'''
-                # 중복 값 제어
-                mutex_opcode = ' '.join(opcodes)  # mutex_opcode -> type(str)
-                if mutex_opcode in mutex_opcode_list:
-                    del function_dicts[hex(basicblock.startEA)]  # del 안하면 비어있는 딕셔너리 생김 ex) 0x402034 = {}
-                    continue
-                else:
-                    mutex_opcode_list.append(mutex_opcode)
-
-                basicblock_dics = {
-                    'opcodes': opcodes,
-                    'disasms': disasms,
-                    'block_sha256': hashlib.sha256(hex(sum(hex_opcodes)).encode()).hexdigest(),  # add my codes
-                    'block_prime' : basic_block_prime,
-                    'start_address': hex(basicblock.startEA),
-                    'end_address': hex(basicblock.endEA),
-                    'block_constant': ' '.join(block_constant)
-                }
-                opcode_flow.append(mutex_opcode)
-                function_dicts[hex(basicblock.startEA)] = basicblock_dics
-                #function_name['funct_name'] = function_dicts
-=======
             function_flowchart = self.api.idaapi.FlowChart(self.function)
             # 플로우 차트에서 반복문 돌려 각 베이직 블록 추출
->>>>>>> upstream/master
         except:
             print('can not parsing flowchart!!!')
             return
