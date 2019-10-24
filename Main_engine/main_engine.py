@@ -316,7 +316,7 @@ if __name__ == "__main__":
     # 1. pe 해시 체크 (동일한 파일 필터), 2.패킹 체크
     pe_check = Pe_Files_Check(PATH)
     file_hash_dict = pe_check.get_unique_pe_list()
-    #pe_check.unpack_pe()
+
 
     # 3. pe파일(+패킹 체크) -> idb 변환
     flag = convert_idb(PATH, IDB_PATH)
@@ -332,9 +332,9 @@ if __name__ == "__main__":
 
     # 5. 분석 하기
     analyze = Analyze_files(all_idb_info, all_pe_info)
-    analyze = Analyze_files(all_pe_info)
 
-   # result_idb = analyze.analyze_idb()
+
+    result_idb = analyze.analyze_idb()
     # with open(r"C:\malware\result\idbtest.txt", 'w') as makefile:
     #     json.dump(result_idb, makefile, ensure_ascii=False, indent='\t')
     result_pe = analyze.analyze_pe()
@@ -344,7 +344,7 @@ if __name__ == "__main__":
     # 6. 결과 csv 저장 (임시)
     all_result = analyze.calculate_heuristic(result_idb, result_pe)
 
-    #out_xlsx(r"C:\malware\result\test.xlsx", all_result)
+    out_xlsx(r"C:\malware\result\test.xlsx", all_result)
 
 #    out_csv(r"C:\malware\result\test.csv", all_result)
 

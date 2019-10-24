@@ -27,7 +27,9 @@ BYTES_SIG_IDB = b'IDA1'  # '0x31414449'
 BYTES_SIG_I64 = b'IDA2'  # '0x32414449'
 
 HEX_M_32 = 0x14c
-HEX_M_64 = 0x2008
+HEX_M_64_IA = 0x200
+HEX_M_64_AMD = 0x8664
+
 #IDB_FLAG = -1
 
 # IDAT_PATH
@@ -69,9 +71,9 @@ def pe_check(PE_F_PATH):
                 print(f"[32bit]{PE_F_PATH}")
                 return IDAT
             
-            #elif m_bit == HEX_M_64:
-                #print(f"[64bit]{PE_F_PATH}")
-                #return IDAT64
+            elif m_bit == HEX_M_64_IA or m_bit == HEX_M_64_AMD:
+                print(f"[64bit]{PE_F_PATH}")
+                return IDAT64
             else:
                 print(f"[64bit]{PE_F_PATH}")
                 return IDAT64
