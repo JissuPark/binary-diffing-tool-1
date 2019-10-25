@@ -12,6 +12,9 @@ Referrence/
 Main_engine/Check_Packing/
 Mysite/__pycache__/
 Main_engine/migrations/__pycache__/
+<<<<<<< HEAD
+=======
 Main_engine/__pycache__/
 
+>>>>>>> upstream/master
 

@@ -218,8 +218,8 @@ class Analyze_files:
     def analyze_idb(self):
         idb = analyze_flowchart.AnalyzeFlowchart(self.all_idb_info)
         idb_split = idb.flow_parser()
-        idb_result = idb.analyze_all(idb_split)
-        return idb_result
+        idb_result, yun = idb.analyze_all(idb_split)
+        return idb_result, yun
 
     def analyze_pe(self):
         pe = analyze_pe.AnalyzePE(self.all_pe_info)
@@ -299,7 +299,10 @@ def start_engine():
     # 5. 분석 하기
     analyze = Analyze_files(all_idb_info, all_pe_info)
 
-    result_idb = analyze.analyze_idb()
+    result_idb, yun = analyze.analyze_idb()
+
+    print(f"yun :: {yun}")
+
     # with open(r"C:\malware\result\idbtest.txt", 'w') as makefile:
     #     json.dump(result_idb, makefile, ensure_ascii=False, indent='\t')
     result_pe = analyze.analyze_pe()
@@ -309,7 +312,7 @@ def start_engine():
     # 6. 결과 csv 저장 (임시)
     all_result = analyze.calculate_heuristic(result_idb, result_pe)
 
-    #out_xlsx(r"C:\malware\result\test.xlsx", all_result)
+    out_xlsx(r"C:\malware\result\test.xlsx", all_result)
 
 
     print(f"[+]time : {timeit.default_timer() - s}")
@@ -342,17 +345,26 @@ if __name__ == "__main__":
     analyze = Analyze_files(all_idb_info, all_pe_info)
 
 
-    result_idb = analyze.analyze_idb()
+    result_pe= analyze.analyze_pe()
+    # sorted_yun = sorted(yun.items(), key=(lambda x: x[1][1]))
+    # print(f"sorted_yun :: {json.dumps(sorted_yun, indent=4)}")
+
+
+    result_idb, yun = analyze.analyze_idb()
+
+    print(f"yun :: {yun}")
+
     # with open(r"C:\malware\result\idbtest.txt", 'w') as makefile:
     #     json.dump(result_idb, makefile, ensure_ascii=False, indent='\t')
-    result_pe = analyze.analyze_pe()
+
     # with open(r"C:\malware\result\petest.txt", 'w') as makefile:
     #     json.dump(result_pe, makefile, ensure_ascii=False, indent='\t')
 
     # 6. 결과 csv 저장 (임시)
-    all_result = analyze.calculate_heuristic(result_idb, result_pe)
-
-    out_xlsx(r"C:\malware\result\test.xlsx", all_result)
+    #all_result = analyze.calculate_heuristic(result_idb, result_pe)
+    # re_result = sorted(all_result.items(), key=(lambda y: y[1][2]))
+    # print(f"re_result :: {json.dumps(re_result, indent=4)}")
+    #out_xlsx(r"C:\malware\result\test.xlsx", all_result)
 
 #    out_csv(r"C:\malware\result\test.csv", all_result)
 
