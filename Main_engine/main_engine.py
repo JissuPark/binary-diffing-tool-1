@@ -311,7 +311,6 @@ def start_engine():
 
     #out_xlsx(r"C:\malware\result\test.xlsx", all_result)
 
-    #    out_csv(r"C:\malware\result\test.csv", all_result)
 
     print(f"[+]time : {timeit.default_timer() - s}")
     print('[+]back-end engine end')
