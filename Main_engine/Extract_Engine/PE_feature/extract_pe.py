@@ -85,15 +85,15 @@ class Pe_Feature:
             if flag != False:
                 xor_key = rich.xorkey
                 rich_dict = dict()
-                print(f'XorKey : {xor_key}')
-                print("ProID    name              count")
+                #print(f'XorKey : {xor_key}')
+                #print("ProID    name              count")
                 for key in rich.info_list.keys():
                     count = rich.info_list[key]
                     mcv = (key << 16)
                     prodid = (key >> 16)
 
                     prodid_name = pe_rich.PRODID_MAP[prodid] if prodid in pe_rich.PRODID_MAP else "<unknown>"
-                    print('%6d   %-15s %5d     %6d' % (prodid, prodid_name, count, mcv))
+                    #print('%6d   %-15s %5d     %6d' % (prodid, prodid_name, count, mcv))
                     rich_dict[key] = count
 
                 return xor_key
@@ -123,7 +123,7 @@ class Pe_Feature:
         rich_info = self.extract_rich()
         pdb_info = self.extract_pdb()
         rsrc_info = self.extract_rsrc()
-        time_info = self.extract_time()
+        time_info, TimeInNum = self.extract_time()
 
         pe_features = {
             'file_name': self.file_name[28:],
@@ -133,7 +133,8 @@ class Pe_Feature:
             'auto': auto,
             'rich_info': rich_info,
             'pdb_info': pdb_info,
-            'time_date_stamp': time_info
+            'time_date_stamp': time_info,
+            'time in num': TimeInNum
             #'rsrc_info': rsrc_info
         }
 

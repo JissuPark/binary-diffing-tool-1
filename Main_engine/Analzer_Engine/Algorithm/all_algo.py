@@ -17,7 +17,7 @@ def get_string_similarity(standard, target):  # input json path string 1, 2
     return result
 
 
-def get_func_similarity(s_dict, t_dict, stand_hash_count):
+def get_func_similarity(s_dict, t_dict, stand_hash_count, correction_score):
     '''
     해쉬값을 넣어주면 비교해서 얼마나 같은지 점수로 반환해주는 함수
     :param stand_hash_dict: stand value for compare
@@ -27,9 +27,12 @@ def get_func_similarity(s_dict, t_dict, stand_hash_count):
     '''
 
     true_count = ([s_dict[fname][fAddr][hashSet] for fname in s_dict for fAddr in s_dict[fname] for hashSet in s_dict[fname][fAddr]]).count(True)
+    #correction_score = 3-Gram 유사블럭 보정점수
+    print(f'유사블럭 보정 전 : {true_count}')
+    true_count = true_count + correction_score
+    print(f'유사블럭 보정 후 : {true_count}')
     #print(f'true_count ::: {true_count}')
     #print(f'stand_hash_count ::: {stand_hash_count}')
-
 
     return (true_count/stand_hash_count)
 

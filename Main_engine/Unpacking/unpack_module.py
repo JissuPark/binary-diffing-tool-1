@@ -11,6 +11,7 @@ import math, array
 import pefile
 from multiprocessing import Process, current_process ,Queue, Pool
 
+import yara
 from yara import rules
 
 
@@ -72,8 +73,8 @@ def get_file_entropy(filepath):
 #########################################################
 
 yara_path="Main_engine/Unpacking/peid.yara"
-
-# yara_path="./peid.yara"
+#yara_path="./peid.yara"
+rules = yara.compile(filepath=yara_path)
 
 
 
@@ -97,7 +98,7 @@ def packer_check(queue, pack_path, unpack_path):
 
         yara_match_result = ""
 
-        flag=0
+        flag = 0
         if matches_list == {}:
             # matches_list 딕셔너리가 비어있단 소리는 야라룰에 매칭되는 게 없다는 뜻이고
             # 그 의미는 2가지로 나뉨
