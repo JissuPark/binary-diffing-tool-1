@@ -3,6 +3,7 @@ from collections import OrderedDict
 import ssdeep
 from ngram import NGram
 import operator
+import json
 
 class AnalyzePE:
     def __init__(self, pe_all):
@@ -130,7 +131,7 @@ class AnalyzePE:
         for key in dict_s.keys() and dict_t.keys():                                 #키의 이름이 다를 때의 예외처리가 필요
             if key in dict_s and key in dict_t:
                 if dict_s[key]['section_name'] == dict_t[key]['section_name']:
-                    print(f"{dict_s[key]['section_name']}, {dict_t[key]['section_name']}")
+                    #print(f"{dict_s[key]['section_name']}, {dict_t[key]['section_name']}")
                     score = ssdeep.compare(dict_s[key]['hash_ssdeep'], dict_t[key]['hash_ssdeep'])
                     comp += score
                 # print(f"{key} :: {score}")
@@ -145,7 +146,7 @@ class AnalyzePE:
         return comp
 
     def analyze_all(self, pe_list):
-
+        yun_pe = dict()
         pe_all = OrderedDict()
 
         for index_1, pe_info_s in enumerate(pe_list):
@@ -157,6 +158,10 @@ class AnalyzePE:
                 #pe_t['filehash'] = hashlib.sha256(open(pe_info_t['file_name'], 'rb').read()).hexdigest()
                 pe_t['file_hash'] = pe_info_t['file_hash']
                 pe_t['time_date_stamp'] = pe_info_t['time_date_stamp']
+
+                yun_pe[pe_info_t['file_name']] = [pe_info_t['time_date_stamp']]
+                yun_pe[pe_info_t['file_name']].append(pe_info_t['time in num'])
+
                 pe_t['imphash'] = self.analyze_imphash(pe_info_s, pe_info_t)
                 pe_t['rich'] = self.analyze_rich(pe_info_s, pe_info_t)
                 #print(f"{pe_info_s['file_name']} vs {pe_info_t['file_name']}")
@@ -167,8 +172,8 @@ class AnalyzePE:
                 #pe_t['rsrc'] = self.analyze_rsrc(pe_info_s['rsrc_info'], pe_info_t['rsrc_info'])
                 pe_s[pe_info_t['file_name']] = pe_t
             pe_all[pe_info_s['file_name']] = pe_s
-
-        return pe_all
+        #print(f"yun :: {json.dumps(yun, indent=4)}")
+        return pe_all, yun_pe
 
 
 
