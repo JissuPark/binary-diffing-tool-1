@@ -144,29 +144,38 @@ class AnalyzeFlowchart:
         return const_score['2-Gram']
 
     def analyze_all(self, idb_list):
-        yun = dict()
+        flag = 0
         idb_all = OrderedDict()
-        test_all = OrderedDict()
+        yun_all = dict()
         for index_1, idb_info_s in enumerate(idb_list):
             idb_s = dict()
-            test_s = dict()
+            yun_s = dict()
             for index_2, idb_info_t in enumerate(idb_list):
                 idb_t = dict()
                 test_d = dict()
-                tmp = idb_info_t['file_name']
+                yun = dict()
                 if index_1 == index_2:
                     continue
                 idb_t['bbh'], test_d['func_name'], test_d['start_addr'] = self.analyze_bbh(idb_info_s, idb_info_t)
+
                 if idb_t['bbh'] >= 0.85:
                     print(f"{idb_info_s['file_name']} compare {idb_info_t['file_name']} :: {idb_t['bbh']}")
-                    yun[idb_info_t['file_name']] = [idb_t['bbh']]
+                    flag = 1
+                    #여기 변경
+                    yun['bbh'] = idb_t['bbh']
+                    yun_s[idb_info_t['file_name']] = yun
+
                 idb_t['const_value'] = self.analyze_constant(idb_info_s, idb_info_t)
-                #test_s[idb_info_t['file_name']] = test_d
                 idb_s[idb_info_t['file_name']] = idb_t
-            #test_all[idb_info_s['file_name']] = test_s
+
+            #여기 추가
+            if flag == 1 : yun_all[idb_info_s['file_name']] = yun_s
+            flag = 0
+
             idb_all[idb_info_s['file_name']] = idb_s
 
+        print(json.dumps(yun_all, indent=4))
         # with open(r"C:\malware\result\cm_test.txt", 'w') as makefile:
         #     json.dump(test_all, makefile, ensure_ascii=False, indent='\t')
         #print(f"idb_all :: {json.dumps(idb_all,indent=4)}")
-        return idb_all, yun
+        return idb_all, yun_all

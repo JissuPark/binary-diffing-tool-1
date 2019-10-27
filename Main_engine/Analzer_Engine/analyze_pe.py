@@ -145,22 +145,38 @@ class AnalyzePE:
                 continue
         return comp
 
-    def analyze_all(self, pe_list):
-        yun_pe = dict()
+    def analyze_all(self, pe_list, yun):
+
         pe_all = OrderedDict()
+        flag = 0
+        tmp = dict()
+
 
         for index_1, pe_info_s in enumerate(pe_list):
             pe_s = OrderedDict()
+            yun_s = dict()
+            flag = 0
             for index_2, pe_info_t in enumerate(pe_list):
                 pe_t = OrderedDict()
+                yun_t = dict()
                 if index_1 == index_2:
                     continue
-                #pe_t['filehash'] = hashlib.sha256(open(pe_info_t['file_name'], 'rb').read()).hexdigest()
+
                 pe_t['file_hash'] = pe_info_t['file_hash']
                 pe_t['time_date_stamp'] = pe_info_t['time_date_stamp']
 
-                yun_pe[pe_info_t['file_name']] = [pe_info_t['time_date_stamp']]
-                yun_pe[pe_info_t['file_name']].append(pe_info_t['time in num'])
+                ##이부분 수정
+                for key, value in yun.items():
+                    flag = 0
+                    for key2, value2 in value.items():
+                        if pe_info_s['file_name'] == key and pe_info_t['file_name'] == key2:
+                            # if pe_info_s['file_name'] in yun:
+                            yun_t['timestamp'] = pe_info_t['time_date_stamp']
+                            yun_t['timestamp_num'] = pe_info_t['time in num']
+                            yun[pe_info_s['file_name']][pe_info_t['file_name']].update(yun_t)
+                            flag = 1
+                            break
+                    if flag ==1 : break
 
                 pe_t['imphash'] = self.analyze_imphash(pe_info_s, pe_info_t)
                 pe_t['rich'] = self.analyze_rich(pe_info_s, pe_info_t)
@@ -170,10 +186,20 @@ class AnalyzePE:
                 pe_t['auth_score'] = self.analyze_auth(pe_info_s['auto'], pe_info_t['auto'])
                 pe_t['pdb_score'] = self.analyze_pdb(pe_info_s['pdb_info'], pe_info_t['pdb_info'])
                 #pe_t['rsrc'] = self.analyze_rsrc(pe_info_s['rsrc_info'], pe_info_t['rsrc_info'])
+
                 pe_s[pe_info_t['file_name']] = pe_t
+
             pe_all[pe_info_s['file_name']] = pe_s
-        #print(f"yun :: {json.dumps(yun, indent=4)}")
-        return pe_all, yun_pe
+
+
+        print(json.dumps(yun, indent=4))
+
+        #여기서 정렬 진행중이였음
+        # for key, values in yun.items():
+        #     sorted(values.items(),key = lambda x: x[1]['timestamp_num'])
+        print('---------------------------------------------------------------------')
+        print(json.dumps(yun, indent=4))
+        return pe_all, yun
 
 
 
