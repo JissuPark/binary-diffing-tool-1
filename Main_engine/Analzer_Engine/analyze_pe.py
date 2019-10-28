@@ -145,13 +145,13 @@ class AnalyzePE:
                 continue
         return comp
 
-    def analyze_all(self, pe_list, yun):
+    def analyze_all(self, pe_list):
 
         pe_all = OrderedDict()
         flag = 0
         tmp = dict()
-
-
+        yun_me = dict()
+        yun = dict()
         for index_1, pe_info_s in enumerate(pe_list):
             pe_s = OrderedDict()
             yun_s = dict()
@@ -165,18 +165,14 @@ class AnalyzePE:
                 pe_t['file_hash'] = pe_info_t['file_hash']
                 pe_t['time_date_stamp'] = pe_info_t['time_date_stamp']
 
-                ##이부분 수정
-                for key, value in yun.items():
-                    flag = 0
-                    for key2, value2 in value.items():
-                        if pe_info_s['file_name'] == key and pe_info_t['file_name'] == key2:
-                            # if pe_info_s['file_name'] in yun:
-                            yun_t['timestamp'] = pe_info_t['time_date_stamp']
-                            yun_t['timestamp_num'] = pe_info_t['time in num']
-                            yun[pe_info_s['file_name']][pe_info_t['file_name']].update(yun_t)
-                            flag = 1
-                            break
-                    if flag ==1 : break
+                ######   연대기 추가  ######
+
+                yun_t['timestamp'] = pe_info_t['time_date_stamp']
+                yun_t['timestamp_num'] = pe_info_t['time in num']
+                #yun[pe_info_t['file_name']] = yun_t
+                yun_me[pe_info_t['file_name']] = yun_t
+
+                ###########################
 
                 pe_t['imphash'] = self.analyze_imphash(pe_info_s, pe_info_t)
                 pe_t['rich'] = self.analyze_rich(pe_info_s, pe_info_t)
@@ -192,14 +188,15 @@ class AnalyzePE:
             pe_all[pe_info_s['file_name']] = pe_s
 
 
-        print(json.dumps(yun, indent=4))
+        #print(json.dumps(yun, indent=4))
 
         #여기서 정렬 진행중이였음
         # for key, values in yun.items():
         #     sorted(values.items(),key = lambda x: x[1]['timestamp_num'])
-        print('---------------------------------------------------------------------')
-        print(json.dumps(yun, indent=4))
-        return pe_all, yun
+        #print('---------------------------------------------------------------------')
+        #print(json.dumps(yun, indent=4))
+        print("yun_me :: ", json.dumps(yun_me, indent=4))
+        return pe_all, yun_me
 
 
 

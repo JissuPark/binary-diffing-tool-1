@@ -221,19 +221,19 @@ class Analyze_files:
 
         return real_final
 
-    def analyze_idb(self):
+    def analyze_idb(self, yun_sorted_pe):
         idb = analyze_flowchart.AnalyzeFlowchart(self.all_idb_info)
         idb_split = idb.flow_parser()
-        idb_result, yun = idb.analyze_all(idb_split)
-        return idb_result, yun
+        idb_result, yun_all = idb.analyze_all(idb_split, yun_sorted_pe)
+        return idb_result, yun_all
 
-    def analyze_pe(self, yun):
+    def analyze_pe(self):
         pe = analyze_pe.AnalyzePE(self.all_pe_info)
         pe_split = pe.pe_parser()
 
-        pe_result, yun_all = pe.analyze_all(pe_split, yun)
+        pe_result, yun_pe = pe.analyze_all(pe_split)
 
-        return pe_result
+        return pe_result, yun_pe
 
 '''
     total score to the excel file
@@ -354,12 +354,13 @@ if __name__ == "__main__":
 
     # sorted_yun = sorted(yun.items(), key=(lambda x: x[1][1]))
     # print(f"sorted_yun :: {json.dumps(sorted_yun, indent=4)}")
+    yun_sorted_pe = dict()
+    result_pe, yun_pe = analyze.analyze_pe()
+    result_idb, yun_all = analyze.analyze_idb(yun_pe)
+    yun_sorted_pe = sorted(yun_all.items(), key=lambda x: x[1]['timestamp_num'])
+    print(f"sorted_yun :: {json.dumps(yun_sorted_pe, indent=4)}")
 
-
-    result_idb, yun = analyze.analyze_idb()
-    result_pe = analyze.analyze_pe(yun)
-
-    print(f"yun :: {yun}")
+    #print(f"yun_all :: {json.dumps(yun_all, indent=4)}")
 
     # with open(r"C:\malware\result\idbtest.txt", 'w') as makefile:
     #     json.dump(result_idb, makefile, ensure_ascii=False, indent='\t')
@@ -368,10 +369,10 @@ if __name__ == "__main__":
     #     json.dump(result_pe, makefile, ensure_ascii=False, indent='\t')
 
     # 6. 결과 csv 저장 (임시)
-    all_result = analyze.calculate_heuristic(result_idb, result_pe)
+    #all_result = analyze.calculate_heuristic(result_idb, result_pe)
     # re_result = sorted(all_result.items(), key=(lambda y: y[1][2]))
     # print(f"re_result :: {json.dumps(re_result, indent=4)}")
-    out_xlsx(r"C:\malware\result\test.xlsx", all_result)
+    #out_xlsx(r"C:\malware\result\test.xlsx", all_result)
 
 
     print(f"[+]time : {timeit.default_timer() - s}")

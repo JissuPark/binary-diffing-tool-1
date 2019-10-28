@@ -143,10 +143,14 @@ class AnalyzeFlowchart:
         const_score = algo.get_string_similarity(standard['constant'], target['constant'])
         return const_score['2-Gram']
 
-    def analyze_all(self, idb_list):
+    def analyze_all(self, idb_list, yun_sorted_pe):
         flag = 0
         idb_all = OrderedDict()
         yun_all = dict()
+        for var in yun_sorted_pe:
+            print(f"yun_sorted_pe ::  {var}")
+        #for key in yun_sorted_pe.items():
+            #print(f"yun_sorted_pe's keys are :: {key}")
         for index_1, idb_info_s in enumerate(idb_list):
             idb_s = dict()
             yun_s = dict()
@@ -158,24 +162,23 @@ class AnalyzeFlowchart:
                     continue
                 idb_t['bbh'], test_d['func_name'], test_d['start_addr'] = self.analyze_bbh(idb_info_s, idb_info_t)
 
-                if idb_t['bbh'] >= 0.85:
-                    print(f"{idb_info_s['file_name']} compare {idb_info_t['file_name']} :: {idb_t['bbh']}")
-                    flag = 1
-                    #여기 변경
-                    yun['bbh'] = idb_t['bbh']
-                    yun_s[idb_info_t['file_name']] = yun
+                ######   연대기 추가  ######
+                for var in yun_sorted_pe:
+                    print("found :: ", var)
+                    if idb_t['bbh'] >= 0.85:
+                        yun_s['comp_file_name'] = idb_info_t['file_name']
+                        yun_s['comp_bbh'] = idb_t['bbh']
+                        yun_sorted_pe[idb_info_s['file_name']].update(yun_s)
+                ############################
 
                 idb_t['const_value'] = self.analyze_constant(idb_info_s, idb_info_t)
                 idb_s[idb_info_t['file_name']] = idb_t
 
-            #여기 추가
-            if flag == 1 : yun_all[idb_info_s['file_name']] = yun_s
-            flag = 0
-
             idb_all[idb_info_s['file_name']] = idb_s
 
-        print(json.dumps(yun_all, indent=4))
+        #print(json.dumps(yun_all, indent=4))
         # with open(r"C:\malware\result\cm_test.txt", 'w') as makefile:
         #     json.dump(test_all, makefile, ensure_ascii=False, indent='\t')
         #print(f"idb_all :: {json.dumps(idb_all,indent=4)}")
-        return idb_all, yun_all
+        print(f"yun_all :: {json.dumps(yun_sorted_pe, indent=4)}")
+        return idb_all, yun_sorted_pe
