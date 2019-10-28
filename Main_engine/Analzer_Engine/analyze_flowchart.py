@@ -47,7 +47,7 @@ class AnalyzeFlowchart:
             block_hash_dic[x] = {}
             for y in bloc_dict["func_name"][x]:
                 if y != "flow_opString":
-                    # 화이트 리스트 처리는 이 부분에서..?
+                    # 화이트 리스트 처리
                     # 해당 코드 로직 개선해야합니다(후순위) - 현목 -
                     try:
                         if bloc_dict["func_name"][x][y]['block_sha256'] in white.list:
@@ -111,7 +111,7 @@ class AnalyzeFlowchart:
                                                             ' '.join(t_flow_data['func_name'][t_fname][t_tAddr]['opcodes']), N=3)
                                         if sim > 0.89:
                                             # 유사블럭 보정점수 모아서 리턴,
-                                            # 따로 유사블럭에 대한 Flag는 변경하지 않음. 추후 필요하면 추가
+                                            # 따로 유사블럭에 대한 Flag는 변경하지 않음. 추후 필요하면 요기에 추가
                                             correction_score = correction_score + 1
                                             #print(f'stand : {s_fname}-{s_sAddr} ::: target : {t_fname}-{t_tAddr} ::::: {sim}')
 

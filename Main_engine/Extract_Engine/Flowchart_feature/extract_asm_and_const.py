@@ -23,11 +23,12 @@ class basic_block(idb_info):
         self.func_name = func_name
 
     def bbs(self, func_name_dicts, file_name):
-        mutex_opcode_list = []
-        opcode_flow = []
-        function_dicts = {}
-        idb_info = {}
-        func_name_dicts[self.func_name] = {}
+        mutex_opcode_list = list()
+        flow_opcode = list()
+        flow_constants = list()
+        function_dicts = dict()
+        idb_info = dict()
+        func_name_dicts[self.func_name] = dict()
         # 함수 내에서 플로우 차트 추출
         try:
             function_flowchart = self.api.idaapi.FlowChart(self.function)
@@ -44,11 +45,11 @@ class basic_block(idb_info):
                 if (endaddr - curaddr) < 30:  # 최소 바이트 50이상 할것
                     continue
 
-                opcodes = []
-                hex_opcodes = []
-                disasms = []
-                block_constant = []  # block 단위의 상수 (ascii string 뽑기)
-                function_dicts[hex(curaddr)] = {}
+                opcodes = list()
+                hex_opcodes = list()
+                disasms = list()
+                block_constant = list()  # block 단위의 상수 (ascii string 뽑기)
+                function_dicts[hex(curaddr)] = dict()
 
                 # 베이직 블록 내 어셈블리어 추출
                 while curaddr < endaddr:
@@ -71,7 +72,7 @@ class basic_block(idb_info):
                                             block_constant.append(operand_2)  # append block constant
                         else:  # operand가 1개일 때 조건입장
                             if operand[0] not in const_filter_indexs.registers and "ptr" not in operand[0] and operand[0] not in const_filter_indexs.logic:  # 레지가아니고 ptr도 없어야 입장
-                                if operand[0] != '0' and len(operand[0]) != 8:  # 8length 일단 하드코딩, 정규식으로 교채해야함
+                                if operand[0] != '0' and len(operand[0]) != 8:  # 8-length 일단 하드코딩, 정규식으로 교채해야함
                                     glo_list.append(operand[0])
                                     block_constant.append(operand[0])
                     '''--- 상수값 추출 끝 ---'''
@@ -97,9 +98,10 @@ class basic_block(idb_info):
                     'end_address': hex(basicblock.endEA),
                     'block_constant': ' '.join(block_constant)
                 }
-                opcode_flow.append(mutex_opcode)
+                flow_opcode.append(mutex_opcode)
                 function_dicts[hex(basicblock.startEA)] = basicblock_dics
-                #function_name['funct_name'] = function_dicts
+                if block_constant:
+                    flow_constants.append(' '.join(block_constant))
             except:
                 continue
         ''' ================================ END ONE Flowchart ================================'''
@@ -109,7 +111,9 @@ class basic_block(idb_info):
         if len(func_name_dicts[self.func_name]) == 0:
             del func_name_dicts[self.func_name]  # del 안하면 비어있는 딕셔너리 생김
         else:
-            func_name_dicts[self.func_name].update({'flow_opString': ' '.join(opcode_flow)})
+            func_name_dicts[self.func_name].update({'flow_opString': ' '.join(flow_opcode)})
+            # flow_opString 붙이는 부분에서 상수 strings도 붙여야 함수단위 상수셋팅 가능
+            func_name_dicts[self.func_name].update({'flow_constants': ' '.join(flow_constants)})
 
         idb_info['file_name'] = file_name
         idb_info['func_name'] = func_name_dicts
@@ -126,15 +130,11 @@ def main(api, file_name):
 
         if 'dllentry' in fname or fname[:3] == 'sub' or fname[:5] == 'start' or fname.find('main') != -1:
             # main or start or sub_***** function. not library function
-            s = timeit.default_timer()  # start time
             basicblock = basic_block(api, fva, fname)
 
             # 베이직 블록 정보 추출 함수 실행
-
             basicblock_function_dicts = basicblock.bbs(function_dicts, file_name)
 
-
-            #print(f"[+]sex_bbs : {timeit.default_timer() - s}")  # end time
             # 시그널 발생시켜야함함
     return basicblock_function_dicts
 
