@@ -309,12 +309,16 @@ def start_engine():
     # 6. 결과 csv 저장 (임시)
     all_result = analyze.calculate_heuristic(result_idb, result_pe)
 
-    #out_xlsx(r"C:\malware\result\test.xlsx", all_result)
+    print(type(all_result))
+    out_xlsx(r"C:\malware\result\test.xlsx", all_result)
 
     #    out_csv(r"C:\malware\result\test.csv", all_result)
 
     print(f"[+]time : {timeit.default_timer() - s}")
     print('[+]back-end engine end')
+
+    return all_result
+
 
 if __name__ == "__main__":
 
