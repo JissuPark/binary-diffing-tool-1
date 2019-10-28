@@ -280,7 +280,6 @@ def start_engine():
     * 백앤드 엔진에서는 사용되지 않음
     * 지금은 서버 테스트만을 위해서 만든 것이므로 무시
     '''
-    print('[+]back-end engine start!')
     s = timeit.default_timer()
 
     PATH = r"C:\malware\mid_GandCrab_exe"
@@ -289,7 +288,6 @@ def start_engine():
     # 1. pe 해시 체크 (동일한 파일 필터), 2.패킹 체크
     pe_check = Pe_Files_Check(PATH)
     file_hash_dict = pe_check.get_unique_pe_list()
-    # pe_check.unpack_pe()
 
     # 3. pe파일(+패킹 체크) -> idb 변환
     flag = convert_idb(PATH, IDB_PATH)
@@ -301,28 +299,34 @@ def start_engine():
         all_pe_info = Features.export_pe_info('pe')
     else:
         print('error fuck')
-    print(type(all_idb_info))
 
     # 5. 분석 하기
     analyze = Analyze_files(all_idb_info, all_pe_info)
 
-    result_idb = analyze.analyze_idb()
+    # sorted_yun = sorted(yun.items(), key=(lambda x: x[1][1]))
+    # print(f"sorted_yun :: {json.dumps(sorted_yun, indent=4)}")
+    yun_sorted_pe = dict()
+    result_pe, yun_pe = analyze.analyze_pe()
+    result_idb, yun_all = analyze.analyze_idb(yun_pe)
+    yun_sorted_pe = sorted(yun_all.items(), key=lambda x: x[1]['timestamp_num'])
+    print(f"sorted_yun :: {json.dumps(yun_sorted_pe, indent=4)}")
+
+    # print(f"yun_all :: {json.dumps(yun_all, indent=4)}")
+
     # with open(r"C:\malware\result\idbtest.txt", 'w') as makefile:
     #     json.dump(result_idb, makefile, ensure_ascii=False, indent='\t')
-    result_pe = analyze.analyze_pe()
+
     # with open(r"C:\malware\result\petest.txt", 'w') as makefile:
     #     json.dump(result_pe, makefile, ensure_ascii=False, indent='\t')
 
     # 6. 결과 csv 저장 (임시)
     all_result = analyze.calculate_heuristic(result_idb, result_pe)
-
-    print(type(all_result))
+    # re_result = sorted(all_result.items(), key=(lambda y: y[1][2]))
+    # print(f"re_result :: {json.dumps(re_result, indent=4)}")
     out_xlsx(r"C:\malware\result\test.xlsx", all_result)
 
-    #    out_csv(r"C:\malware\result\test.csv", all_result)
-
     print(f"[+]time : {timeit.default_timer() - s}")
-    print('[+]back-end engine end')
+
 
     return all_result
 
@@ -372,10 +376,10 @@ if __name__ == "__main__":
     #     json.dump(result_pe, makefile, ensure_ascii=False, indent='\t')
 
     # 6. 결과 csv 저장 (임시)
-    #all_result = analyze.calculate_heuristic(result_idb, result_pe)
+    all_result = analyze.calculate_heuristic(result_idb, result_pe)
     # re_result = sorted(all_result.items(), key=(lambda y: y[1][2]))
     # print(f"re_result :: {json.dumps(re_result, indent=4)}")
-    #out_xlsx(r"C:\malware\result\test.xlsx", all_result)
+    out_xlsx(r"C:\malware\result\test.xlsx", all_result)
 
 
     print(f"[+]time : {timeit.default_timer() - s}")
