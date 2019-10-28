@@ -47,7 +47,7 @@ class AnalyzeFlowchart:
             block_hash_dic[x] = {}
             for y in bloc_dict["func_name"][x]:
                 if y != "flow_opString":
-                    # 화이트 리스트 처리는 이 부분에서..?
+                    # 화이트 리스트 처리
                     # 해당 코드 로직 개선해야합니다(후순위) - 현목 -
                     try:
                         if bloc_dict["func_name"][x][y]['block_sha256'] in white.list:
@@ -111,7 +111,7 @@ class AnalyzeFlowchart:
                                                             ' '.join(t_flow_data['func_name'][t_fname][t_tAddr]['opcodes']), N=3)
                                         if sim > 0.89:
                                             # 유사블럭 보정점수 모아서 리턴,
-                                            # 따로 유사블럭에 대한 Flag는 변경하지 않음. 추후 필요하면 추가
+                                            # 따로 유사블럭에 대한 Flag는 변경하지 않음. 추후 필요하면 요기에 추가
                                             correction_score = correction_score + 1
                                             #print(f'stand : {s_fname}-{s_sAddr} ::: target : {t_fname}-{t_tAddr} ::::: {sim}')
 
@@ -143,26 +143,42 @@ class AnalyzeFlowchart:
         const_score = algo.get_string_similarity(standard['constant'], target['constant'])
         return const_score['2-Gram']
 
-    def analyze_all(self, idb_list):
+    def analyze_all(self, idb_list, yun_sorted_pe):
+        flag = 0
         idb_all = OrderedDict()
-        test_all = OrderedDict()
+        yun_all = dict()
+        for var in yun_sorted_pe:
+            print(f"yun_sorted_pe ::  {var}")
+        #for key in yun_sorted_pe.items():
+            #print(f"yun_sorted_pe's keys are :: {key}")
         for index_1, idb_info_s in enumerate(idb_list):
             idb_s = dict()
-            test_s = dict()
+            yun_s = dict()
             for index_2, idb_info_t in enumerate(idb_list):
                 idb_t = dict()
                 test_d = dict()
-                tmp = idb_info_t['file_name']
+                yun = dict()
                 if index_1 == index_2:
                     continue
                 idb_t['bbh'], test_d['func_name'], test_d['start_addr'] = self.analyze_bbh(idb_info_s, idb_info_t)
+
+                ######   연대기 추가  ######
+                for var in yun_sorted_pe:
+                    print("found :: ", var)
+                    if idb_t['bbh'] >= 0.85:
+                        yun_s['comp_file_name'] = idb_info_t['file_name']
+                        yun_s['comp_bbh'] = idb_t['bbh']
+                        yun_sorted_pe[idb_info_s['file_name']].update(yun_s)
+                ############################
+
                 idb_t['const_value'] = self.analyze_constant(idb_info_s, idb_info_t)
-                # test_s[idb_info_t['file_name']] = test_d
                 idb_s[idb_info_t['file_name']] = idb_t
-            # test_all[idb_info_s['file_name']] = test_s
+
             idb_all[idb_info_s['file_name']] = idb_s
 
+        #print(json.dumps(yun_all, indent=4))
         # with open(r"C:\malware\result\cm_test.txt", 'w') as makefile:
         #     json.dump(test_all, makefile, ensure_ascii=False, indent='\t')
-
-        return idb_all
+        #print(f"idb_all :: {json.dumps(idb_all,indent=4)}")
+        print(f"yun_all :: {json.dumps(yun_sorted_pe, indent=4)}")
+        return idb_all, yun_sorted_pe

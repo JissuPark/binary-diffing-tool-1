@@ -47,21 +47,6 @@ def get_data_similarity(self, stand_data, target_data):
     cmp_data_score = 0
     return cmp_data_score
 
-    '''
-    print('기준!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-    for i in stand_hash_list:
-        print(f'key :: {i}, value :: {stand_hash_list[i]} ')
-
-    print('')
-    print('')
-    print('')
-
-    print('비교대상!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-    for i in target_hash_list:
-        print(f'key :: {i}, value :: {target_hash_list[i]} ')
-
-    '''
-
 
 # if __name__ == "__main__":
 #
