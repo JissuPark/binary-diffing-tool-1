@@ -261,6 +261,7 @@ if __name__ == "__main__":
 
     s = timeit.default_timer()
 
+
     PATH = r"C:\malware\mid_GandCrab_exe"
     IDB_PATH = r"C:\malware\mid_idb"
 
