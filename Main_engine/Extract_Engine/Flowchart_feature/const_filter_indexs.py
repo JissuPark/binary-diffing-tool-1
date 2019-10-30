@@ -187,7 +187,10 @@ prime_set = {'arpl': 2, 'fstp8': 3, 'pavgw': 5, 'pabsw': 7, 'fincstp': 11, 'clfl
              'psubq': 2833, 'rl': 2837, 'jmp': 2843, 'neg': 2851, 'sqrtps': 2857, 'dec': 2861, 'shrd': 2879,
              'clc': 2887, 'setnz': 2897, 'xgetbv': 2903, 'stmxcsr': 2909, 'fsubp': 2917, 'cmc': 2927, 'unpckhps': 2939,
              'fldlg2': 2953, 'pmulhrsw': 2957, 'sets': 2963, 'fxrstor': 2969, 'clts': 2971, 'cmps': 2999, 'fcos': 3001,
-             'fcomp5': 3011}
+             'fcomp5': 3011, 'ret':3019, 'jae': 3023, 'setg': 3037, 'pshuflw': 3041, 'cmovne':3049 , 'rep movsd':3061,
+             'movdqu':3067, 'stosd':3079, 'je':3083, 'movsb':3089, 'jne':3109, 'jge':3119, 'lock xadd':3121, 'jg':3137,
+             'movsd':3163, 'sete':3167, 'movsw':3169, 'repne scasb':3181, 'cmova':3187, 'ja':3191, 'pushal':3203,
+             'movlpd':3209, 'movdqa':3217, 'cmove':3221, 'setne':3229, 'rep movsb': 3251,}
 
 
 def make_prime_set():
@@ -209,7 +212,7 @@ def make_prime_set():
 
 def make_opcode_set():
     '''
-    인터넷에서 opcodes 싹 긁어온 파일을 저장해서
+    인터넷에서 opcodes 싹 긁어온 파일을 저장해서 set으로 저장해주는 함수
     :return:
     '''
     opset = set()
@@ -228,12 +231,16 @@ def make_opcode_set():
             except:
                 pass
 
-    print(opset)
-    print(len(opset))
-    print('add' in opset)
+    print(opset) # opcode 전체 출력
+    print(len(opset)) # opcode 몇 개 있는지 확인
+    print('add' in opset) # opcode가 있는지 확인
 
 
 def make_prime_dict():
+    '''
+    opcode와 소수를 묶어주는 함수
+    :return:
+    '''
     prime_dict = dict(zip(opcodes, primes))
     print(prime_dict)
 
