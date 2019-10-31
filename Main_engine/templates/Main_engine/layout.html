@@ -3,11 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %} {% endblock %} </title>
+    {% load static %}
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>RoyalUI</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="{% static 'Main_engine/vendors/ti-icons/css/themify-icons.css' %}">
+    <link rel="stylesheet" href="{% static 'Main_engine/vendors/base/vendor.bundle.base.css' %}">
+    <!-- endinject -->
+    <!-- plugin css for this page -->
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="{% static 'Main_engine/css/style.css' %}">
+    <!-- endinject -->
+    <link rel="shortcut icon" href="{% static 'Main_engine/images/favicon.png' %}" />
     {% block head %}
     {% endblock %}
 </head>
 <body>
-{% block body %}
-{% endblock %}
+<div class="container-scroller">
+    <header>
+        <div>
+            여기가 헤더
+        </div>
+    </header>
+    <nav>여기가 네비게이션 바</nav>
+    <section>
+        여기가 섹션영역
+        {% block body %}
+        {% endblock %}
+    </section>
+    <footer>여기가 푸터</footer>
+</div>
 </body>
 </html>

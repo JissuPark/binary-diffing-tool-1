@@ -4,11 +4,11 @@ import os
 
 
 #####################################################
-yara_path="./peid.yara"
+yara_path="Main_engine/Check_Packing/peid.yara"
 Sample_dir_Full_path=r"D:\etc\upx394w\aa"
 rules = yara.compile(filepath=yara_path)
-result_csv_path="./File_Packer_Type.csv"
-result_csv_count_path="./File_Packer_Count.csv"
+result_csv_path="Main_engine/Check_Packing/File_Packer_Type.csv"
+result_csv_count_path="Main_engine/Check_Packing/File_Packer_Count.csv"
 #####################################################
 
 
