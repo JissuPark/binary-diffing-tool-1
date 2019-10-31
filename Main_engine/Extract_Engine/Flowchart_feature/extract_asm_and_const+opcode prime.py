@@ -3,6 +3,8 @@ import timeit
 import idb
 import hashlib
 from Main_engine.Extract_Engine.Flowchart_feature import const_filter_indexs
+from fractions import Fraction
+
 
 glo_list = list()  # PE 전체의 constant 값을 담을 global list
 except_list = set() # 없는 opcode 저장용ㄴ
@@ -178,14 +180,105 @@ def basicblock_idb_info_extraction(FROM_FILE):
     return idb_sub_function_info
 
 
+def factorization(num):
+    # 전체 opcode 갯수 중에서 mod 연산했을 시 0이 나오는 것을 세어 유사도 점수를 측정
+    opdict = dict()
+    full_count = 0
+    for opcode, prime in const_filter_indexs.prime_set.items():
+        count = 0
+        while num % prime == 0:
+            num //= prime
+            count += 1
+        if count > 0:
+            opdict[opcode] = count
+            full_count += count
+    return opdict, full_count
+
+def diff_prime_set(target, standard):
+    target_dict = dict()
+    standard_dict = dict()
+    score_list = list()
+    result_score = 0
+
+    for a in target['func_name']:
+        for b in target['func_name'][a]:
+            if b != 'flow_opString':
+                target_dict[b] = target['func_name'][a][b]['block_prime'], False
+
+    for a in standard['func_name']:
+        for b in standard['func_name'][a]:
+            if b != 'flow_opString':
+                standard_dict[b] = standard['func_name'][a][b]['block_prime'], False
+
+    # diffing
+    for t_addr, t_prime in target_dict.items():
+        for s_addr, s_prime in standard_dict.items():
+            if s_prime[1]:
+                # print(f"[debug] Target {dd} is already selected! {cnt1}")
+                continue
+
+            gijun, gijun_cnt = factorization(t_prime[0])
+            deasang, deasang_cnt = factorization(s_prime[0])
+            bunmo = Fraction(t_prime[0], s_prime[0]).denominator
+            bunja = Fraction(t_prime[0], s_prime[0]).numerator
+            diff_gijun, diff_gijun_cnt = factorization(bunja)
+            diff_deasang, diff_deasang_cnt = factorization(bunmo)
+            diff_gijun_score = (gijun_cnt - diff_gijun_cnt) / gijun_cnt
+            diff_deasang_score = (deasang_cnt - diff_deasang_cnt)/deasang_cnt
+
+            print(f"[diff] Diffing between {t_addr} and {s_addr}")
+            print(f"대상블록({t_addr})")
+            print(f" o 유사도 : {gijun_cnt - diff_gijun_cnt}/{gijun_cnt} = {diff_gijun_score}")
+            print(f" o 다른 부분 :{diff_gijun}")
+            print(f"기준블록({s_addr})")
+            print(f" o 유사도 : {deasang_cnt - diff_deasang_cnt}/{deasang_cnt} = {diff_deasang_score}")
+            print(f" o 다른 부분diff :{diff_deasang}\n")
+
+            score_list.append((diff_gijun_score, t_addr, s_addr))
+            # 두개가 완전히 같으면 둘 다 제외
+            if diff_gijun_score == 1:
+                target_dict[t_addr] = 0, True
+                standard_dict[s_addr] = 0, True
+
+    # 리스트를 유사도 순으로 정렬
+    score_list.sort(reverse=True)
+
+    # 유사도 순으로 남기고 지움
+    # print(range(len(score_list)))
+    for a in range(len(score_list)):
+        rmvcnt = 0
+        for b in range(a+1, len(score_list)):
+             if score_list[a][1] == score_list[b-rmvcnt][1] or score_list[a][2] == score_list[b-rmvcnt][2]:
+                score_list.remove(score_list[b-rmvcnt])
+                rmvcnt += 1
+    for score in score_list:
+        result_score += score[0]
+    result_score /= len(score_list)
+    print(f"[debug] 총점 : {result_score}")
+    print(f"[debug] 대상 블록 수 : {len(target_dict)}")
+    print(f"[debug] 기준 블록 수 : {len(standard_dict)}")
+    print(f"[debug] Total score : {result_score}")
+
+
 if __name__ == "__main__":
     s = timeit.default_timer()  # start time
-    PATH = r"C:\malware\mid_idb\52F2B6380B492C175837418285CBEFA51F1DE3187D00C01383BB5F9CA4EBE7DB.idb"
-    idb_sub_function_info = basicblock_idb_info_extraction(PATH)
+    # PATH1 = r"C:\malware\mid_idb\41A004EBB42648DCA2AFA78680FD70DFEC9DA8C5190C2CF383A7C668A1C4C38F.idb"
+    # idb_sub_function_info1 = basicblock_idb_info_extraction(PATH1)
+    # PATH2 = r"C:\malware\mid_idb\49B769536224F160B6087DC866EDF6445531C6136AB76B9D5079CE622B043200.idb"
+    # idb_sub_function_info2 = basicblock_idb_info_extraction(PATH2)
+    #
+    # with open(r"C:\malware\result\test1.txt", 'w') as makefile:
+    #     json.dump(idb_sub_function_info1, makefile, ensure_ascii=False, indent='\t')
+    # with open(r"C:\malware\result\test2.txt", 'w') as makefile:
+    #     json.dump(idb_sub_function_info2, makefile, ensure_ascii=False, indent='\t')
 
-    with open(r"C:\malware\result\test.txt", 'w') as makefile:
-        json.dump(idb_sub_function_info, makefile, ensure_ascii=False, indent='\t')
+    fd1 = open(r"C:\malware\result\test1.txt", 'rb').read()
+    arg1 = json.loads(fd1, encoding='utf-8')
+    fd2 = open(r"C:\malware\result\test2.txt", 'rb').read()
+    arg2 = json.loads(fd2)
 
-    print(f"[except]Not found opcodes : {except_list}")
+    print(f"[analyze]Analyze Start!")
+    diff_prime_set(arg1, arg2)
+    # print(f"[except]Not found opcodes : {except_list}")
     print(f"[+]running : {timeit.default_timer() - s}")  # end time
     print("-----END-----")
