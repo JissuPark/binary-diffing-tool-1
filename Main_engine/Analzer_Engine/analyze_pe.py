@@ -3,15 +3,9 @@ from collections import OrderedDict
 import ssdeep
 from ngram import NGram
 import operator
-<<<<<<< HEAD:Main_engine/Analzer_Engine/analyze_pe.py
-=======
 import json
-<<<<<<< HEAD
-from Analzer_Engine.Algorithm import all_algo as algo
->>>>>>> upstream/master:Analzer_Engine/analyze_pe.py
-=======
 from Main_engine.Analzer_Engine.Algorithm import all_algo as algo
->>>>>>> upstream/master
+
 
 
 class AnalyzePE:
