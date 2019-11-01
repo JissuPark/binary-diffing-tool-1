@@ -51,7 +51,7 @@ class AnalyzePE:
         '''
         score = 0
         if dict_s.get('hash') == None or dict_t.get('hash') == None:
-            #print("No Authentication")
+            #print("No Certificate")
             return score
         else:
             if dict_s['hash'] == dict_t['hash']:
@@ -98,12 +98,46 @@ class AnalyzePE:
         리소스 데이터를 각각 ssdeep으로 비교해서 결과를 반환하는 함수
         :return: score list with weight
         '''
-        #print(json.dumps(standard, indent=4))
-        #print(json.dumps(target, indent=4))
+        size = len(standard)
+        print(json.dumps(standard, indent=4))
+        print(json.dumps(target, indent=4))
+        flag = 0
+        for i in range(len(standard)):
+            for j in range(len(target)):
+                #1번의 경우(리소스에 쉘코드가 없는 경우)
+                if standard[i]['Resource Type'] == target[j]['Resource Type']:
+                    if standard[i]['sha-256'] == target[j]['sha-256']:
+                        flag += 1
+                    else:
+                        continue
 
-        #for i in range(len(standard)):
-            #for j in range(len(target)):
-                #if standard[i]
+        '''
+        리소스에 쉘코드가 삽입되어 있는 경우
+        어느 리소스에 쉘코드가 들어있는지 모르고
+        몇개나 매칭되는지 모르기 때문에
+        좀 다른 방식으로 return 값을 정해줘야 할 것 같다. -> 여러 개에서 유사도 수치가 나올 수 있으므로
+        standard 리소스 1, 2, 3, 4, 5
+        target 리소스 1, 2, 3
+        이렇게 있을 경우
+        standard 1번과 target에 2번의 유사도 수치가 나온다고 치면
+        return : standard 1, target 2, (유사도 수치) 이런식으로?
+        '''
+        score = 0
+        if flag > 0:
+            print("case 1: ")
+            return flag / size * 100
+        else:
+            print("There could be SHELLCODE in resource section!!")
+            for i in range(len(standard)):
+                for j in range(len(target)):
+                    #2번의 경우(리소스에 쉘코드가 삽입되어 있는 경우)
+                    score += ssdeep.compare(standard[i]['ssdeep'], target[j]['ssdeep'])
+
+                    #if score > 0:
+                        # score_str = "standard rsrc num " + str(i) + " and " + "target rsrc num " + str(j) + " " + str(score)
+            #return score / len(standard)
+            print("case 2: ")
+            return score
 
     def analyze_rich(self, standard, target):
         '''
@@ -148,14 +182,9 @@ class AnalyzePE:
     def analyze_all(self, pe_list):
 
         pe_all = OrderedDict()
-        flag = 0
-        tmp = dict()
         yun_me = dict()
-        yun = dict()
         for index_1, pe_info_s in enumerate(pe_list):
             pe_s = OrderedDict()
-            yun_s = dict()
-            flag = 0
             for index_2, pe_info_t in enumerate(pe_list):
                 pe_t = OrderedDict()
                 yun_t = dict()
@@ -181,7 +210,8 @@ class AnalyzePE:
                 #print("")
                 pe_t['auth_score'] = self.analyze_auth(pe_info_s['auto'], pe_info_t['auto'])
                 pe_t['pdb_score'] = self.analyze_pdb(pe_info_s['pdb_info'], pe_info_t['pdb_info'])
-                #pe_t['rsrc'] = self.analyze_rsrc(pe_info_s['rsrc_info'], pe_info_t['rsrc_info'])
+                pe_t['rsrc'] = self.analyze_rsrc(pe_info_s['rsrc_info'], pe_info_t['rsrc_info'])
+                print(f"rsrc compare score is :: {pe_t['rsrc']}")
 
                 pe_s[pe_info_t['file_name']] = pe_t
 
