@@ -31,11 +31,9 @@ class AnalyzeFlowchart:
         '''
 
         idb_list = list()
-
         idb_dict = sorted(self.idb_all.items(), key=operator.itemgetter(0))
         for f_name, f_info in idb_dict:
             idb_list.append(f_info)
-
         return idb_list
 
     def block_hash_parser(self, bloc_dict):
@@ -64,7 +62,6 @@ class AnalyzeFlowchart:
         basic block hash(함수 대표값)을 비교해서 점수에 가중치를 매겨 반환하는 함수
         :return: score with weight
         '''
-
         s_hash_dict = self.block_hash_parser(s_flow_data)
         t_hash_dict = self.block_hash_parser(t_flow_data)
         stand_hash_count = 0
@@ -111,6 +108,9 @@ class AnalyzeFlowchart:
                                                             ' '.join(t_flow_data['func_name'][t_fname][t_tAddr]['opcodes']), N=3)
                                         if sim > 0.89:
                                             # 유사블럭 보정점수 모아서 리턴,
+                                            # 2-Gram으로 전환하고 opcodes가 유사한 블럭에 대해 추가적인 상수추적을 하면 좋겠음.
+                                            # 결국 opcode만으론 신빙성이 없음.
+                                            # 상수가 없는 블럭의 경우 2grm 유사도를 좀더 높게 (90~100%) 잡고 ...
                                             # 따로 유사블럭에 대한 Flag는 변경하지 않음. 추후 필요하면 요기에 추가
                                             correction_score = correction_score + 1
                                             #print(f'stand : {s_fname}-{s_sAddr} ::: target : {t_fname}-{t_tAddr} ::::: {sim}')
