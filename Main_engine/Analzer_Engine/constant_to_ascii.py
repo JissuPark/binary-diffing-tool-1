@@ -1,8 +1,3 @@
-'''
-일단, 임시로 json 경로 담아서 호출하면 나오게 해놨음.
-수정예정
-'''
-
 
 import json
 import re

@@ -125,69 +125,103 @@ primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67
           9781, 9787, 9791, 9803, 9811, 9817, 9829, 9833, 9839, 9851, 9857, 9859, 9871, 9883, 9887, 9901, 9907, 9923,
           9929, 9931, 9941, 9949, 9967, 9973]
 
-prime_set = {'arpl': 2, 'fstp8': 3, 'pavgw': 5, 'pabsw': 7, 'fincstp': 11, 'clflush': 13, 'lidt': 17, 'fld1': 19,
-             'lfs': 23, 'rsm': 29, 'cvtps2pi': 31, 'cmpxchg8b': 37, 'scas': 41, 'fimul': 43, 'callf': 47, 'fsubrp': 53,
-             'setnp': 59, 'fnsetpm nop': 61, 'jp': 67, 'fnstsw': 71, 'orps': 73, 'pshufw': 79, 'fucom': 83, 'cmovo': 89,
-             'popad': 97, 'packssdw': 101, 'fyl2x': 103, 'pmuludq': 107, 'fnsave': 109, 'fisub': 113, 'x': 127,
-             'cmpps': 131, 'cmovbe': 137, 'sar': 139, 'prefetcht2': 149, 'psrld': 151, 'movups': 157, 'cmovb': 163,
-             'cvttps2pi': 167, 'fucompp': 173, 'fidivr': 179, 'fucomi': 181, 'stos': 191, 'setz': 193, 'fcmovnbe': 197,
-             'rsqrtps': 199, 'phsubd': 211, 'pminsw': 223, 'pushfd': 227, 'hint_nop': 229, 'ficomp': 233, 'fcompp': 239,
-             'fucomip': 241, 'psrlw': 251, 'xsetbv': 257, 'psraw': 263, 'fabs': 269, 'fdecstp': 271, 'vmptrst': 277,
-             'rcr': 281, 'pcmpgtd': 283, 'phaddd': 293, 'fldpi': 307, 'vmresume': 311, 'popa': 313, 'int': 317,
-             'fpatan': 331, 'sldt': 337, 'bound': 347, 'movnti': 349, 'shufps': 353, 'add': 359, 'jl': 367,
-             'fprem1': 373, 'fidiv': 379, 'comiss': 383, 'maskmovq': 389, 'mwait': 397, 'enter': 401, 'punpckldq': 409,
-             'pmulhuw': 419, 'movs': 421, 'bt': 431, 'vmwrite': 433, 'jmpf': 439, 'stc': 443, 'frstor': 449,
-             'cwde': 457, 'ltr': 461, 'sfence': 463, 'fmul': 467, 'pslld': 479, 'lar': 487, 'undefined': 491,
-             'btr': 499, 'pmaddubsw': 503, 'psignw': 509, 'fldenv': 521, 'fyl2xp1': 523, 'mulps': 541, 'pminub': 547,
-             'bsr': 557, 'psubw': 563, 'punpckhwd': 569, 'xlat': 571, 'pxor': 577, 'psubusb': 587, 'phsubw': 593,
-             'pabsd': 599, 'fnclex': 601, 'retn': 607, 'psadbw': 613, 'movhlps': 617, 'fchs': 619, 'setns': 631,
-             'lgs': 641, 'movq': 643, 'setbe': 647, 'fneni nop': 653, 'shld': 659, 'js': 661, 'fstp': 673, 'cmp': 677,
-             'r8': 683, 'pmaddwd': 691, 'iretd': 701, 'pextrw': 709, 'cmovnl': 719, 'movntps': 727, 'movzx': 733,
-             'ffreep': 739, 'invlpg': 743, 'paddb': 751, 'psubsw': 757, 'jbe': 761, 'cbw': 769, 'fcmovu': 773,
-             'mov': 787, 'jb': 797, 'lldt': 809, 'movsx': 811, 'fnstcw': 821, 'pcmpgtw': 823, 'ficom': 827,
-             'rdmsr': 829, 'fisubr': 839, 'btc': 853, 'punpckhbw': 857, 'phaddw': 859, 'out': 863, 'xrstor': 877,
-             'paddw': 881, 'fldz': 883, 'paddsw': 887, 'pavgb': 907, 'phsubsw': 911, 'cmovnle': 919, 'paddq': 929,
-             'sal': 937, 'aaa': 941, 'setle': 947, 'paddusw': 953, 'setb': 967, 'psllw': 971, 'cvtps2pd': 977,
-             'wrmsr': 983, 'das': 991, 'idiv': 997, 'prefetchnta': 1009, 'jo': 1013, 'pmullw': 1019, 'str': 1021,
-             'fldln2': 1031, 'not': 1033, 'fiadd': 1039, 'test': 1049, 'smsw': 1051, 'ins': 1061, 'fnop': 1063,
-             'punpcklwd': 1069, 'fldl2e': 1087, 'pmovmskb': 1091, 'faddp': 1093, 'fxsave': 1097, 'fscale': 1103,
-             'fcom2': 1109, 'fist': 1117, 'bts': 1123, 'setnb': 1129, 'phaddsw': 1151, 'packsswb': 1153, 'setl': 1163,
-             'movlhps': 1171, 'fsubr': 1181, 'loopnz': 1187, 'jnl': 1193, 'cmovns': 1201, 'lds': 1213, 'setp': 1217,
-             'fptan': 1223, 'andps': 1229, 'minps': 1231, 'movhps': 1237, 'ror': 1249, 'monitor': 1259, 'leave': 1277,
-             'amx': 1279, 'r16/32': 1283, 'fxch4': 1289, 'fldl2t': 1291, 'jns': 1297, 'cmovp': 1301, 'subps': 1303,
-             'addps': 1307, 'fprem': 1319, 'fstp9': 1321, 'aas': 1327, 'jnle': 1361, 'xsave': 1367, 'lahf': 1373,
-             'fcmovnb': 1381, 'por': 1399, 'lmsw': 1409, 'cmovz': 1423, 'fcmove': 1427, 'cli': 1429, 'fsincos': 1433,
-             'cmovle': 1439, 'ud': 1447, 'psubb': 1451, 'xadd': 1453, 'fwait': 1459, 'fistp': 1471, 'jnbe': 1481,
-             'rol': 1483, 'fxtract': 1487, 'rcpps': 1489, 'vmptrld': 1493, 'fsub': 1499, 'pusha': 1511, 'sbb': 1523,
-             'fcmovbe': 1531, 'divps': 1543, 'loopz': 1549, 'movntq': 1553, 'vmlaunch': 1559, 'and': 1567, 'aad': 1571,
-             'loop': 1579, 'movmskps': 1583, 'movaps': 1597, 'pcmpeqd': 1601, 'div': 1607, 'fcomi': 1609,
-             'packuswb': 1613, 'psignb': 1619, 'cmovnz': 1621, 'cpuid': 1627, 'fldcw': 1637, 'vmcall': 1657,
-             'pmulhw': 1663, 'fdivrp': 1667, 'fsqrt': 1669, 'fcmovb': 1693, 'cmovnp': 1697, 'cmovnb': 1699,
-             'pcmpgtb': 1709, 'getsec': 1721, 'movlps': 1723, 'pmaxub': 1733, 'psignd': 1741, 'fcomp': 1747,
-             'fild': 1753, 'pcmpeqb': 1759, 'fmulp': 1777, 'daa': 1783, 'pcmpeqw': 1787, 'popf': 1789, 'cmovno': 1801,
-             'fxch7': 1811, 'fdivr': 1823, 'pand': 1831, 'ud2': 1847, 'fninit': 1861, 'fcmovne': 1867, 'cwd': 1871,
-             'verw': 1873, 'cvtpi2ps': 1877, 'sti': 1879, 'psrlq': 1889, 'cdq': 1901, 'xorps': 1907, 'cmovnbe': 1913,
-             'frndint': 1931, 'pop': 1933, 'shl': 1949, 'psubsb': 1951, 'fcmovnu': 1973, 'lss': 1979, 'unpcklps': 1987,
-             'xor': 1993, 'paddusb': 1997, 'setnle': 1999, 'inc': 2003, 'invd': 2011, 'pushad': 2017, 'mfence': 2027,
-             'aam': 2029, 'cld': 2039, 'fucomp': 2053, 'pinsrw': 2063, 'fadd': 2069, 'cvtdq2ps': 2081, 'fld': 2083,
-             'maxps': 2087, 'paddsb': 2089, 'mul': 2099, 'rdtsc': 2111, 'punpckhdq': 2113, 'call': 2129,
-             'cmpxchg': 2131, 'psubusw': 2137, 'pabsb': 2141, 'andnps': 2143, 'seto': 2153, 'f2xm1': 2161, 'sub': 2179,
-             'xchg': 2203, 'fstp1': 2207, 'int1': 2213, 'punpcklbw': 2221, 'fst': 2237, 'nop': 2239, 'ffree': 2243,
-             'jnz': 2251, 'sgdt': 2267, 'emms': 2269, 'push': 2273, 'std': 2281, 'les': 2287, 'jno': 2293, 'fxch': 2297,
-             'ucomiss': 2309, 'bsf': 2311, 'rcl': 2333, 'fcomp3': 2339, 'fnstenv': 2341, 'salc': 2347, 'psubd': 2351,
-             'popfd': 2357, 'adx': 2371, 'lgdt': 2377, 'jz': 2381, 'lods': 2383, 'wbinvd': 2389, 'psllq': 2393,
-             'retf': 2399, 'lfence': 2411, 'verr': 2417, 'movbe': 2423, 'palignr': 2437, 'fbstp': 2441, 'in': 2447,
-             'prefetcht0': 2459, 'jnb': 2467, 'fisttp': 2473, 'vmread': 2477, 'setnl': 2503, 'fsin': 2521,
-             'fndisi nop': 2531, 'jle': 2539, 'sysexit': 2543, 'ldmxcsr': 2549, 'pushf': 2551, 'pmaxsw': 2557,
-             'fcom': 2579, 'outs': 2591, 'jnp': 2593, 'lsl': 2609, 'sidt': 2617, 'fcomip': 2621, 'psrad': 2633,
-             'ftst': 2647, 'or': 2657, 'sysenter': 2659, 'into': 2663, 'movd': 2671, 'fdivp': 2677, 'rdpmc': 2683,
-             'prefetcht1': 2687, 'pandn': 2689, 'shr': 2693, 'fdiv': 2699, 'sahf': 2707, 'hlt': 2711, 'rdtscp': 2713,
-             'fxam': 2719, 'setnbe': 2729, 'paddd': 2731, 'cmovl': 2741, 'adc': 2749, 'pshufb': 2753, 'lea': 2767,
-             'imul': 2777, 'setno': 2789, 'cmovs': 2791, 'vmxoff': 2797, 'iret': 2801, 'fbld': 2803, 'jcxz': 2819,
-             'psubq': 2833, 'rl': 2837, 'jmp': 2843, 'neg': 2851, 'sqrtps': 2857, 'dec': 2861, 'shrd': 2879,
-             'clc': 2887, 'setnz': 2897, 'xgetbv': 2903, 'stmxcsr': 2909, 'fsubp': 2917, 'cmc': 2927, 'unpckhps': 2939,
-             'fldlg2': 2953, 'pmulhrsw': 2957, 'sets': 2963, 'fxrstor': 2969, 'clts': 2971, 'cmps': 2999, 'fcos': 3001,
-             'fcomp5': 3011}
+prime_set = {
+    'mov': 2, 'push': 3, 'xor': 5, 'je': 7, 'jz': 11, 'sub': 13, 'cmp': 17, 'shrd': 19, 'phsubw': 23,
+     'syscall': 29, 'fxch': 31, 'r64/16': 37, 'fneni nop': 41, 'maskmovq': 43, 'lgdt': 47, 'fcmovu': 53, 'ftst': 59,
+     'vmxon': 61, 'fdivp': 67, 'jl': 71, 'pextrw': 73, 'cmovnc': 79, 'setno': 83, 'cmpxchg': 89, 'x': 97,
+     'pcmpeqd': 101, 'cmc': 103, 'fisttp': 107, 'mulpd': 109, 'icebp': 113, 'lmsw': 127, 'fild': 131, 'divps': 137,
+     'setnl': 139, 'cmovns': 149, 'packuswb': 151, 'cvtsd2ss': 157, 'bts': 163, 'fucomi': 167, 'aad': 173, 'psrld': 179,
+     'ud2': 181, 'lodsw': 191, 'fcom': 193, 'stmxcsr': 197, 'ffreep': 199, 'andnps': 211, 'pmulhw': 223, 'pminsb': 227,
+     'bound': 229, 'movmskpd': 233, 'setz': 239, 'movsq': 241, 'outs': 251, 'roundps': 257, 'adx': 263, 'str': 269,
+     'movddup': 271, 'cmovpo': 277, 'outsd': 281, 'pushfd': 283, 'pcmpeqw': 293, 'pand': 307, 'pmaxub': 311,
+     'pandn': 313, 'hsubpd': 317, 'cvtpi2pd': 331, 'fadd': 337, 'fs': 347, 'jnc': 349, 'jpo': 353, 'lodsq': 359,
+     'pmovzxdq': 367, 'pmovsxbw': 373, 'pminsd': 379, 'maxsd': 383, 'btr': 389, 'pshuflw': 397, 'fcomp3': 401,
+     'amx': 409, 'psignd': 419, 'fcomp5': 421, 'fdecstp': 431, 'pblendw': 433, 'wait': 439, 'arpl': 443, 'hlt': 449,
+     'pmulld': 457, 'dppd': 461, 'movs': 463, 'smsw': 467, 'jna': 479, 'cmovo': 487, 'movsb': 491, 'neg': 499,
+     'pcmpgtq': 503, 'verr': 509, 'jle': 521, 'lgs': 523, 'fstp8': 541, 'rcr': 547, 'addsubps': 557, 'phaddw': 563,
+     'fsub': 569, 'sidt': 571, 'das': 577, 'clc': 587, 'stosw': 593, 'cmovnbe': 599, 'r8': 601, 'jnp': 607,
+     'movntdq': 613, 'mulsd': 617, 'invalid': 619, 'mwait': 631, 'fxam': 641, 'fldenv': 643, 'fldln2': 647, 'invd': 653,
+     'popcnt': 659, 'maskmovdqu': 661, 'movdqa': 673, 'pcmpgtw': 677, 'lldt': 683, 'ficomp': 691, 'fucom': 701,
+     'rep': 709, 'verw': 719, 'addpd': 727, 'punpckldq': 733, 'movntps': 739, 'fimul': 743, 'fstsw': 751, 'maxpd': 757,
+     'popfq': 761, 'wbinvd': 769, 'aaa': 773, 'pinsrd': 787, 'addss': 797, 'paddusw': 809, 'movsw': 811, 'retn': 821,
+     'pmovsxwd': 823, 'pminuw': 827, 'lodsb': 829, 'minps': 839, 'punpckhwd': 853, 'fldl2e': 857, 'psignb': 859,
+     'setpe': 863, 'movbe': 877, 'addsubpd': 881, 'pmullw': 883, 'cvtpd2dq': 887, 'movsxd': 907, 'pushad': 911,
+     'movups': 919, 'pmaxsd': 929, 'pmaxsb': 937, 'sahf': 941, 'scasw': 947, 'unpcklps': 953, 'paddb': 967,
+     'setnb': 971, 'lss': 977, 'orpd': 983, 'rcpss': 991, 'fnop': 997, 'pmovmskb': 1009, 'cvtss2sd': 1013,
+     'punpckhbw': 1019, 'es': 1021, 'fcmovnu': 1031, 'std': 1033, 'cmpsb': 1039, 'psignw': 1049, 'fyl2x': 1051,
+     'pusha': 1061, 'swapgs': 1063, 'lea': 1069, 'cmovge': 1087, 'movhpd': 1091, 'divpd': 1093, 'fscale': 1097,
+     'fwait': 1103, 'fxsave': 1109, 'fnstsw': 1117, 'cvttsd2si': 1123, 'movsd': 1129, 'insb': 1151, 'pshufhw': 1153,
+     'salc': 1163, 'andpd': 1171, 'setns': 1181, 'lsl': 1187, 'pmovsxdq': 1193, 'js': 1201, 'cmove': 1213,
+     'cvtsi2sd': 1217, 'ss': 1223, 'f2xm1': 1229, 'pmovzxbd': 1231, 'fldl2t': 1237, 'maxps': 1249, 'sti': 1259,
+     'subss': 1277, 'unpcklpd': 1279, 'hsubps': 1283, 'pshufb': 1289, 'fsave': 1291, 'jnbe': 1297, 'fstenv': 1301,
+     'movq2dq': 1303, 'fptan': 1307, 'fcmovbe': 1319, 'cvtdq2ps': 1321, 'minsd': 1327, 'setp': 1361, 'jnz': 1367,
+     'idiv': 1373, 'setne': 1381, 'jc': 1399, 'repz': 1409, 'hint_nop': 1423, 'fidivr': 1427, 'psubsb': 1429,
+     'jno': 1433, 'cvtpd2pi': 1439, 'leave': 1447, 'adc': 1451, 'jo': 1453, 'punpckhqdq': 1459, 'xsave': 1471,
+     'ud': 1481, 'movss': 1483, 'pmulhrsw': 1487, 'phaddsw': 1489, 'subpd': 1493, 'movsldup': 1499, 'div': 1511,
+     'nop': 1523, 'fxch4': 1531, 'pcmpgtd': 1543, 'setnc': 1549, 'pcmpeqb': 1553, 'lfence': 1559, 'jae': 1567,
+     'fstp': 1571, 'fcom2': 1579, 'fxrstor': 1583, 'paddsw': 1597, 'shl': 1601, 'paddd': 1607, 'cdqe': 1609,
+     'pslldq': 1613, 'sysret': 1619, 'pavgw': 1621, 'movntq': 1627, 'scas': 1637, 'fcmovb': 1657, 'packssdw': 1663,
+     'fsin': 1667, 'ucomiss': 1669, 'insd': 1693, 'ucomisd': 1697, 'lock': 1699, 'stc': 1709, 'cmpxchg16b': 1721,
+     'movapd': 1723, 'undefined': 1733, 'stosb': 1741, 'pmovsxbd': 1747, 'cmovnz': 1753, 'wrmsr': 1759, 'setng': 1777,
+     'in': 1783, 'xorps': 1787, 'emms': 1789, 'pmaxud': 1801, 'cvtps2dq': 1811, 'orps': 1823, 'paddusb': 1831,
+     'fdivr': 1847, 'jge': 1861, 'ds': 1867, 'fxch7': 1871, 'fabs': 1873, 'cmovnp': 1877, 'vmread': 1879, 'enter': 1889,
+     'r16/32': 1901, 'prefetcht2': 1907, 'psubw': 1913, 'add': 1931, 'popa': 1933, 'invvpid': 1949, 'lodsd': 1951,
+     'xlat': 1973, 'jnge': 1979, 'cmovno': 1987, 'psubusw': 1993, 'sbb': 1997, 'not': 1999, 'retf': 2003,
+     'pmovzxbw': 2011, 'pshufd': 2017, 'ror': 2027, 'rol': 2029, 'fidiv': 2039, 'jbe': 2053, 'fist': 2063,
+     'outsb': 2069, 'pmovsxwq': 2081, 'xgetbv': 2083, 'fcmovnb': 2087, 'setnge': 2089, 'cvttps2pi': 2099,
+     'vmptrst': 2111, 'inc': 2113, 'cmovpe': 2129, 'fnstenv': 2131, 'daa': 2137, 'sysexit': 2141, 'ptest': 2143,
+     'pinsrw': 2153, 'bsf': 2161, 'psubsw': 2179, 'mul': 2203, 'cli': 2207, 'rsqrtps': 2213, 'jnb': 2221, 'xchg': 2237,
+     'cmovnb': 2239, 'fcompp': 2243, 'pabsd': 2251, 'cqo': 2267, 'stosq': 2269, 'loop': 2273, 'prefetchnta': 2281,
+     'divss': 2287, 'psubd': 2293, 'blendps': 2297, 'lds': 2309, 'fprem1': 2311, 'pextrd': 2333, 'psraw': 2339,
+     'fnsave': 2341, 'cvttss2si': 2347, 'cmppd': 2351, 'loopne': 2357, 'fbld': 2371, 'psubusb': 2377, 'cvttpd2pi': 2381,
+     'psubq': 2383, 'movmskps': 2389, 'fsubr': 2393, 'call': 2399, 'pavgb': 2411, 'jng': 2417, 'movupd': 2423,
+     'fmul': 2437, 'fcmovne': 2441, 'setnbe': 2447, 'setbe': 2459, 'jnae': 2467, 'fdivrp': 2473, 'test': 2477,
+     'pcmpistri': 2503, 'pause': 2521, 'fnsetpm nop': 2531, 'movlpd': 2539, 'sqrtpd': 2543, 'jecxz': 2549,
+     'vmxoff': 2551, 'sysenter': 2557, 'cmovl': 2579, 'xadd': 2591, 'vmcall': 2593, 'paddw': 2609, 'into': 2617,
+     'lar': 2621, 'pmovsxbq': 2633, 'pminsw': 2647, 'subps': 2657, 'addsd': 2659, 'fisubr': 2663, 'mpsadbw': 2671,
+     'aam': 2677, 'fiadd': 2683, 'fchs': 2687, 'phsubsw': 2689, 'haddps': 2693, 'pmuldq': 2699, 'paddsb': 2707,
+     'fcmovnbe': 2711, 'fninit': 2713, 'jrcxz': 2719, 'vmlaunch': 2729, 'setna': 2731, 'addps': 2741, 'btc': 2749,
+     'movdqu': 2753, 'fnclex': 2767, 'fcmove': 2777, 'popad': 2789, 'cmpsq': 2791, 'fldlg2': 2797, 'psrlw': 2801,
+     'packusdw': 2803, 'seto': 2819, 'rdmsr': 2833, 'pabsw': 2837, 'phminposuw': 2843, 'or': 2851, 'fpatan': 2857,
+     'cbw': 2861, 'psrldq': 2879, 'insw': 2887, 'fcomp': 2897, 'shld': 2903, 'fstp9': 2909, 'psrlq': 2917, 'setc': 2927,
+     'movaps': 2939, 'rdtsc': 2953, 'setg': 2957, 'int': 2963, 'paddq': 2969, 'rdtscp': 2971, 'iretq': 2999,
+     'fst': 3001, 'xrstor': 3011, 'fstcw': 3019, 'cmpss': 3023, 'dpps': 3037, 'vmclear': 3041, 'cwde': 3049,
+     'pabsb': 3061, 'cvtsi2ss': 3067, 'cmovle': 3079, 'jnl': 3083, 'jmp': 3089, 'cvtps2pd': 3109, 'movlhps': 3119,
+     'pmovzxwd': 3121, 'cmps': 3137, 'les': 3163, 'fucomp': 3167, 'pushfq': 3169, 'stosd': 3181, 'pslld': 3187,
+     'cvtsd2si': 3191, 'cmpps': 3203, 'clflush': 3209, 'mulss': 3217, 'xorpd': 3221, 'comiss': 3229, 'jcxz': 3251,
+     'callf': 3253, 'finit': 3257, 'psubb': 3259, 'clts': 3271, 'sqrtss': 3299, 'cwd': 3301, 'cmpxchg8b': 3307,
+     'pmaxsw': 3313, 'psadbw': 3319, 'shufps': 3323, 'movdq2q': 3329, 'pmaxuw': 3331, 'rl': 3343, 'phaddd': 3347,
+     'invept': 3359, 'fsincos': 3361, 'jne': 3371, 'roundsd': 3373, 'pinsrb': 3389, 'setl': 3391, 'imul': 3407,
+     'cpuid': 3413, 'repne': 3433, 'setnle': 3449, 'stos': 3457, 'subsd': 3461, 'jnle': 3463, 'setb': 3467,
+     'fld': 3469, 'unpckhpd': 3491, 'punpcklwd': 3499, 'movzx': 3511, 'outsw': 3517, 'fldcw': 3527, 'fldz': 3529,
+     'setle': 3533, 'lddqu': 3539, 'jb': 3541, 'jmpf': 3547, 'fndisi nop': 3557, 'repnz': 3559, 'packsswb': 3571,
+     'pblendvb': 3581, 'fnstcw': 3583, 'fsubp': 3593, 'seta': 3607, 'rsm': 3613, 'fbstp': 3617, 'cmovbe': 3623,
+     'vmresume': 3631, 'fclex': 3637, 'comisd': 3643, 'aas': 3659, 'setpo': 3671, 'dec': 3673, 'pcmpgtb': 3677,
+     'setae': 3691, 'ffree': 3697, 'pmuludq': 3701, 'rcpps': 3709, 'cmovna': 3719, 'fsqrt': 3727, 'fsubrp': 3733,
+     'sqrtps': 3739, 'cdq': 3761, 'movhps': 3767, 'punpcklbw': 3769, 'ficom': 3779, 'movd': 3793, 'movntdqa': 3797,
+     'sldt': 3803, 'int1': 3821, 'cld': 3823, 'invlpg': 3833, 'vmwrite': 3847, 'andnpd': 3851, 'divsd': 3853,
+     'pmovzxwq': 3863, 'shr': 3877, 'cmpsw': 3881, 'cvtps2pi': 3889, 'phsubd': 3907, 'fstp1': 3911, 'pmovzxbq': 3917,
+     'setnz': 3919, 'pextrq': 3923, 'movshdup': 3929, 'faddp': 3931, 'out': 3943, 'movlps': 3947, 'pop': 3967,
+     'roundss': 3989, 'prefetcht1': 4001, 'lfs': 4003, 'lods': 4007, 'frstor': 4013, 'xsetbv': 4019, 'popfd': 4021,
+     'sqrtsd': 4027, 'shufpd': 4049, 'ja': 4051, 'pextrb': 4057, 'pcmpestri': 4073, 'rcl': 4079, 'cmovc': 4091,
+     'punpcklqdq': 4093, 'pshufw': 4099, 'ldmxcsr': 4111, 'por': 4127, 'cmovz': 4129, 'fmulp': 4133, 'monitor': 4139,
+     'minpd': 4153, 'lidt': 4157, 'cmovnle': 4159, 'cvtdq2pd': 4177, 'xlatb': 4201, 'cvttps2dq': 4211, 'fprem': 4217,
+     'rsqrtss': 4219, 'pcmpestrm': 4229, 'blendvpd': 4231, 'roundpd': 4241, 'fdiv': 4243, 'cmovp': 4253, 'and': 4259,
+     'pxor': 4261, 'cvtpi2ps': 4271, 'cmovae': 4273, 'fxtract': 4283, 'pmaddubsw': 4289, 'movq': 4297, 'cmovng': 4327,
+     'ins': 4337, 'cmovb': 4339, 'iretd': 4349, 'pushf': 4357, 'cvtss2si': 4363, 'fcomi': 4373, 'blendvps': 4391,
+     'gs': 4397, 'rdpmc': 4409, 'jp': 4421, 'pcmpistrm': 4423, 'vmptrld': 4441, 'frndint': 4447, 'setge': 4451,
+     'sar': 4457, 'fldpi': 4463, 'scasd': 4481, 'movntpd': 4483, 'cmova': 4493, 'crc32': 4507, 'iret': 4513,
+     'loopz': 4517, 'bsr': 4519, 'fcomip': 4523, 'jns': 4547, 'insertps': 4549, 'psrad': 4561, 'fucomip': 4567,
+     'unpckhps': 4583, 'pminub': 4591, 'setnae': 4597, 'jg': 4603, 'fucompp': 4621, 'extractps': 4637, 'maxss': 4639,
+     'jpe': 4643, 'cmovnae': 4649, 'pmaddwd': 4651, 'fcos': 4657, 'pmulhuw': 4663, 'haddpd': 4673, 'fisub': 4679,
+     'sets': 4691, 'cmovnge': 4703, 'cmovne': 4721, 'andps': 4723, 'sfence': 4729, 'cvttpd2dq': 4733, 'pcmpeqq': 4751,
+     'bt': 4759, 'fincstp': 4783, 'mulps': 4787, 'scasq': 4789, 'fistp': 4793, 'minss': 4799, 'mfence': 4801,
+     'sete': 4813, 'prefetcht0': 4817, 'cmovg': 4831, 'sgdt': 4861, 'punpckhdq': 4871, 'getsec': 4877, 'pinsrq': 4889,
+     'cmpsd': 4903, 'repe': 4909, 'cs': 4919, 'cmovnl': 4931, 'setalc': 4933, 'movnti': 4937, 'r16/32/64': 4943,
+     'fld1': 4951, 'psllq': 4957, 'popf': 4967, 'setnp': 4969, 'pminud': 4973, 'loope': 4987, 'cmovs': 4993,
+     'psllw': 4999, 'cvtpd2ps': 5003, 'movhlps': 5009, 'sal': 5011, 'lahf': 5021, 'blendpd': 5023, 'scasb': 5039,
+     'fyl2xp1': 5051, 'movsx': 5059, 'ltr': 5077, 'palignr': 5081, 'loopnz': 5087, '': 5099}
+
 
 
 def make_prime_set():
@@ -205,40 +239,61 @@ def make_prime_set():
                 a[j] = False
     print(primes)
     print(len(primes))
+    return primes
 
 
 def make_opcode_set():
     '''
-    인터넷에서 opcodes 싹 긁어온 파일을 저장해서
+    인터넷에서 opcodes 싹 긁어온 파일을 저장해서 set으로 저장해주는 함수
     :return:
     '''
     opset = set()
-    with open(r"C:\malware\opcodes.txt", 'rt', encoding='UTF-8') as opcode_file:
+    with open(r"C:\malware\coder32(1).txt", 'rt', encoding='UTF-8') as opcode_file:
         for line in opcode_file.readlines():
             try:
                 # print(line.split('\t')[8])
                 opset.add(line.split('\t')[8].lower())
             except:
                 pass
-    with open(r"C:\malware\opcodes2.txt", 'rt', encoding='UTF-8') as opcode_file:
+    with open(r"C:\malware\coder32(2).txt", 'rt', encoding='UTF-8') as opcode_file:
         for line in opcode_file.readlines():
             try:
                 # print(line.split('\t')[9])
                 opset.add(line.split('\t')[9].lower())
             except:
                 pass
-
-    print(opset)
-    print(len(opset))
-    print('add' in opset)
+    with open(r"C:\malware\coder64(1).txt", 'rt', encoding='UTF-8') as opcode_file:
+        for line in opcode_file.readlines():
+            try:
+                # print(line.split('\t')[8])
+                opset.add(line.split('\t')[8].lower())
+            except:
+                pass
+    with open(r"C:\malware\coder64(2).txt", 'rt', encoding='UTF-8') as opcode_file:
+        for line in opcode_file.readlines():
+            try:
+                # print(line.split('\t')[9])
+                opset.add(line.split('\t')[9].lower())
+            except:
+                pass
+    print(opset)  # opcode 전체 출력
+    print(len(opset))  # opcode 몇 개 있는지 확인
+    print('JE' in opset)  # opcode가 있는지 확인
+    return opset
 
 
 def make_prime_dict():
+    '''
+    opcode와 소수를 묶어주는 함수
+    :return:
+    '''
+    opcodes = make_opcode_set()
+    primes = make_prime_set()
     prime_dict = dict(zip(opcodes, primes))
     print(prime_dict)
 
 
 if __name__ == "__main__":
-    make_opcode_set()
-    make_prime_set()
+    # make_opcode_set()
+    # make_prime_set()
     make_prime_dict()
