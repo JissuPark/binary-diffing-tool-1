@@ -220,7 +220,7 @@ def diff_prime_set(target, standard):
             gijun, gijun_cnt = factorization(t_prime[0])
             deasang, deasang_cnt = factorization(s_prime[0])
             bunmo = Fraction(t_prime[0], s_prime[0]).denominator
-            bunja = Fraction(t_prime[0], s_prime[0]).numerator
+            bunja = Fraction(t_prime[0], s_prime[0]).numerator98
             diff_gijun, diff_gijun_cnt = factorization(bunja)
             diff_deasang, diff_deasang_cnt = factorization(bunmo)
             diff_gijun_score = (gijun_cnt - diff_gijun_cnt) / gijun_cnt

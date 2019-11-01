@@ -145,7 +145,6 @@ def open_idb(FROM_FILE):
         print(api)
         return api
 
-
 def basicblock_idb_info_extraction(FROM_FILE):
 
     api = open_idb(FROM_FILE)
