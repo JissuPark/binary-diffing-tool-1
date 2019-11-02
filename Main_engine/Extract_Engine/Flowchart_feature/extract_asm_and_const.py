@@ -1,7 +1,10 @@
 import json
+import signal
 import timeit
 import idb
 import hashlib
+
+import pefile
 from Main_engine.Extract_Engine.Flowchart_feature import const_filter_indexs
 
 glo_list = list()  # PE 전체의 constant 값을 담을 global list
@@ -20,47 +23,38 @@ class basic_block(idb_info):
         self.func_name = func_name
 
     def bbs(self, func_name_dicts, file_name):
-        mutex_opcode_list = []
-        opcode_flow = []
-        function_dicts = {}
-        idb_info = {}
-        func_name_dicts[self.func_name] = {}
+        mutex_opcode_list = list()
+        flow_opcode = list()
+        flow_constants = list()
+        function_dicts = dict()
+        idb_info = dict()
+        func_name_dicts[self.func_name] = dict()
         # 함수 내에서 플로우 차트 추출
-        function_flowchart = self.api.idaapi.FlowChart(self.function)
-
-        # 플로우 차트에서 반복문 돌려 각 베이직 블록 추출
         try:
-            for basicblock in function_flowchart:
+            function_flowchart = self.api.idaapi.FlowChart(self.function)
+            # 플로우 차트에서 반복문 돌려 각 베이직 블록 추출
+        except:
+            print('can not parsing flowchart!!!')
+            return
+
+        for basicblock in function_flowchart:
+            try:
                 curaddr = basicblock.startEA
                 endaddr = basicblock.endEA
 
                 if (endaddr - curaddr) < 30:  # 최소 바이트 50이상 할것
                     continue
 
-                opcodes = []
-                hex_opcodes = []
-                disasms = []
-                block_constant = []  # block 단위의 상수 (ascii string 뽑기)
-                function_dicts[hex(curaddr)] = {}
-                basic_block_prime = dict() # block 단위의 소수 list
-                
+                opcodes = list()
+                hex_opcodes = list()
+                disasms = list()
+                block_constant = list()  # block 단위의 상수 (ascii string 뽑기)
+                function_dicts[hex(curaddr)] = dict()
+
                 # 베이직 블록 내 어셈블리어 추출
                 while curaddr < endaddr:
                     opcode = self.api.idc.GetMnem(curaddr)
                     disasm = self.api.idc.GetDisasm(curaddr)
-
-                    ''' opcode_prime 추출(임시면 BBP(basic block prime) '''
-                    opcode_prime = const_filter_indexs.prime_set[opcode]    # opcode에 해당하는 소수
-                    # 이미 있는 opcode면 +1해주고 없으면 0으로 세팅해서 +1
-                    basic_block_prime[opcode_prime] = basic_block_prime[opcode_prime]+1 if opcode_prime in basic_block_prime else 1
-                    ######################################################
-                    # Comprehension 이전 버전임                            #
-                    # if opcode_prime in basic_block_prime:              #
-                    #     prime_count = basic_block_prime[opcode_prime]  #
-                    # else:                                              #
-                    #     prime_count = 0                                #
-                    # basic_block_prime[opcode_prime] = prime_count+1    #
-                    ######################################################
 
                     '''--- 상수값 추출 시작 ---'''
                     if opcode in const_filter_indexs.indexs:  # instruction white list
@@ -76,11 +70,15 @@ class basic_block(idb_info):
                                         if operand_2 != '0' and len(operand_2) != 8 and "[" not in operand_2 and "]" not in operand_2:
                                             glo_list.append(operand_2)  # append file total constant
                                             block_constant.append(operand_2)  # append block constant
-                        else:  # operand가 1개일 때 조건입장
+                        elif operand[0] != "": # 0주소 명령일 때 공백필터
                             if operand[0] not in const_filter_indexs.registers and "ptr" not in operand[0] and operand[0] not in const_filter_indexs.logic:  # 레지가아니고 ptr도 없어야 입장
-                                if operand[0] != '0' and len(operand[0]) != 8:  # 8length 일단 하드코딩, 정규식으로 교채해야함
+
+                                if operand[0] != '0' and len(operand[0]) != 8:  # 8-length 일단 하드코딩, 정규식으로 교채해야함
+
                                     glo_list.append(operand[0])
                                     block_constant.append(operand[0])
+                        else:   # 3주소 pass
+                            pass
                     '''--- 상수값 추출 끝 ---'''
                     # 3주소 명령도 있음? 그러면 위에 else로 빠져서 쓸모없는 값 뽑을 수 있음....
                     opcodes.append(opcode)
@@ -100,40 +98,29 @@ class basic_block(idb_info):
                     'opcodes': opcodes,
                     'disasms': disasms,
                     'block_sha256': hashlib.sha256(hex(sum(hex_opcodes)).encode()).hexdigest(),  # add my codes
-                    'block_prime' : basic_block_prime,
                     'start_address': hex(basicblock.startEA),
                     'end_address': hex(basicblock.endEA),
                     'block_constant': ' '.join(block_constant)
                 }
-                opcode_flow.append(mutex_opcode)
+                flow_opcode.append(mutex_opcode)
                 function_dicts[hex(basicblock.startEA)] = basicblock_dics
-                #function_name['funct_name'] = function_dicts
-        except:
-            print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
+                if block_constant:
+                    flow_constants.append(' '.join(block_constant))
+            except:
+                continue
         ''' ================================ END ONE Flowchart ================================'''
+
         func_name_dicts[self.func_name] = function_dicts
 
         if len(func_name_dicts[self.func_name]) == 0:
             del func_name_dicts[self.func_name]  # del 안하면 비어있는 딕셔너리 생김
         else:
-            func_name_dicts[self.func_name].update({'flow_opString': ' '.join(opcode_flow)})
+            func_name_dicts[self.func_name].update({'flow_opString': ' '.join(flow_opcode)})
+            # flow_opString 붙이는 부분에서 상수 strings도 붙여야 함수단위 상수셋팅 가능
+            func_name_dicts[self.func_name].update({'flow_constants': ' '.join(flow_constants)})
 
         idb_info['file_name'] = file_name
         idb_info['func_name'] = func_name_dicts
-        #idb_info['func_name'] = func_name_dicts
-        #idb_info['func_name'] = func_name_dicts
-
-
-        # del(opcodes)
-        # del(hex_opcodes)
-        # del(disasms)
-        # del(block_constant)
-        # del(function_dicts)
-        # del(mutex_opcode_list)
-        # del(opcode_flow)
-        # del(function_dicts)
-        # del(func_name_dicts)
-
 
         return idb_info
 
@@ -142,14 +129,17 @@ def main(api, file_name):
 
     for fva in api.idautils.Functions():
         # 함수이름 출력
+
         fname = api.idc.GetFunctionName(fva).lower()
+
         if 'dllentry' in fname or fname[:3] == 'sub' or fname[:5] == 'start' or fname.find('main') != -1:
             # main or start or sub_***** function. not library function
             basicblock = basic_block(api, fva, fname)
+
             # 베이직 블록 정보 추출 함수 실행
             basicblock_function_dicts = basicblock.bbs(function_dicts, file_name)
 
-
+            # 시그널 발생시켜야함함
     return basicblock_function_dicts
 
 
@@ -158,7 +148,6 @@ def open_idb(FROM_FILE):
         api = idb.IDAPython(db)
         print(api)
         return api
-
 
 def basicblock_idb_info_extraction(FROM_FILE):
 
@@ -172,10 +161,10 @@ def basicblock_idb_info_extraction(FROM_FILE):
 
 
 if __name__ == "__main__":
-    s = timeit.default_timer()  # start time
-    PATH = r"C:\malware\mid_idb\0b3d0a3c4fdfd4fb0669216aea68376b5214490f8c4e76d6925de9a6c1a468d5.idb"
-    idb_sub_function_info = basicblock_idb_info_extraction(PATH)
 
+    s = timeit.default_timer()  # start time
+    PATH = r"C:\malware\mid_idb\ca625e085ce5ad531bc65c4ce34ca7f72c9e3546273fb0dfb2b76d9faf5f709e.idb"
+    idb_sub_function_info = basicblock_idb_info_extraction(PATH)
 
     with open(r"C:\malware\result\test.txt", 'w') as makefile:
         json.dump(idb_sub_function_info, makefile, ensure_ascii=False, indent='\t')

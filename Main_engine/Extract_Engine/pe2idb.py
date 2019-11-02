@@ -7,6 +7,10 @@ import timeit
 import subprocess
 import shutil
 
+from Main_engine.Check_Packing.Packer_Detect2 import sample_packer_type_detect
+from Main_engine.Unpacking import unpack_module
+from Main_engine.Unpacking.unpack_module2 import packer_check
+
 '''
     Developed by seonaelee
 '''
@@ -23,7 +27,8 @@ BYTES_SIG_IDB = b'IDA1'  # '0x31414449'
 BYTES_SIG_I64 = b'IDA2'  # '0x32414449'
 
 HEX_M_32 = 0x14c
-HEX_M_64 = 0x2008
+HEX_M_64_IA = 0x200
+HEX_M_64_AMD = 0x8664
 #IDB_FLAG = -1
 
 # IDAT_PATH
@@ -58,17 +63,10 @@ def pe_check(PE_F_PATH):
             # pe format인거 확인 후, pefile 열기
             pe = pefile.PE(PE_F_PATH, fast_load=True)
             m_bit = pe.FILE_HEADER.Machine
-            #print(m_bit)
             pe.close()
             if m_bit == HEX_M_32:
-                print(f"[32bit]{PE_F_PATH}")
                 return IDAT
-            
-            #elif m_bit == HEX_M_64:
-                #print(f"[64bit]{PE_F_PATH}")
-                #return IDAT64
-            else:
-                print(f"[64bit]{PE_F_PATH}")
+            elif m_bit == HEX_M_64_AMD or m_bit == HEX_M_64_IA:
                 return IDAT64
 
         except:
@@ -93,10 +91,9 @@ def pe_check(PE_F_PATH):
 
 def exe_list_to_queue(PE_D_PATH, q):
     # 인자로 받은 PE 파일이 위치한 디렉토리의 모든 파일의 리스트(exe_list)를 가져옴.
-    exe_list = os.listdir(PE_D_PATH)
-    for f in exe_list:
+
+    for f in os.listdir(PE_D_PATH):
         f_path = os.path.join(PE_D_PATH, f)
-        print(f_path)
         q.put(f_path)
     # for index in PE_D_PATH:
     #     f_path = index
@@ -114,12 +111,16 @@ def exe_list_to_queue(PE_D_PATH, q):
 
 
 def exec_idat(EXE_F_PATH, pe_flag):
+    print(pe_flag)
     if pe_flag == IDAT or pe_flag == IDAT64:
         # -A :
         # -B : batch mode. IDA는 .IDB와 .ASM 파일을 자동 생성한다.
         # -P : 압축된 idb를 생성한다.
-        process = subprocess.Popen([IDAT_PATH[pe_flag], "-A", "-B", "-P+", EXE_F_PATH], shell=True)
-        process.wait()
+        try:
+            process = subprocess.Popen([IDAT_PATH[pe_flag], "-A", "-B", "-P+", EXE_F_PATH], shell=True)
+            process.wait()
+        except:
+            print('errorrrrrrrrrrrrrr')
         return pe_flag
     #        return process
     else:
@@ -150,27 +151,41 @@ def exec_idat(EXE_F_PATH, pe_flag):
 '''
 
 
-def exe_to_idb(exe_q):  ### Multiprocessing할 때, target의 인자로 넘길 함수
+def exe_to_idb(exe_q, pack_path, unpack_path,):  ### Multiprocessing할 때, target의 인자로 넘길 함수
     while exe_q.empty() != True:
         # exe_q에 삽입된 PE 파일 디렉토리 경로를 가져와서
         # pe 포맷인지 확인(pe_check 호출)
         f_path = exe_q.get()
-        pe_flag = pe_check(f_path)
 
-        # 만약 PE 포맷이라면
-        # exec_idat을 호출해서 diat을 실행하고
-        #if pe_flag == IDB_FLAG:
-        #    continue
-        if pe_flag != PE_CHECK_ERROR:
-            # exec_idat을 실행하고 해당 자식프로세스가 끝날 때까지 기다린다.
-            # 기다렸다가 idat 실행 후, 생성되는 파일을 정리해야하기 때문에
-            # idat 실행이 종료될 때까지 기다린다.
-            p = exec_idat(f_path, pe_flag)
-        else:
-            print(f_path+'  '+'pe error')
+        try:
+            # 정상파일인지 체크용
+            pefile.PE(f_path)
 
+            pe_flag = pe_check(f_path)
 
-#            p.wait()
+            # 만약 PE 포맷이라면
+            # exec_idat을 호출해서 diat을 실행하고
+            #if pe_flag == IDB_FLAG:
+            #    continue
+            print(pe_flag)
+            if pe_flag != PE_CHECK_ERROR:
+                # exec_idat을 실행하고 해당 자식프로세스가 끝날 때까지 기다린다.
+                # 기다렸다가 idat 실행 후, 생성되는 파일을 정리해야하기 때문에
+                # idat 실행이 종료될 때까지 기다린다.
+
+                # 1. 파일 패킹 정보 저장 로직
+                tmp = sample_packer_type_detect(f_path)
+                print(tmp)
+
+                # 2. 파일 언팩 수행 로직
+                print('unpacke!!!!!!!!!!!!!!')
+                packer_check(f_path, pack_path, unpack_path)
+
+                p = exec_idat(f_path, pe_flag)
+            else:
+                print(f_path+'  '+'pe error')
+        except:
+            print('this pe is error pefile!!')
 
 
 '''
@@ -209,7 +224,21 @@ def clear_folder(EXE_F_PATH, IDA_F_PATH):
 
 def create_idb(PE_PATH, IDB_PATH):
     ### time idb로 파일을 변환하는 시간 측정을 위한 코드
-    #s = timeit.default_timer()
+    s = timeit.default_timer()
+
+    # packing 관련
+    sample_folder_path = PE_PATH
+    save_folder_path = r"C:\malware\packing_info"
+    pack_path = os.path.join(save_folder_path, 'packed')
+    unpack_path = os.path.join(save_folder_path, 'unpacked')
+    if not (os.path.isdir(save_folder_path)): os.makedirs(save_folder_path)
+    if not (os.path.isdir(pack_path)): os.makedirs(pack_path)
+    if not (os.path.isdir(unpack_path)): os.makedirs(unpack_path)
+
+    #packing ..
+    pack_q = Queue()
+
+    exe_list_to_queue(PE_PATH, pack_q)
 
     # exe_q에 idb로 변환할 exe파일을 쌓는다
     exe_q = Queue()
@@ -220,16 +249,13 @@ def create_idb(PE_PATH, IDB_PATH):
     ##################### START - Multiprocessing ######################
     procs = list()
     for i in range(os.cpu_count() // 2 + 1):
-        proc = Process(target=exe_to_idb, args=[exe_q, ])
+        proc = Process(target=exe_to_idb, args=[exe_q, pack_path, unpack_path, ])
         procs.append(proc)
         proc.start()
     # join() : multiprocessing하는 프로세스 종료까지 기다린다.
     for p in procs:
         p.join()
     ###################### END - Multiprocessing #######################
-
-    ### time
-    #print(f"[+]PE2IDB time : {timeit.default_timer() - s}")
 
     return clear_folder(PE_PATH, IDB_PATH)
 
@@ -238,8 +264,8 @@ if __name__=="__main__":
     # PATH : idb로 변환할 pe 파일이 위치한 디렉토리 경로
     # IDB_PATH : 변환된 idb파일을 저장할 디렉토리 경로
 
-    PATH = r"C:\malware\mid_GandCrab_exe"
-    IDB_PATH = r"C:\malware\mid_idb"
+    PATH = r"c/malware/mid_GandCrab_exe"
+    IDB_PATH = r"c/malware/mid_idb"
 
     create_idb(PATH, IDB_PATH)
 

@@ -1,10 +1,15 @@
+#coding:utf-8
 import hashlib
 import json
+import operator
 import timeit
 import os
+import sys
 from multiprocessing import Process, Queue, Manager
 from collections import OrderedDict
+import pefile
 from Main_engine.Extract_Engine import pe2idb
+
 from Main_engine.Extract_Engine.Flowchart_feature import extract_asm_and_const
 from Main_engine.Extract_Engine.PE_feature import extract_pe
 from Main_engine.Analzer_Engine import analyze_pe, analyze_flowchart
@@ -106,8 +111,13 @@ def multiprocess_file(q, return_dict, flag):
         if flag == 'idb':
             info = extract_asm_and_const.basicblock_idb_info_extraction(f_path)  # 함수대표값 및 상수값 출력
         elif flag == 'pe':
-            info = extract_pe.Pe_Feature(f_path).all()  # pe 속성 출력
-
+            try:
+                pe = pefile.PE(f_path)
+                print('씨발')
+                info = extract_pe.Pe_Feature(f_path, pe).all()  # pe 속성 출력
+            except:
+                print('pe error !!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+                continue
         return_dict[f_path] = info
 
 
@@ -187,15 +197,16 @@ class Analyze_files:
             idb_final_score = OrderedDict()
             pe_final_score = OrderedDict()
             for value_i, value_pe in zip(key_i[1].items(), key_pe[1].items()):
-                semifinal = [0, 0, 0, 0, 0, 0, 0, 0]
+                semifinal = [0, 0, 0, 0, 0, 0, 0, 0, 0]
                 semifinal[0] = (value_pe[1]['file_hash'])
-                semifinal[1] = (value_i[1]['bbh'])
-                semifinal[2] = (value_i[1]['const_value'])
-                semifinal[3] = (value_pe[1]['section_score'])
-                semifinal[4] = (value_pe[1]['auth_score'])
-                semifinal[5] = (value_pe[1]['pdb_score'])
-                semifinal[6] = (value_pe[1]['imphash'])
-                semifinal[7] = (value_pe[1]['rich'])
+                semifinal[1] = (value_pe[1]['time_date_stamp'])
+                semifinal[2] = (value_i[1]['bbh'])
+                semifinal[3] = (value_i[1]['const_value'])
+                semifinal[4] = (value_pe[1]['section_score'])
+                semifinal[5] = (value_pe[1]['auth_score'])
+                semifinal[6] = (value_pe[1]['pdb_score'])
+                semifinal[7] = (value_pe[1]['imphash'])
+                semifinal[8] = (value_pe[1]['rich'])
 
                 idb_final_score[value_i[0]] = semifinal
                 pe_final_score[value_pe[0]] = semifinal
@@ -203,21 +214,25 @@ class Analyze_files:
             real_final[key_i[0]] = idb_final_score
             real_final[key_pe[0]] = pe_final_score
 
+            # for base,target in real_final.items():
+            #     sorted(target.items(), key=lambda x: x[1][1])
+            #     print(json.dumps(target, indent=4))
+            #sorted(real_final.items(), key=lambda x: x[1])
+
         return real_final
 
-    def analyze_idb(self):
+    def analyze_idb(self, yun_sorted_pe):
         idb = analyze_flowchart.AnalyzeFlowchart(self.all_idb_info)
-        idb_split = idb.flow_parser()
-        idb_result = idb.analyze_all(idb_split)
-        return idb_result
+        idb_result, yun_all = idb.analyze_all(yun_sorted_pe)
+
+        return idb_result, yun_all
 
     def analyze_pe(self):
         pe = analyze_pe.AnalyzePE(self.all_pe_info)
         pe_split = pe.pe_parser()
+        pe_result, yun_pe = pe.analyze_all(pe_split)
 
-        pe_result = pe.analyze_all(pe_split)
-
-        return pe_result
+        return pe_result, yun_pe
 
 '''
     total score to the excel file
@@ -231,8 +246,8 @@ def out_xlsx(path, result_dict):
     ws = wb.active
 
     ws.title = 'result_xlsx'
-    title = ['BASE_FILE', 'COMP_FILE', 'FILE HASH', 'BB HASH', 'CONSTANT', 'SECTION', 'AUTH', 'PDB', 'IMPORT HASH', 'RICH']
-    cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
+    title = ['BASE_FILE', 'COMP_FILE', 'FILE HASH', 'TIME STAMP', 'BB HASH', 'CONSTANT', 'SECTION', 'AUTH', 'PDB', 'IMPORT HASH', 'RICH']
+    cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K']
 
     for i in range(len(title)):
         ws[f'{cols[i]}1'] = title[i]
@@ -257,8 +272,13 @@ def out_xlsx(path, result_dict):
     wb.save(path)
 
 
-if __name__ == "__main__":
 
+def start_engine():
+    '''
+    웹 서버에서 메인 엔진을 호출하면 엔진을 돌리기위한 함수
+    * 백앤드 엔진에서는 사용되지 않음
+    * 지금은 서버 테스트만을 위해서 만든 것이므로 무시
+    '''
     s = timeit.default_timer()
 
 
@@ -268,9 +288,8 @@ if __name__ == "__main__":
     # 1. pe 해시 체크 (동일한 파일 필터), 2.패킹 체크
     pe_check = Pe_Files_Check(PATH)
     file_hash_dict = pe_check.get_unique_pe_list()
-    pe_check.unpack_pe()
 
-    # 3. pe파일 -> idb 변환
+    # 3. pe파일(+패킹 체크) -> idb 변환
     flag = convert_idb(PATH, IDB_PATH)
     Features = Exract_Feature(PATH, IDB_PATH)
 
@@ -280,24 +299,80 @@ if __name__ == "__main__":
         all_pe_info = Features.export_pe_info('pe')
     else:
         print('error fuck')
-    print(type(all_idb_info))
 
     # 5. 분석 하기
     analyze = Analyze_files(all_idb_info, all_pe_info)
 
-    result_idb = analyze.analyze_idb()
+    # sorted_yun = sorted(yun.items(), key=(lambda x: x[1][1]))
+    # print(f"sorted_yun :: {json.dumps(sorted_yun, indent=4)}")
+    yun_sorted_pe = dict()
+    result_pe, yun_pe = analyze.analyze_pe()
+    result_idb, yun_all = analyze.analyze_idb(yun_pe)
+    yun_sorted_pe = sorted(yun_all.items(), key=lambda x: x[1]['timestamp_num'])
+    print(f"sorted_yun :: {json.dumps(yun_sorted_pe, indent=4)}")
+
+    # print(f"yun_all :: {json.dumps(yun_all, indent=4)}")
+
     # with open(r"C:\malware\result\idbtest.txt", 'w') as makefile:
     #     json.dump(result_idb, makefile, ensure_ascii=False, indent='\t')
-    result_pe = analyze.analyze_pe()
+
     # with open(r"C:\malware\result\petest.txt", 'w') as makefile:
     #     json.dump(result_pe, makefile, ensure_ascii=False, indent='\t')
+
+    # 6. 결과 csv 저장 (임시)
+    all_result = analyze.calculate_heuristic(result_idb, result_pe)
+    # re_result = sorted(all_result.items(), key=(lambda y: y[1][2]))
+    # print(f"re_result :: {json.dumps(re_result, indent=4)}")
+    out_xlsx(r"C:\malware\result\test.xlsx", all_result)
+
+    print(f"[+]time : {timeit.default_timer() - s}")
+
+
+    return all_result
+
+
+if __name__ == "__main__":
+
+    s = timeit.default_timer()
+
+    PATH = r"C:\malware\mid_GandCrab_exe"
+    IDB_PATH = r"C:\malware\mid_idb"
+
+    # 1. pe 해시 체크 (동일한 파일 필터), 2.패킹 체크
+    pe_check = Pe_Files_Check(PATH)
+    file_hash_dict = pe_check.get_unique_pe_list()
+
+    # 3. pe파일(+패킹 체크) -> idb 변환
+    flag = convert_idb(PATH, IDB_PATH)
+    Features = Exract_Feature(PATH, IDB_PATH)
+
+    # 4. 정보 추출(idb,pe)
+    if flag == True:
+        all_idb_info = Features.export_idb_info('idb')
+        all_pe_info = Features.export_pe_info('pe')
+    else:
+        print('convert_idb is error')
+
+    # 만약 5개의 파일이 들어왔을때 그중 convert_idb 에러뜨는 것들은 제외시키고 나머지 것들만 다음 로직 수행되도록
+    # 변경해야함.
+
+    # 5. 분석 하기
+    analyze = Analyze_files(all_idb_info, all_pe_info)
+
+    yun_sorted_pe = dict()
+    result_pe, yun_pe = analyze.analyze_pe()
+    result_idb, yun_all = analyze.analyze_idb(yun_pe)
+
+    yun_sorted_pe = sorted(yun_all.items(), key=lambda x: x[1]['timestamp_num'])
+
+    print(f"sorted_yun :: {json.dumps(yun_sorted_pe, indent=4)}")
+
 
     # 6. 결과 csv 저장 (임시)
     all_result = analyze.calculate_heuristic(result_idb, result_pe)
 
     out_xlsx(r"C:\malware\result\test.xlsx", all_result)
 
-#    out_csv(r"C:\malware\result\test.csv", all_result)
 
     print(f"[+]time : {timeit.default_timer() - s}")
 

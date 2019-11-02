@@ -225,8 +225,8 @@ class RsrcParser:
         #print(f"TimeDateStamp : {self.pe.FILE_HEADER.dump_dict()['TimeDateStamp']['Value'].split('[')[1][:-1]}")
         Time = self.pe.FILE_HEADER.dump_dict()['TimeDateStamp']['Value'].split('[')[1][:-1]
         second = self.pe.FILE_HEADER.TimeDateStamp
-        print(type(second))
-        print(f"Time in second :: {second}")
+        #print(type(second))
+        #print(f"Time in second :: {second}")
         return Time, second
 
     def get_entropy(self,data):
@@ -387,3 +387,7 @@ print(get_resource(pe))
 print(extract_sections_privileges(pe))
 print(extractPKCS7(r'C\\Users\\qkrwl\\Downloads\\Notion Setup 1.0.8.exe'))
 '''
+
+# if __name__ == "__main__":
+#     t = RsrcParser(r"C:\malware\mid_GandCrab_exe\test (3)")
+#     print(t.get_timestamp())

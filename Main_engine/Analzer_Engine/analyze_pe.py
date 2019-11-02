@@ -3,15 +3,7 @@ from collections import OrderedDict
 import ssdeep
 from ngram import NGram
 import operator
-<<<<<<< HEAD:Main_engine/Analzer_Engine/analyze_pe.py
-=======
 import json
-<<<<<<< HEAD
-from Analzer_Engine.Algorithm import all_algo as algo
->>>>>>> upstream/master:Analzer_Engine/analyze_pe.py
-=======
-from Main_engine.Analzer_Engine.Algorithm import all_algo as algo
->>>>>>> upstream/master
 
 
 class AnalyzePE:
@@ -140,7 +132,7 @@ class AnalyzePE:
         for key in dict_s.keys() and dict_t.keys():                                 #키의 이름이 다를 때의 예외처리가 필요
             if key in dict_s and key in dict_t:
                 if dict_s[key]['section_name'] == dict_t[key]['section_name']:
-                    print(f"{dict_s[key]['section_name']}, {dict_t[key]['section_name']}")
+                    #print(f"{dict_s[key]['section_name']}, {dict_t[key]['section_name']}")
                     score = ssdeep.compare(dict_s[key]['hash_ssdeep'], dict_t[key]['hash_ssdeep'])
                     comp += score
                 # print(f"{key} :: {score}")
@@ -157,15 +149,32 @@ class AnalyzePE:
     def analyze_all(self, pe_list):
 
         pe_all = OrderedDict()
-
+        flag = 0
+        tmp = dict()
+        yun_me = dict()
+        yun = dict()
         for index_1, pe_info_s in enumerate(pe_list):
             pe_s = OrderedDict()
+            yun_s = dict()
+            flag = 0
             for index_2, pe_info_t in enumerate(pe_list):
                 pe_t = OrderedDict()
+                yun_t = dict()
                 if index_1 == index_2:
                     continue
-                #pe_t['filehash'] = hashlib.sha256(open(pe_info_t['file_name'], 'rb').read()).hexdigest()
+
                 pe_t['file_hash'] = pe_info_t['file_hash']
+                pe_t['time_date_stamp'] = pe_info_t['time_date_stamp']
+
+                ######   연대기 추가  ######
+
+                yun_t['timestamp'] = pe_info_t['time_date_stamp']
+                yun_t['timestamp_num'] = pe_info_t['time in num']
+                #yun[pe_info_t['file_name']] = yun_t
+                yun_me[pe_info_t['file_name']] = yun_t
+
+                ###########################
+
                 pe_t['imphash'] = self.analyze_imphash(pe_info_s, pe_info_t)
                 pe_t['rich'] = self.analyze_rich(pe_info_s, pe_info_t)
                 #print(f"{pe_info_s['file_name']} vs {pe_info_t['file_name']}")
@@ -174,10 +183,21 @@ class AnalyzePE:
                 pe_t['auth_score'] = self.analyze_auth(pe_info_s['auto'], pe_info_t['auto'])
                 pe_t['pdb_score'] = self.analyze_pdb(pe_info_s['pdb_info'], pe_info_t['pdb_info'])
                 #pe_t['rsrc'] = self.analyze_rsrc(pe_info_s['rsrc_info'], pe_info_t['rsrc_info'])
+
                 pe_s[pe_info_t['file_name']] = pe_t
+
             pe_all[pe_info_s['file_name']] = pe_s
 
-        return pe_all
+
+        #print(json.dumps(yun, indent=4))
+
+        #여기서 정렬 진행중이였음
+        # for key, values in yun.items():
+        #     sorted(values.items(),key = lambda x: x[1]['timestamp_num'])
+        #print('---------------------------------------------------------------------')
+        #print(json.dumps(yun, indent=4))
+        print("yun_me :: ", json.dumps(yun_me, indent=4))
+        return pe_all, yun_me
 
 
 
