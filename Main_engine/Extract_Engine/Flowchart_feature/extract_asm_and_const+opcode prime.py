@@ -194,70 +194,90 @@ def factorization(num):
             full_count += count
     return opdict, full_count
 
-def diff_prime_set(target, standard):
+
+def dict_parse(json_data):
+    '''
+    입력으로 들어온 json 형식의 데이터를 파싱해서
+    {함수 이름 : {시작 주소1: (basic block prime, false),
+                시작 주소2: (basic block prime, false),
+                            ...                      }
+    }
+    위와 같은 형태로 저장해주는 함수
+    :param json_data: 추출엔진에서 나오는 데이터
+    :return: 소수를 비교하기위해 정리된 dictionary 형태의 데이터
+    '''
+    data_dict = dict()
+    for func_name in json_data['func_name']:
+        func_dict = dict()
+        for bb_addr in json_data['func_name'][func_name]:
+            if bb_addr != 'flow_opString':
+                func_dict[bb_addr] = json_data['func_name'][func_name][bb_addr]['block_prime'], False
+        data_dict[func_name] = func_dict
+    # print(json.dumps(data_dict, indent=4))
+    return data_dict
+
+
+def diff_prime_set(standard, target):
     target_dict = dict()
     standard_dict = dict()
     score_list = list()
     result_score = 0
 
-    for a in target['func_name']:
-        for b in target['func_name'][a]:
-            if b != 'flow_opString':
-                target_dict[b] = target['func_name'][a][b]['block_prime'], False
-
-    for a in standard['func_name']:
-        for b in standard['func_name'][a]:
-            if b != 'flow_opString':
-                standard_dict[b] = standard['func_name'][a][b]['block_prime'], False
+    # json parsing
+    target_dict = dict_parse(target)
+    standard_dict = dict_parse(standard)
 
     # diffing
-    for t_addr, t_prime in target_dict.items():
-        for s_addr, s_prime in standard_dict.items():
-            if s_prime[1]:
-                # print(f"[debug] Target {dd} is already selected! {cnt1}")
-                continue
+    for s_fname, s_fdata in standard_dict.items():
+        for s_addr, s_prime in s_fdata.items():
+            for t_fname, t_fdata in target_dict.items():
+                for t_addr, t_prime in t_fdata.items():
+                    # 이미 검사한 부분(True로 설정)은 넘어감
+                    if t_prime[1]:
+                        # print(f"[debug] Target {dd} is already selected! {cnt1}")
+                        continue
 
-            gijun, gijun_cnt = factorization(t_prime[0])
-            deasang, deasang_cnt = factorization(s_prime[0])
-            bunmo = Fraction(t_prime[0], s_prime[0]).denominator
-            bunja = Fraction(t_prime[0], s_prime[0]).numerator98
-            diff_gijun, diff_gijun_cnt = factorization(bunja)
-            diff_deasang, diff_deasang_cnt = factorization(bunmo)
-            diff_gijun_score = (gijun_cnt - diff_gijun_cnt) / gijun_cnt
-            diff_deasang_score = (deasang_cnt - diff_deasang_cnt)/deasang_cnt
+                    s_opcodes, s_opcnt = factorization(s_prime[0])
+                    t_opcodes, t_opcnt = factorization(t_prime[0])
+                    bunmo = Fraction(t_prime[0], s_prime[0]).denominator
+                    bunja = Fraction(t_prime[0], s_prime[0]).numerator
+                    t_diff, t_diffcnt = factorization(bunja)
+                    s_diff, s_diffcnt = factorization(bunmo)
+                    s_score = (s_opcnt - s_diffcnt) / s_opcnt
+                    t_score = (t_opcnt - t_diffcnt) / t_opcnt
 
-            print(f"[diff] Diffing between {t_addr} and {s_addr}")
-            print(f"대상블록({t_addr})")
-            print(f" o 유사도 : {gijun_cnt - diff_gijun_cnt}/{gijun_cnt} = {diff_gijun_score}")
-            print(f" o 다른 부분 :{diff_gijun}")
-            print(f"기준블록({s_addr})")
-            print(f" o 유사도 : {deasang_cnt - diff_deasang_cnt}/{deasang_cnt} = {diff_deasang_score}")
-            print(f" o 다른 부분diff :{diff_deasang}\n")
+                    print(f"[diff] Diffing between {t_addr} and {s_addr}")
+                    print(f"기준블록({t_addr})")
+                    print(f" o 유사도 : {s_opcnt - s_score}/{s_opcnt} = {s_score}")
+                    print(f" o 다른 부분 :{s_diffcnt}")
+                    print(f"대상블록({s_addr})")
+                    print(f" o 유사도 : {t_opcnt - t_score}/{t_opcnt} = {t_score}")
+                    print(f" o 다른 부분diff :{t_diffcnt}\n")
 
-            score_list.append((diff_gijun_score, t_addr, s_addr))
-            # 두개가 완전히 같으면 둘 다 제외
-            if diff_gijun_score == 1:
-                target_dict[t_addr] = 0, True
-                standard_dict[s_addr] = 0, True
+                    score_list.append((s_score, s_addr, t_addr))
+                    # 두개가 완전히 같으면 둘 다 제외
+                    if s_score == 1:
+                        target_dict[t_addr] = 0, True
+                        standard_dict[s_addr] = 0, True
 
-    # 리스트를 유사도 순으로 정렬
-    score_list.sort(reverse=True)
+                # 리스트를 유사도 순으로 정렬
+                score_list.sort(reverse=True)
 
-    # 유사도 순으로 남기고 지움
-    # print(range(len(score_list)))
-    for a in range(len(score_list)):
-        rmvcnt = 0
-        for b in range(a+1, len(score_list)):
-             if score_list[a][1] == score_list[b-rmvcnt][1] or score_list[a][2] == score_list[b-rmvcnt][2]:
-                score_list.remove(score_list[b-rmvcnt])
-                rmvcnt += 1
-    for score in score_list:
-        result_score += score[0]
-    result_score /= len(score_list)
-    print(f"[debug] 총점 : {result_score}")
-    print(f"[debug] 대상 블록 수 : {len(target_dict)}")
-    print(f"[debug] 기준 블록 수 : {len(standard_dict)}")
-    print(f"[debug] Total score : {result_score}")
+                # 유사도 순으로 남기고 지움
+                # print(range(len(score_list)))
+                for a in range(len(score_list)):
+                    rmvcnt = 0
+                    for b in range(a+1, len(score_list)):
+                         if score_list[a][1] == score_list[b-rmvcnt][1] or score_list[a][2] == score_list[b-rmvcnt][2]:
+                            score_list.remove(score_list[b-rmvcnt])
+                            rmvcnt += 1
+                for score in score_list:
+                    result_score += score[0]
+                result_score /= len(score_list)
+                print(f"[debug] 총점 : {result_score}")
+                print(f"[debug] 대상 블록 수 : {len(target_dict)}")
+                print(f"[debug] 기준 블록 수 : {len(standard_dict)}")
+                print(f"[debug] Total score : {result_score}")
 
 
 if __name__ == "__main__":

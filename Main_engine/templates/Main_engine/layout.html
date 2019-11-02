@@ -9,12 +9,12 @@
   <meta name="author" content="">
 
   <title>Simple Sidebar - Start Bootstrap Template</title>
-
+    {% load static %}
   <!-- Bootstrap core CSS -->
-  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="{% static 'Main_engine/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
 
   <!-- Custom styles for this template -->
-  <link href="css/simple-sidebar.css" rel="stylesheet">
+  <link href="{% static 'Main_engine/css/simple-sidebar.css' %}" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css">
 </head>
@@ -386,10 +386,10 @@
     <!-- /#page-content-wrapper -->
 
   <!-- /#wrapper -->
-
+    {% load static %}
   <!-- Bootstrap core JavaScript -->
-  <script src="vendor/jquery/jquery.min.js"></script>
-  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="{% static 'Main_engine/vendor/jquery/jquery.min.js' %}"></script>
+  <script src="{% static 'Main_engine/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 
   <!-- Menu Toggle Script -->
   <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
