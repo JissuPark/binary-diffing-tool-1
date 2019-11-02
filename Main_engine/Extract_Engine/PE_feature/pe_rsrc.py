@@ -1,8 +1,15 @@
 import pefile, os
+import json
 import hashlib
 import ssdeep
+import sdhash
 import array
 import math
+import struct
+from pyasn1.codec.ber.decoder import decode
+from pyasn1_modules import rfc2315, rfc2459
+
+from signify.signed_pe import SignedPEFile
 
 COUNTRY_MAP = {
     0: "Unicode",
@@ -193,6 +200,18 @@ COUNTRY_MAP = {
     20490: "Spanish - Puerto Rico"
 }
 
+wRevision_kind = {
+    256: "WIN_CERT_REVISION_1_0",
+    512: "WIN_CERT_REVISION_2_0"
+}
+
+wCertificateType_kind = {
+    1: "WIN_CERT_TYPE_X509",
+    2: "WIN_CERT_TYPE_PKCS_SIGNED_DATA",
+    3: "WIN_CERT_TYPE_RESERVED_1",
+    4: "WIN_CERT_TYPE_TS_STACK_SIGNED"
+}
+
 '''
 def make_country_dic():
     #파일을 읽어서 원하는 정보만을 추출해 dictionary 형태로 저장
@@ -215,6 +234,11 @@ def make_country_dic():
 def match_language(id):
     return COUNTRY_MAP[id] if id in COUNTRY_MAP else "<unknown>"
 
+def find_wRevision(r):
+    return wRevision_kind[r] if r in wRevision_kind else "<NONE>"
+
+def find_wCertificateType(c):
+    return wCertificateType_kind[c] if c in wCertificateType_kind else "<NONE>"
 
 class RsrcParser:
     def __init__(self, filename):
@@ -225,9 +249,10 @@ class RsrcParser:
         #print(f"TimeDateStamp : {self.pe.FILE_HEADER.dump_dict()['TimeDateStamp']['Value'].split('[')[1][:-1]}")
         Time = self.pe.FILE_HEADER.dump_dict()['TimeDateStamp']['Value'].split('[')[1][:-1]
         second = self.pe.FILE_HEADER.TimeDateStamp
+        if Time == None: Time = os.utime(self.filename)
         #print(type(second))
-        #print(f"Time in second :: {second}")
-        return Time, second
+        print(f"Time in second :: {second}")
+        return Time
 
     def get_entropy(self,data):
         if len(data) == 0:
@@ -289,7 +314,8 @@ class RsrcParser:
                     #이 시부레 새끼도 ssdeep 조져야함 중요한 건 ssdeep 조져야 하는 애들이 byte type이라 json에 넣을 수 없단거임
                     #resouce 데이터(해시화) 출력 성공
                     data = data.decode('Latin-1').replace(u"\u0000", u"").replace(u"\u000B", u"")
-                    rsrc_entry['hashed data'] = ssdeep.hash(data)
+                    rsrc_entry['sha-256'] = hashlib.sha256(data.encode()).hexdigest()
+                    rsrc_entry['ssdeep'] = ssdeep.hash(data)
                     #print(f'data : {data}')
                     size = resource_lang.data.struct.Size
                     rsrc_entry['size'] = size
@@ -314,19 +340,28 @@ class RsrcParser:
                 # 섹션 이름 추출
                 section_name = section.Name.decode().split('\x00')[0]
                 entropy = section.get_entropy()
-                hash_256 = section.get_hash_sha256()
                 hash_ssdeep = ssdeep.hash(section.get_data())
                 offset = hex(section.PointerToRawData)
                 character = hex(section.Characteristics)[2:]
+                # data = ""
+                # print("")
+                # print(f"{section_name}")
+                # for i in range(0, 100000):
+                #     data += hex(section.get_data()[i]) + " "
+                #     if i != 0 and i % 16 == 0:
+                #         print("")
+                #     print("%02x" % section.get_data()[i] + " ", end="")
+                # print('\n')
             except:
                 continue
             #권한 확인 부분 삭제
             #각 섹션별 데이터 해시와 섹션 시작 offset주소부분이 중복되어 출력되서 다음과 같이 수정
             section_dict[section_name] = {
-                'section_name': section_name,
                 'entropy': entropy,
-                'hash_256': hash_256,
+                #'hash_256': hash_256,
+                #'data' : data,
                 'hash_ssdeep': hash_ssdeep,
+                #'hash_sdhash': hash_sdhash,
                 'offset': offset,
                 'character': character
             }
@@ -336,6 +371,7 @@ class RsrcParser:
         return section_dict
 
     def extractPKCS7(self):
+        pe = pefile.PE(self.filename)
         pkcs_dict = dict()
         try:
             # 절대 경로를 통해서 받아옴
@@ -343,8 +379,7 @@ class RsrcParser:
             #ape = pefile.PE(self.filename, fast_load=True)
 
             # 절대 경로를 통해서 받아옴
-            self.pe.parse_data_directories(directories=[
-                pefile.DIRECTORY_ENTRY['IMAGE_DIRECTORY_ENTRY_SECURITY']])
+            self.pe.parse_data_directories(directories=[pefile.DIRECTORY_ENTRY['IMAGE_DIRECTORY_ENTRY_SECURITY']])
             sigoff = 0
             siglen = 0
 
@@ -360,23 +395,70 @@ class RsrcParser:
                 f.seek(sigoff)
                 thesig = f.read(siglen)
                 f.close()
+                #print("printing thesig", thesig[8:].decode('Latin-1'))
 
                 # 제대로 인증서를 찾으면 반환
-                if 'sign' in str(thesig[8:]).lower() or  'root' in str(thesig[8:]).lower() or 'global' in str(thesig[8:]).lower():
+                if 'sign' in str(thesig[8:]).lower() or 'root' in str(thesig[8:]).lower() or 'global' in str(thesig[8:]).lower():
+                    pkcs_dict['dwLength'] = struct.unpack('<L', thesig[0:4])[0]
+                    pkcs_dict['wRevision'] = find_wRevision(struct.unpack('<h', thesig[4:6])[0])
+                    pkcs_dict['wCertificateType'] = find_wCertificateType(struct.unpack('<h', thesig[6:8])[0])
+                    pkcs_dict['VirtualAddress'] = hex(sigoff)
                     pkcs_dict['totalsize'] = totsize
-                    pkcs_dict['VirtualAddress'] = sigoff
-                    pkcs_dict['Size'] = siglen
 
                     #이 새끼는 ssdeep으로 조져서 hash값 구해야 돼 근데 내 컴이 ssdeep이 안돼 아주 드러워
                     #인증서 해시화 성공
                     #thesig = ssdeep.hash(thesig)
                     thesig = hashlib.md5(thesig).hexdigest().upper()
                     pkcs_dict['hash'] = thesig
-                    return pkcs_dict
-                else:
-                    return pkcs_dict
+                address = pe.OPTIONAL_HEADER.DATA_DIRECTORY[pefile.DIRECTORY_ENTRY['IMAGE_DIRECTORY_ENTRY_SECURITY']].VirtualAddress
+                derData = pe.write()[address + 8:]
+
+                (contentInfo, rest) = decode(derData, asn1Spec=rfc2315.ContentInfo())
+
+                contentType = contentInfo.getComponentByName('contentType')
+
+                if contentType == rfc2315.signedData:
+                    signedData = decode(contentInfo.getComponentByName('content'), asn1Spec=rfc2315.SignedData())
+
+                for sd in signedData:
+                    if sd == '':
+                        continue
+                    try:
+                        signerInfos = sd.getComponentByName('signerInfos')
+                    except:
+                        continue
+                    for si in signerInfos:
+                        issuerAndSerial = si.getComponentByName('issuerAndSerialNumber')
+                        issuer = issuerAndSerial.getComponentByName('issuer').getComponent()
+                        for i in issuer:
+                            for r in i:
+                                at = r.getComponentByName('type')
+                                if rfc2459.id_at_countryName == at:
+                                    cn = decode(
+                                        r.getComponentByName('value'),
+                                        asn1Spec=rfc2459.X520countryName())
+                                    pkcs_dict['Country'] = str(cn[0])
+                                elif rfc2459.id_at_organizationName == at:
+                                    on = decode(
+                                        r.getComponentByName('value'),
+                                        asn1Spec=rfc2459.X520OrganizationName())
+                                    pkcs_dict['Company name'] = str(on[0].getComponent())
+                                elif rfc2459.id_at_organizationalUnitName == at:
+                                    ou = decode(
+                                        r.getComponentByName('value'),
+                                        asn1Spec=rfc2459.X520OrganizationalUnitName())
+                                    pkcs_dict['Company Unit name'] = str(ou[0].getComponent())
+                                elif rfc2459.id_at_commonName == at:
+                                    cn = decode(
+                                        r.getComponentByName('value'),
+                                        asn1Spec=rfc2459.X520CommonName())
+                                    pkcs_dict['Issuer name'] = str(cn[0].getComponent())
+                                else:
+                                    print
+                                    at
         except:
             return pkcs_dict
+        return pkcs_dict
 
 
 '''
@@ -387,7 +469,3 @@ print(get_resource(pe))
 print(extract_sections_privileges(pe))
 print(extractPKCS7(r'C\\Users\\qkrwl\\Downloads\\Notion Setup 1.0.8.exe'))
 '''
-
-# if __name__ == "__main__":
-#     t = RsrcParser(r"C:\malware\mid_GandCrab_exe\test (3)")
-#     print(t.get_timestamp())
