@@ -223,14 +223,13 @@ class Analyze_files:
 
     def analyze_idb(self, yun_sorted_pe):
         idb = analyze_flowchart.AnalyzeFlowchart(self.all_idb_info)
-        idb_split = idb.flow_parser()
-        idb_result, yun_all = idb.analyze_all(idb_split, yun_sorted_pe)
+        idb_result, yun_all = idb.analyze_all(yun_sorted_pe)
+
         return idb_result, yun_all
 
     def analyze_pe(self):
         pe = analyze_pe.AnalyzePE(self.all_pe_info)
         pe_split = pe.pe_parser()
-
         pe_result, yun_pe = pe.analyze_all(pe_split)
 
         return pe_result, yun_pe
@@ -273,56 +272,64 @@ def out_xlsx(path, result_dict):
     wb.save(path)
 
 
-# def start_engine():
-#     '''
-#     웹 서버에서 메인 엔진을 호출하면 엔진을 돌리기위한 함수
-#     * 백앤드 엔진에서는 사용되지 않음
-#     * 지금은 서버 테스트만을 위해서 만든 것이므로 무시
-#     '''
-#     print('[+]back-end engine start!')
-#     s = timeit.default_timer()
-#
-#     PATH = r"C:\malware\mid_GandCrab_exe"
-#     IDB_PATH = r"C:\malware\mid_idb"
-#
-#     # 1. pe 해시 체크 (동일한 파일 필터), 2.패킹 체크
-#     pe_check = Pe_Files_Check(PATH)
-#     file_hash_dict = pe_check.get_unique_pe_list()
-#     # pe_check.unpack_pe()
-#
-#     # 3. pe파일(+패킹 체크) -> idb 변환
-#     flag = convert_idb(PATH, IDB_PATH)
-#     Features = Exract_Feature(PATH, IDB_PATH)
-#
-#     # 4. 정보 추출(idb,pe)
-#     if flag == True:
-#         all_idb_info = Features.export_idb_info('idb')
-#         all_pe_info = Features.export_pe_info('pe')
-#     else:
-#         print('error fuck')
-#     print(type(all_idb_info))
-#
-#     # 5. 분석 하기
-#     analyze = Analyze_files(all_idb_info, all_pe_info)
-#
-#     result_idb, yun = analyze.analyze_idb()
-#
-#     print(f"yun :: {yun}")
-#
-#     # with open(r"C:\malware\result\idbtest.txt", 'w') as makefile:
-#     #     json.dump(result_idb, makefile, ensure_ascii=False, indent='\t')
-#     result_pe = analyze.analyze_pe()
-#     # with open(r"C:\malware\result\petest.txt", 'w') as makefile:
-#     #     json.dump(result_pe, makefile, ensure_ascii=False, indent='\t')
-#
-#     # 6. 결과 csv 저장 (임시)
-#     all_result = analyze.calculate_heuristic(result_idb, result_pe)
-#
-#     out_xlsx(r"C:\malware\result\test.xlsx", all_result)
-#
-#
-#     print(f"[+]time : {timeit.default_timer() - s}")
-#     print('[+]back-end engine end')
+
+def start_engine():
+    '''
+    웹 서버에서 메인 엔진을 호출하면 엔진을 돌리기위한 함수
+    * 백앤드 엔진에서는 사용되지 않음
+    * 지금은 서버 테스트만을 위해서 만든 것이므로 무시
+    '''
+    s = timeit.default_timer()
+
+
+    PATH = r"C:\malware\mid_GandCrab_exe"
+    IDB_PATH = r"C:\malware\mid_idb"
+
+    # 1. pe 해시 체크 (동일한 파일 필터), 2.패킹 체크
+    pe_check = Pe_Files_Check(PATH)
+    file_hash_dict = pe_check.get_unique_pe_list()
+
+    # 3. pe파일(+패킹 체크) -> idb 변환
+    flag = convert_idb(PATH, IDB_PATH)
+    Features = Exract_Feature(PATH, IDB_PATH)
+
+    # 4. 정보 추출(idb,pe)
+    if flag == True:
+        all_idb_info = Features.export_idb_info('idb')
+        all_pe_info = Features.export_pe_info('pe')
+    else:
+        print('error fuck')
+
+    # 5. 분석 하기
+    analyze = Analyze_files(all_idb_info, all_pe_info)
+
+    # sorted_yun = sorted(yun.items(), key=(lambda x: x[1][1]))
+    # print(f"sorted_yun :: {json.dumps(sorted_yun, indent=4)}")
+    yun_sorted_pe = dict()
+    result_pe, yun_pe = analyze.analyze_pe()
+    result_idb, yun_all = analyze.analyze_idb(yun_pe)
+    yun_sorted_pe = sorted(yun_all.items(), key=lambda x: x[1]['timestamp_num'])
+    print(f"sorted_yun :: {json.dumps(yun_sorted_pe, indent=4)}")
+
+    # print(f"yun_all :: {json.dumps(yun_all, indent=4)}")
+
+    # with open(r"C:\malware\result\idbtest.txt", 'w') as makefile:
+    #     json.dump(result_idb, makefile, ensure_ascii=False, indent='\t')
+
+    # with open(r"C:\malware\result\petest.txt", 'w') as makefile:
+    #     json.dump(result_pe, makefile, ensure_ascii=False, indent='\t')
+
+    # 6. 결과 csv 저장 (임시)
+    all_result = analyze.calculate_heuristic(result_idb, result_pe)
+    # re_result = sorted(all_result.items(), key=(lambda y: y[1][2]))
+    # print(f"re_result :: {json.dumps(re_result, indent=4)}")
+    out_xlsx(r"C:\malware\result\test.xlsx", all_result)
+
+    print(f"[+]time : {timeit.default_timer() - s}")
+
+
+    return all_result
+
 
 if __name__ == "__main__":
 
@@ -344,35 +351,27 @@ if __name__ == "__main__":
         all_idb_info = Features.export_idb_info('idb')
         all_pe_info = Features.export_pe_info('pe')
     else:
-        print('error fuck')
+        print('convert_idb is error')
 
+    # 만약 5개의 파일이 들어왔을때 그중 convert_idb 에러뜨는 것들은 제외시키고 나머지 것들만 다음 로직 수행되도록
+    # 변경해야함.
 
     # 5. 분석 하기
     analyze = Analyze_files(all_idb_info, all_pe_info)
 
-
-
-    # sorted_yun = sorted(yun.items(), key=(lambda x: x[1][1]))
-    # print(f"sorted_yun :: {json.dumps(sorted_yun, indent=4)}")
     yun_sorted_pe = dict()
     result_pe, yun_pe = analyze.analyze_pe()
     result_idb, yun_all = analyze.analyze_idb(yun_pe)
+
     yun_sorted_pe = sorted(yun_all.items(), key=lambda x: x[1]['timestamp_num'])
+
     print(f"sorted_yun :: {json.dumps(yun_sorted_pe, indent=4)}")
 
-    #print(f"yun_all :: {json.dumps(yun_all, indent=4)}")
-
-    # with open(r"C:\malware\result\idbtest.txt", 'w') as makefile:
-    #     json.dump(result_idb, makefile, ensure_ascii=False, indent='\t')
-
-    # with open(r"C:\malware\result\petest.txt", 'w') as makefile:
-    #     json.dump(result_pe, makefile, ensure_ascii=False, indent='\t')
 
     # 6. 결과 csv 저장 (임시)
-    #all_result = analyze.calculate_heuristic(result_idb, result_pe)
-    # re_result = sorted(all_result.items(), key=(lambda y: y[1][2]))
-    # print(f"re_result :: {json.dumps(re_result, indent=4)}")
-    #out_xlsx(r"C:\malware\result\test.xlsx", all_result)
+    all_result = analyze.calculate_heuristic(result_idb, result_pe)
+
+    out_xlsx(r"C:\malware\result\test.xlsx", all_result)
 
 
     print(f"[+]time : {timeit.default_timer() - s}")

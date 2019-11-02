@@ -5,6 +5,7 @@ from ngram import NGram
 import operator
 import json
 
+
 class AnalyzePE:
     def __init__(self, pe_all):
         self.pe_all = pe_all
