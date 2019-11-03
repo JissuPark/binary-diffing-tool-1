@@ -102,7 +102,6 @@ class AnalyzeFlowchart:
 
                 if index_1 == index_2:
                     continue
-                #idb_t['bbh'], test_d['func_name'], test_d['start_addr'] = self.analyze_bbh(idb_info_s, idb_info_t)
                 idb_t['bbh'] = self.analyze_bbh(idb_info_s, idb_info_t)
 
                 ######   연대기 추가  ######
@@ -121,3 +120,4 @@ class AnalyzeFlowchart:
         print(f"yun_all :: {json.dumps(yun_sorted_pe, indent=4)}")
 
         return idb_all, yun_sorted_pe
+

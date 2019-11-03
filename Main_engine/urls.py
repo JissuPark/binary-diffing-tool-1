@@ -10,4 +10,6 @@ urlpatterns = [
     path('upload', views.upload_file_dropzone, name='upload'),
     path('result', views.call_main, name='result'),
     path('bootstrap', views.showbootstrap, name='boot'),
+    path('recent', views.recent, name='recent'),
+    path('pe', views.pe, name='pe'),
 ]
