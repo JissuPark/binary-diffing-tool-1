@@ -106,7 +106,7 @@ class AnalyzeFlowchart:
 
                 ######   연대기 추가  ######
                 for var in yun_sorted_pe:
-                    print("found :: ", var)
+                    #print("found :: ", var)
                     if idb_t['bbh'] >= 0.85:
                         yun_s['comp_file_name'] = idb_info_t['file_name']
                         yun_s['comp_bbh'] = idb_t['bbh']
