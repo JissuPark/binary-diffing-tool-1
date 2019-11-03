@@ -134,8 +134,8 @@ class Pe_Feature:
             'rich_info': rich_info,
             'pdb_info': pdb_info,
             'time_date_stamp': time_info,
-            'time in num': TimeInNum
-            #'rsrc_info': rsrc_info
+            'time in num': TimeInNum,
+            'rsrc_info': rsrc_info
         }
 
         return pe_features
