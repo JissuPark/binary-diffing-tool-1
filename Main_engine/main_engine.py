@@ -1,17 +1,15 @@
 #coding:utf-8
 import hashlib
 import json
-import operator
+import django
 import timeit
 import os
-import sys
 from multiprocessing import Process, Queue, Manager
 from collections import OrderedDict
 import pefile
-from django.db.models import Q
+django.setup()
 
 from Main_engine.Extract_Engine import pe2idb
-
 from Main_engine.Extract_Engine.Flowchart_feature import extract_asm_and_const
 from Main_engine.Extract_Engine.PE_feature import extract_pe
 from Main_engine.Analzer_Engine import analyze_pe, analyze_flowchart
@@ -20,6 +18,7 @@ from Main_engine.Check_Packing import Packer_Detect2
 from Main_engine.Unpacking import unpack_module
 from Main_engine.models import *
 
+idb_file_path = "C:\\malware\\all_result\\idb\\"
 
 class Pe_Files_Check:
     '''
@@ -87,8 +86,6 @@ class Pe_Files_Check:
         if not (os.path.isdir(unpack_path)): os.makedirs(unpack_path)
 
         queue = unpack_module.mains(sample_folder_path)
-        # start Multi Process
-        # packer_check(queue, pack_path, unpack_path)
 
         proc_list = []
         for _ in range(0, 5):
@@ -114,14 +111,20 @@ def multiprocess_file(q, return_dict, flag):
 
             # if db 미 존재
             # if f_path[f_path.rfind('\\')+1:]
-            db_path = f_path[f_path.rfind('\\') + 1:-4]
-            filter = Filter.objects.filter(Q(db_path))
-            print(f"반환값 :: {filter}")
+            file_filter = f_path[f_path.rfind('\\') + 1:-4]
 
-            info = extract_asm_and_const.basicblock_idb_info_extraction(f_path)  # 함수대표값 및 상수값 출력
-            # elif db 존재
-            # info = json.load
-            
+            try:
+                file_ = Filter.objects.get(filehash=file_filter)
+                fd1 = open(file_.filepath + ".txt","rb").read()
+                info = json.loads(fd1, encoding='utf-8')
+                print('존재함')
+            except:
+                info = extract_asm_and_const.basicblock_idb_info_extraction(f_path)  # 함수대표값 및 상수값 출력
+                with open(r"C:\malware\all_result\idb" + "\\" + file_filter + ".txt", 'w') as makefile:
+                    json.dump(info, makefile, ensure_ascii=False, indent='\t')
+                Filter.objects.create(filehash=info['file_name'], filepath=idb_file_path+file_filter)
+                print('없음')
+
         elif flag == 'pe':
             try:
                 pe = pefile.PE(f_path)
@@ -166,16 +169,6 @@ class Exract_Feature:
         export_idb = self.export_by_multi(flag)
 
         if export_idb != False:
-
-            for dict_list in export_idb.values():
-
-                # 파일 저장은 우리를 위한 임시적인 행위
-                with open(r"C:\malware\all_result\idb\ " + dict_list['file_name'] + ".txt", 'w') as makefile:
-                    json.dump(dict_list, makefile, ensure_ascii=False, indent='\t')
-
-                #실제론 db 저장(?)
-                #
-                #
             return export_idb
         else:
             return False
@@ -189,7 +182,7 @@ class Exract_Feature:
             for dict_list in export_pe.values():
 
                 # 파일 저장은 우리를 위한 임시적인 행위
-                with open(r"C:\malware\all_result\pe\ " + dict_list['file_name'] + ".txt", 'w') as makefile:
+                with open(r"C:\malware\all_result\pe"+"\\" + dict_list['file_name'] + ".txt", 'w') as makefile:
                     json.dump(dict_list, makefile, ensure_ascii=False, indent='\t')
 
                 # 실제론 db 저장(?)
@@ -234,11 +227,6 @@ class Analyze_files:
 
             real_final[key_i[0]] = idb_final_score
             real_final[key_pe[0]] = pe_final_score
-
-            # for base,target in real_final.items():
-            #     sorted(target.items(), key=lambda x: x[1][1])
-            #     print(json.dumps(target, indent=4))
-            #sorted(real_final.items(), key=lambda x: x[1])
 
         return real_final
 
@@ -300,8 +288,8 @@ def start_engine():
     * 백앤드 엔진에서는 사용되지 않음
     * 지금은 서버 테스트만을 위해서 만든 것이므로 무시
     '''
-    PATH = r"C:\malware\mal_exe"
-    IDB_PATH = r"C:\malware\mal_idb"
+    PATH = r"C:/malware/mal_exe"
+    IDB_PATH = r"C:/malware/mal_idb"
     RESUT_IDB_PATH = r"C:\malware\all_result_idb"
     RESUT_PE_PATH = r"C:\malware\all_result_pe"
 
@@ -332,12 +320,12 @@ def start_engine():
 
     yun_sorted_pe = sorted(yun_all.items(), key=lambda x: x[1]['timestamp_num'])
 
-    print(f"sorted_yun :: {json.dumps(yun_sorted_pe, indent=4)}")
+    #print(f"sorted_yun :: {json.dumps(yun_sorted_pe, indent=4)}")
 
     # 6. 결과 csv 저장 (임시)
     all_result = analyze.calculate_heuristic(result_idb, result_pe)
 
-    out_xlsx(r"C:\malware\result\test.xlsx", all_result)
+    #out_xlsx(r"C:\malware\result\test.xlsx", all_result)
 
     return all_result
 

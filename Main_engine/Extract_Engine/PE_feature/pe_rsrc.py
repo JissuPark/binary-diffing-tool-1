@@ -2,14 +2,11 @@ import pefile, os
 import json
 import hashlib
 import ssdeep
-import sdhash
 import array
 import math
 import struct
 from pyasn1.codec.ber.decoder import decode
 from pyasn1_modules import rfc2315, rfc2459
-
-from signify.signed_pe import SignedPEFile
 
 COUNTRY_MAP = {
     0: "Unicode",
@@ -252,7 +249,7 @@ class RsrcParser:
         if Time == None: Time = os.utime(self.filename)
         #print(type(second))
         print(f"Time in second :: {second}")
-        return Time
+        return Time, second
 
     def get_entropy(self,data):
         if len(data) == 0:
@@ -357,6 +354,7 @@ class RsrcParser:
             #권한 확인 부분 삭제
             #각 섹션별 데이터 해시와 섹션 시작 offset주소부분이 중복되어 출력되서 다음과 같이 수정
             section_dict[section_name] = {
+                'section_name': section_name,
                 'entropy': entropy,
                 #'hash_256': hash_256,
                 #'data' : data,
@@ -456,6 +454,7 @@ class RsrcParser:
                                 else:
                                     print
                                     at
+
         except:
             return pkcs_dict
         return pkcs_dict

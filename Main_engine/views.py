@@ -78,7 +78,6 @@ def file_check(request,file):
     print(file_extension)
 
     file_type = file.content_type
-    print(file_type)
     if file_extension in extension:
         return True
     else:
@@ -96,8 +95,9 @@ def handle_uploaded_file(file):
     :param file: 업로드 된 파일
     :return: None
     '''
-    with open('C:\\malware\\mid_GandCrab_exe\\'+file.name, 'wb+') as uploaded_file:
+    with open('C:\\malware\\mal_exe\\'+file.name, 'wb+') as uploaded_file:
         for chunk in file.chunks():
+            print(chunk)
             uploaded_file.write(chunk)
 
 
