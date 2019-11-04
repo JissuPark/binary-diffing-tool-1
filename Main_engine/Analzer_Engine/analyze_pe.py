@@ -146,15 +146,23 @@ class AnalyzePE:
         *문자열로 뽑아서 한다면 ngram을, 데이터 자체를 뽑아서 한다며 data를 사용.. 재호랑 얘기해서하기
         :return: score with weight
         '''
-        if standard['rich_info'] == {} or target['rich_info'] == {}:
+        xor_score = 0
+        prodid_score = 0
+        if standard['rich_xor_key'] == {} or target['rich_xor_key'] == {}:
             return 0
         else:
-            if standard['rich_info'] == target['rich_info']:
-                return 1
+            #rich header의 xor key 유사도(True or False)
+            if standard['rich_xor_key'] == target['rich_xor_key']:
+                xor_score += 1
             else:
-                return 0
-        #print(json.dumps(standard, indent=4))
-        #print(json.dumps(target, indent=4))
+                for prod in range(len(standard['rich_prodid'])):
+                    if prod in target['rich_prodid']:
+                        prodid_score += 1
+                    else:
+                        continue
+        return str(xor_score) + "," + str(prodid_score / len(standard['rich_prodid']))
+        # #print(json.dumps(standard, indent=4))
+        # #print(json.dumps(target, indent=4))
 
     def analyze_section(self, dict_s, dict_t):
         '''
@@ -166,7 +174,7 @@ class AnalyzePE:
         for key in dict_s.keys() and dict_t.keys():                                 #키의 이름이 다를 때의 예외처리가 필요
             if key in dict_s and key in dict_t:
                 if dict_s[key]['section_name'] == dict_t[key]['section_name']:
-                    #print(f"{dict_s[key]['section_name']}, {dict_t[key]['section_name']}")
+                    print(f"{dict_s[key]['section_name']}, {dict_t[key]['section_name']}")
                     score = ssdeep.compare(dict_s[key]['hash_ssdeep'], dict_t[key]['hash_ssdeep'])
                     comp += score
                 # print(f"{key} :: {score}")

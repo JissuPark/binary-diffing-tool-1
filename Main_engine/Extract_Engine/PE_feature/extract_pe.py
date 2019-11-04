@@ -84,19 +84,20 @@ class Pe_Feature:
 
             if flag != False:
                 xor_key = rich.xorkey
-                rich_dict = dict()
+                #rich_dict = dict()
+                prod_list = list()
                 #print(f'XorKey : {xor_key}')
                 #print("ProID    name              count")
                 for key in rich.info_list.keys():
                     count = rich.info_list[key]
                     mcv = (key << 16)
                     prodid = (key >> 16)
-
+                    prod_list.append(prodid)
                     prodid_name = pe_rich.PRODID_MAP[prodid] if prodid in pe_rich.PRODID_MAP else "<unknown>"
                     #print('%6d   %-15s %5d     %6d' % (prodid, prodid_name, count, mcv))
-                    rich_dict[key] = count
+                    #rich_dict[key] = count
 
-                return xor_key
+                return xor_key, prod_list
             else:
                 return ""
         except:
@@ -120,18 +121,19 @@ class Pe_Feature:
         imphash = self.imphash_data()
         cmp_section_data = self.cmp_section_data()
         auto = self.Autoninfo()
-        rich_info = self.extract_rich()
+        rich_xor_key, rich_prodid = self.extract_rich()
         pdb_info = self.extract_pdb()
         rsrc_info = self.extract_rsrc()
         time_info, TimeInNum = self.extract_time()
 
         pe_features = {
-            'file_name': self.file_name[28:],
+            'file_name': self.file_name[self.file_name.rfind('\\')+1:],
             'file_hash': hashlib.sha256(open(self.file_name, 'rb').read()).hexdigest(),
             'imp_hash': imphash,
             'cmp_section': cmp_section_data,
             'auto': auto,
-            'rich_info': rich_info,
+            'rich_xor_key': rich_xor_key,
+            'rich_prodid': rich_prodid,
             'pdb_info': pdb_info,
             'time_date_stamp': time_info,
             'time in num': TimeInNum,

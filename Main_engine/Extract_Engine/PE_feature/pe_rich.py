@@ -268,7 +268,7 @@ class ParseRichHeader:
             return False
 
         rich_offset = rich_identifi_addr + 4
-        checksum_text = data[rich_offset : rich_offset+4]
+        checksum_text = data[rich_offset: rich_offset+4]
         self.xorkey = struct.unpack('<I', checksum_text)[0]
         self.data= data[:rich_identifi_addr]
 
@@ -277,7 +277,7 @@ class ParseRichHeader:
         for i in range(16, rich_identifi_addr, 8):
             compID = struct.unpack('<L', self.data[i:i+4])[0] ^ self.xorkey     # extract compID(mVC,prodID)
             count = struct.unpack('<L', self.data[i+4:i+8])[0] ^ self.xorkey    # extract count
-            self.info_list[compID]=count
+            self.info_list[compID] = count
 
     def extract_prodid(self):                                                   # prodid
         set1 = []

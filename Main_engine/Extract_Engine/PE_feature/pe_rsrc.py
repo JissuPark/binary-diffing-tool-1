@@ -1,15 +1,11 @@
 import pefile, os
-import json
 import hashlib
 import ssdeep
-import sdhash
 import array
 import math
 import struct
 from pyasn1.codec.ber.decoder import decode
 from pyasn1_modules import rfc2315, rfc2459
-
-from signify.signed_pe import SignedPEFile
 
 COUNTRY_MAP = {
     0: "Unicode",
@@ -251,8 +247,8 @@ class RsrcParser:
         second = self.pe.FILE_HEADER.TimeDateStamp
         if Time == None: Time = os.utime(self.filename)
         #print(type(second))
-        print(f"Time in second :: {second}")
-        return Time
+        #print(f"Time in second :: {second}")
+        return Time, second
 
     def get_entropy(self,data):
         if len(data) == 0:
@@ -357,6 +353,7 @@ class RsrcParser:
             #권한 확인 부분 삭제
             #각 섹션별 데이터 해시와 섹션 시작 offset주소부분이 중복되어 출력되서 다음과 같이 수정
             section_dict[section_name] = {
+                'section_name': section_name,
                 'entropy': entropy,
                 #'hash_256': hash_256,
                 #'data' : data,
@@ -434,28 +431,19 @@ class RsrcParser:
                             for r in i:
                                 at = r.getComponentByName('type')
                                 if rfc2459.id_at_countryName == at:
-                                    cn = decode(
-                                        r.getComponentByName('value'),
-                                        asn1Spec=rfc2459.X520countryName())
+                                    cn = decode(r.getComponentByName('value'), asn1Spec=rfc2459.X520countryName())
                                     pkcs_dict['Country'] = str(cn[0])
                                 elif rfc2459.id_at_organizationName == at:
-                                    on = decode(
-                                        r.getComponentByName('value'),
-                                        asn1Spec=rfc2459.X520OrganizationName())
+                                    on = decode(r.getComponentByName('value'), asn1Spec=rfc2459.X520OrganizationName())
                                     pkcs_dict['Company name'] = str(on[0].getComponent())
                                 elif rfc2459.id_at_organizationalUnitName == at:
-                                    ou = decode(
-                                        r.getComponentByName('value'),
-                                        asn1Spec=rfc2459.X520OrganizationalUnitName())
+                                    ou = decode(r.getComponentByName('value'), asn1Spec=rfc2459.X520OrganizationalUnitName())
                                     pkcs_dict['Company Unit name'] = str(ou[0].getComponent())
                                 elif rfc2459.id_at_commonName == at:
-                                    cn = decode(
-                                        r.getComponentByName('value'),
-                                        asn1Spec=rfc2459.X520CommonName())
+                                    cn = decode(r.getComponentByName('value'), asn1Spec=rfc2459.X520CommonName())
                                     pkcs_dict['Issuer name'] = str(cn[0].getComponent())
                                 else:
-                                    print
-                                    at
+                                    print(at)
         except:
             return pkcs_dict
         return pkcs_dict
