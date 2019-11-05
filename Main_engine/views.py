@@ -11,9 +11,6 @@ import json, os
 def showindex(request):
     return render(request, 'Main_engine/index.html')
 
-def showbootstrap(request):
-    return render(request, 'Main_engine/bootstrap.html')
-
 def recent(request):
     return render(request, 'Main_engine/recent.html')
 
