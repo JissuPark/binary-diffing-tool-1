@@ -19,7 +19,7 @@ class AnalyzeFlowchart:
 
     def block_hash_parser(self, bloc_dict):
         s = timeit.default_timer()  # start time
-        print(f'[info] Making Block hash SET & Filter White List')
+        #print(f'[info] Making Block hash SET & Filter White List')
         block_hash_dic = dict()
 
         for x in bloc_dict["func_name"]:
@@ -34,7 +34,7 @@ class AnalyzeFlowchart:
                         block_hash_dic[x].update({y: {bloc_dict["func_name"][x][y]['block_sha256']: False}})
                     except:
                         continue
-        print(f'[info] END block hash set & filter_list : {timeit.default_timer() - s}')
+        #print(f'[info] END block hash set & filter_list : {timeit.default_timer() - s}')
         return block_hash_dic
 
     def analyze_bbh(self, s_flow_data, t_flow_data):
@@ -102,7 +102,6 @@ class AnalyzeFlowchart:
 
                 if index_1 == index_2:
                     continue
-                #idb_t['bbh'], test_d['func_name'], test_d['start_addr'] = self.analyze_bbh(idb_info_s, idb_info_t)
                 idb_t['bbh'] = self.analyze_bbh(idb_info_s, idb_info_t)
 
                 ######   연대기 추가  ######
@@ -118,6 +117,7 @@ class AnalyzeFlowchart:
 
             idb_all[idb_info_s['file_name']] = idb_s
 
-        print(f"yun_all :: {json.dumps(yun_sorted_pe, indent=4)}")
+        # print(f"yun_all :: {json.dumps(yun_sorted_pe, indent=4)}")
 
         return idb_all, yun_sorted_pe
+

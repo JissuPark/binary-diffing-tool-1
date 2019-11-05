@@ -2,14 +2,11 @@ import pefile, os
 import json
 import hashlib
 import ssdeep
-import sdhash
 import array
 import math
 import struct
 from pyasn1.codec.ber.decoder import decode
 from pyasn1_modules import rfc2315, rfc2459
-
-from signify.signed_pe import SignedPEFile
 
 COUNTRY_MAP = {
     0: "Unicode",
@@ -457,6 +454,7 @@ class RsrcParser:
                                 else:
                                     print
                                     at
+
         except:
             return pkcs_dict
         return pkcs_dict
