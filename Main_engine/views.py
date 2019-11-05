@@ -21,16 +21,11 @@ def pe(request):
     return render(request, 'Main_engine/pe.html')
 
 def call_main(request):
+    result = main_engine.start_engine()
 
-    if os.path.isfile("result.txt"):
-        result = open(r"C:\malware/result/result.txt", 'rb').read()
-    else:
-        result_engine = main_engine.start_engine()
-        result = json.dumps(result_engine, indent=4, default=str)
-        with open(r"C:\malware\result\result.txt", 'w') as res:
-            json.dump(result_engine, res, ensure_ascii=False, indent='\t')
-
-    result_str = json.loads(result)
+    print(json.dumps(result, indent=4))
+    result_json = json.dumps(result, indent=4, default=str)
+    result_str = json.loads(result_json)
 
     for standard, data_s in result.items():
         print(f'[S]{standard}')

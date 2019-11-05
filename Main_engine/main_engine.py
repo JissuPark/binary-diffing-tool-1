@@ -148,8 +148,8 @@ def multiprocess_file(q, return_dict, flag):
                         with open(r"C:\malware\all_result\pe" + "\\" + file_filter2 + ".txt", 'w') as makefile:
                             json.dump(info, makefile, ensure_ascii=False, indent='\t')
                         print('ads')
-                        pe_file.pe_filepath(pe_file_path + file_filter2)
-                        pefile.save()
+                        #pe_file.pe_filepath(pe_file_path + file_filter2)
+                        #pefile.save()
                         print('pe없음')
                     except:
                         print('pe error !')
@@ -322,8 +322,8 @@ def start_engine():
     * 백앤드 엔진에서는 사용되지 않음
     * 지금은 서버 테스트만을 위해서 만든 것이므로 무시
     '''
-    PATH = r"C:/malware/mal_exe"
-    IDB_PATH = r"C:/malware/mal_idb"
+    PATH = r"C:\malware\mal_exe"
+    IDB_PATH = r"C:\malware\mal_idb"
     RESUT_IDB_PATH = r"C:\malware\all_result_idb"
     RESUT_PE_PATH = r"C:\malware\all_result_pe"
 
