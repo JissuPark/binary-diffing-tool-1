@@ -28,9 +28,9 @@ def get_func_similarity(s_dict, t_dict, stand_hash_count, correction_score):
 
     true_count = ([s_dict[fname][fAddr][hashSet] for fname in s_dict for fAddr in s_dict[fname] for hashSet in s_dict[fname][fAddr]]).count(True)
     #correction_score = 3-Gram 유사블럭 보정점수
-    print(f'유사블럭 보정 전 : {true_count}')
+    #print(f'유사블럭 보정 전 : {true_count}')
     true_count = true_count + correction_score
-    print(f'유사블럭 보정 후 : {true_count}')
+    #print(f'유사블럭 보정 후 : {true_count}')
     #print(f'true_count ::: {true_count}')
     #print(f'stand_hash_count ::: {stand_hash_count}')
 
