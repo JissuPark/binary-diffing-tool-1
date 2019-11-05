@@ -81,6 +81,7 @@ class AnalyzeFlowchart:
         stand_f.update(target_f)
 
 
+
         with open(r"C:\malware\all_result\dict_test.txt", 'a') as makefile:
             json.dump(stand_f, makefile, ensure_ascii=False, indent='\t')
 
