@@ -5,7 +5,8 @@ from django.urls import reverse
 from django.contrib import messages
 from Main_engine import main_engine
 from collections import OrderedDict
-import json
+
+import json, os
 
 def showindex(request):
     return render(request, 'Main_engine/index.html')
@@ -20,11 +21,16 @@ def pe(request):
     return render(request, 'Main_engine/pe.html')
 
 def call_main(request):
-    result = main_engine.start_engine()
 
-    print(json.dumps(result, indent=4))
-    result_json = json.dumps(result, indent=4, default=str)
-    result_str = json.loads(result_json)
+    if os.path.isfile("result.txt"):
+        result = open(r"C:\malware/result/result.txt", 'rb').read()
+    else:
+        result_engine = main_engine.start_engine()
+        result = json.dumps(result_engine, indent=4, default=str)
+        with open(r"C:\malware\result\result.txt", 'w') as res:
+            json.dump(result_engine, res, ensure_ascii=False, indent='\t')
+
+    result_str = json.loads(result)
 
     for standard, data_s in result.items():
         print(f'[S]{standard}')
@@ -98,79 +104,3 @@ def handle_uploaded_file(file):
     with open('C:\\malware\\mal_exe\\'+file.name, 'wb+') as uploaded_file:
         for chunk in file.chunks():
             uploaded_file.write(chunk)
-
-
-#     result = {
-#     "41A004EBB42648DCA2AFA78680FD70DFEC9DA8C5190C2CF383A7C668A1C4C38F": {
-#         "49B769536224F160B6087DC866EDF6445531C6136AB76B9D5079CE622B043200": [
-#             "49b769536224f160b6087dc866edf6445531c6136ab76b9d5079ce622b043200",
-#             "Tue Dec  6 11:34:00 2016 UTC",
-#             0.39344262295081966,
-#             0.04096140825998646,
-#             445,
-#             0,
-#             "0,0",
-#             1,
-#             1
-#         ],
-#         "52F2B6380B492C175837418285CBEFA51F1DE3187D00C01383BB5F9CA4EBE7DB": [
-#             "52f2b6380b492c175837418285cbefa51f1de3187d00c01383bb5f9ca4ebe7db",
-#             "Sat Sep 29 22:01:53 2018 UTC",
-#             0.0,
-#             0.2909817276835418,
-#             0,
-#             0,
-#             "0,0",
-#             0,
-#             0
-#         ]
-#     },
-#     "49B769536224F160B6087DC866EDF6445531C6136AB76B9D5079CE622B043200": {
-#         "41A004EBB42648DCA2AFA78680FD70DFEC9DA8C5190C2CF383A7C668A1C4C38F": [
-#             "41a004ebb42648dca2afa78680fd70dfec9da8c5190c2cf383a7c668a1c4c38f",
-#             "Tue Dec  6 11:34:00 2016 UTC",
-#             1.0,
-#             0.04096140825998646,
-#             445,
-#             0,
-#             "0,0",
-#             1,
-#             1
-#         ],
-#         "52F2B6380B492C175837418285CBEFA51F1DE3187D00C01383BB5F9CA4EBE7DB": [
-#             "52f2b6380b492c175837418285cbefa51f1de3187d00c01383bb5f9ca4ebe7db",
-#             "Sat Sep 29 22:01:53 2018 UTC",
-#             0.0,
-#             0.11184606133493687,
-#             0,
-#             0,
-#             "0,0",
-#             0,
-#             0
-#         ]
-#     },
-#     "52F2B6380B492C175837418285CBEFA51F1DE3187D00C01383BB5F9CA4EBE7DB": {
-#         "41A004EBB42648DCA2AFA78680FD70DFEC9DA8C5190C2CF383A7C668A1C4C38F": [
-#             "41a004ebb42648dca2afa78680fd70dfec9da8c5190c2cf383a7c668a1c4c38f",
-#             "Tue Dec  6 11:34:00 2016 UTC",
-#             0.0,
-#             0.2909817276835418,
-#             0,
-#             0,
-#             "0,0",
-#             0,
-#             0
-#         ],
-#         "49B769536224F160B6087DC866EDF6445531C6136AB76B9D5079CE622B043200": [
-#             "49b769536224f160b6087dc866edf6445531c6136ab76b9d5079ce622b043200",
-#             "Tue Dec  6 11:34:00 2016 UTC",
-#             0.0,
-#             0.11184606133493687,
-#             0,
-#             0,
-#             "0,0",
-#             0,
-#             0
-#         ]
-#     }
-# }
