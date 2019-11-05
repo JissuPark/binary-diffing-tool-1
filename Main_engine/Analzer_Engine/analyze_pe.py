@@ -169,7 +169,7 @@ class AnalyzePE:
         for key in dict_s.keys() and dict_t.keys():                                 #키의 이름이 다를 때의 예외처리가 필요
             if key in dict_s and key in dict_t:
                 if dict_s[key]['section_name'] == dict_t[key]['section_name']:
-                    print(f"{dict_s[key]['section_name']}, {dict_t[key]['section_name']}")
+                    #print(f"{dict_s[key]['section_name']}, {dict_t[key]['section_name']}")
                     score = ssdeep.compare(dict_s[key]['hash_ssdeep'], dict_t[key]['hash_ssdeep'])
                     comp += score
                 # print(f"{key} :: {score}")
