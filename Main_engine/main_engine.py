@@ -126,12 +126,43 @@ def multiprocess_file(q, return_dict, flag):
                 print('없음')
 
         elif flag == 'pe':
+            file_filter2 = f_path[f_path.rfind('\\') + 1:]
             try:
-                pe = pefile.PE(f_path)
-                info = extract_pe.Pe_Feature(f_path, pe).all()  # pe 속성 출력
+                print('zzzzzz1')
+                print(file_filter2)
+                pe_file = Filter.objects.get(filehash=file_filter2)
+                print('ssdfasdfasdf')
+                print(pe_file.pe_filepath)
+                if pe_file.pe_filepath is not None:
+                    fd1 = open(pe_file.pe_filepath + ".txt", "rb").read()
+                    info = json.loads(fd1, encoding='utf-8')
+                    print('pe존재함')
+                else:
+                    try:
+                        pe = pefile.PE(f_path)
+                        print('9999999999999999999999999999')
+                        info = extract_pe.Pe_Feature(f_path, pe).all()  # pe 속성 출력
+                        with open(r"C:\malware\all_result\pe" + "\\" + file_filter2 + ".txt", 'w') as makefile:
+                            json.dump(info, makefile, ensure_ascii=False, indent='\t')
+                        print('ads')
+                        #pe_file.pe_filepath(pe_file_path + file_filter2)
+                        #pefile.save()
+                        print('pe없음')
+                    except:
+                        print('pe error !')
+                        continue
             except:
-                print('pe error !')
-                continue
+                try:
+                    pe = pefile.PE(f_path)
+                    info = extract_pe.Pe_Feature(f_path, pe).all()  # pe 속성 출력
+                    with open(r"C:\malware\all_result\pe" + "\\" + file_filter2 + ".txt", 'w') as makefile:
+                        json.dump(info, makefile, ensure_ascii=False, indent='\t')
+                    tmp = Filter.objects.get(filehash=file_filter2)
+                    #tmp.update(pe_filepath=pe_file_path + file_filter2)
+                    print('없음')
+                except:
+                    print('pe error !')
+                    continue
 
         return_dict[f_path] = info
 
@@ -288,8 +319,8 @@ def start_engine():
     * 백앤드 엔진에서는 사용되지 않음
     * 지금은 서버 테스트만을 위해서 만든 것이므로 무시
     '''
-    PATH = r"C:/malware/mal_exe"
-    IDB_PATH = r"C:/malware/mal_idb"
+    PATH = r"C:\malware\mal_exe"
+    IDB_PATH = r"C:\malware\mal_idb"
     RESUT_IDB_PATH = r"C:\malware\all_result_idb"
     RESUT_PE_PATH = r"C:\malware\all_result_pe"
 

@@ -21,8 +21,7 @@ def pe(request):
     return render(request, 'Main_engine/pe.html')
 
 def call_main(request):
-
-    if os.path.isfile("result.txt"):
+    if os.path.isfile(r"C:\malware\all_result\result.txt"):
         result = open(r"C:\malware\all_result\result.txt", 'rb').read()
     else:
         result_engine = main_engine.start_engine()
