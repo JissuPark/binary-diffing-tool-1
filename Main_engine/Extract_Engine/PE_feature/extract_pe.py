@@ -126,7 +126,7 @@ class Pe_Feature:
         time_info, TimeInNum = self.extract_time()
 
         pe_features = {
-            'file_name': self.file_name[28:],
+            'file_name': self.file_name[self.file_name.rfind('\\')+1:],
             'file_hash': hashlib.sha256(open(self.file_name, 'rb').read()).hexdigest(),
             'imp_hash': imphash,
             'cmp_section': cmp_section_data,
@@ -134,8 +134,8 @@ class Pe_Feature:
             'rich_info': rich_info,
             'pdb_info': pdb_info,
             'time_date_stamp': time_info,
-            'time in num': TimeInNum
-            #'rsrc_info': rsrc_info
+            'time in num': TimeInNum,
+            'rsrc_info': rsrc_info
         }
 
         return pe_features

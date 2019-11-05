@@ -20,15 +20,11 @@ result_csv_count_path="Main_engine/Check_Packing/File_Packer_Count.csv"
 
 
 def sample_packer_type_detect(sample_path):
-    #Sample_List=os.listdir(Sample_dir_Full_path)
     packer_dict_count={}
-
     # CSV Write DATA
     with open(result_csv_path, 'w+', newline='', encoding='utf-8') as csv_file:
         count = 1
-        print(sample_path)
-
-        #sample_full_path=os.path.join(Sample_dir_Full_path,sample_path)
+       # print(sample_path)
 
         read_mal = open(sample_path, "rb")
         read_data = read_mal.read()
@@ -38,8 +34,6 @@ def sample_packer_type_detect(sample_path):
         if matches_list == {} :
             return -3
         else:
-            #packer_dict_count[ matches_list['main'][count]['rule'] ] += 1
-            #packer_dict_count.update({matches_list['main'][0]['rule'] : count})
             try:
                 packer_dict_count[matches_list['main'][0]['rule']]+=1
             except:
