@@ -97,7 +97,6 @@ def handle_uploaded_file(file):
     '''
     with open('C:\\malware\\mal_exe\\'+file.name, 'wb+') as uploaded_file:
         for chunk in file.chunks():
-            print(chunk)
             uploaded_file.write(chunk)
 
 
