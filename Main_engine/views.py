@@ -11,14 +11,14 @@ import json, os
 def showindex(request):
     return render(request, 'Main_engine/index.html')
 
-def showbootstrap(request):
-    return render(request, 'Main_engine/bootstrap.html')
-
 def recent(request):
     return render(request, 'Main_engine/recent.html')
 
 def pe(request):
     return render(request, 'Main_engine/pe.html')
+
+def cfg(request):
+    return render(request, 'Main_engine/cfg.html')
 
 def call_main(request):
     result = main_engine.start_engine()

@@ -70,6 +70,7 @@ class Pe_Files_Check:
         # DB에는 file1과 file2의 파일명 그리고 해시값을 저장한다.
         # 그리고 서버 파일시스템 내에서 둘 중 하나의 파일은 지운다.
         # 일단 더 먼저 나오는 파일을 살리고 아닌 파일은 삭제하도록 하였다. 어차피 동일 파일이니깐.
+
         with open(r"C:\malware\all_result\test_pelist.txt", 'w') as pelist:
             json.dump(self.pe_hash_dict, pelist, ensure_ascii=False, indent='\t')
 
