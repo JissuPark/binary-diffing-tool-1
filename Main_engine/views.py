@@ -23,11 +23,12 @@ def pe(request):
 def call_main(request):
 
     if os.path.isfile("result.txt"):
-        result = open(r"C:\malware/result/result.txt", 'rb').read()
+        result = open(r"C:\malware\all_result\result.txt", 'rb').read()
     else:
         result_engine = main_engine.start_engine()
+        print(result_engine)
         result = json.dumps(result_engine, indent=4, default=str)
-        with open(r"C:\malware\result\result.txt", 'w') as res:
+        with open(r"C:\malware\all_result\result.txt", 'w') as res:
             json.dump(result_engine, res, ensure_ascii=False, indent='\t')
 
     result_str = json.loads(result)

@@ -81,7 +81,7 @@ class AnalyzeFlowchart:
         stand_f.update(target_f)
 
 
-        with open(r"C:\malware\result\dict_test.txt", 'a') as makefile:
+        with open(r"C:\malware\all_result\dict_test.txt", 'a') as makefile:
             json.dump(stand_f, makefile, ensure_ascii=False, indent='\t')
 
         return algo.get_func_similarity(s_hash_dict, t_hash_dict, stand_hash_count, correction_score)

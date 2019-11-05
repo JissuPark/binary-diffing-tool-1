@@ -19,7 +19,6 @@ from Main_engine.Unpacking import unpack_module
 from Main_engine.models import *
 
 idb_file_path = "C:\\malware\\all_result\\idb\\"
-pe_file_path = "C:\\malware\\all_result\\pe\\"
 
 class Pe_Files_Check:
     '''
@@ -105,67 +104,34 @@ def multiprocess_file(q, return_dict, flag):
 
     while q.empty() != True:
         f_path = q.get()
-
         if flag == 'idb':
             # 여기에 조건문 하나 더 추가해서 바로 idb 추출하는게 아니라 db에서 이미 뽑힌 정보 있는지 확인하고
             # 저장된게 있으면 해당 파일 정보 dict의 경로를 db에서 가져와서
             # json.load로 읽어서 dict를 받음
 
             # if db 미 존재
-            file_filter = f_path[f_path.rfind('\\')+1:-4]
+            # if f_path[f_path.rfind('\\')+1:]
+            file_filter = f_path[f_path.rfind('\\') + 1:-4]
 
             try:
-                file = Filter.objects.get(filehash=file_filter)
-                fd1 = open(file.idb_filepath + ".txt","rb").read()
+                file_ = Filter.objects.get(filehash=file_filter)
+                fd1 = open(file_.filepath + ".txt","rb").read()
                 info = json.loads(fd1, encoding='utf-8')
-                print('idb존재함')
+                print('존재함')
             except:
                 info = extract_asm_and_const.basicblock_idb_info_extraction(f_path)  # 함수대표값 및 상수값 출력
                 with open(r"C:\malware\all_result\idb" + "\\" + file_filter + ".txt", 'w') as makefile:
                     json.dump(info, makefile, ensure_ascii=False, indent='\t')
-                Filter.objects.create(filehash=info['file_name'], idb_filepath=idb_file_path+file_filter)
-                print('idb없음')
+                Filter.objects.create(filehash=info['file_name'], filepath=idb_file_path+file_filter)
+                print('없음')
 
         elif flag == 'pe':
-
-            file_filter2 = f_path[f_path.rfind('\\') + 1:]
-
             try:
-                print('zzzzzz1')
-                print(file_filter2)
-                pe_file = Filter.objects.get(filehash=file_filter2)
-                print('ssdfasdfasdf')
-                print(pe_file.pe_filepath)
-                if pe_file.pe_filepath is not None:
-                    fd1 = open(pe_file.pe_filepath + ".txt", "rb").read()
-                    info = json.loads(fd1, encoding='utf-8')
-                    print('pe존재함')
-                else:
-                    try:
-                        pe = pefile.PE(f_path)
-                        print('9999999999999999999999999999')
-                        info = extract_pe.Pe_Feature(f_path, pe).all()  # pe 속성 출력
-                        with open(r"C:\malware\all_result\pe" + "\\" + file_filter2 + ".txt", 'w') as makefile:
-                            json.dump(info, makefile, ensure_ascii=False, indent='\t')
-                        print('ads')
-                        pe_file.pe_filepath(pe_file_path + file_filter2)
-                        pefile.save()
-                        print('pe없음')
-                    except:
-                        print('pe error !')
-                        continue
+                pe = pefile.PE(f_path)
+                info = extract_pe.Pe_Feature(f_path, pe).all()  # pe 속성 출력
             except:
-                try:
-                    pe = pefile.PE(f_path)
-                    info = extract_pe.Pe_Feature(f_path, pe).all()  # pe 속성 출력
-                    with open(r"C:\malware\all_result\pe" + "\\" + file_filter2 + ".txt", 'w') as makefile:
-                        json.dump(info, makefile, ensure_ascii=False, indent='\t')
-                    tmp = Filter.objects.get(filehash=file_filter2)
-                    tmp.update(pe_filepath=pe_file_path + file_filter2)
-                    print('없음')
-                except:
-                    print('pe error !')
-                    continue
+                print('pe error !')
+                continue
 
         return_dict[f_path] = info
 
