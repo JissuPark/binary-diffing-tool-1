@@ -161,7 +161,7 @@ def multiprocess_file(q, return_dict, flag):
                     with open(r"C:\malware\all_result\pe" + "\\" + file_filter2 + ".txt", 'w') as makefile:
                         json.dump(info, makefile, ensure_ascii=False, indent='\t')
                     tmp = Filter.objects.get(filehash=file_filter2)
-                    tmp.update(pe_filepath=pe_file_path + file_filter2)
+                    #tmp.update(pe_filepath=pe_file_path + file_filter2)
                     print('없음')
                 except:
                     print('pe error !')
