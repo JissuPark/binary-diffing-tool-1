@@ -12,4 +12,5 @@ urlpatterns = [
     path('bootstrap', views.showbootstrap, name='boot'),
     path('recent', views.recent, name='recent'),
     path('pe', views.pe, name='pe'),
+    path('cfg', views.cfg, name='cfg'),
 ]

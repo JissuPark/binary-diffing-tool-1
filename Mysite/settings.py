@@ -89,9 +89,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql', #use mysql (not sqlite)
         'NAME': 'bind_diff',
         'USER': 'bind_diff',
-        'PASSWORD': '1234',
+        'PASSWORD': '@1234567',
         'HOST': '127.0.0.1',
-        'PORT': '3306',
+        'PORT': '3305',
         'OPTIONS': {
             'init_command': 'SET sql_mode="STRICT_TRANS_TABLES"'
         }

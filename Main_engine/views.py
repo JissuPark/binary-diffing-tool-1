@@ -19,6 +19,9 @@ def recent(request):
 def pe(request):
     return render(request, 'Main_engine/pe.html')
 
+def cfg(request):
+    return render(request, 'Main_engine/cfg.html')
+
 def call_main(request):
     result = main_engine.start_engine()
 
@@ -97,7 +100,6 @@ def handle_uploaded_file(file):
     '''
     with open('C:\\malware\\mal_exe\\'+file.name, 'wb+') as uploaded_file:
         for chunk in file.chunks():
-            print(chunk)
             uploaded_file.write(chunk)
 
 
