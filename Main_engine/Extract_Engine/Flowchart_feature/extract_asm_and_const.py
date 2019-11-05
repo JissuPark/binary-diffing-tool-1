@@ -71,10 +71,8 @@ class basic_block(idb_info):
                                             glo_list.append(operand_2)  # append file total constant
                                             block_constant.append(operand_2)  # append block constant
                         elif operand[0] != "": # 0주소 명령일 때 공백필터
-                            if operand[0] not in const_filter_indexs.registers and "ptr" not in operand[0] and operand[0] not in const_filter_indexs.logic:  # 레지가아니고 ptr도 없어야 입장
-
+                            if operand[0] not in const_filter_indexs.registers and "ptr" not in operand[0] and operand[0] not in const_filter_indexs.logic:
                                 if operand[0] != '0' and len(operand[0]) != 8:  # 8-length 일단 하드코딩, 정규식으로 교채해야함
-
                                     glo_list.append(operand[0])
                                     block_constant.append(operand[0])
                         else:   # 3주소 pass
