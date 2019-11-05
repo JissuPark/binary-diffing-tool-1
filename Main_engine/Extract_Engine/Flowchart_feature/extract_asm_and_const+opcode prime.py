@@ -4,16 +4,18 @@ import idb
 import hashlib
 from Main_engine.Extract_Engine.Flowchart_feature import const_filter_indexs
 from fractions import Fraction
-
+from pprint import pprint
 
 glo_list = list()  # PE 전체의 constant 값을 담을 global list
 except_list = set() # 없는 opcode 저장용ㄴ
+
 
 class idb_info(object):
     def __init__(self, api, fva):
         self.api = api
         self.fva = fva
         self.function = self.api.ida_funcs.get_func(self.fva)
+
 
 class basic_block(idb_info):
 
@@ -143,8 +145,8 @@ class basic_block(idb_info):
         # del(function_dicts)
         # del(func_name_dicts)
 
-
         return idb_info
+
 
 def main(api, file_name):
     function_dicts = {}
@@ -157,7 +159,6 @@ def main(api, file_name):
             basicblock = basic_block(api, fva, fname)
             # 베이직 블록 정보 추출 함수 실행
             basicblock_function_dicts = basicblock.bbs(function_dicts, file_name)
-
 
     return basicblock_function_dicts
 
@@ -192,6 +193,8 @@ def factorization(num):
         if count > 0:
             opdict[opcode] = count
             full_count += count
+        if num == 1:
+            break
     return opdict, full_count
 
 
@@ -211,7 +214,7 @@ def dict_parse(json_data):
         func_dict = dict()
         for bb_addr in json_data['func_name'][func_name]:
             if bb_addr != 'flow_opString':
-                func_dict[bb_addr] = json_data['func_name'][func_name][bb_addr]['block_prime'], False
+                func_dict[bb_addr] = [json_data['func_name'][func_name][bb_addr]['block_prime'], False]
         data_dict[func_name] = func_dict
     # print(json.dumps(data_dict, indent=4))
     return data_dict
@@ -220,22 +223,23 @@ def dict_parse(json_data):
 def diff_prime_set(standard, target):
     target_dict = dict()
     standard_dict = dict()
-    score_list = list()
-    result_score = 0
 
     # json parsing
     target_dict = dict_parse(target)
     standard_dict = dict_parse(standard)
 
+
     # diffing
-    for s_fname, s_fdata in standard_dict.items():
-        for s_addr, s_prime in s_fdata.items():
-            for t_fname, t_fdata in target_dict.items():
-                for t_addr, t_prime in t_fdata.items():
+    f_score_list = list()
+    for s_fname, s_fdata in standard_dict.items(): # 기준 함수 선택
+        for t_fname, t_fdata in target_dict.items(): # 대상 함수 선택
+            bb_score_list = list()
+            for s_addr, s_prime in s_fdata.items(): # 기준 함수의 베이직 블록 선택
+                for t_addr, t_prime in t_fdata.items(): # 대상 함수의 베이직 블록 선택
                     # 이미 검사한 부분(True로 설정)은 넘어감
-                    if t_prime[1]:
-                        # print(f"[debug] Target {dd} is already selected! {cnt1}")
-                        continue
+                    # if t_prime[1]:
+                    #     # print(f"[debug] Target {t_addr} is already selected! ")
+                    #     continue
 
                     s_opcodes, s_opcnt = factorization(s_prime[0])
                     t_opcodes, t_opcnt = factorization(t_prime[0])
@@ -246,38 +250,64 @@ def diff_prime_set(standard, target):
                     s_score = (s_opcnt - s_diffcnt) / s_opcnt
                     t_score = (t_opcnt - t_diffcnt) / t_opcnt
 
-                    print(f"[diff] Diffing between {t_addr} and {s_addr}")
-                    print(f"기준블록({t_addr})")
-                    print(f" o 유사도 : {s_opcnt - s_score}/{s_opcnt} = {s_score}")
-                    print(f" o 다른 부분 :{s_diffcnt}")
-                    print(f"대상블록({s_addr})")
-                    print(f" o 유사도 : {t_opcnt - t_score}/{t_opcnt} = {t_score}")
-                    print(f" o 다른 부분diff :{t_diffcnt}\n")
+                    # print(f"[diff] Diffing between {t_addr} and {s_addr}")
+                    # print(f"기준블록({t_addr})")
+                    # print(f" o 유사도 : {s_opcnt - s_diffcnt}/{s_opcnt} = {s_score}")
+                    # print(f" o 다른 부분 :{s_diff}")
+                    # print(f"대상블록({s_addr})")
+                    # print(f" o 유사도 : {t_opcnt - t_diffcnt}/{t_opcnt} = {t_score}")
+                    # print(f" o 다른 부분diff :{t_diff}\n")
 
-                    score_list.append((s_score, s_addr, t_addr))
+                    bb_score_list.append((s_score, s_addr, t_addr))
                     # 두개가 완전히 같으면 둘 다 제외
                     if s_score == 1:
-                        target_dict[t_addr] = 0, True
-                        standard_dict[s_addr] = 0, True
+                        target_dict[t_fname][t_addr][1] = True
+                        standard_dict[s_fname][s_addr][1] = True
+            if len(bb_score_list) == 0:
+                continue
+            print(f"\x1b[1;34m{bb_score_list}\x1b[1;m")
+            # 리스트를 유사도 순으로 정렬
+            bb_score_list.sort(reverse=True)
 
-                # 리스트를 유사도 순으로 정렬
-                score_list.sort(reverse=True)
+            # 유사도 순으로 남기고 지움
+            # print(range(len(score_list)))
+            for a in range(len(bb_score_list)):
+                rmvcnt = 0
+                for b in range(a+1, len(bb_score_list)):
+                     if bb_score_list[a][1] == bb_score_list[b-rmvcnt][1] or bb_score_list[a][2] == bb_score_list[b-rmvcnt][2]:
+                        bb_score_list.remove(bb_score_list[b-rmvcnt])
+                        rmvcnt += 1
+            print(f"\x1b[1;32m{bb_score_list}\x1b[1;m")
+            bb_result_score = 0
+            for bb_score in bb_score_list:
+                bb_result_score += bb_score[0]
+            print(f"[diff] Diffing between {s_fname} and {t_fname}")
+            print(f"[debug] 함수 총점 : {bb_result_score}/{len(bb_score_list)}")
+            bb_result_score /= len(s_fdata)
+            print(f"[debug] {t_fname} 대상 블록 수 : {len(t_fdata)}")
+            print(f"[debug] {s_fname} 기준 블록 수 : {len(s_fdata)}")
+            print(f"[debug] 함수 score : {bb_result_score}")
+            f_score_list.append((bb_result_score, s_fname, t_fname, bb_score_list))
+            print(f"\x1b[1;31m{f_score_list}\x1b[1;m")
 
-                # 유사도 순으로 남기고 지움
-                # print(range(len(score_list)))
-                for a in range(len(score_list)):
-                    rmvcnt = 0
-                    for b in range(a+1, len(score_list)):
-                         if score_list[a][1] == score_list[b-rmvcnt][1] or score_list[a][2] == score_list[b-rmvcnt][2]:
-                            score_list.remove(score_list[b-rmvcnt])
-                            rmvcnt += 1
-                for score in score_list:
-                    result_score += score[0]
-                result_score /= len(score_list)
-                print(f"[debug] 총점 : {result_score}")
-                print(f"[debug] 대상 블록 수 : {len(target_dict)}")
-                print(f"[debug] 기준 블록 수 : {len(standard_dict)}")
-                print(f"[debug] Total score : {result_score}")
+    print(f"\x1b[1;33m{f_score_list}\x1b[1;m")
+    f_score_list.sort(reverse=True)
+    for a in range(len(f_score_list)):
+        rmvcnt = 0
+        for b in range(a+1, len(f_score_list)):
+            if f_score_list[a][1] == f_score_list[b-rmvcnt][1] or f_score_list[a][2] == f_score_list[b-rmvcnt][2]:
+                f_score_list.remove(f_score_list[b-rmvcnt])
+                rmvcnt += 1
+    print(f"\x1b[1;35m{f_score_list}\x1b[1;m")
+    f_result_score = 0
+    for f_score in f_score_list:
+        f_result_score += f_score[0]
+    print(f"[debug] 총점 : {f_result_score}/{len(f_score_list)}")
+    f_result_score /= len(standard_dict)
+    print(f"[debug] 대상 함수 수 : {len(target_dict)}")
+    print(f"[debug] 기준 함수 수 : {len(standard_dict)}")
+    print(f"[debug] Total score : {f_result_score}")
+
 
 
 if __name__ == "__main__":
@@ -298,6 +328,7 @@ if __name__ == "__main__":
     arg2 = json.loads(fd2)
 
     print(f"[analyze]Analyze Start!")
+    # 첫번째로 들어오는게 기준, 두번째가 타겟
     diff_prime_set(arg1, arg2)
     # print(f"[except]Not found opcodes : {except_list}")
     print(f"[+]running : {timeit.default_timer() - s}")  # end time
