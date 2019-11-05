@@ -246,8 +246,6 @@ class RsrcParser:
         Time = self.pe.FILE_HEADER.dump_dict()['TimeDateStamp']['Value'].split('[')[1][:-1]
         second = self.pe.FILE_HEADER.TimeDateStamp
         if Time == None: Time = os.utime(self.filename)
-        #print(type(second))
-        #print(f"Time in second :: {second}")
         return Time, second
 
     def get_entropy(self,data):

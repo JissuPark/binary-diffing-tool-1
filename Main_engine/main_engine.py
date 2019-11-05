@@ -1,22 +1,24 @@
 #coding:utf-8
 import hashlib
 import json
-import operator
+import django
 import timeit
 import os
-import sys
 from multiprocessing import Process, Queue, Manager
 from collections import OrderedDict
 import pefile
-from Main_engine.Extract_Engine import pe2idb
+django.setup()
 
+from Main_engine.Extract_Engine import pe2idb
 from Main_engine.Extract_Engine.Flowchart_feature import extract_asm_and_const
 from Main_engine.Extract_Engine.PE_feature import extract_pe
 from Main_engine.Analzer_Engine import analyze_pe, analyze_flowchart
 from openpyxl import load_workbook, Workbook
 from Main_engine.Check_Packing import Packer_Detect2
 from Main_engine.Unpacking import unpack_module
+from Main_engine.models import *
 
+idb_file_path = "C:\\malware\\all_result\\idb\\"
 
 class Pe_Files_Check:
     '''
@@ -38,10 +40,6 @@ class Pe_Files_Check:
         self.idat64 = 1
         self.pe_check_error = -1
         self.pe_hash_dict = {}
-        # self.STR_SIG_MZ = '0x5A4D'
-        # self.STR_SIG_PE = '0x4550'
-        # self.BYTES_SIG_IDB = b'IDA1'  #'0x31414449'
-        # self.BYTES_SIG_I64 = b'IDA2'  #'0x32414449'
         self.HEX_M_32 = 0x14c
         self.HEX_M_64 = 0x200
 
@@ -88,8 +86,6 @@ class Pe_Files_Check:
         if not (os.path.isdir(unpack_path)): os.makedirs(unpack_path)
 
         queue = unpack_module.mains(sample_folder_path)
-        # start Multi Process
-        # packer_check(queue, pack_path, unpack_path)
 
         proc_list = []
         for _ in range(0, 5):
@@ -109,15 +105,34 @@ def multiprocess_file(q, return_dict, flag):
     while q.empty() != True:
         f_path = q.get()
         if flag == 'idb':
-            info = extract_asm_and_const.basicblock_idb_info_extraction(f_path)  # 함수대표값 및 상수값 출력
+            # 여기에 조건문 하나 더 추가해서 바로 idb 추출하는게 아니라 db에서 이미 뽑힌 정보 있는지 확인하고
+            # 저장된게 있으면 해당 파일 정보 dict의 경로를 db에서 가져와서
+            # json.load로 읽어서 dict를 받음
+
+            # if db 미 존재
+            # if f_path[f_path.rfind('\\')+1:]
+            file_filter = f_path[f_path.rfind('\\') + 1:-4]
+
+            try:
+                file_ = Filter.objects.get(filehash=file_filter)
+                fd1 = open(file_.filepath + ".txt","rb").read()
+                info = json.loads(fd1, encoding='utf-8')
+                print('존재함')
+            except:
+                info = extract_asm_and_const.basicblock_idb_info_extraction(f_path)  # 함수대표값 및 상수값 출력
+                with open(r"C:\malware\all_result\idb" + "\\" + file_filter + ".txt", 'w') as makefile:
+                    json.dump(info, makefile, ensure_ascii=False, indent='\t')
+                Filter.objects.create(filehash=info['file_name'], filepath=idb_file_path+file_filter)
+                print('없음')
+
         elif flag == 'pe':
             try:
                 pe = pefile.PE(f_path)
-                print('씨발')
                 info = extract_pe.Pe_Feature(f_path, pe).all()  # pe 속성 출력
             except:
-                print('pe error !!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+                print('pe error !')
                 continue
+
         return_dict[f_path] = info
 
 
@@ -154,11 +169,6 @@ class Exract_Feature:
         export_idb = self.export_by_multi(flag)
 
         if export_idb != False:
-            count = 1
-            for dict_list in export_idb.values():
-                with open(r"C:\malware\result\idbfile_"+str(count)+".txt", 'w') as makefile:
-                    json.dump(dict_list, makefile, ensure_ascii=False, indent='\t')
-                count = count + 1
             return export_idb
         else:
             return False
@@ -168,12 +178,16 @@ class Exract_Feature:
         export_pe = self.export_by_multi(flag)
 
         if export_pe != False:
-            count = 1
-            # print(return_dict)
+
             for dict_list in export_pe.values():
-                with open(r"C:\malware\result\pefile_" + str(count) + ".txt", 'w') as makefile:
+
+                # 파일 저장은 우리를 위한 임시적인 행위
+                with open(r"C:\malware\all_result\pe"+"\\" + dict_list['file_name'] + ".txt", 'w') as makefile:
                     json.dump(dict_list, makefile, ensure_ascii=False, indent='\t')
-                count = count + 1
+
+                # 실제론 db 저장(?)
+                #
+                #
             return export_pe
         else:
             return False
@@ -213,11 +227,6 @@ class Analyze_files:
 
             real_final[key_i[0]] = idb_final_score
             real_final[key_pe[0]] = pe_final_score
-
-            # for base,target in real_final.items():
-            #     sorted(target.items(), key=lambda x: x[1][1])
-            #     print(json.dumps(target, indent=4))
-            #sorted(real_final.items(), key=lambda x: x[1])
 
         return real_final
 
@@ -279,11 +288,10 @@ def start_engine():
     * 백앤드 엔진에서는 사용되지 않음
     * 지금은 서버 테스트만을 위해서 만든 것이므로 무시
     '''
-    s = timeit.default_timer()
-
-
-    PATH = r"C:\malware\mid_GandCrab_exe"
-    IDB_PATH = r"C:\malware\mid_idb"
+    PATH = r"C:/malware/mal_exe"
+    IDB_PATH = r"C:/malware/mal_idb"
+    RESUT_IDB_PATH = r"C:\malware\all_result_idb"
+    RESUT_PE_PATH = r"C:\malware\all_result_pe"
 
     # 1. pe 해시 체크 (동일한 파일 필터), 2.패킹 체크
     pe_check = Pe_Files_Check(PATH)
@@ -298,38 +306,28 @@ def start_engine():
         all_idb_info = Features.export_idb_info('idb')
         all_pe_info = Features.export_pe_info('pe')
     else:
-        print('error fuck')
+        print('convert_idb is error')
+
+    # 만약 5개의 파일이 들어왔을때 그중 convert_idb 에러뜨는 것들은 제외시키고 나머지 것들만 다음 로직 수행되도록
+    # 변경해야함.
 
     # 5. 분석 하기
     analyze = Analyze_files(all_idb_info, all_pe_info)
 
-    # sorted_yun = sorted(yun.items(), key=(lambda x: x[1][1]))
-    # print(f"sorted_yun :: {json.dumps(sorted_yun, indent=4)}")
     yun_sorted_pe = dict()
     result_pe, yun_pe = analyze.analyze_pe()
     result_idb, yun_all = analyze.analyze_idb(yun_pe)
-    yun_sorted_pe = sorted(yun_all.items(), key=lambda x: x[1]['timestamp_num'])
+    #yun_sorted_pe = sorted(yun_all.items(), key=lambda x: x[1]['timestamp_num'])
     #print(f"sorted_yun :: {json.dumps(yun_sorted_pe, indent=4)}")
 
     # print(f"yun_all :: {json.dumps(yun_all, indent=4)}")
 
-    # with open(r"C:\malware\result\idbtest.txt", 'w') as makefile:
-    #     json.dump(result_idb, makefile, ensure_ascii=False, indent='\t')
-
-    # with open(r"C:\malware\result\petest.txt", 'w') as makefile:
-    #     json.dump(result_pe, makefile, ensure_ascii=False, indent='\t')
-
     # 6. 결과 csv 저장 (임시)
     all_result = analyze.calculate_heuristic(result_idb, result_pe)
-    # re_result = sorted(all_result.items(), key=(lambda y: y[1][2]))
-    # print(f"re_result :: {json.dumps(re_result, indent=4)}")
-    out_xlsx(r"C:\malware\result\test.xlsx", all_result)
 
-    print(f"[+]time : {timeit.default_timer() - s}")
-
+    #out_xlsx(r"C:\malware\result\test.xlsx", all_result)
 
     return all_result
-
 
 if __name__ == "__main__":
 
@@ -372,41 +370,9 @@ if __name__ == "__main__":
     all_result = analyze.calculate_heuristic(result_idb, result_pe)
 
     out_xlsx(r"C:\malware\result\test.xlsx", all_result)
+    start_engine()
 
 
     print(f"[+]time : {timeit.default_timer() - s}")
 
-    ########################### 최종 결과물 csv 추출 ###################################
 
-    # dict = {
-    #           "file1" : {
-    #                        "file2":["0x456",1, 2, 3, 4, 5, 6],
-    #                        "file3":["0x789",1, 2, 3, 4, 5, 6],
-    #                        "file4":["0x012",1, 2, 3, 4, 5, 6],
-    #                        "file5":["0x345",1, 2, 3, 4, 5, 6]
-    #                     }
-    #           "file2" : {
-    #                        "file1":["0x456",1, 2, 3, 4, 5, 6],
-    #                        "file3":["0x789",1, 2, 3, 4, 5, 6],
-    #                        "file4":["0x012",1, 2, 3, 4, 5, 6],
-    #                        "file5":["0x345",1, 2, 3, 4, 5, 6]
-    #                     }
-    #           "file3" : {
-    #                        "file1":["0x456",1, 2, 3, 4, 5, 6],
-    #                        "file2":["0x789",1, 2, 3, 4, 5, 6],
-    #                        "file4":["0x012",1, 2, 3, 4, 5, 6],
-    #                        "file5":["0x345",1, 2, 3, 4, 5, 6]
-    #                     }
-    #           "file4" : {
-    #                        "file1":["0x456",1, 2, 3, 4, 5, 6],
-    #                        "file2":["0x789",1, 2, 3, 4, 5, 6],
-    #                        "file3":["0x012",1, 2, 3, 4, 5, 6],
-    #                        "file5":["0x345",1, 2, 3, 4, 5, 6]
-    #                     }
-    #           "file5" : {
-    #                        "file2":["0x456",1, 2, 3, 4, 5, 6],
-    #                        "file3":["0x789",1, 2, 3, 4, 5, 6],
-    #                        "file4":["0x012",1, 2, 3, 4, 5, 6],
-    #                        "file5":["0x345",1, 2, 3, 4, 5, 6]
-    #                     }
-    #        }

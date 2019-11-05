@@ -68,22 +68,12 @@ def get_file_entropy(filepath):
     return [fileSize, ent]
 
 
-#########################################################
-
 yara_path="Main_engine/Unpacking/peid.yara"
 #yara_path="./peid.yara"
 rules = yara.compile(filepath=yara_path)
 
 
 def packer_check(sample_path, pack_path, unpack_path):
-    # pack_path = C:\malware\unpack_exe\packed
-    # unpack_path = C:\malware\unpack_exe\unpacked
-
-    #while queue.empty() != True:
-    #sample_path = queue.get()
-
-    print(sample_path)
-    print('jaehoajaehojaeho')
 
     read_mal = open(sample_path, "rb")
     read_data = read_mal.read()
@@ -94,7 +84,6 @@ def packer_check(sample_path, pack_path, unpack_path):
     sample_basename = os.path.basename(sample_path)
     sample_unpack_path = os.path.join(unpack_path, sample_basename)
 
-    yara_match_result = ""
 
     flag=0
     if matches_list == {}:
@@ -105,19 +94,13 @@ def packer_check(sample_path, pack_path, unpack_path):
 
         try:
             pe = pefile.PE(sample_path)
-            # pe_entropy = get_file_entropy(sample_path)
-            # print(pe_entropy[1])
-            # if pe_entropy[1] > 6.3:
-            #     flag = 1
-            print('ggggggggggggg')
+
             for section in pe.sections:
                 if section.get_entropy() > 6.3:
                     # 1. 알려지지 않은 패커로 패킹됨
                     flag = 1
-                    print('--------------------g--------------')
 
             if flag == 1:
-                print('---g-----------------------------')
                 unknown_sample_path = os.path.join(pack_path, 'unknown', sample_basename)
                 unknown_folder_path = os.path.join(pack_path, 'unknown')
                 if not (os.path.isdir(unknown_folder_path)): os.makedirs(unknown_folder_path)
@@ -127,42 +110,32 @@ def packer_check(sample_path, pack_path, unpack_path):
                 #continue
             else:
                 # 2. 패킹이 안된 파일임
-                print('--------------------------------------')
                 pe.close()
                 shutil.copy(sample_path, sample_unpack_path)
-                # os.remove(sample_path)
-                #continue
+
         except:
-            print('asdjfksdfshfdfgdf')
             unknown_sample_path = os.path.join(pack_path, 'unknown', sample_basename)
             unknown_folder_path = os.path.join(pack_path, 'unknown')
             if not (os.path.isdir(unknown_folder_path)): os.makedirs(unknown_folder_path)
             shutil.copy(sample_path, unknown_sample_path)
 
     else:
-        #yara_match_result += str(matches_list['main'][0]['rule']).lower()+' '
         yara_match_result = str(matches_list['main'][0]['rule']).lower()
         print(yara_match_result)
-        print('=============================================')
 
         File_Data = str(open(sample_path, 'rb').read(0x300)).lower()
 
         if 'fsg' in File_Data or 'fsg' in yara_match_result:
             print("FSG")
             Unpacks_sub_process(sample_path, 1, sample_unpack_path)
-            #os.remove(sample_path)
-            #continue
 
         elif 'upx' in yara_match_result:
             print("UPX")
             Unpacks_sub_process(sample_path, 2, sample_unpack_path, pack_path, sample_basename)
-            #os.remove(sample_path)
-            #continue
+
         elif 'aspack' in yara_match_result:
             print("ASPACK")
             Unpacks_sub_process(sample_path, 3, sample_unpack_path)
-            #os.remove(sample_path)
-            #continue
 
         else:
             yara_tag=os.path.join(pack_path, yara_match_result)[:-1]
@@ -171,9 +144,6 @@ def packer_check(sample_path, pack_path, unpack_path):
             yara_tag_sample_path=os.path.join(yara_tag,sample_basename)
             print(yara_tag_sample_path)
             shutil.copy(sample_path, yara_tag_sample_path)
-            #os.remove(sample_path)
-            print('aaaaaaaaaaaaaa')
-            #continue
 
     return
 
@@ -191,12 +161,6 @@ def Unpacks_sub_process(sample_path, flags, sample_unpack_path, pack_path, sampl
             mnm_tag_sample_path = os.path.join(mnm_error, sample_basename)
             shutil.copy(sample_path, mnm_tag_sample_path)
             return
-
-        # if os.path.isfile(sample_path + "_"):
-        #     shutil.move(sample_path + "_", sample_unpack_path)
-        #     #os.remove(sample_path + "_")
-        #     return
-
 
     elif flags==2:
         process_flag = subprocess.Popen(["upx.exe", "-d", sample_path], shell=True).wait()
@@ -221,12 +185,6 @@ def Unpacks_sub_process(sample_path, flags, sample_unpack_path, pack_path, sampl
             mnm3_tag_sample_path = os.path.join(mnm3_error, sample_basename)
             shutil.copy(sample_path, mnm3_tag_sample_path)
             return
-
-        # time.sleep(2)
-        # if os.path.isfile(sample_path + "_"):
-        #     shutil.copy(sample_path+"_", sample_unpack_path)
-        #     #os.remove(sample_path+"_")
-        #     return
 
 
 def mains(sample_folder_path):

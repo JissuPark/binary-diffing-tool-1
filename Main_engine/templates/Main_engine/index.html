@@ -1,11 +1,11 @@
-{% extends "Main_engine/layout.html" %}
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+<!--    <link rel="stylesheet" type="text/css" href="{% static 'Main_engine/css/style.css' %}">-->
+    <link rel="stylesheet" href="https://rawgit.com/enyo/dropzone/master/dist/dropzone.css">
 
-{% block head %}
-{% load static %} <!-- static files are loaded -->
-<link rel="stylesheet" type="text/css" href="{% static 'Main_engine/css/style.css' %}">
-<link rel="stylesheet" href="https://rawgit.com/enyo/dropzone/master/dist/dropzone.css">
-
-<script src="{% static 'Main_engine/js/dropzone.js' %}">
+    <script src="{% static 'Main_engine/js/dropzone.js' %}">
 <!--<script>-->
 <!--    var myDropzone = new Dropzone("div#dZUpload",-->
 <!--                {   url: "/media/",-->
@@ -29,14 +29,15 @@
 <!--                    $(".dz-maxsize-error").empty();-->
 <!--                }-->
 <!--    );-->
-<!--</script>
-{% endblock %}
+<!--
+    </script>
+</head>
 
-
-{% block body %}
+<body>
 <form action="{% url 'upload' %}" class="dropzone" method="post" enctype="multipart/form-data">
     {% csrf_token %}
 
 </form>
 <input type="submit" value="start" onclick="location.href='{% url 'result' %}'">
-{% endblock %}
+</body>
+</html>

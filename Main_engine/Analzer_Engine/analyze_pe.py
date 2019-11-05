@@ -158,6 +158,7 @@ class AnalyzePE:
         # #print(json.dumps(standard, indent=4))
         # #print(json.dumps(target, indent=4))
 
+
     def analyze_section(self, dict_s, dict_t):
         '''
         section 별 정보를
@@ -168,7 +169,7 @@ class AnalyzePE:
         for key in dict_s.keys() and dict_t.keys():                                 #키의 이름이 다를 때의 예외처리가 필요
             if key in dict_s and key in dict_t:
                 if dict_s[key]['section_name'] == dict_t[key]['section_name']:
-                    #print(f"{dict_s[key]['section_name']}, {dict_t[key]['section_name']}")
+                    print(f"{dict_s[key]['section_name']}, {dict_t[key]['section_name']}")
                     score = ssdeep.compare(dict_s[key]['hash_ssdeep'], dict_t[key]['hash_ssdeep'])
                     comp += score
                 # print(f"{key} :: {score}")
@@ -214,21 +215,11 @@ class AnalyzePE:
                 pe_t['auth_score'] = self.analyze_auth(pe_info_s['auto'], pe_info_t['auto'])
                 pe_t['pdb_score'] = self.analyze_pdb(pe_info_s['pdb_info'], pe_info_t['pdb_info'])
                 pe_t['rsrc'] = self.analyze_rsrc(pe_info_s['rsrc_info'], pe_info_t['rsrc_info'])
-
                 pe_s[pe_info_t['file_name']] = pe_t
 
             pe_all[pe_info_s['file_name']] = pe_s
 
-
-        #print(json.dumps(yun, indent=4))
-
-        #여기서 정렬 진행중이였음
-        # for key, values in yun.items():
-        #     sorted(values.items(),key = lambda x: x[1]['timestamp_num'])
-        #print('---------------------------------------------------------------------')
-        #print(json.dumps(yun, indent=4))
         return pe_all, yun_me
-
 
 
 
