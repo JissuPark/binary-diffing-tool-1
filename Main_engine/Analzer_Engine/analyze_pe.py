@@ -3,8 +3,6 @@ from collections import OrderedDict
 import ssdeep
 from ngram import NGram
 import operator
-import json
-
 
 class AnalyzePE:
     def __init__(self, pe_all):
@@ -100,8 +98,6 @@ class AnalyzePE:
         :return: score list with weight
         '''
         size = len(standard)
-        print(json.dumps(standard, indent=4))
-        print(json.dumps(target, indent=4))
         flag = 0
         for i in range(len(standard)):
             for j in range(len(target)):
@@ -125,7 +121,6 @@ class AnalyzePE:
         '''
         score = 0
         if flag > 0:
-            print("case 1: ")
             return flag / size * 100
         else:
             print("There could be SHELLCODE in resource section!!")
@@ -137,7 +132,6 @@ class AnalyzePE:
                     #if score > 0:
                         # score_str = "standard rsrc num " + str(i) + " and " + "target rsrc num " + str(j) + " " + str(score)
             #return score / len(standard)
-            print("case 2: ")
             return score
 
     def analyze_rich(self, standard, target):
@@ -174,7 +168,7 @@ class AnalyzePE:
         for key in dict_s.keys() and dict_t.keys():                                 #키의 이름이 다를 때의 예외처리가 필요
             if key in dict_s and key in dict_t:
                 if dict_s[key]['section_name'] == dict_t[key]['section_name']:
-                    print(f"{dict_s[key]['section_name']}, {dict_t[key]['section_name']}")
+                    #print(f"{dict_s[key]['section_name']}, {dict_t[key]['section_name']}")
                     score = ssdeep.compare(dict_s[key]['hash_ssdeep'], dict_t[key]['hash_ssdeep'])
                     comp += score
                 # print(f"{key} :: {score}")
@@ -220,7 +214,6 @@ class AnalyzePE:
                 pe_t['auth_score'] = self.analyze_auth(pe_info_s['auto'], pe_info_t['auto'])
                 pe_t['pdb_score'] = self.analyze_pdb(pe_info_s['pdb_info'], pe_info_t['pdb_info'])
                 pe_t['rsrc'] = self.analyze_rsrc(pe_info_s['rsrc_info'], pe_info_t['rsrc_info'])
-                print(f"rsrc compare score is :: {pe_t['rsrc']}")
 
                 pe_s[pe_info_t['file_name']] = pe_t
 
@@ -234,7 +227,6 @@ class AnalyzePE:
         #     sorted(values.items(),key = lambda x: x[1]['timestamp_num'])
         #print('---------------------------------------------------------------------')
         #print(json.dumps(yun, indent=4))
-        print("yun_me :: ", json.dumps(yun_me, indent=4))
         return pe_all, yun_me
 
 

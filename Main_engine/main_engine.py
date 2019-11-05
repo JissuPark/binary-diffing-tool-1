@@ -309,7 +309,7 @@ def start_engine():
     result_pe, yun_pe = analyze.analyze_pe()
     result_idb, yun_all = analyze.analyze_idb(yun_pe)
     yun_sorted_pe = sorted(yun_all.items(), key=lambda x: x[1]['timestamp_num'])
-    print(f"sorted_yun :: {json.dumps(yun_sorted_pe, indent=4)}")
+    #print(f"sorted_yun :: {json.dumps(yun_sorted_pe, indent=4)}")
 
     # print(f"yun_all :: {json.dumps(yun_all, indent=4)}")
 
@@ -365,7 +365,7 @@ if __name__ == "__main__":
 
     yun_sorted_pe = sorted(yun_all.items(), key=lambda x: x[1]['timestamp_num'])
 
-    print(f"sorted_yun :: {json.dumps(yun_sorted_pe, indent=4)}")
+    #print(f"sorted_yun :: {json.dumps(yun_sorted_pe, indent=4)}")
 
 
     # 6. 결과 csv 저장 (임시)

@@ -263,7 +263,7 @@ class ParseRichHeader:
         data = get_rich_section(self.file_name)
         rich_identifi_addr = data.find(b'Rich')
 
-        if rich_identifi_addr == -1 :
+        if rich_identifi_addr == -1:
             #raise RichHeaderNotFoundException()       # if rich_header no exit
             return False
 

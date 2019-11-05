@@ -118,6 +118,6 @@ class AnalyzeFlowchart:
 
             idb_all[idb_info_s['file_name']] = idb_s
 
-        print(f"yun_all :: {json.dumps(yun_sorted_pe, indent=4)}")
+        #print(f"yun_all :: {json.dumps(yun_sorted_pe, indent=4)}")
 
         return idb_all, yun_sorted_pe

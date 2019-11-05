@@ -17,8 +17,6 @@ class Pe_Feature:
 
 
     def extract_pdb(self):
-        output_data = dict()
-
         PDB_result = pe_pdb.result_all(self.file_name)
         return PDB_result
 
@@ -115,7 +113,6 @@ class Pe_Feature:
         return {kind.extension: kind.mime}
 
     def all(self, ):
-        test= dict()
         func_list = self.ImportDll()
         #file_type = filetypes()
         imphash = self.imphash_data()
