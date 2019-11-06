@@ -1,4 +1,4 @@
-{% extends "Main_engine/layout_save.html" %}
+{% extends "Main_engine/layout.html" %}
 
 {% block title %} 결과 페이지 {% endblock %}
 
@@ -10,7 +10,7 @@
 {% endblock %}
 
 
-{% block section %}
+{% block table %}
 {% csrf_token %}
 {% if result %}
 <div id="result_json">

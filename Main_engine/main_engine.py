@@ -19,7 +19,6 @@ from Main_engine.Unpacking import unpack_module
 from Main_engine.models import *
 
 idb_file_path = "C:\\malware\\all_result\\idb\\"
-pe_file_path = "C:\\malware\\all_result\\pe\\"
 
 class Pe_Files_Check:
     '''
@@ -70,6 +69,7 @@ class Pe_Files_Check:
         # DB에는 file1과 file2의 파일명 그리고 해시값을 저장한다.
         # 그리고 서버 파일시스템 내에서 둘 중 하나의 파일은 지운다.
         # 일단 더 먼저 나오는 파일을 살리고 아닌 파일은 삭제하도록 하였다. 어차피 동일 파일이니깐.
+
         with open(r"C:\malware\all_result\test_pelist.txt", 'w') as pelist:
             json.dump(self.pe_hash_dict, pelist, ensure_ascii=False, indent='\t')
 
@@ -102,7 +102,6 @@ def convert_idb(PATH,IDB_PATH):
     return pe2idb.create_idb(PATH, IDB_PATH)
 
 def multiprocess_file(q, return_dict, flag):
-
     while q.empty() != True:
         f_path = q.get()
 
@@ -112,18 +111,18 @@ def multiprocess_file(q, return_dict, flag):
             # json.load로 읽어서 dict를 받음
 
             # if db 미 존재
-            file_filter = f_path[f_path.rfind('\\')+1:-4]
+            file_filter = f_path[f_path.rfind('\\') + 1:-4]
 
             try:
                 file = Filter.objects.get(filehash=file_filter)
-                fd1 = open(file.idb_filepath + ".txt","rb").read()
+                fd1 = open(file.idb_filepath + ".txt", "rb").read()
                 info = json.loads(fd1, encoding='utf-8')
                 print('idb존재함')
             except:
                 info = extract_asm_and_const.basicblock_idb_info_extraction(f_path)  # 함수대표값 및 상수값 출력
                 with open(r"C:\malware\all_result\idb" + "\\" + file_filter + ".txt", 'w') as makefile:
                     json.dump(info, makefile, ensure_ascii=False, indent='\t')
-                Filter.objects.create(filehash=info['file_name'], idb_filepath=idb_file_path+file_filter)
+                Filter.objects.create(filehash=info['file_name'], idb_filepath=idb_file_path + file_filter)
                 print('idb없음')
 
         elif flag == 'pe':
@@ -148,8 +147,8 @@ def multiprocess_file(q, return_dict, flag):
                         with open(r"C:\malware\all_result\pe" + "\\" + file_filter2 + ".txt", 'w') as makefile:
                             json.dump(info, makefile, ensure_ascii=False, indent='\t')
                         print('ads')
-                        #pe_file.pe_filepath(pe_file_path + file_filter2)
-                        #pefile.save()
+                        # pe_file.pe_filepath(pe_file_path + file_filter2)
+                        # pefile.save()
                         print('pe없음')
                     except:
                         print('pe error !')
@@ -161,7 +160,7 @@ def multiprocess_file(q, return_dict, flag):
                     with open(r"C:\malware\all_result\pe" + "\\" + file_filter2 + ".txt", 'w') as makefile:
                         json.dump(info, makefile, ensure_ascii=False, indent='\t')
                     tmp = Filter.objects.get(filehash=file_filter2)
-                    tmp.update(pe_filepath=pe_file_path + file_filter2)
+                    # tmp.update(pe_filepath=pe_file_path + file_filter2)
                     print('없음')
                 except:
                     print('pe error !')
