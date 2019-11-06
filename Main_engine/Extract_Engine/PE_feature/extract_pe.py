@@ -1,6 +1,7 @@
 import hashlib
 import filetype
 import numpy as np
+import ssdeep
 
 import pefile
 from Main_engine.Extract_Engine.PE_feature import pe_pdb, pe_rsrc, pe_rich
@@ -137,7 +138,28 @@ class Pe_Feature:
             'rsrc_info': rsrc_info
         }
 
-        return pe_features
+        MD5 = hashlib.md5(open(self.file_name, 'rb').read()).hexdigest().upper()
+        sha1 = hashlib.sha1(open(self.file_name, 'rb').read()).hexdigest()
+        sha256 = hashlib.sha256(open(self.file_name, 'rb').read()).hexdigest()
+        ImpHash = imphash.upper()
+        ssdeep_hash = ssdeep.hash_from_file(self.file_name)
+        TimeStamp = time_info
+        PDB = pdb_info
+        Cert = auto
+
+        pe_features_for_DB = {
+            'file_type': filetype,
+            'MD5 hash': MD5,
+            'SHA-1 hash': sha1,
+            'SHA-256 hash': sha256,
+            'Imp hash': ImpHash,
+            'SSDEEP hash': ssdeep_hash,
+            'File Creation Time': TimeStamp,
+            'PDB Information': PDB,
+            'File Certification': Cert
+        }
+
+        return pe_features, pe_features_for_DB
 
 # if __name__ == "__main__":
 #     pe = Pe_Feature(r"C:\malware\mid_GandCrab_exe\test")

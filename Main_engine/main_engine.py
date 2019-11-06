@@ -143,7 +143,8 @@ def multiprocess_file(q, return_dict, flag):
                     try:
                         pe = pefile.PE(f_path)
                         print('9999999999999999999999999999')
-                        info = extract_pe.Pe_Feature(f_path, pe).all()  # pe 속성 출력
+                        #DB에 담길 pe meta data -> pe_info_DB에 담음
+                        info, pe_info_DB = extract_pe.Pe_Feature(f_path, pe).all()  # pe 속성 출력
                         with open(r"C:\malware\all_result\pe" + "\\" + file_filter2 + ".txt", 'w') as makefile:
                             json.dump(info, makefile, ensure_ascii=False, indent='\t')
                         print('ads')
@@ -156,7 +157,7 @@ def multiprocess_file(q, return_dict, flag):
             except:
                 try:
                     pe = pefile.PE(f_path)
-                    info = extract_pe.Pe_Feature(f_path, pe).all()  # pe 속성 출력
+                    info, pe_info_DB = extract_pe.Pe_Feature(f_path, pe).all()  # pe 속성 출력
                     with open(r"C:\malware\all_result\pe" + "\\" + file_filter2 + ".txt", 'w') as makefile:
                         json.dump(info, makefile, ensure_ascii=False, indent='\t')
                     tmp = Filter.objects.get(filehash=file_filter2)
