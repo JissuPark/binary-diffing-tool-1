@@ -22,38 +22,37 @@ def cfg(request):
 
 def call_main(request):
     if os.path.isfile(r"C:\malware\all_result\result.txt"):
-        result = open(r"C:\malware\all_result\result.txt", 'rb').read()
+        result_file = open(r"C:\malware\all_result\result.txt", 'rb').read()
+        result = json.loads(result_file)
     else:
         result_engine = main_engine.start_engine()
-        print(result_engine)
-        result = json.dumps(result_engine, indent=4, default=str)
         with open(r"C:\malware\all_result\result.txt", 'w') as res:
             json.dump(result_engine, res, ensure_ascii=False, indent='\t')
+        result = json.dumps(result_engine, indent=4, default=str)
+    # result_str = json.loads(result)
 
-    result_str = json.loads(result)
-
-    for standard, data_s in result.items():
-        print(f'[S]{standard}')
-        for target, data_t in data_s.items():
-            print(f'[T]{target}')
-            data_time = data_t[1]
-            data_bbh = data_t[2]
-            data_const = data_t[3]
-            data_section = data_t[4]
-            data_cert = data_t[5]
-            data_pdb_guid, data_pdb_path = data_t[6].split(',')
-            data_imph = data_t[7]
-            data_xor = data_t[8]
-            print(f'[data]timestamp : {data_time}')
-            print(f'[data]bbh score : {data_bbh}')
-            print(f'[data]constant score : {data_const}')
-            print(f'[data]section score : {data_section}')
-            print(f'[data]certification : {data_cert}')
-            print(f'[data]pdb_guid : {data_pdb_guid}')
-            print(f'[data]pdb_path : {data_pdb_path}')
-            print(f'[data]imphash : {data_imph}')
-            print(f'[data]xorkey : {data_xor}')
-    return render(request, 'Main_engine/result.html', {'result': result_str})
+    # for standard, data_s in result.items():
+    #     print(f'[S]{standard}')
+    #     for target, data_t in data_s.items():
+    #         print(f'[T]{target}')
+    #         data_time = data_t[1]
+    #         data_bbh = data_t[2]
+    #         data_const = data_t[3]
+    #         data_section = data_t[4]
+    #         data_cert = data_t[5]
+    #         data_pdb_guid, data_pdb_path = data_t[6].split(',')
+    #         data_imph = data_t[7]
+    #         data_xor = data_t[8]
+    #         print(f'[data]timestamp : {data_time}')
+    #         print(f'[data]bbh score : {data_bbh}')
+    #         print(f'[data]constant score : {data_const}')
+    #         print(f'[data]section score : {data_section}')
+    #         print(f'[data]certification : {data_cert}')
+    #         print(f'[data]pdb_guid : {data_pdb_guid}')
+    #         print(f'[data]pdb_path : {data_pdb_path}')
+    #         print(f'[data]imphash : {data_imph}')
+    #         print(f'[data]xorkey : {data_xor}')
+    return render(request, 'Main_engine/result.html', {'result': result})
 
 
 def upload_file_dropzone(request):
