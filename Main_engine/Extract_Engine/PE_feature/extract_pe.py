@@ -50,7 +50,7 @@ class Pe_Feature:
         return rsrc.extract_sections_privileges()
 
 
-    def Autoninfo(self):
+    def Certificateinfo(self):
 
         rsrc = pe_rsrc.RsrcParser(self.file_name)
         #authentication = rsrc.extractPKCS7()
@@ -111,14 +111,19 @@ class Pe_Feature:
         kind = filetype.guess(self.file_name)
         if kind is None:
             return np.nan
-        return {kind.extension: kind.mime}
+        else:
+            if kind.extension == 'exe':
+                file_type = 'Window 32bit exe'
+            else:
+                return np.nan
+        return file_type
 
     def all(self, ):
         func_list = self.ImportDll()
         #file_type = filetypes()
         imphash = self.imphash_data()
         cmp_section_data = self.cmp_section_data()
-        auto = self.Autoninfo()
+        cert = self.Certificateinfo()
         rich_xor_key, rich_prodid = self.extract_rich()
         pdb_info = self.extract_pdb()
         rsrc_info = self.extract_rsrc()
@@ -129,7 +134,7 @@ class Pe_Feature:
             'file_hash': hashlib.sha256(open(self.file_name, 'rb').read()).hexdigest(),
             'imp_hash': imphash,
             'cmp_section': cmp_section_data,
-            'auto': auto,
+            'auto': cert,
             'rich_xor_key': rich_xor_key,
             'rich_prodid': rich_prodid,
             'pdb_info': pdb_info,
@@ -145,7 +150,7 @@ class Pe_Feature:
         ssdeep_hash = ssdeep.hash_from_file(self.file_name)
         TimeStamp = time_info
         PDB = pdb_info
-        Cert = auto
+        Cert = cert
 
         pe_features_for_DB = {
             'file_type': filetype,
