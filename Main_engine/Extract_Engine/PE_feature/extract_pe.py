@@ -1,6 +1,7 @@
 import hashlib
 import filetype
 import numpy as np
+import ssdeep
 
 import pefile
 from Main_engine.Extract_Engine.PE_feature import pe_pdb, pe_rsrc, pe_rich
@@ -17,8 +18,6 @@ class Pe_Feature:
 
 
     def extract_pdb(self):
-        output_data = dict()
-
         PDB_result = pe_pdb.result_all(self.file_name)
         return PDB_result
 
@@ -51,7 +50,7 @@ class Pe_Feature:
         return rsrc.extract_sections_privileges()
 
 
-    def Autoninfo(self):
+    def Certificateinfo(self):
 
         rsrc = pe_rsrc.RsrcParser(self.file_name)
         #authentication = rsrc.extractPKCS7()
@@ -84,19 +83,20 @@ class Pe_Feature:
 
             if flag != False:
                 xor_key = rich.xorkey
-                rich_dict = dict()
+                #rich_dict = dict()
+                prod_list = list()
                 #print(f'XorKey : {xor_key}')
                 #print("ProID    name              count")
                 for key in rich.info_list.keys():
                     count = rich.info_list[key]
                     mcv = (key << 16)
                     prodid = (key >> 16)
-
+                    prod_list.append(prodid)
                     prodid_name = pe_rich.PRODID_MAP[prodid] if prodid in pe_rich.PRODID_MAP else "<unknown>"
                     #print('%6d   %-15s %5d     %6d' % (prodid, prodid_name, count, mcv))
-                    rich_dict[key] = count
+                    #rich_dict[key] = count
 
-                return xor_key
+                return xor_key, prod_list
             else:
                 return ""
         except:
@@ -111,16 +111,20 @@ class Pe_Feature:
         kind = filetype.guess(self.file_name)
         if kind is None:
             return np.nan
-        return {kind.extension: kind.mime}
+        else:
+            if kind.extension == 'exe':
+                file_type = 'Window 32bit exe'
+            else:
+                return np.nan
+        return file_type
 
     def all(self, ):
-        test= dict()
         func_list = self.ImportDll()
         #file_type = filetypes()
         imphash = self.imphash_data()
         cmp_section_data = self.cmp_section_data()
-        auto = self.Autoninfo()
-        rich_info = self.extract_rich()
+        cert = self.Certificateinfo()
+        rich_xor_key, rich_prodid = self.extract_rich()
         pdb_info = self.extract_pdb()
         rsrc_info = self.extract_rsrc()
         time_info, TimeInNum = self.extract_time()
@@ -130,15 +134,37 @@ class Pe_Feature:
             'file_hash': hashlib.sha256(open(self.file_name, 'rb').read()).hexdigest(),
             'imp_hash': imphash,
             'cmp_section': cmp_section_data,
-            'auto': auto,
-            'rich_info': rich_info,
+            'auto': cert,
+            'rich_xor_key': rich_xor_key,
+            'rich_prodid': rich_prodid,
             'pdb_info': pdb_info,
             'time_date_stamp': time_info,
             'time in num': TimeInNum,
             'rsrc_info': rsrc_info
         }
 
-        return pe_features
+        MD5 = hashlib.md5(open(self.file_name, 'rb').read()).hexdigest().upper()
+        sha1 = hashlib.sha1(open(self.file_name, 'rb').read()).hexdigest()
+        sha256 = hashlib.sha256(open(self.file_name, 'rb').read()).hexdigest()
+        ImpHash = imphash.upper()
+        ssdeep_hash = ssdeep.hash_from_file(self.file_name)
+        TimeStamp = time_info
+        PDB = pdb_info
+        Cert = cert
+
+        pe_features_for_DB = {
+            'file_type': filetype,
+            'MD5 hash': MD5,
+            'SHA-1 hash': sha1,
+            'SHA-256 hash': sha256,
+            'Imp hash': ImpHash,
+            'SSDEEP hash': ssdeep_hash,
+            'File Creation Time': TimeStamp,
+            'PDB Information': PDB,
+            'File Certification': Cert
+        }
+
+        return pe_features, pe_features_for_DB
 
 # if __name__ == "__main__":
 #     pe = Pe_Feature(r"C:\malware\mid_GandCrab_exe\test")

@@ -143,7 +143,8 @@ def multiprocess_file(q, return_dict, flag):
                     try:
                         pe = pefile.PE(f_path)
                         print('9999999999999999999999999999')
-                        info = extract_pe.Pe_Feature(f_path, pe).all()  # pe 속성 출력
+                        #DB에 담길 pe meta data -> pe_info_DB에 담음
+                        info, pe_info_DB = extract_pe.Pe_Feature(f_path, pe).all()  # pe 속성 출력
                         with open(r"C:\malware\all_result\pe" + "\\" + file_filter2 + ".txt", 'w') as makefile:
                             json.dump(info, makefile, ensure_ascii=False, indent='\t')
                         print('ads')
@@ -156,7 +157,7 @@ def multiprocess_file(q, return_dict, flag):
             except:
                 try:
                     pe = pefile.PE(f_path)
-                    info = extract_pe.Pe_Feature(f_path, pe).all()  # pe 속성 출력
+                    info, pe_info_DB = extract_pe.Pe_Feature(f_path, pe).all()  # pe 속성 출력
                     with open(r"C:\malware\all_result\pe" + "\\" + file_filter2 + ".txt", 'w') as makefile:
                         json.dump(info, makefile, ensure_ascii=False, indent='\t')
                     tmp = Filter.objects.get(filehash=file_filter2)
@@ -350,10 +351,10 @@ def start_engine():
     yun_sorted_pe = dict()
     result_pe, yun_pe = analyze.analyze_pe()
     result_idb, yun_all = analyze.analyze_idb(yun_pe)
-
-    yun_sorted_pe = sorted(yun_all.items(), key=lambda x: x[1]['timestamp_num'])
-
+    #yun_sorted_pe = sorted(yun_all.items(), key=lambda x: x[1]['timestamp_num'])
     #print(f"sorted_yun :: {json.dumps(yun_sorted_pe, indent=4)}")
+
+    # print(f"yun_all :: {json.dumps(yun_all, indent=4)}")
 
     # 6. 결과 csv 저장 (임시)
     all_result = analyze.calculate_heuristic(result_idb, result_pe)
@@ -366,7 +367,45 @@ if __name__ == "__main__":
 
     s = timeit.default_timer()
 
+    PATH = r"C:\malware\mid_GandCrab_exe"
+    IDB_PATH = r"C:\malware\mid_idb"
+
+    # 1. pe 해시 체크 (동일한 파일 필터), 2.패킹 체크
+    pe_check = Pe_Files_Check(PATH)
+    file_hash_dict = pe_check.get_unique_pe_list()
+
+    # 3. pe파일(+패킹 체크) -> idb 변환
+    flag = convert_idb(PATH, IDB_PATH)
+    Features = Exract_Feature(PATH, IDB_PATH)
+
+    # 4. 정보 추출(idb,pe)
+    if flag == True:
+        all_idb_info = Features.export_idb_info('idb')
+        all_pe_info = Features.export_pe_info('pe')
+    else:
+        print('convert_idb is error')
+
+    # 만약 5개의 파일이 들어왔을때 그중 convert_idb 에러뜨는 것들은 제외시키고 나머지 것들만 다음 로직 수행되도록
+    # 변경해야함.
+
+    # 5. 분석 하기
+    analyze = Analyze_files(all_idb_info, all_pe_info)
+
+    yun_sorted_pe = dict()
+    result_pe, yun_pe = analyze.analyze_pe()
+    result_idb, yun_all = analyze.analyze_idb(yun_pe)
+
+    yun_sorted_pe = sorted(yun_all.items(), key=lambda x: x[1]['timestamp_num'])
+
+    #print(f"sorted_yun :: {json.dumps(yun_sorted_pe, indent=4)}")
+
+
+    # 6. 결과 csv 저장 (임시)
+    all_result = analyze.calculate_heuristic(result_idb, result_pe)
+
+    out_xlsx(r"C:\malware\result\test.xlsx", all_result)
     start_engine()
+
 
     print(f"[+]time : {timeit.default_timer() - s}")
 
