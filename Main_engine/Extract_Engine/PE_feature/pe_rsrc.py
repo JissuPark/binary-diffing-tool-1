@@ -1,5 +1,4 @@
 import pefile, os
-import json
 import hashlib
 import ssdeep
 import array
@@ -247,8 +246,6 @@ class RsrcParser:
         Time = self.pe.FILE_HEADER.dump_dict()['TimeDateStamp']['Value'].split('[')[1][:-1]
         second = self.pe.FILE_HEADER.TimeDateStamp
         if Time == None: Time = os.utime(self.filename)
-        #print(type(second))
-        print(f"Time in second :: {second}")
         return Time, second
 
     def get_entropy(self,data):
@@ -432,29 +429,19 @@ class RsrcParser:
                             for r in i:
                                 at = r.getComponentByName('type')
                                 if rfc2459.id_at_countryName == at:
-                                    cn = decode(
-                                        r.getComponentByName('value'),
-                                        asn1Spec=rfc2459.X520countryName())
+                                    cn = decode(r.getComponentByName('value'), asn1Spec=rfc2459.X520countryName())
                                     pkcs_dict['Country'] = str(cn[0])
                                 elif rfc2459.id_at_organizationName == at:
-                                    on = decode(
-                                        r.getComponentByName('value'),
-                                        asn1Spec=rfc2459.X520OrganizationName())
+                                    on = decode(r.getComponentByName('value'), asn1Spec=rfc2459.X520OrganizationName())
                                     pkcs_dict['Company name'] = str(on[0].getComponent())
                                 elif rfc2459.id_at_organizationalUnitName == at:
-                                    ou = decode(
-                                        r.getComponentByName('value'),
-                                        asn1Spec=rfc2459.X520OrganizationalUnitName())
+                                    ou = decode(r.getComponentByName('value'), asn1Spec=rfc2459.X520OrganizationalUnitName())
                                     pkcs_dict['Company Unit name'] = str(ou[0].getComponent())
                                 elif rfc2459.id_at_commonName == at:
-                                    cn = decode(
-                                        r.getComponentByName('value'),
-                                        asn1Spec=rfc2459.X520CommonName())
+                                    cn = decode(r.getComponentByName('value'), asn1Spec=rfc2459.X520CommonName())
                                     pkcs_dict['Issuer name'] = str(cn[0].getComponent())
                                 else:
-                                    print
-                                    at
-
+                                    print(at)
         except:
             return pkcs_dict
         return pkcs_dict

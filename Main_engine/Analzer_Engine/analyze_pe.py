@@ -3,8 +3,6 @@ from collections import OrderedDict
 import ssdeep
 from ngram import NGram
 import operator
-import json
-
 
 class AnalyzePE:
     def __init__(self, pe_all):
@@ -100,8 +98,6 @@ class AnalyzePE:
         :return: score list with weight
         '''
         size = len(standard)
-        print(json.dumps(standard, indent=4))
-        print(json.dumps(target, indent=4))
         flag = 0
         for i in range(len(standard)):
             for j in range(len(target)):
@@ -125,7 +121,6 @@ class AnalyzePE:
         '''
         score = 0
         if flag > 0:
-            print("case 1: ")
             return flag / size * 100
         else:
             print("There could be SHELLCODE in resource section!!")
@@ -137,7 +132,6 @@ class AnalyzePE:
                     #if score > 0:
                         # score_str = "standard rsrc num " + str(i) + " and " + "target rsrc num " + str(j) + " " + str(score)
             #return score / len(standard)
-            print("case 2: ")
             return score
 
     def analyze_rich(self, standard, target):
@@ -146,17 +140,23 @@ class AnalyzePE:
         *문자열로 뽑아서 한다면 ngram을, 데이터 자체를 뽑아서 한다며 data를 사용.. 재호랑 얘기해서하기
         :return: score with weight
         '''
-        if standard['rich_info'] == {} or target['rich_info'] == {}:
+        xor_score = 0
+        prodid_score = 0
+        if standard['rich_xor_key'] == {} or target['rich_xor_key'] == {}:
             return 0
         else:
-            if standard['rich_info'] == target['rich_info']:
-                return 1
+            #rich header의 xor key 유사도(True or False)
+            if standard['rich_xor_key'] == target['rich_xor_key']:
+                xor_score += 1
             else:
-                return 0
+                for prod in range(len(standard['rich_prodid'])):
+                    if prod in target['rich_prodid']:
+                        prodid_score += 1
+                    else:
+                        continue
+        return str(xor_score) + "," + str(prodid_score / len(standard['rich_prodid']))
         # #print(json.dumps(standard, indent=4))
         # #print(json.dumps(target, indent=4))
-        #위까지는 rich header의 xor key만을 비교하는 로직
-
 
 
     def analyze_section(self, dict_s, dict_t):
@@ -215,8 +215,6 @@ class AnalyzePE:
                 pe_t['auth_score'] = self.analyze_auth(pe_info_s['auto'], pe_info_t['auto'])
                 pe_t['pdb_score'] = self.analyze_pdb(pe_info_s['pdb_info'], pe_info_t['pdb_info'])
                 pe_t['rsrc'] = self.analyze_rsrc(pe_info_s['rsrc_info'], pe_info_t['rsrc_info'])
-                #print(f"rsrc compare score is :: {pe_t['rsrc']}")
-
                 pe_s[pe_info_t['file_name']] = pe_t
 
             pe_all[pe_info_s['file_name']] = pe_s
