@@ -6,7 +6,7 @@ from Main_engine.Extract_Engine.Flowchart_feature import const_filter_indexs
 from fractions import Fraction
 from pprint import pprint
 
-glo_list = list()  # PE 전체의 constant 값을 담을 global list
+glo_constant = list()  # PE 전체의 constant 값을 담을 global list
 except_list = set() # 없는 opcode 저장용ㄴ
 
 
@@ -15,6 +15,10 @@ class idb_info(object):
         self.api = api
         self.fva = fva
         self.function = self.api.ida_funcs.get_func(self.fva)
+        self.MinEA = hex(self.api.idc.MinEA())
+        self.MaxEA = hex(self.api.idc.MaxEA())
+        self.MinEA_int = int(self.MinEA, 16)
+        self.MaxEA_int = int(self.MaxEA, 16)
 
 
 class basic_block(idb_info):
@@ -24,11 +28,11 @@ class basic_block(idb_info):
         self.func_name = func_name
 
     def bbs(self, func_name_dicts, file_name):
-        mutex_opcode_list = []
-        opcode_flow = []
-        function_dicts = {}
-        idb_info = {}
-        func_name_dicts[self.func_name] = {}
+        mutex_opcode_list = list()
+        opcode_flow = list()
+        function_dicts = dict()
+        idb_info = dict()
+        func_name_dicts[self.func_name] = dict()
         # 함수 내에서 플로우 차트 추출
         function_flowchart = self.api.idaapi.FlowChart(self.function)
 
@@ -41,11 +45,11 @@ class basic_block(idb_info):
                 if (endaddr - curaddr) < 30:  # 최소 바이트 50이상 할것
                     continue
 
-                opcodes = []
-                hex_opcodes = []
-                disasms = []
-                block_constant = []  # block 단위의 상수 (ascii string 뽑기)
-                function_dicts[hex(curaddr)] = {}
+                opcodes = list()
+                hex_opcodes = list()
+                disasms = list()
+                block_constant = list()  # block 단위의 상수 (ascii string 뽑기)
+                function_dicts[hex(curaddr)] = dict()
                 basic_block_prime = 1
                 prime_dict = dict()
 
@@ -81,16 +85,24 @@ class basic_block(idb_info):
                             operand_2 = unpack_2.strip()
                             # print(f'01 ::: {operand_1}, 02::: {operand_2}') # 테스트코드
                             if operand_1 not in const_filter_indexs.pointer:  # esp, esi, ebp가 아니여야 입장
-                                if "ptr" not in operand_2 and operand_2 not in const_filter_indexs.logic:  # ptr, 0xffffffff 등 없어야 입장
-                                    if operand_2 not in const_filter_indexs.registers:  # 레지스터가 없어야 입장
-                                        if len(operand_2) != 8 and "[" not in operand_2 and "]" not in operand_2:
-                                            glo_list.append(operand_2)  # append file total constant
+                                if "ptr" not in operand_2 and operand_2 not in const_filter_indexs.logic:
+                                    if operand_2 not in const_filter_indexs.registers and "[" not in operand_2 and "]" not in operand_2:
+                                        if operand_2.find('0x') != -1 and self.MinEA_int <= int(operand_2, 16) and int(operand_2, 16) <= self.MaxEA_int:
+                                            pass
+                                        else:
+                                            glo_constant.append(operand_2)  # append file total constant
                                             block_constant.append(operand_2)  # append block constant
-                        else:  # operand가 1개일 때 조건입장
-                            if operand[0] not in const_filter_indexs.registers and "ptr" not in operand[0] and operand[0] not in const_filter_indexs.logic:  # 레지가아니고 ptr도 없어야 입장
-                                if len(operand[0]) != 8:  # 8length 일단 하드코딩, 정규식으로 교채해야함
-                                    glo_list.append(operand[0])
+
+                        elif operand[0] != "": # 0주소 명령일 때 공백필터
+                            if operand[0] not in const_filter_indexs.registers and "ptr" not in operand[0] and operand[0] not in const_filter_indexs.logic:
+                                if operand[0].find('0x') != -1 and self.MinEA_int <= int(operand[0], 16) and int(operand[0], 16) <= self.MaxEA_int:
+                                    pass
+                                else:
+                                    glo_constant.append(operand[0])
                                     block_constant.append(operand[0])
+
+                        else:   # 3주소 pass
+                            pass
                     '''--- 상수값 추출 끝 ---'''
                     # 3주소 명령도 있음? 그러면 위에 else로 빠져서 쓸모없는 값 뽑을 수 있음....
                     opcodes.append(opcode)
@@ -175,7 +187,7 @@ def basicblock_idb_info_extraction(FROM_FILE):
     api = open_idb(FROM_FILE)
     idb_sub_function_info = main(api, FROM_FILE[(FROM_FILE.rfind('\\'))+1:-4])
     # 여기서 상수값 붙임. json 맨 아래에 통쨰로 붙이기 위함.
-    idb_sub_function_info.update({'constant': ' '.join(glo_list)})
+    idb_sub_function_info.update({'constant': ' '.join(glo_constant)})
     # END
 
     return idb_sub_function_info
