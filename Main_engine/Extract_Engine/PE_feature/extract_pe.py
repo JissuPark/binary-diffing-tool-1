@@ -5,6 +5,7 @@ import ssdeep
 
 import pefile
 from Main_engine.Extract_Engine.PE_feature import pe_pdb, pe_rsrc, pe_rich
+from Main_engine.models import PE_info
 
 
 class Pe_Feature:
@@ -129,8 +130,10 @@ class Pe_Feature:
         rsrc_info = self.extract_rsrc()
         time_info, TimeInNum = self.extract_time()
 
+        f_name = self.file_name[self.file_name.rfind('\\') + 1:]
+
         pe_features = {
-            'file_name': self.file_name[self.file_name.rfind('\\')+1:],
+            'file_name': f_name,
             'file_hash': hashlib.sha256(open(self.file_name, 'rb').read()).hexdigest(),
             'imp_hash': imphash,
             'cmp_section': cmp_section_data,
@@ -152,6 +155,8 @@ class Pe_Feature:
         PDB = pdb_info
         Cert = cert
 
+
+
         pe_features_for_DB = {
             'file_type': file_type,
             'MD5 hash': MD5,
@@ -163,6 +168,9 @@ class Pe_Feature:
             'PDB Information': PDB,
             'File Certification': Cert
         }
+
+        # PE_info.objects.create(filehash=f_name, filetype=filetype, md5hash=MD5, sha_1=sha1, sha_256=sha256,
+        #                        imphash=ImpHash, ssdeephash=ssdeep_hash, timestamp=TimeStamp, pdbinfo=PDB, file_cert=Cert)
 
         return pe_features, pe_features_for_DB
 
