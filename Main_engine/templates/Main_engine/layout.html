@@ -86,8 +86,16 @@
       </div>
     </nav>
 
-      <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4"><div class="chartjs-size-monitor" style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
-      <div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div></div><div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;"><div style="position:absolute;width:200%;height:200%;left:0; top:0"></div></div></div>
+      <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+          <div class="chartjs-size-monitor" style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+      <div class="chartjs-size-monitor-expand" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+          <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0">
+              </div>
+      </div>
+          <div class="chartjs-size-monitor-shrink" style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+              <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
+          </div>
+      </div>
       <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-5">
         <h3>분석 결과</h3>
         <div class="btn-toolbar mb-2 mb-md-0">
@@ -179,33 +187,60 @@
           <a href="#" id="prev">-</a>
         </div>
       </div>
-
+{#휴리스틱 스코어부분 #}
 <!--원래 있던 차트 부분-->
       <br>
-      <h5 class="mt-2 mb-3" style="margin-top">휴리스틱 점수</h5>
+      <h5 class="mt-2 mb-3">휴리스틱 점수</h5>
       <!--원래 있던 차트 부분-->
-      <div class="about_chart_frame" style="display:inline-flex">
-        <div>
-          <canvas id="myChart" width="450" height="350"></canvas>
-        </div>
-        <artivle style="height: 450px; margin-left: 35px;">
-        <section>
-          <div class="grids">
-            <canvas id="myPieChart1" class ="grid-items" width="200" height="200"></canvas>
-            <canvas id="myPieChart2" class ="grid-items" width="200" height="200"></canvas>
-            <canvas id="myPieChart3" class ="grid-items" width="200" height="200"></canvas>
-            <canvas id="myPieChart4" class ="grid-items" width="200" height="200"></canvas>
-            <canvas id="myPieChart5" class ="grid-items" width="200" height="200"></canvas>
-            <canvas id="myPieChart6" class ="grid-items" width="200" height="200"></canvas>
-            <canvas id="myPieChart7" class ="grid-items" width="200" height="200"></canvas>
-            <canvas id="myPieChart8" class ="grid-items" width="200" height="200"></canvas>
-          </div>
-        </section>
-        </artivle>
+          <div class= "justify-content-center ml-5" style="display: inline-flex;">
+            <div class="row ml-3 mr-5">
+              <div><canvas id="myChart" width="500" height="500"></canvas></div>
+            </div>
 
-      </div>
+            <div class="container mt-5">
+                <div class="row">
+                  <div class="ml-5 mr-5">
+                  <canvas id="myPieChart" width="200" height="200"></canvas>
+                  </div>
+                  <div class="ml-5 mr-5">
+                  <canvas id="myPieChart2" width="200" height="200"></canvas>
+                  </div>
+                  <div class="ml-5 mr-5">
+                      <canvas id="myPieChart3" width="200" height="200"></canvas>
+                  </div>
+                </div>
+                <div class="row justify-content-center">
+                  <div class="ml-5 mr-5">
+                  <canvas id="myPieChart4" width="200" height="200"></canvas>
+                  </div>
+                  <div class="ml-5 mr-5">
+                  <canvas id="myPieChart5" width="200" height="200"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {#      <div class="about_chart_frame" style="display:inline-flex">#}
+{#        <div>#}
+{#          <canvas id="myChart" width="450" height="350"></canvas>#}
+{#        </div>#}
+{#        <artivle style="height: 450px; margin-left: 35px;">#}
+{#        <section>#}
+{#          <div class="grids">#}
+{#            <canvas id="myPieChart1" class ="grid-items" width="200" height="200"></canvas>#}
+{#            <canvas id="myPieChart2" class ="grid-items" width="200" height="200"></canvas>#}
+{#            <canvas id="myPieChart3" class ="grid-items" width="200" height="200"></canvas>#}
+{#            <canvas id="myPieChart4" class ="grid-items" width="200" height="200"></canvas>#}
+{#            <canvas id="myPieChart5" class ="grid-items" width="200" height="200"></canvas>#}
+{#            <canvas id="myPieChart6" class ="grid-items" width="200" height="200"></canvas>#}
+{#            <canvas id="myPieChart7" class ="grid-items" width="200" height="200"></canvas>#}
+{#            <canvas id="myPieChart8" class ="grid-items" width="200" height="200"></canvas>#}
+{#          </div>#}
+{#        </section>#}
+{#        </artivle>#}
+{##}
+{#      </div>#}
 
-
+{#휴리스틱 스코어 종료#}
       <h5 class="mt-2 mb-3">나머지 타겟점수</h5>
       <div class="table-responsive">
         {% block table %}
