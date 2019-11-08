@@ -26,11 +26,14 @@ def call_main(request):
     if os.path.isfile(r"C:\malware\all_result\result.txt"):
         result_file = open(r"C:\malware\all_result\result.txt", 'rb').read()
         result = json.loads(result_file)
+
     else:
         result_engine = main_engine.start_engine()
         with open(r"C:\malware\all_result\result.txt", 'w') as res:
             json.dump(result_engine, res, ensure_ascii=False, indent='\t')
         result = json.dumps(result_engine, indent=4, default=str)
+        result = json.loads(result)
+        #
     # result_str = json.loads(result)
 
     # for standard, data_s in result.items():
