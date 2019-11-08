@@ -4,10 +4,10 @@
 }
 
   #tileline_frame{
-    background: #222;
+    background: #FFFF;
   }
   #timeline {
-    background: #222;
+    background: #FFFF;
     font-family: Georgia, serif;
     color: #fff;
     font-size: 14px;
@@ -153,6 +153,7 @@ section,h1 {
 }
 
 .grid-items{
-  border:thin gray solid;
+  /*border:thin gray solid;*/
   padding:10px;
 }
+
