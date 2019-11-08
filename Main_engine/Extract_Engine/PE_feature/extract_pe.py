@@ -113,14 +113,14 @@ class Pe_Feature:
             return np.nan
         else:
             if kind.extension == 'exe':
-                file_type = 'Window 32bit exe'
+                file_type = 'Window exe'
             else:
                 return np.nan
         return file_type
 
     def all(self, ):
         func_list = self.ImportDll()
-        #file_type = filetypes()
+        file_type = self.filetypes()
         imphash = self.imphash_data()
         cmp_section_data = self.cmp_section_data()
         cert = self.Certificateinfo()
@@ -153,7 +153,7 @@ class Pe_Feature:
         Cert = cert
 
         pe_features_for_DB = {
-            'file_type': filetype,
+            'file_type': file_type,
             'MD5 hash': MD5,
             'SHA-1 hash': sha1,
             'SHA-256 hash': sha256,
