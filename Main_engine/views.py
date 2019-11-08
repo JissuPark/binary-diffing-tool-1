@@ -18,6 +18,8 @@ def pe(request):
     return render(request, 'Main_engine/pe.html')
 
 def cfg(request):
+    # with open(r"C:\malware\all_result\idb\348FEFD90F73E9992F79C9624F73B116CF295515C2EFB4F5A23CC556D160E7D3.txt", 'rb') as jsonfile:
+    #     json.load(jsonfile, )
     return render(request, 'Main_engine/cfg.html')
 
 def call_main(request):

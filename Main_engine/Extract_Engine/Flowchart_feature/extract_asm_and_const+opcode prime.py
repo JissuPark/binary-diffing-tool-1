@@ -312,20 +312,21 @@ def diff_prime_set(standard, target):
 
 if __name__ == "__main__":
     s = timeit.default_timer()  # start time
-    # PATH1 = r"C:\malware\mid_idb\41A004EBB42648DCA2AFA78680FD70DFEC9DA8C5190C2CF383A7C668A1C4C38F.idb"
-    # idb_sub_function_info1 = basicblock_idb_info_extraction(PATH1)
-    # PATH2 = r"C:\malware\mid_idb\49B769536224F160B6087DC866EDF6445531C6136AB76B9D5079CE622B043200.idb"
-    # idb_sub_function_info2 = basicblock_idb_info_extraction(PATH2)
-    #
-    # with open(r"C:\malware\result\test1.txt", 'w') as makefile:
-    #     json.dump(idb_sub_function_info1, makefile, ensure_ascii=False, indent='\t')
-    # with open(r"C:\malware\result\test2.txt", 'w') as makefile:
-    #     json.dump(idb_sub_function_info2, makefile, ensure_ascii=False, indent='\t')
+    PATH1 = r"C:\malware\mal_idb\1275274692f1990939706e7b3217e8426639b7b0ee2b4244492f6d5fe42d97f4.idb"
+    idb_sub_function_info1 = basicblock_idb_info_extraction(PATH1)
+    PATH2 = r"C:\malware\mal_idb\3e7715ac57003f8a80119ab348a7a7b260afde749cad3c56bd2d9ab931288f92.idb"
+    idb_sub_function_info2 = basicblock_idb_info_extraction(PATH2)
 
-    fd1 = open(r"C:\malware\result\test1.txt", 'rb').read()
+    with open(r"C:\malware\all_result\test1.txt", 'w') as makefile:
+        json.dump(idb_sub_function_info1, makefile, ensure_ascii=False, indent='\t')
+    with open(r"C:\malware\all_result\test2.txt", 'w') as makefile:
+        json.dump(idb_sub_function_info2, makefile, ensure_ascii=False, indent='\t')
+
+    fd1 = open(r"C:\malware\all_result\test1.txt", 'rb').read()
     arg1 = json.loads(fd1, encoding='utf-8')
-    fd2 = open(r"C:\malware\result\test2.txt", 'rb').read()
+    fd2 = open(r"C:\malware\all_result\test2.txt", 'rb').read()
     arg2 = json.loads(fd2)
+
 
     print(f"[analyze]Analyze Start!")
     # 첫번째로 들어오는게 기준, 두번째가 타겟
