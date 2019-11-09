@@ -1,6 +1,7 @@
 import json
 import timeit
 import idb
+import idb.analysis
 import hashlib
 from Main_engine.Extract_Engine.Flowchart_feature import const_filter_indexs
 from fractions import Fraction
@@ -37,9 +38,10 @@ class basic_block(idb_info):
             for basicblock in function_flowchart:
                 curaddr = basicblock.startEA
                 endaddr = basicblock.endEA
-
-                if (endaddr - curaddr) < 30:  # 최소 바이트 50이상 할것
-                    continue
+                for succ in basicblock.succs():
+                    print(f"{hex(curaddr)} -> {hex(succ.startEA)}, {hex(succ.endEA)}")
+                # if (endaddr - curaddr) < 30:  # 최소 바이트 50이상 할것
+                #     continue
 
                 opcodes = []
                 hex_opcodes = []
@@ -150,12 +152,12 @@ class basic_block(idb_info):
 
 def main(api, file_name):
     function_dicts = {}
-
     for fva in api.idautils.Functions():
         # 함수이름 출력
         fname = api.idc.GetFunctionName(fva).lower()
         if 'dllentry' in fname or fname[:3] == 'sub' or fname[:5] == 'start' or fname.find('main') != -1:
             # main or start or sub_***** function. not library function
+            print(f"func_name is {fname}")
             basicblock = basic_block(api, fva, fname)
             # 베이직 블록 정보 추출 함수 실행
             basicblock_function_dicts = basicblock.bbs(function_dicts, file_name)
@@ -309,12 +311,11 @@ def diff_prime_set(standard, target):
     print(f"[debug] Total score : {f_result_score}")
 
 
-
 if __name__ == "__main__":
     s = timeit.default_timer()  # start time
-    PATH1 = r"C:\malware\mal_idb\1275274692f1990939706e7b3217e8426639b7b0ee2b4244492f6d5fe42d97f4.idb"
+    PATH1 = r"C:\malware\mal_idb\Andariel1.idb"
     idb_sub_function_info1 = basicblock_idb_info_extraction(PATH1)
-    PATH2 = r"C:\malware\mal_idb\3e7715ac57003f8a80119ab348a7a7b260afde749cad3c56bd2d9ab931288f92.idb"
+    PATH2 = r"C:\malware\mal_idb\Andariel2.idb"
     idb_sub_function_info2 = basicblock_idb_info_extraction(PATH2)
 
     with open(r"C:\malware\all_result\test1.txt", 'w') as makefile:
@@ -330,7 +331,7 @@ if __name__ == "__main__":
 
     print(f"[analyze]Analyze Start!")
     # 첫번째로 들어오는게 기준, 두번째가 타겟
-    diff_prime_set(arg1, arg2)
+    # diff_prime_set(arg1, arg2)
     # print(f"[except]Not found opcodes : {except_list}")
     print(f"[+]running : {timeit.default_timer() - s}")  # end time
     print("-----END-----")
