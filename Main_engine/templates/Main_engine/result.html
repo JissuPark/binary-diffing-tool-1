@@ -6,7 +6,45 @@
 {% block head %}
 {% load static %} <!-- static files are loaded -->
 <link href="{% static 'Main_engine/css/simple-sidebar.css' %}" rel="stylesheet">
+<link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet" media="screen">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script src="{% static 'Main_engine/js/jquery.timelinr-0.9.7.js' %}"></script>
+<script>
+    $(function(){
+      $().timelinr({
+        arrowKeys: 'true'
+      })
+    });
+ </script>
+{% endblock %}
 
+{% block content %}
+<div id="timeline">
+
+  <ul id="dates">
+    {% for pe in pe_%}
+    <li><a href=#{{pe.timestamp}} style="color: #ffcc00;">{{pe.timestamp}}</a></li>
+    {%endfor%}
+  </ul>
+  <ul id="issues">
+    {% for pe in pe_%}
+    <li id={{pe.timestamp}}>
+      <img src="{% static 'Main_engine/images/test1.png' %}" width="256" height="256" />
+      <h1>{{pe.timestamp}}</h1>
+<!--      <p> File Name : {{pe.filename}}</p>-->
+      <p> File Size : {{pe.filesize}}</p>
+      <p> File Type : {{pe.filetype}}</p>
+<!--      <p> File Sha-256 :{{pe.sha_256}}</p>-->
+      <p> TimeStamp : {{pe.timestamp}}</p>
+    </li>
+    {%endfor%}
+  </ul>
+
+  <div id="grad_left"></div>
+  <div id="grad_right"></div>
+  <a href="#" id="next">+</a>
+  <a href="#" id="prev">-</a>
+ </div>
 {% endblock %}
 
 
