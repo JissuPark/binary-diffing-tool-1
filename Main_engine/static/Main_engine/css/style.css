@@ -39,12 +39,12 @@
         #dates .selected {
               font-size: 38px;
         }
-    
+
     #issues {
       width: 800px;
       height: 350px;
       overflow: hidden;
-    } 
+    }
       #issues li {
         width: 800px;
         height: 350px;
@@ -58,8 +58,8 @@
           float: left;
           margin: 10px 30px 10px 50px;
           background: transparent;
-          -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#00FFFFFF,endColorstr=#00FFFFFF)"; /* IE 8 */   
-          filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#00FFFFFF,endColorstr=#00FFFFFF);/* IE 6 & 7 */      
+          -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#00FFFFFF,endColorstr=#00FFFFFF)"; /* IE 8 */
+          filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#00FFFFFF,endColorstr=#00FFFFFF);/* IE 6 & 7 */
           zoom: 1;
           -webkit-transition: all 2s ease-in-out;
           transition: all 2s ease-in-out;
@@ -79,7 +79,7 @@
           line-height: 12px;
           text-shadow: #000 1px 1px 2px;
         }
-    
+
     #grad_left,
     #grad_right {
       width: 100px;
@@ -95,7 +95,7 @@
             right: 0;
             background: url('../images/grad_right.png') repeat-y;
       }
-    
+
     #next,
     #prev {
       position: absolute;
@@ -153,7 +153,7 @@ section,h1 {
 }
 
 .grid-items{
-  border:thin gray solid;
+  /*border:thin gray solid;*/
   padding:10px;
 }
 

@@ -8,6 +8,9 @@ from collections import OrderedDict
 
 import json, os
 
+from Main_engine.models import Result
+
+
 def showindex(request):
     return render(request, 'Main_engine/index.html')
 
@@ -23,12 +26,14 @@ def cfg(request):
     return render(request, 'Main_engine/cfg.html')
 
 def call_main(request):
+
     if os.path.isfile(r"C:\malware\all_result\result.txt"):
         result_file = open(r"C:\malware\all_result\result.txt", 'rb').read()
         result = json.loads(result_file)
 
     else:
         result_engine = main_engine.start_engine()
+
         with open(r"C:\malware\all_result\result.txt", 'w') as res:
             json.dump(result_engine, res, ensure_ascii=False, indent='\t')
         result = json.dumps(result_engine, indent=4, default=str)

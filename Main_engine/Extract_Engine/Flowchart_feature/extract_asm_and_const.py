@@ -7,7 +7,7 @@ import hashlib
 import pefile
 from Main_engine.Extract_Engine.Flowchart_feature import const_filter_indexs
 
-glo_list = list()  # PE 전체의 constant 값을 담을 global list
+glo_constant = list()  # PE 전체의 constant 값을 담을 global list
 
 
 class idb_info(object):
@@ -15,7 +15,10 @@ class idb_info(object):
         self.api = api
         self.fva = fva
         self.function = self.api.ida_funcs.get_func(self.fva)
-
+        self.MinEA = hex(self.api.idc.MinEA())
+        self.MaxEA = hex(self.api.idc.MaxEA())
+        self.MinEA_int = int(self.MinEA, 16)
+        self.MaxEA_int = int(self.MaxEA, 16)
 
 class basic_block(idb_info):
     def __init__(self, api, fva, func_name):
@@ -63,20 +66,24 @@ class basic_block(idb_info):
                             unpack_1, unpack_2 = operand  # unpacking list
                             operand_1 = unpack_1.strip()  # 공백제거
                             operand_2 = unpack_2.strip()
-                            # print(f'01 ::: {operand_1}, 02::: {operand_2}') # 테스트코드
+
                             if operand_1 not in const_filter_indexs.pointer:  # esp, esi, ebp가 아니여야 입장
-                                if "ptr" not in operand_2 and operand_2 not in const_filter_indexs.logic:  # ptr, 0xffffffff 등 없어야 입장
-                                    if operand_2 not in const_filter_indexs.registers:  # 레지스터가 없어야 입장
-                                        if operand_2 != '0' and len(operand_2) != 8 and "[" not in operand_2 and "]" not in operand_2:
-                                            glo_list.append(operand_2)  # append file total constant
+                                if "ptr" not in operand_2 and operand_2 not in const_filter_indexs.logic:
+                                    if operand_2 not in const_filter_indexs.registers and "[" not in operand_2 and "]" not in operand_2:
+                                        if operand_2.find('0x') != -1 and self.MinEA_int <= int(operand_2, 16) and int(operand_2, 16) <= self.MaxEA_int:
+                                            pass
+                                        else:
+                                            glo_constant.append(operand_2)  # append file total constant
                                             block_constant.append(operand_2)  # append block constant
+
                         elif operand[0] != "": # 0주소 명령일 때 공백필터
-                            if operand[0] not in const_filter_indexs.registers and "ptr" not in operand[0] and operand[0] not in const_filter_indexs.logic:  # 레지가아니고 ptr도 없어야 입장
+                            if operand[0] not in const_filter_indexs.registers and "ptr" not in operand[0] and operand[0] not in const_filter_indexs.logic:
+                                if operand[0].find('0x') != -1 and self.MinEA_int <= int(operand[0], 16) and int(operand[0], 16) <= self.MaxEA_int:
+                                    pass
+                                else:
+                                    glo_constant.append(operand[0])  # append file total constant
+                                    block_constant.append(operand[0])  # append block constant
 
-                                if operand[0] != '0' and len(operand[0]) != 8:  # 8-length 일단 하드코딩, 정규식으로 교채해야함
-
-                                    glo_list.append(operand[0])
-                                    block_constant.append(operand[0])
                         else:   # 3주소 pass
                             pass
                     '''--- 상수값 추출 끝 ---'''
@@ -125,7 +132,7 @@ class basic_block(idb_info):
         return idb_info
 
 def main(api, file_name):
-    function_dicts = {}
+    function_dicts = dict()
 
     for fva in api.idautils.Functions():
         # 함수이름 출력
@@ -139,7 +146,6 @@ def main(api, file_name):
             # 베이직 블록 정보 추출 함수 실행
             basicblock_function_dicts = basicblock.bbs(function_dicts, file_name)
 
-            # 시그널 발생시켜야함함
     return basicblock_function_dicts
 
 
@@ -154,7 +160,7 @@ def basicblock_idb_info_extraction(FROM_FILE):
     api = open_idb(FROM_FILE)
     idb_sub_function_info = main(api, FROM_FILE[(FROM_FILE.rfind('\\'))+1:-4])
     # 여기서 상수값 붙임. json 맨 아래에 통쨰로 붙이기 위함.
-    idb_sub_function_info.update({'constant': ' '.join(glo_list)})
+    idb_sub_function_info.update({'constant': ' '.join(glo_constant)})
     # END
 
     return idb_sub_function_info

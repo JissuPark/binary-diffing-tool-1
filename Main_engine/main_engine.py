@@ -130,10 +130,8 @@ def multiprocess_file(q, return_dict, flag):
             file_filter2 = f_path[f_path.rfind('\\') + 1:]
 
             try:
-                print('zzzzzz1')
                 print(file_filter2)
                 pe_file = Filter.objects.get(filehash=file_filter2)
-                print('ssdfasdfasdf')
                 print(pe_file.pe_filepath)
                 if pe_file.pe_filepath is not None:
                     fd1 = open(pe_file.pe_filepath + ".txt", "rb").read()
@@ -142,7 +140,6 @@ def multiprocess_file(q, return_dict, flag):
                 else:
                     try:
                         pe = pefile.PE(f_path)
-                        print('9999999999999999999999999999')
                         #DB에 담길 pe meta data -> pe_info_DB에 담음
                         info, pe_info_DB = extract_pe.Pe_Feature(f_path, pe).all()  # pe 속성 출력
                         with open(r"C:\malware\all_result\pe" + "\\" + file_filter2 + ".txt", 'w') as makefile:
@@ -367,8 +364,8 @@ if __name__ == "__main__":
 
     s = timeit.default_timer()
 
-    PATH = r"C:\malware\mid_GandCrab_exe"
-    IDB_PATH = r"C:\malware\mid_idb"
+    PATH = r"C:\malware\mal_exe"
+    IDB_PATH = r"C:\malware\mal_idb"
 
     # 1. pe 해시 체크 (동일한 파일 필터), 2.패킹 체크
     pe_check = Pe_Files_Check(PATH)
