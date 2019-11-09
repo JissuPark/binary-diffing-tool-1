@@ -16,7 +16,8 @@
       })
     });
   </script>
-
+  {% block head %}
+  {% endblock %}
 </head>
 <body>
 <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
@@ -96,6 +97,7 @@
               <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
           </div>
       </div>
+        {% block section %}
       <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-5">
         <h3>분석 결과</h3>
         <div class="btn-toolbar mb-2 mb-md-0">
@@ -351,6 +353,7 @@
         </table>
         {% endblock %}
       </div>
+        {% endblock %}
     </main>
 
   </div>

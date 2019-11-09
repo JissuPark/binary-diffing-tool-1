@@ -1,0 +1,10 @@
+hr.cuttitle{
+  width: 2000px; margin-left: 0px; border-top: 1px solid gray;
+}
+hr.cuttable{
+  width: 2000px; margin-left: 0px; border-top: 1px solid gray;
+}
+.header{
+  border-top: 1px solid #bfbdbd;
+  border-bottom: 1px solid #bfbdbd;
+}
