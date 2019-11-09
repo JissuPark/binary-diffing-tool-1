@@ -7,6 +7,7 @@ import os
 from multiprocessing import Process, Queue, Manager
 from collections import OrderedDict
 import pefile
+import shutil
 django.setup()
 
 from Main_engine.Extract_Engine import pe2idb
@@ -316,9 +317,16 @@ def out_xlsx(path, result_dict):
 def create_folder():
     # mal_exe는 drag&drop할 때 먼저 생성됨
     # mal_idb, all_result(idb, pe) 가 없으면 생성
-    default_path = [r"C:\malware\mal_idb", r"C:\malware\all_result", r"C:\malware\all_result\idb",r"C:\malware\all_result\pe"]
+    # 있으면 폴더 내 파일 전체 제거
+    root_path = r"C:\malware"
+    default_path = [r"C:\malware\mal_idb",r"C:\malware\all_result", r"C:\malware\all_result\idb", r"C:\malware\all_result\pe"]
     for path in default_path:
-        if not os.path.exists(path):
+        if os.path.exists(path):
+            os.chmod(path, 0o777)
+            shutil.rmtree(path)
+            os.makedirs(path)
+        else:
+            os.chmod(root_path, 0o777)
             os.makedirs(path)
 
 

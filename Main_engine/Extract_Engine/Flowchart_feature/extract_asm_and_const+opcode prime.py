@@ -42,8 +42,8 @@ class basic_block(idb_info):
             for basicblock in function_flowchart:
                 curaddr = basicblock.startEA
                 endaddr = basicblock.endEA
-                for succ in basicblock.succs():
-                    print(f"{hex(curaddr)} -> {hex(succ.startEA)}, {hex(succ.endEA)}")
+                # for succ in basicblock.succs():
+                #     print(f"{hex(curaddr)} -> {hex(succ.startEA)}, {hex(succ.endEA)}")
                 # if (endaddr - curaddr) < 30:  # 최소 바이트 50이상 할것
                 #     continue
 
@@ -325,9 +325,9 @@ def diff_prime_set(standard, target):
 
 if __name__ == "__main__":
     s = timeit.default_timer()  # start time
-    PATH1 = r"C:\malware\mal_idb\Andariel1.idb"
+    PATH1 = r"C:\malware\mal_idb\28EE788423E10E4040D9B80DB9DBD2B85E8F992C89D01D21356C65074B2DFD88.idb"
     idb_sub_function_info1 = basicblock_idb_info_extraction(PATH1)
-    PATH2 = r"C:\malware\mal_idb\Andariel2.idb"
+    PATH2 = r"C:\malware\mal_idb\65D0CF34F6266EB246B75A9012BA84D9821351F7C9E9E8FFE831E3B68CDCFB56.idb"
     idb_sub_function_info2 = basicblock_idb_info_extraction(PATH2)
 
     with open(r"C:\malware\all_result\test1.txt", 'w') as makefile:
@@ -343,7 +343,7 @@ if __name__ == "__main__":
 
     print(f"[analyze]Analyze Start!")
     # 첫번째로 들어오는게 기준, 두번째가 타겟
-    # diff_prime_set(arg1, arg2)
+    diff_prime_set(arg1, arg2)
     # print(f"[except]Not found opcodes : {except_list}")
     print(f"[+]running : {timeit.default_timer() - s}")  # end time
     print("-----END-----")
