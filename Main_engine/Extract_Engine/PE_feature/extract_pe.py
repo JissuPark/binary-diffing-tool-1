@@ -2,6 +2,7 @@ import hashlib
 import filetype
 import numpy as np
 import ssdeep
+import magic
 
 import pefile
 from Main_engine.Extract_Engine.PE_feature import pe_pdb, pe_rsrc, pe_rich
@@ -121,7 +122,7 @@ class Pe_Feature:
 
     def all(self, ):
         func_list = self.ImportDll()
-        file_type = self.filetypes()
+        file_type = magic.from_file(self.file_name)
         imphash = self.imphash_data()
         cmp_section_data = self.cmp_section_data()
         cert = self.Certificateinfo()
@@ -169,8 +170,8 @@ class Pe_Feature:
             'File Certification': Cert
         }
 
-        # PE_info.objects.create(filehash=f_name, filetype=filetype, md5hash=MD5, sha_1=sha1, sha_256=sha256,
-        #                        imphash=ImpHash, ssdeephash=ssdeep_hash, timestamp=TimeStamp, pdbinfo=PDB, file_cert=Cert)
+        PE_info.objects.create(filehash=f_name, filetype=file_type, md5hash=MD5, sha_1=sha1, sha_256=sha256,
+                               imphash=ImpHash, ssdeephash=ssdeep_hash, timestamp=TimeStamp, pdbinfo=PDB, file_cert=Cert)
 
         return pe_features, pe_features_for_DB
 
