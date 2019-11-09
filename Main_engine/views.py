@@ -36,8 +36,8 @@ def call_main(request):
 
         with open(r"C:\malware\all_result\result.txt", 'w') as res:
             json.dump(result_engine, res, ensure_ascii=False, indent='\t')
-        result = json.dumps(result_engine, indent=4, default=str)
-        result = json.loads(result)
+        results = json.dumps(result_engine, indent=4, default=str)
+        result = json.loads(results)
         #
     # result_str = json.loads(result)
 
@@ -110,6 +110,11 @@ def handle_uploaded_file(file):
     :param file: 업로드 된 파일
     :return: None
     '''
+    # mal_exe가 없으면 만들어주는 부분
+    Path = "C:\\malware\\mal_exe"
+    if not os.path.exists(Path):
+        os.makedirs(Path)
+    # 폴더를 열어서 파일을 저장해주는 부분
     with open('C:\\malware\\mal_exe\\'+file.name, 'wb+') as uploaded_file:
         for chunk in file.chunks():
             uploaded_file.write(chunk)

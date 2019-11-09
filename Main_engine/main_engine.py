@@ -70,6 +70,7 @@ class Pe_Files_Check:
         # 그리고 서버 파일시스템 내에서 둘 중 하나의 파일은 지운다.
         # 일단 더 먼저 나오는 파일을 살리고 아닌 파일은 삭제하도록 하였다. 어차피 동일 파일이니깐.
 
+        # all_result 안에 결과를 저장하는 부분
         with open(r"C:\malware\all_result\test_pelist.txt", 'w') as pelist:
             json.dump(self.pe_hash_dict, pelist, ensure_ascii=False, indent='\t')
 
@@ -312,6 +313,14 @@ def out_xlsx(path, result_dict):
     wb.save(path)
 
 
+def create_folder():
+    # mal_exe는 drag&drop할 때 먼저 생성됨
+    # mal_idb, all_result(idb, pe) 가 없으면 생성
+    default_path = [r"C:\malware\mal_idb", r"C:\malware\all_result", r"C:\malware\all_result\idb",r"C:\malware\all_result\pe"]
+    for path in default_path:
+        if not os.path.exists(path):
+            os.makedirs(path)
+
 
 def start_engine():
     '''
@@ -323,7 +332,8 @@ def start_engine():
     IDB_PATH = r"C:\malware\mal_idb"
     RESUT_IDB_PATH = r"C:\malware\all_result_idb"
     RESUT_PE_PATH = r"C:\malware\all_result_pe"
-
+    # 0. 없는 폴더 먼저 생성
+    create_folder()
     # 1. pe 해시 체크 (동일한 파일 필터), 2.패킹 체크
     pe_check = Pe_Files_Check(PATH)
     file_hash_dict = pe_check.get_unique_pe_list()
