@@ -3,6 +3,8 @@ import filetype
 import numpy as np
 import ssdeep
 import magic
+import os
+import math
 
 import pefile
 from Main_engine.Extract_Engine.PE_feature import pe_pdb, pe_rsrc, pe_rich
@@ -120,6 +122,16 @@ class Pe_Feature:
                 return np.nan
         return file_type
 
+    def convert_size(self, size_bytes):
+        if size_bytes == 0:
+            return "0B"
+        size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+        i = int(math.floor(math.log(size_bytes, 1024)))
+        p = math.pow(1024, i)
+        s = round(size_bytes / p, 2)
+        Size = str(s) + size_name[i] + " (" + str(size_bytes) + " bytes)"
+        return Size
+
     def all(self, ):
         func_list = self.ImportDll()
         file_type = magic.from_file(self.file_name)
@@ -146,7 +158,8 @@ class Pe_Feature:
             'time in num': TimeInNum,
             'rsrc_info': rsrc_info
         }
-
+        file_size = os.path.getsize(self.file_name)
+        file_size = self.convert_size(file_size)
         MD5 = hashlib.md5(open(self.file_name, 'rb').read()).hexdigest().upper()
         sha1 = hashlib.sha1(open(self.file_name, 'rb').read()).hexdigest()
         sha256 = hashlib.sha256(open(self.file_name, 'rb').read()).hexdigest()
@@ -159,6 +172,8 @@ class Pe_Feature:
 
 
         pe_features_for_DB = {
+            'file name': f_name,
+            'file size': file_size,
             'file_type': file_type,
             'MD5 hash': MD5,
             'SHA-1 hash': sha1,
@@ -170,8 +185,8 @@ class Pe_Feature:
             'File Certification': Cert
         }
 
-        # PE_info.objects.create(filehash=f_name, filetype=file_type, md5hash=MD5, sha_1=sha1, sha_256=sha256,
-        #                        imphash=ImpHash, ssdeephash=ssdeep_hash, timestamp=TimeStamp, pdbinfo=PDB, file_cert=Cert)
+        # PE_info.objects.create(filename=f_name, filesize=file_size, filetype=file_type, md5hash=MD5, sha_1=sha1, sha_256=sha256,
+        #                        imphash=ImpHash, ssdeephash=ssdeep_hash, timestamp=TimeStamp)
 
         return pe_features, pe_features_for_DB
 
