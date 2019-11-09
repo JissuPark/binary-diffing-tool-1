@@ -170,8 +170,8 @@ class Pe_Feature:
             'File Certification': Cert
         }
 
-        PE_info.objects.create(filehash=f_name, filetype=file_type, md5hash=MD5, sha_1=sha1, sha_256=sha256,
-                               imphash=ImpHash, ssdeephash=ssdeep_hash, timestamp=TimeStamp, pdbinfo=PDB, file_cert=Cert)
+        # PE_info.objects.create(filehash=f_name, filetype=file_type, md5hash=MD5, sha_1=sha1, sha_256=sha256,
+        #                        imphash=ImpHash, ssdeephash=ssdeep_hash, timestamp=TimeStamp, pdbinfo=PDB, file_cert=Cert)
 
         return pe_features, pe_features_for_DB
 
