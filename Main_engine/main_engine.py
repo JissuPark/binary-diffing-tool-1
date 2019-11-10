@@ -20,6 +20,7 @@ from Main_engine.Unpacking import unpack_module
 from Main_engine.models import *
 
 idb_file_path = "C:\\malware\\all_result\\idb\\"
+pe_file_path = "C:\\malware\\all_result\\pe\\"
 
 class Pe_Files_Check:
     '''
@@ -117,10 +118,14 @@ def multiprocess_file(q, return_dict, flag):
 
             try:
                 file = Filter.objects.get(filehash=file_filter)
+            except Filter.DoesNotExist:
+                file = None
+
+            if file is not None:
                 fd1 = open(file.idb_filepath + ".txt", "rb").read()
                 info = json.loads(fd1, encoding='utf-8')
                 print('idb존재함')
-            except:
+            elif file is None:
                 info = extract_asm_and_const.basicblock_idb_info_extraction(f_path)  # 함수대표값 및 상수값 출력
                 with open(r"C:\malware\all_result\idb" + "\\" + file_filter + ".txt", 'w') as makefile:
                     json.dump(info, makefile, ensure_ascii=False, indent='\t')
@@ -132,39 +137,36 @@ def multiprocess_file(q, return_dict, flag):
             file_filter2 = f_path[f_path.rfind('\\') + 1:]
 
             try:
-                print(file_filter2)
                 pe_file = Filter.objects.get(filehash=file_filter2)
-                print(pe_file.pe_filepath)
-                if pe_file.pe_filepath is not None:
-                    fd1 = open(pe_file.pe_filepath + ".txt", "rb").read()
-                    info = json.loads(fd1, encoding='utf-8')
-                    print('pe존재함')
-                else:
-                    try:
-                        pe = pefile.PE(f_path)
-                        #DB에 담길 pe meta data -> pe_info_DB에 담음
-                        info, pe_info_DB = extract_pe.Pe_Feature(f_path, pe).all()  # pe 속성 출력
-                        with open(r"C:\malware\all_result\pe" + "\\" + file_filter2 + ".txt", 'w') as makefile:
-                            json.dump(info, makefile, ensure_ascii=False, indent='\t')
-                        print('ads')
-                        # pe_file.pe_filepath(pe_file_path + file_filter2)
-                        # pefile.save()
-                        print('pe없음')
-                    except:
-                        print('pe error !')
-                        continue
+                print(pe_file)
+            except Filter.DoesNotExist:
+                print('jaeho')
+                pe_file = None
+
+            try:
+                pe_f = pe_file.pe_filepath
             except:
+                pe_f = None
+
+            if pe_f is not None:
+                fd1 = open(pe_file.pe_filepath + ".txt", "rb").read()
+                info = json.loads(fd1, encoding='utf-8')
+                print('pe존재함')
+            elif pe_f is None:
                 try:
                     pe = pefile.PE(f_path)
+                    #DB에 담길 pe meta data -> pe_info_DB에 담음
                     info, pe_info_DB = extract_pe.Pe_Feature(f_path, pe).all()  # pe 속성 출력
                     with open(r"C:\malware\all_result\pe" + "\\" + file_filter2 + ".txt", 'w') as makefile:
                         json.dump(info, makefile, ensure_ascii=False, indent='\t')
-                    tmp = Filter.objects.get(filehash=file_filter2)
-                    # tmp.update(pe_filepath=pe_file_path + file_filter2)
-                    print('없음')
+                    print('시발 왜 에러뜸')
+                    pe_file.pe_filepath = pe_file_path + file_filter2
+                    pe_file.save()
+                    print('pe없음')
                 except:
                     print('pe error !')
                     continue
+
 
         return_dict[f_path] = info
 
@@ -238,11 +240,11 @@ class Analyze_files:
                 '''
         # 최종 휴리스틱 스코어
 
-        real_final = OrderedDict()
+        real_final = dict()
 
         for key_i, key_pe in zip(idb_result.items(), pe_result.items()):
-            idb_final_score = OrderedDict()
-            pe_final_score = OrderedDict()
+            idb_final_score = dict()
+            pe_final_score = dict()
             for value_i, value_pe in zip(key_i[1].items(), key_pe[1].items()):
                 semifinal = [0, 0, 0, 0, 0, 0, 0, 0, 0]
                 semifinal[0] = (value_pe[1]['file_hash'])

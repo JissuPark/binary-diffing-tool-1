@@ -13,16 +13,11 @@ class Filter(models.Model):
     cdate = models.DateTimeField(auto_now_add=True)
 
 class PE_info(models.Model):
-    filehash = models.CharField(max_length=100, primary_key=True)
+    filename = models.CharField(max_length=100, primary_key=True)
+    filesize = models.TextField()
     filetype = models.TextField()
-    md5hash = models.TextField()
-    sha_1 = models.TextField()
     sha_256 = models.TextField()
-    imphash = models.TextField()
-    ssdeephash = models.TextField()
     timestamp = models.TextField()
-    pdbinfo = models.TextField()
-    file_cert = models.TextField()
     cdate = models.DateTimeField(auto_now_add=True)
 
 class Result(models.Model):
