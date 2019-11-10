@@ -41,7 +41,7 @@
   <div id="timeline">
     <ul id="dates">
     {% for pe in pe_%}
-    <li><a href=#{{pe.timestamp}} style="color: #ffcc00;">{{pe.timestamp}}</a></li>
+    <li><a href=#{{pe.year}} style="color: #ffcc00;">{{pe.year}}</a></li>
     {%endfor%}
     </ul>
     <ul id="issues">
@@ -109,10 +109,10 @@
         <form name="select_form">
             <select id="select_file" onchange="change_table()"></select>
         </form>
-        <table id="result_table">
+        <table id="result_table" class="table table-striped table-bordered">
             <thead>
             <tr>
-                <th rowspan="2">File Name</th>
+                <th rowspan="2" align=center>File Name</th>
                 <th rowspan="2">Timestamp</th>
                 <th colspan="2">Algorithm</th>
                 <th colspan="6">PE META data</th>

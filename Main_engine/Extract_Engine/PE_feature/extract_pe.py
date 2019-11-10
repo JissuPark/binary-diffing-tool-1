@@ -169,6 +169,7 @@ class Pe_Feature:
         PDB = pdb_info
         Cert = cert
 
+        Year = TimeStamp[TimeStamp.rfind('UTC') - 5:TimeStamp.rfind('UTC') - 1]
 
 
         pe_features_for_DB = {
@@ -185,7 +186,7 @@ class Pe_Feature:
             'File Certification': Cert
         }
 
-        PE_info.objects.create(filename=f_name, filesize=file_size, filetype=file_type,sha_256=sha256,timestamp=TimeStamp)
+        PE_info.objects.create(filename=f_name, filesize=file_size, filetype=file_type,sha_256=sha256,timestamp=TimeStamp,year=Year, timenum=TimeInNum)
 
         return pe_features, pe_features_for_DB
 

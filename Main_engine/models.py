@@ -18,6 +18,8 @@ class PE_info(models.Model):
     filetype = models.TextField()
     sha_256 = models.TextField()
     timestamp = models.TextField()
+    year = models.TextField(null=True)
+    timenum = models.BigIntegerField(null=True)
     cdate = models.DateTimeField(auto_now_add=True)
 
 class Result(models.Model):

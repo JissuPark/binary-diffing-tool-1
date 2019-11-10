@@ -37,7 +37,7 @@ def call_main(request):
         result = json.dumps(result_engine, indent=4, default=str)
     #result = main_engine.start_engine()
 
-    pe_ = PE_info.objects.all()
+    pe_ = PE_info.objects.order_by('timenum').all()
 
     return render(request, 'Main_engine/result.html', {'result': result, 'pe_':pe_})
 
