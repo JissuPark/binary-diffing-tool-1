@@ -45,8 +45,8 @@ class basic_block(idb_info):
                 curaddr = basicblock.startEA
                 endaddr = basicblock.endEA
 
-                if (endaddr - curaddr) < 30:  # 최소 바이트 50이상 할것
-                    continue
+                # if (endaddr - curaddr) < 30:  # 최소 바이트 50이상 할것
+                #     continue
 
                 opcodes = list()
                 hex_opcodes = list()
@@ -169,10 +169,10 @@ def basicblock_idb_info_extraction(FROM_FILE):
 if __name__ == "__main__":
 
     s = timeit.default_timer()  # start time
-    PATH = r"C:\malware\mid_idb\ca625e085ce5ad531bc65c4ce34ca7f72c9e3546273fb0dfb2b76d9faf5f709e.idb"
+    PATH = r"C:\malware\mal_idb\3e7715ac57003f8a80119ab348a7a7b260afde749cad3c56bd2d9ab931288f92.idb"
     idb_sub_function_info = basicblock_idb_info_extraction(PATH)
 
-    with open(r"C:\malware\result\test.txt", 'w') as makefile:
+    with open(r"C:\malware\all_result\test.txt", 'w') as makefile:
         json.dump(idb_sub_function_info, makefile, ensure_ascii=False, indent='\t')
 
     print(f"[+]running : {timeit.default_timer() - s}")  # end time
