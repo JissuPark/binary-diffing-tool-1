@@ -8,71 +8,87 @@
 
 {% block section %}
 <br><br><br>
-{% for pe in lists %}
-<div class="header">
-    <h3 align="left">Basic Properties</h3>
+<div id="wrapper">
+    <div class="header">
+        <h3 align="left">Basic Properties</h3>
+    </div>
+    <div class="detail">
+        {% for pe in lists %}
+        <table align="left" class="table table-borderless" height="400" width="800">
+            <tr>
+                <th>File name</th>
+                <td>{{pe.filename}}</td>
+            </tr>
+            <tr>
+                <th>File size</th>
+                <td>{{pe.filesize}}</td>
+            </tr>
+            <tr>
+                <th>File type</th>
+                <td>{{pe.filetype}}</td>
+            </tr>
+            <tr>
+                <th>MD5</th>
+                <td>{{pe.md5}}</td>
+            </tr>
+            <tr>
+                <th>SHA-1</th>
+                <td>{{pe.sha_1}}</td>
+            </tr>
+            <tr>
+                <th>SHA-256</th>
+                <td>{{pe.sha_256}}</td>
+            </tr>
+            <tr>
+                <th>Imphash</th>
+                <td>{{pe.imphash}}</td>
+            </tr>
+            <tr>
+                <th>SSDEEP</th>
+                <td>{{pe.ssdeep}}</td>
+            </tr>
+            <tr>
+                <th>TimeStamp</th>
+                <td>{{pe.timestamp}}</td>
+            </tr>
+        </table>
+        {% endfor %}
+    </div>
 </div>
-<table align="left" class="table table-borderless" height="400" width="800">
-    <tr>
-        <th>File name</th>
-        <td>{{pe.filename}}</td>
-    </tr>
-    <tr>
-        <th>File size</th>
-        <td>{{pe.filesize}}</td>
-    </tr>
-    <tr>
-        <th>File type</th>
-        <td>{{pe.filetype}}</td>
-    </tr>
-    <tr>
-        <th>MD5</th>
-        <td>{{pe.md5}}</td>
-    </tr>
-    <tr>
-        <th>SHA-1</th>
-        <td>{{pe.sha_1}}</td>
-    </tr>
-    <tr>
-        <th>SHA-256</th>
-        <td>{{pe.sha_256}}</td>
-    </tr>
-    <tr>
-        <th>Imphash</th>
-        <td>{{pe.imphash}}</td>
-    </tr>
-    <tr>
-        <th>SSDEEP</th>
-        <td>{{pe.ssdeep}}</td>
-    </tr>
-    <tr>
-        <th>TimeStamp</th>
-        <td>{{pe.timestamp}}</td>
-    </tr>
-</table>
-{% endfor %}
+<div class="header">
+    <h3 align="left">Portable Executable Info</h3>
+</div>
 {% endblock section %}
 
 {% block foot %}
 {% if lists.has_other_pages %}
-<nav aria-label="Page navigation example">
-    <div style="position: relative; left: 600px;">
+<nav aria-label="...">
+    <div style="position: relative; left: 600px; top: 20px;">
         <ul class="pagination">
             {% if lists.has_previous %}
             <li class="page-item">
-                <a aria-label="Previous" class="page-link" href="?page={{ lists.previous_page_number }}">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
+                <a class="page-link" href="?page={{ lists.previous_page_number }}">Previous</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link">Previous</span>
             </li>
             {% endif %}
             {% for i in lists.paginator.page_range %}
-                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                {% if lists.number == i %}
+                    <li class="page-item active" aria-current="page">
+                        <span class="page-link">{{ i }}<span class="sr-only">(current)</span></span></li>
+                {% else %}
+                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                {% endif %}
             {% endfor %}
             {% if lists.has_next %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ lists.next_page_number }}" aria-label="Next" >
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
+                <a class="page-link" href="?page={{ lists.next_page_number }}">Next</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <a class="page-link">Next</a>
             </li>
             {% endif %}
         </ul>
