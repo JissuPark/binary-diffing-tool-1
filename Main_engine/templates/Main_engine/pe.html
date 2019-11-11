@@ -54,21 +54,21 @@
 {% endblock section %}
 
 {% block foot %}
-{% if lists.has_other_pages %}
+{% if pe_.has_other_pages %}
 <nav aria-label="Page navigation example">
     <div style="position: relative; left: 600px;">
         <ul class="pagination">
-            {% if lists.has_previous %}
+            {% if pe_.has_previous %}
             <li class="page-item">
                 <a aria-label="Previous" class="page-link" href="?page={{ lists.previous_page_number }}">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
             {% endif %}
-            {% for i in lists.paginator.page_range %}
+            {% for i in pe_.paginator.page_range %}
                 <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
             {% endfor %}
-            {% if lists.has_next %}
+            {% if pe_.has_next %}
             <li class="page-item">
                 <a class="page-link" href="?page={{ lists.next_page_number }}" aria-label="Next" >
                     <span aria-hidden="true">&raquo;</span>
