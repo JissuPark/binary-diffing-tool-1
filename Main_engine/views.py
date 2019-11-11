@@ -20,7 +20,6 @@ def recent(request):
     return render(request, 'Main_engine/recent.html')
 
 def pe(request):
-    pe_ = PE_info.objects.all()
     pe_list = PE_info.objects.all()
 
     paginator = Paginator(pe_list, 1)
@@ -34,7 +33,7 @@ def pe(request):
     except EmptyPage:
         lists = paginator.page(paginator.num_pages)
 
-    return render(request, 'Main_engine/pe.html', {'pe_': pe_, 'lists': lists})
+    return render(request, 'Main_engine/pe.html', {'lists': lists})
 
 def cfg(request):
     return render(request, 'Main_engine/cfg.html')
