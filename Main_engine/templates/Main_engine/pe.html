@@ -1,19 +1,20 @@
 {% extends "Main_engine/layout.html" %}
+
 {% block head %}
 {% load static %}
 <link href="{% static 'Main_engine/css/pe.css' %}" rel="stylesheet">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 {% endblock %}
+
 {% block section %}
 <br><br><br>
-
+{% for pe in lists %}
 <div class="header">
     <h3 align="left">Basic Properties</h3>
 </div>
-{% for pe in pe_ %}
 <table align="left" class="table table-borderless" height="400" width="800">
     <tr>
         <th>File name</th>
-        <!--DB에서 가져온 데이터가 들어갈 부분-->
         <td>{{pe.filename}}</td>
     </tr>
     <tr>
@@ -37,6 +38,10 @@
         <td>{{pe.sha_256}}</td>
     </tr>
     <tr>
+        <th>Imphash</th>
+        <td>{{pe.imphash}}</td>
+    </tr>
+    <tr>
         <th>SSDEEP</th>
         <td>{{pe.ssdeep}}</td>
     </tr>
@@ -45,6 +50,33 @@
         <td>{{pe.timestamp}}</td>
     </tr>
 </table>
-
 {% endfor %}
 {% endblock section %}
+
+{% block foot %}
+{% if lists.has_other_pages %}
+<nav aria-label="Page navigation example">
+    <div style="position: relative; left: 600px;">
+        <ul class="pagination">
+            {% if lists.has_previous %}
+            <li class="page-item">
+                <a aria-label="Previous" class="page-link" href="?page={{ lists.previous_page_number }}">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            {% endif %}
+            {% for i in lists.paginator.page_range %}
+                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+            {% endfor %}
+            {% if lists.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ lists.next_page_number }}" aria-label="Next" >
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
+{% endif %}
+{% endblock foot %}
