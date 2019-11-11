@@ -25,7 +25,7 @@ def pe(request):
 
     paginator = Paginator(pe_list, 1)
 
-    page = request.GET.get('page')
+    page = request.GET.get('page', 1)
 
     try:
         lists = paginator.get_page(page)
