@@ -1,165 +1,65 @@
-<!DOCTYPE html>
+{% extends "Main_engine/layout.html" %}
 
-<html>
-<head>
-    <style>
-        .node rect {
-            cursor: pointer;
-            fill: #fff;
-            fill-opacity: 0.5;
-            stroke: #3182bd;
-            stroke-width: 1.5px;
-        }
-        .node text {
-            font: 10px sans-serif;
-            pointer-events: none;
-        }
-        .link {
-            fill: none;
-            stroke: #9ecae1;
-            stroke-width: 1.5px;
-        }
-    </style>
-</head>
-<body>
-{% load static %}
-<script src="https://d3js.org/d3.v4.min.js"></script>
+{% block title %} CFG page {% endblock %}
+{% block head %}
+<script src="//d3js.org/d3.v4.min.js"></script>
+<script src="https://unpkg.com/viz.js@1.8.1/viz.js" type="javascript/worker"></script>
+<script src="https://unpkg.com/d3-graphviz@2.6.1/build/d3-graphviz.js"></script>
+{% endblock head %}
+
+{% block section %}
+<div class="mt-5" id="graph" style="text-align: center;"></div>
+{% if cfg_ %}
 <script>
-    var margin = {top: 30, right: 20, bottom: 30, left: 20},
-        width = 960,
-        barHeight = 20,
-        barWidth = (width - margin.left - margin.right) * 0.8;
-    var i = 0,
-        duration = 400,
-        root;
-    var diagonal = d3.linkHorizontal()
-        .x(function (d) {
-            return d.y;
-        })
-        .y(function (d) {
-            return d.x;
-        });
-    var svg = d3.select("body").append("svg")
-        .attr("width", width) // + margin.left + margin.right)
-        .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-    d3.json("{% static 'Main_engine/flare.json' %}", function (error, flare) {
-        if (error) throw error;
-        root = d3.hierarchy(flare);
-        root.x0 = 0;
-        root.y0 = 0;
-        update(root);
-    });
-    function update(source) {
-        // Compute the flattened node list.
-        var nodes = root.descendants();
-        var height = Math.max(500, nodes.length * barHeight + margin.top + margin.bottom);
-        d3.select("svg").transition()
-            .duration(duration)
-            .attr("height", height);
-        d3.select(self.frameElement).transition()
-            .duration(duration)
-            .style("height", height + "px");
-        // Compute the "layout". TODO https://github.com/d3/d3-hierarchy/issues/67
-        var index = -1;
-        root.eachBefore(function (n) {
-            n.x = ++index * barHeight;
-            n.y = n.depth * 20;
-        });
-        // Update the nodes…
-        var node = svg.selectAll(".node")
-            .data(nodes, function (d) {
-                return d.id || (d.id = ++i);
-            });
-        var nodeEnter = node.enter().append("g")
-            .attr("class", "node")
-            .attr("transform", function (d) {
-                return "translate(" + source.y0 + "," + source.x0 + ")";
-            })
-            .style("opacity", 0);
-        // Enter any new nodes at the parent's previous position.
-        nodeEnter.append("rect")
-            .attr("y", -barHeight / 2)
-            .attr("height", barHeight)
-            .attr("width", barWidth)
-            .style("fill", color)
-            .on("click", click);
-        nodeEnter.append("text")
-            .attr("dy", 3.5)
-            .attr("dx", 5.5)
-            .text(function (d) {
-                return d.data.name;
-            });
-        // Transition nodes to their new position.
-        nodeEnter.transition()
-            .duration(duration)
-            .attr("transform", function (d) {
-                return "translate(" + d.y + "," + d.x + ")";
-            })
-            .style("opacity", 1);
-        node.transition()
-            .duration(duration)
-            .attr("transform", function (d) {
-                return "translate(" + d.y + "," + d.x + ")";
-            })
-            .style("opacity", 1)
-            .select("rect")
-            .style("fill", color);
-        // Transition exiting nodes to the parent's new position.
-        node.exit().transition()
-            .duration(duration)
-            .attr("transform", function (d) {
-                return "translate(" + source.y + "," + source.x + ")";
-            })
-            .style("opacity", 0)
-            .remove();
-        // Update the links…
-        var link = svg.selectAll(".link")
-            .data(root.links(), function (d) {
-                return d.target.id;
-            });
-        // Enter any new links at the parent's previous position.
-        link.enter().insert("path", "g")
-            .attr("class", "link")
-            .attr("d", function (d) {
-                var o = {x: source.x0, y: source.y0};
-                return diagonal({source: o, target: o});
-            })
-            .transition()
-            .duration(duration)
-            .attr("d", diagonal);
-        // Transition links to their new position.
-        link.transition()
-            .duration(duration)
-            .attr("d", diagonal);
-        // Transition exiting nodes to the parent's new position.
-        link.exit().transition()
-            .duration(duration)
-            .attr("d", function (d) {
-                var o = {x: source.x, y: source.y};
-                return diagonal({source: o, target: o});
-            })
-            .remove();
-        // Stash the old positions for transition.
-        root.each(function (d) {
-            d.x0 = d.x;
-            d.y0 = d.y;
-        });
-    }
-    // Toggle children on click.
-    function click(d) {
-        if (d.children) {
-            d._children = d.children;
-            d.children = null;
-        } else {
-            d.children = d._children;
-            d._children = null;
+    var cfgdata = "{{cfg_}}";
+    // document.write(cfgdata)
+    var text_res = cfgdata.replace(/&#39;/gi, '"').replace(/\n/gi, '\\n').replace(/\r/gi, '\\r').replace(/\t/gi, '\\t');
+    // document.write(text_res);
+    var json_res = JSON.parse(text_res);
+
+    document.write('<br>');
+    var array = [];
+    for (var startaddr in json_res){
+        if(startaddr != "flow_opString" && startaddr != "flow_constants") {
+            // document.write(startaddr+"<br>");
+            var block = startaddr + '\n' + json_res[startaddr]['disasms'];
+            // asdf = asdf.replace(/'<br>'/gi, '&#39;');
+            // document.write(block);
+            // document.write('<br>');
+            array.push(block);
+            // block = 'graph { node [shape=box] '+ block+ '}';
+            // d3.select("#graph").graphviz()
+            //     .fade(false)
+            //     .renderDot(block);
+            // document.write(block);
         }
-        update(d);
     }
-    function color(d) {
-        return d._children ? "#3182bd" : d.children ? "#c6dbef" : "#fd8d3c";
+    document.write('<br>');
+    // document.write(array[0]);
+
+    var box = 'graph { node [shape=box] ';
+    for (var item in array){
+        box = item + ' [label="' + array[item] + '"];\n';
     }
+    box = box + '}';
+    d3.select("#graph").graphviz()
+        .fade(false)
+        .renderDot(box);
+
+    var a = '"push\tebp\n"' + "asdf";
+    var b = '"pop\\tedi\n",' +
+        '"pop\\tesi\r",' +
+        '"ret\\t"';
+    var str = 'digraph Orthogonal{' +
+        'node [shape=box]' +
+        a + '->' + b + '}';
+
+    // d3.select("#graph").graphviz()
+    //     .fade(false)
+    //     .renderDot(str);
+
 </script>
-</body>
-</html>
+{% else %}
+<h2>Nope!</h2>
+{% endif %}
+{% endblock section %}

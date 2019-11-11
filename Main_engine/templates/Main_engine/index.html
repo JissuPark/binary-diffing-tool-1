@@ -1,42 +1,172 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
+    <meta charset="UTF-8">
+    <title>WinBinary Diffing Service - Breakers</title>
     {% load static %}
-<!--    <link rel="stylesheet" type="text/css" href="{% static 'Main_engine/css/style.css' %}">-->
-    <link rel="stylesheet" href="https://rawgit.com/enyo/dropzone/master/dist/dropzone.css">
+    <script src="{% static 'Main_engine/js/dropzone.js' %}"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'Main_engine/css/dropzone.css' %}">
 
-    <script src="{% static 'Main_engine/js/dropzone.js' %}">
-<!--<script>-->
-<!--    var myDropzone = new Dropzone("div#dZUpload",-->
-<!--                {   url: "/media/",-->
-<!--                    addRemoveLinks: true,-->
-<!--                    maxFiles: 4,-->
-<!--                    success: function(file, response){-->
-<!--                        var imgName = response.serFileNM;-->
-<!--                        var oriName = response.orgFileNM;-->
-<!--                        if(imgName != ''){-->
-<!--                            var adClass = imgName.replace('.',"");-->
-<!--                            file.previewElement.classList.add("dz-success");-->
-<!--                            file.previewElement.classList.add(adClass);-->
-<!--                            var html = '<input type="hidden" name="serverFileNM" value="'+imgName+'">';-->
-<!--                            html += '<input type="hidden" name="oriFileNM" value="'+oriName+'">';-->
-<!--                            $("."+adClass).append(html);-->
-<!--                        }-->
-<!--                    }-->
-<!--                },error : function(file, response){-->
-<!--                    file.previewElement.classList.add("dz-maxsize-error");-->
-<!--                    alert("파일은 최대 4개까지만 업로드 가능합니다.");-->
-<!--                    $(".dz-maxsize-error").empty();-->
-<!--                }-->
-<!--    );-->
-    </script>
 </head>
-
 <body>
-<form action="{% url 'upload' %}" class="dropzone" method="post" enctype="multipart/form-data">
-    {% csrf_token %}
+<style>
+    #container {
+        display: flex;
+    }
 
-</form>
-<input type="submit" value="start" onclick="location.href='{% url 'result' %}'">
+    .diagonal {
+        -webkit-transform: rotate(15deg);
+        -moz-transform: rotate(15deg);
+        -o-transform: rotate(15deg);
+        -ms-transform: rotate(15deg);
+        transform: rotate(15deg);
+    }
+
+    input {
+        background: #1AAB8A;
+        color: #fff;
+        border: none;
+        position: relative;
+        height: 60px;
+        font-size: 1.6em;
+        padding: 0 2em;
+        cursor: pointer;
+        transition: 800ms ease all;
+        outline: none;
+    }
+
+    input:hover {
+        background: #fff;
+        color: #1AAB8A;
+    }
+
+    input:before, input:after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 2px;
+        width: 0;
+        background: #1AAB8A;
+        transition: 400ms ease all;
+    }
+
+    input:after {
+        right: inherit;
+        top: inherit;
+        left: 0;
+        bottom: 0;
+    }
+
+    input:hover:before, input:hover:after {
+        width: 100%;
+        transition: 800ms ease all;
+    }
+</style>
+<!-- header -->
+<header>
+    <div id='header container' style="text-align: center">
+        <div id="header1" style="float: left; width:50%;">
+            <img src="{% static 'Main_engine/images/service_logo.png' %}" style="width: 100%; height: auto;"></div>
+
+        <div id="header2" style="float: right; width:50%;">
+            <img src="{% static 'Main_engine/images/team_logo.png' %}" style="width: 40%; height: auto; float: right;"
+                 class="diagonal"></div>
+    </div>
+    <h1 style="text-align:center">&nbsp;</h1>
+</header>
+<!-- header end -->
+<!-- section -->
+<main class="row align-items-center row justify-content-md-center" style="width: 100%; padding: 3%;">
+
+    <div id='container' style="text-align: center; width: 100%;">
+        <div style="float:left; width:50%; padding:15px; vertical-align: middle">
+            <h1 id="Try-it-out-1" class="strings_try">Stand Binary Try it out!</h1>
+            <div id="dropzone 1">
+                <form action="{% url 'upload' %}" class="dropzone needsclick dz-clickable" id="upload-1">
+                    {% csrf_token %}
+                    <div class="dz-message needsclick">
+                        Comparison standard file drop zone<br>
+                        (Drop only Windows PE File)<br>
+                        <div class="dz-message info">
+                            <em>(This is demo service. File size limit:<strong> 2MB / 1EA</strong>)</em>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- <div style=" float: right; width: 5%; padding:10px; font-size: 4rem; text-align: center;"> </div> -->
+        <div style="float:right; width: 50%; padding:15px; vertical-align: middle">
+            <h1 id="Try-it-out-2" class="strings_try">Tartget Binary Try it out!</h1>
+            <div id="dropzone 2">
+                <form action="{% url 'upload' %}" class="dropzone needsclick dz-clickable" id="upload-2">
+                    {% csrf_token %}
+                    <div class="dz-message needsclick">
+                        Comparison target file drop zone<br>
+                        (Drop only Windows PE File)<br>
+                        <div class="dz-message info">
+                            <em>(This is demo service. File size limit:<strong> 2MB / 3EA</strong>)</em>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div style="float: left; padding: 10px;">
+        <input class="" type="submit" value="start" onclick="location.href='{% url 'result' %}'">
+    </div>
+</main>
+
+<!-- section end -->
+<!-- Footer -->
+<footer>
+    <p style="text-align: center; font-size: 1.5rem; color:black"><strong>Recent Scans | About</strong></p>
+    <p style="text-align: center; color:black">© 2019 Best of the Best Team. Breakers – WinBinary Diffing Tools v0.1
+        Beta. All Rights Reserved</p>
+</footer>
+<!-- Footer end -->
 </body>
 </html>
+<!--
+<style>
+@import url("https://fonts.googleapis.com/css?family=Noto+Sans+KR&display=swap");
+html, body {
+    height:100%; overflow:hidden
+}
+body{
+    font-family: 'Noto Sans KR', sans-serif;
+    background-image: url('../Main_engine/static/Main_engine/images/bg.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+h1, h2, h3, table th, table th .header {
+    font-size: 3rem;
+    color: #0087F7;
+    line-height: 2.2rem;
+}
+html, body {
+  margin: 0;
+  height: 100%;
+}
+body {
+  display: flex;
+  flex-direction: column;
+}
+header, footer {
+  flex: none;
+}
+main {
+    flex: auto;
+}
+.strings_try{
+    text-align:center;
+    word-break:nowrap;
+    display:inline-block;
+    text-overflow:clip;
+    white-space:nowrap;
+}
+</style>
+-->

@@ -156,7 +156,6 @@
                 select_file.appendChild(option);
             }
             select_file.selectedIndex = 0;
-            change_table();
             /* 기준이 변하면 테이블이 변경될 수 있도록 */
             function change_table() {
                 /* 기준이 변할때마다 테이블을 지우고 새로 시작 */
@@ -204,6 +203,7 @@
                     }
                 }
             }
+            change_table();
         </script>
     </div>
     {% else %}
