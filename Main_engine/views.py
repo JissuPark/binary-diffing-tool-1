@@ -6,6 +6,7 @@ from django.contrib import messages
 from Main_engine import main_engine
 from collections import OrderedDict
 from .models import PE_info
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 import json, os
 
@@ -20,7 +21,20 @@ def recent(request):
 
 def pe(request):
     pe_ = PE_info.objects.all()
-    return render(request, 'Main_engine/pe.html', {'pe_': pe_})
+    pe_list = PE_info.objects.all()
+
+    paginator = Paginator(pe_list, 1)
+
+    page = request.GET.get('page')
+
+    try:
+        lists = paginator.get_page(page)
+    except PageNotAnInteger:
+        lists = paginator.page(1)
+    except EmptyPage:
+        lists = paginator.page(paginator.num_pages)
+
+    return render(request, 'Main_engine/pe.html', {'pe_': pe_, 'lists': lists})
 
 def cfg(request):
     return render(request, 'Main_engine/cfg.html')
