@@ -1,58 +1,82 @@
 {% extends "Main_engine/layout.html" %}
 
-{% block title %} PE page {% endblock %}
-
 {% block head %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'Main_engine/css/pe.css' %}">
-{% endblock head %}
+<link href="{% static 'Main_engine/css/pe.css' %}" rel="stylesheet">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+{% endblock %}
 
 {% block section %}
-<div class="mt-5"></div>
+<br><br><br>
+{% for pe in lists %}
 <div class="header">
     <h3 align="left">Basic Properties</h3>
 </div>
-<table class="table table-borderless" width="800" height="400" align="left">
+<table align="left" class="table table-borderless" height="400" width="800">
     <tr>
         <th>File name</th>
-        <!--DB에서 가져온 데이터가 들어갈 부분-->
-        <td>d9ab4d752792811644273094b62153c1f61d4bcfae6cff5462c25b665bc5f290</td>
-
+        <td>{{pe.filename}}</td>
     </tr>
     <tr>
         <th>File size</th>
-        <td>76.75KB(78596 bytes)</td>
-
+        <td>{{pe.filesize}}</td>
     </tr>
     <tr>
         <th>File type</th>
-        <td>PE32 executable (GUI) Intel 80386, for MS Windows</td>
+        <td>{{pe.filetype}}</td>
     </tr>
     <tr>
         <th>MD5</th>
-        <td>B20B4D925505B46C40785E3E8198DA99</td>
+        <td>{{pe.md5}}</td>
     </tr>
     <tr>
         <th>SHA-1</th>
-        <td>5d93a0f3a2539b2276e816ed4ee16842ea5a75fb</td>
+        <td>{{pe.sha_1}}</td>
     </tr>
     <tr>
         <th>SHA-256</th>
-        <td>d9ab4d752792811644273094b62153c1f61d4bcfae6cff5462c25b665bc5f290</td>
+        <td>{{pe.sha_256}}</td>
     </tr>
     <tr>
         <th>Imphash</th>
-        <td>587BF55EB237BB0EE3C9D753B5B27E23</td>
+        <td>{{pe.imphash}}</td>
     </tr>
     <tr>
         <th>SSDEEP</th>
-        <td>1536:nLNIW39SaZTbFARlq7jC1OZstZu0TS3gEdUJCkb0FGK:nLlbZTZX3BAtTS3gEdUJCkb0FGK</td>
+        <td>{{pe.ssdeep}}</td>
     </tr>
     <tr>
         <th>TimeStamp</th>
-        <td>Sat Jan 30 00:31:12 2016 UTC</td>
+        <td>{{pe.timestamp}}</td>
     </tr>
 </table>
-
-
+{% endfor %}
 {% endblock section %}
+
+{% block foot %}
+{% if lists.has_other_pages %}
+<nav aria-label="Page navigation example">
+    <div style="position: relative; left: 600px;">
+        <ul class="pagination">
+            {% if lists.has_previous %}
+            <li class="page-item">
+                <a aria-label="Previous" class="page-link" href="?page={{ lists.previous_page_number }}">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            {% endif %}
+            {% for i in lists.paginator.page_range %}
+                <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+            {% endfor %}
+            {% if lists.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ lists.next_page_number }}" aria-label="Next" >
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
+{% endif %}
+{% endblock foot %}

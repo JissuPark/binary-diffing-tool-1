@@ -6,6 +6,7 @@ from django.contrib import messages
 from Main_engine import main_engine
 from collections import OrderedDict
 from .models import PE_info
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 import json, os
 
@@ -19,7 +20,21 @@ def recent(request):
     return render(request, 'Main_engine/recent.html')
 
 def pe(request):
-    return render(request, 'Main_engine/pe.html')
+    pe_ = PE_info.objects.all()
+    pe_list = PE_info.objects.all()
+
+    paginator = Paginator(pe_list, 1)
+
+    page = request.GET.get('page', 1)
+
+    try:
+        lists = paginator.get_page(page)
+    except PageNotAnInteger:
+        lists = paginator.page(1)
+    except EmptyPage:
+        lists = paginator.page(paginator.num_pages)
+
+    return render(request, 'Main_engine/pe.html', {'pe_': pe_, 'lists': lists})
 
 def cfg(request):
     with open(r"C:\malware\test.txt", 'rb') as test:
@@ -33,12 +48,10 @@ def call_main(request):
         result_file = open(r"C:\malware\all_result\result.txt", 'rb').read()
         result = json.loads(result_file)
     else:
-        result_engine = main_engine.start_engine()
+        result = main_engine.start_engine()
 
         with open(r"C:\malware\all_result\result.txt", 'w') as res:
-            json.dump(result_engine, res, ensure_ascii=False, indent='\t')
-        result = json.dumps(result_engine, indent=4, default=str)
-    #result = main_engine.start_engine()
+            json.dump(result, res, ensure_ascii=False, indent='\t')
 
     pe_ = PE_info.objects.order_by('timenum').all()
 
@@ -93,3 +106,6 @@ def handle_uploaded_file(file):
     with open('C:\\malware\\mal_exe\\'+file.name, 'wb+') as uploaded_file:
         for chunk in file.chunks():
             uploaded_file.write(chunk)
+
+def test(request):
+    return render(request, 'Main_engine/result.html')
