@@ -326,6 +326,7 @@ def create_folder():
         if os.path.exists(path):
             os.chmod(path, 0o777)
             shutil.rmtree(path)
+            os.chmod(root_path, 0o777)
             os.makedirs(path)
         else:
             os.chmod(root_path, 0o777)

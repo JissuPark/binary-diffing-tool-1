@@ -22,7 +22,10 @@ def pe(request):
     return render(request, 'Main_engine/pe.html')
 
 def cfg(request):
-    return render(request, 'Main_engine/cfg.html')
+    with open(r"C:\malware\test.txt", 'rb') as test:
+        cfg_ = json.loads(test.read())
+    return render(request, 'Main_engine/cfg.html', {'cfg_': cfg_})
+
 
 def call_main(request):
 
