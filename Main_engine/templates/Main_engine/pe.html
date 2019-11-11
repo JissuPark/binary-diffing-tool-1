@@ -5,11 +5,11 @@
 {% endblock %}
 {% block section %}
 <br><br><br>
-{% for pe in pe_ %}
+
 <div class="header">
     <h3 align="left">Basic Properties</h3>
 </div>
-
+{% for pe in pe_ %}
 <table align="left" class="table table-borderless" height="400" width="800">
     <tr>
         <th>File name</th>
@@ -45,5 +45,6 @@
         <td>{{pe.timestamp}}</td>
     </tr>
 </table>
+
 {% endfor %}
 {% endblock section %}
