@@ -16,12 +16,10 @@ class PE_info(models.Model):
     filename = models.CharField(max_length=100, primary_key=True)
     filesize = models.TextField()
     filetype = models.TextField()
-    md5hash = models.TextField()
-    sha_1 = models.TextField()
     sha_256 = models.TextField()
-    imphash = models.TextField()
-    ssdeephash = models.TextField()
     timestamp = models.TextField()
+    year = models.TextField(null=True)
+    timenum = models.BigIntegerField(null=True)
     cdate = models.DateTimeField(auto_now_add=True)
 
 class Result(models.Model):

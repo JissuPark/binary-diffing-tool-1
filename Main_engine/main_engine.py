@@ -7,6 +7,7 @@ import os
 from multiprocessing import Process, Queue, Manager
 from collections import OrderedDict
 import pefile
+import shutil
 django.setup()
 
 from Main_engine.Extract_Engine import pe2idb
@@ -19,6 +20,7 @@ from Main_engine.Unpacking import unpack_module
 from Main_engine.models import *
 
 idb_file_path = "C:\\malware\\all_result\\idb\\"
+pe_file_path = "C:\\malware\\all_result\\pe\\"
 
 class Pe_Files_Check:
     '''
@@ -70,6 +72,7 @@ class Pe_Files_Check:
         # 그리고 서버 파일시스템 내에서 둘 중 하나의 파일은 지운다.
         # 일단 더 먼저 나오는 파일을 살리고 아닌 파일은 삭제하도록 하였다. 어차피 동일 파일이니깐.
 
+        # all_result 안에 결과를 저장하는 부분
         with open(r"C:\malware\all_result\test_pelist.txt", 'w') as pelist:
             json.dump(self.pe_hash_dict, pelist, ensure_ascii=False, indent='\t')
 
@@ -115,10 +118,14 @@ def multiprocess_file(q, return_dict, flag):
 
             try:
                 file = Filter.objects.get(filehash=file_filter)
+            except Filter.DoesNotExist:
+                file = None
+
+            if file is not None:
                 fd1 = open(file.idb_filepath + ".txt", "rb").read()
                 info = json.loads(fd1, encoding='utf-8')
                 print('idb존재함')
-            except:
+            elif file is None:
                 info = extract_asm_and_const.basicblock_idb_info_extraction(f_path)  # 함수대표값 및 상수값 출력
                 with open(r"C:\malware\all_result\idb" + "\\" + file_filter + ".txt", 'w') as makefile:
                     json.dump(info, makefile, ensure_ascii=False, indent='\t')
@@ -130,39 +137,36 @@ def multiprocess_file(q, return_dict, flag):
             file_filter2 = f_path[f_path.rfind('\\') + 1:]
 
             try:
-                print(file_filter2)
                 pe_file = Filter.objects.get(filehash=file_filter2)
-                print(pe_file.pe_filepath)
-                if pe_file.pe_filepath is not None:
-                    fd1 = open(pe_file.pe_filepath + ".txt", "rb").read()
-                    info = json.loads(fd1, encoding='utf-8')
-                    print('pe존재함')
-                else:
-                    try:
-                        pe = pefile.PE(f_path)
-                        #DB에 담길 pe meta data -> pe_info_DB에 담음
-                        info, pe_info_DB = extract_pe.Pe_Feature(f_path, pe).all()  # pe 속성 출력
-                        with open(r"C:\malware\all_result\pe" + "\\" + file_filter2 + ".txt", 'w') as makefile:
-                            json.dump(info, makefile, ensure_ascii=False, indent='\t')
-                        print('ads')
-                        # pe_file.pe_filepath(pe_file_path + file_filter2)
-                        # pefile.save()
-                        print('pe없음')
-                    except:
-                        print('pe error !')
-                        continue
+                print(pe_file)
+            except Filter.DoesNotExist:
+                print('jaeho')
+                pe_file = None
+
+            try:
+                pe_f = pe_file.pe_filepath
             except:
+                pe_f = None
+
+            if pe_f is not None:
+                fd1 = open(pe_file.pe_filepath + ".txt", "rb").read()
+                info = json.loads(fd1, encoding='utf-8')
+                print('pe존재함')
+            elif pe_f is None:
                 try:
                     pe = pefile.PE(f_path)
+                    #DB에 담길 pe meta data -> pe_info_DB에 담음
                     info, pe_info_DB = extract_pe.Pe_Feature(f_path, pe).all()  # pe 속성 출력
                     with open(r"C:\malware\all_result\pe" + "\\" + file_filter2 + ".txt", 'w') as makefile:
                         json.dump(info, makefile, ensure_ascii=False, indent='\t')
-                    tmp = Filter.objects.get(filehash=file_filter2)
-                    # tmp.update(pe_filepath=pe_file_path + file_filter2)
-                    print('없음')
+                    print('시발 왜 에러뜸')
+                    pe_file.pe_filepath = pe_file_path + file_filter2
+                    pe_file.save()
+                    print('pe없음')
                 except:
                     print('pe error !')
                     continue
+
 
         return_dict[f_path] = info
 
@@ -236,11 +240,11 @@ class Analyze_files:
                 '''
         # 최종 휴리스틱 스코어
 
-        real_final = OrderedDict()
+        real_final = dict()
 
         for key_i, key_pe in zip(idb_result.items(), pe_result.items()):
-            idb_final_score = OrderedDict()
-            pe_final_score = OrderedDict()
+            idb_final_score = dict()
+            pe_final_score = dict()
             for value_i, value_pe in zip(key_i[1].items(), key_pe[1].items()):
                 semifinal = [0, 0, 0, 0, 0, 0, 0, 0, 0]
                 semifinal[0] = (value_pe[1]['file_hash'])
@@ -312,6 +316,21 @@ def out_xlsx(path, result_dict):
     wb.save(path)
 
 
+def create_folder():
+    # mal_exe는 drag&drop할 때 먼저 생성됨
+    # mal_idb, all_result(idb, pe) 가 없으면 생성
+    # 있으면 폴더 내 파일 전체 제거
+    root_path = r"C:\malware"
+    default_path = [r"C:\malware\mal_idb",r"C:\malware\all_result", r"C:\malware\all_result\idb", r"C:\malware\all_result\pe"]
+    for path in default_path:
+        if os.path.exists(path):
+            os.chmod(path, 0o777)
+            shutil.rmtree(path)
+            os.makedirs(path)
+        else:
+            os.chmod(root_path, 0o777)
+            os.makedirs(path)
+
 
 def start_engine():
     '''
@@ -323,7 +342,8 @@ def start_engine():
     IDB_PATH = r"C:\malware\mal_idb"
     RESUT_IDB_PATH = r"C:\malware\all_result_idb"
     RESUT_PE_PATH = r"C:\malware\all_result_pe"
-
+    # 0. 없는 폴더 먼저 생성
+    create_folder()
     # 1. pe 해시 체크 (동일한 파일 필터), 2.패킹 체크
     pe_check = Pe_Files_Check(PATH)
     file_hash_dict = pe_check.get_unique_pe_list()

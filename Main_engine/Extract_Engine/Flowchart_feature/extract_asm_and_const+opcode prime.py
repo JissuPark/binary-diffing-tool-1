@@ -1,6 +1,7 @@
 import json
 import timeit
 import idb
+import idb.analysis
 import hashlib
 from Main_engine.Extract_Engine.Flowchart_feature import const_filter_indexs
 from fractions import Fraction
@@ -41,9 +42,10 @@ class basic_block(idb_info):
             for basicblock in function_flowchart:
                 curaddr = basicblock.startEA
                 endaddr = basicblock.endEA
-
-                if (endaddr - curaddr) < 30:  # 최소 바이트 50이상 할것
-                    continue
+                # for succ in basicblock.succs():
+                #     print(f"{hex(curaddr)} -> {hex(succ.startEA)}, {hex(succ.endEA)}")
+                # if (endaddr - curaddr) < 30:  # 최소 바이트 50이상 할것
+                #     continue
 
                 opcodes = list()
                 hex_opcodes = list()
@@ -162,12 +164,12 @@ class basic_block(idb_info):
 
 def main(api, file_name):
     function_dicts = {}
-
     for fva in api.idautils.Functions():
         # 함수이름 출력
         fname = api.idc.GetFunctionName(fva).lower()
         if 'dllentry' in fname or fname[:3] == 'sub' or fname[:5] == 'start' or fname.find('main') != -1:
             # main or start or sub_***** function. not library function
+            print(f"func_name is {fname}")
             basicblock = basic_block(api, fva, fname)
             # 베이직 블록 정보 추출 함수 실행
             basicblock_function_dicts = basicblock.bbs(function_dicts, file_name)
@@ -321,23 +323,23 @@ def diff_prime_set(standard, target):
     print(f"[debug] Total score : {f_result_score}")
 
 
-
 if __name__ == "__main__":
     s = timeit.default_timer()  # start time
-    # PATH1 = r"C:\malware\mid_idb\41A004EBB42648DCA2AFA78680FD70DFEC9DA8C5190C2CF383A7C668A1C4C38F.idb"
-    # idb_sub_function_info1 = basicblock_idb_info_extraction(PATH1)
-    # PATH2 = r"C:\malware\mid_idb\49B769536224F160B6087DC866EDF6445531C6136AB76B9D5079CE622B043200.idb"
-    # idb_sub_function_info2 = basicblock_idb_info_extraction(PATH2)
-    #
-    # with open(r"C:\malware\result\test1.txt", 'w') as makefile:
-    #     json.dump(idb_sub_function_info1, makefile, ensure_ascii=False, indent='\t')
-    # with open(r"C:\malware\result\test2.txt", 'w') as makefile:
-    #     json.dump(idb_sub_function_info2, makefile, ensure_ascii=False, indent='\t')
+    PATH1 = r"C:\malware\mal_idb\28EE788423E10E4040D9B80DB9DBD2B85E8F992C89D01D21356C65074B2DFD88.idb"
+    idb_sub_function_info1 = basicblock_idb_info_extraction(PATH1)
+    PATH2 = r"C:\malware\mal_idb\65D0CF34F6266EB246B75A9012BA84D9821351F7C9E9E8FFE831E3B68CDCFB56.idb"
+    idb_sub_function_info2 = basicblock_idb_info_extraction(PATH2)
 
-    fd1 = open(r"C:\malware\result\test1.txt", 'rb').read()
+    with open(r"C:\malware\all_result\test1.txt", 'w') as makefile:
+        json.dump(idb_sub_function_info1, makefile, ensure_ascii=False, indent='\t')
+    with open(r"C:\malware\all_result\test2.txt", 'w') as makefile:
+        json.dump(idb_sub_function_info2, makefile, ensure_ascii=False, indent='\t')
+
+    fd1 = open(r"C:\malware\all_result\test1.txt", 'rb').read()
     arg1 = json.loads(fd1, encoding='utf-8')
-    fd2 = open(r"C:\malware\result\test2.txt", 'rb').read()
+    fd2 = open(r"C:\malware\all_result\test2.txt", 'rb').read()
     arg2 = json.loads(fd2)
+
 
     print(f"[analyze]Analyze Start!")
     # 첫번째로 들어오는게 기준, 두번째가 타겟
