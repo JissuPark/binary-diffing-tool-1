@@ -20,12 +20,13 @@ def recent(request):
     return render(request, 'Main_engine/recent.html')
 
 def pe(request):
-    pe_list = PE_info.objects.order_by('timenum').all()
-    paginator = Paginator(pe_list, 1)
+
+    pe_ = PE_info.objects.order_by('timenum').all()
+    paginator = Paginator(pe_, 1)
     page = request.GET.get('page')
     posts = paginator.get_page(page)
 
-    return render(request, 'Main_engine/pe.html',{'pe_list':pe_list, 'pots':posts})
+    return render(request, 'Main_engine/pe.html',{'pe_':pe_, 'pots':posts})
 
 def cfg(request):
     return render(request, 'Main_engine/cfg.html')
