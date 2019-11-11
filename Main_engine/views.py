@@ -19,7 +19,8 @@ def recent(request):
     return render(request, 'Main_engine/recent.html')
 
 def pe(request):
-    return render(request, 'Main_engine/pe.html')
+    pe_ = PE_info.objects.all()
+    return render(request, 'Main_engine/pe.html', {'pe_': pe_})
 
 def cfg(request):
     return render(request, 'Main_engine/cfg.html')

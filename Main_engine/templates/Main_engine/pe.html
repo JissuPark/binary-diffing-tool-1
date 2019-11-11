@@ -5,49 +5,46 @@
 {% endblock %}
 {% block section %}
 <br><br><br>
-<div id=wrapper">
-    <div class="header">
-        <h3 align="left">Basic Properties</h3>
-    </div>
-    <table align="left" class="table table-borderless" height="400" width="800">
-        <tr>
-            <th>File name</th>
-            <!--DB에서 가져온 데이터가 들어갈 부분-->
-            <td>d9ab4d752792811644273094b62153c1f61d4bcfae6cff5462c25b665bc5f290</td>
-        </tr>
-        <tr>
-            <th>File size</th>
-            <td>76.75KB(78596 bytes)</td>
-        </tr>
-        <tr>
-            <th>File type</th>
-            <td>PE32 executable (GUI) Intel 80386, for MS Windows</td>
-        </tr>
-        <tr>
-            <th>MD5</th>
-            <td>B20B4D925505B46C40785E3E8198DA99</td>
-        </tr>
-        <tr>
-            <th>SHA-1</th>
-            <td>5d93a0f3a2539b2276e816ed4ee16842ea5a75fb</td>
-        </tr>
-        <tr>
-            <th>SHA-256</th>
-            <td>d9ab4d752792811644273094b62153c1f61d4bcfae6cff5462c25b665bc5f290</td>
-        </tr>
-        <tr>
-            <th>Imphash</th>
-            <td>587BF55EB237BB0EE3C9D753B5B27E23</td>
-        </tr>
-        <tr>
-            <th>SSDEEP</th>
-            <td>1536:nLNIW39SaZTbFARlq7jC1OZstZu0TS3gEdUJCkb0FGK:nLlbZTZX3BAtTS3gEdUJCkb0FGK</td>
-        </tr>
-        <tr>
-            <th>TimeStamp</th>
-            <td>Sat Jan 30 00:31:12 2016 UTC</td>
-        </tr>
-    </table>
+{% for pe in pe_ %}
+<div class="header">
+    <h3 align="left">Basic Properties</h3>
 </div>
+
+<table align="left" class="table table-borderless" height="400" width="800">
+    <tr>
+        <th>File name</th>
+        <!--DB에서 가져온 데이터가 들어갈 부분-->
+        <td>{{pe.filename}}</td>
+    </tr>
+    <tr>
+        <th>File size</th>
+        <td>{{pe.filesize}}</td>
+    </tr>
+    <tr>
+        <th>File type</th>
+        <td>{{pe.filetype}}</td>
+    </tr>
+    <tr>
+        <th>MD5</th>
+        <td>{{pe.md5}}</td>
+    </tr>
+    <tr>
+        <th>SHA-1</th>
+        <td>{{pe.sha_1}}</td>
+    </tr>
+    <tr>
+        <th>SHA-256</th>
+        <td>{{pe.sha_256}}</td>
+    </tr>
+    <tr>
+        <th>SSDEEP</th>
+        <td>{{pe.ssdeep}}</td>
+    </tr>
+    <tr>
+        <th>TimeStamp</th>
+        <td>{{pe.timestamp}}</td>
+    </tr>
+</table>
+{% endfor %}
 {% endblock section %}
 
