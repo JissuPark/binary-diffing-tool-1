@@ -23,6 +23,7 @@ class PE_info(models.Model):
     timestamp = models.TextField(null=True)
     year = models.TextField(null=True)
     timenum = models.BigIntegerField(null=True)
+    imphash = models.TextField(null=True)
     cdate = models.DateTimeField(auto_now_add=True)
 
 class Result(models.Model):

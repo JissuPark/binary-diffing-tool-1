@@ -7,9 +7,12 @@
 {% load static %} <!-- static files are loaded -->
 <link href="{% static 'Main_engine/css/result_sort.css' %}" rel="stylesheet">
 <link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet" media="screen">
+<link href="{% static 'Main_engine/css/fakeLoaer.css' %}">
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>-->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="{% static 'Main_engine/js/jquery.timelinr-0.9.7.js' %}"></script>
+<script src="{% static 'Main_engine/js/fakeLoader.js' %}"></script>
 <script>
     $(function () {
         $().timelinr({
@@ -22,6 +25,8 @@
 {% block section %}
 
 {% load static %}
+
+
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-5">
     <h3>분석 결과</h3>
     <div class="btn-toolbar mb-2 mb-md-0">
@@ -205,4 +210,5 @@
     <h1>There is not result!</h1>
     {% endif %}
 </div>
+
 {% endblock section %}
