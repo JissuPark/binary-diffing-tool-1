@@ -157,3 +157,8 @@ section,h1 {
   padding:10px;
 }
 
+ .my-hr3 {
+    border: 0;
+    height: 2px;
+    background: #dee2e6;
+    }

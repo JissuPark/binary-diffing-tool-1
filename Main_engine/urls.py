@@ -7,9 +7,9 @@ from Main_engine import main_engine
 # URL을 찾기위한 패턴 매칭 리스트
 urlpatterns = [
     path('', views.showindex),
+    path('home', views.showindex),
     path('upload', views.upload_file_dropzone, name='upload'), #파일 업로드 기능 구현
     path('result', views.call_main, name='result'),
-    path('recent', views.recent, name='recent'),
     path('pe', views.pe, name='pe'),
     path('cfg', views.cfg, name='cfg'),
 ]
