@@ -155,11 +155,9 @@ def multiprocess_file(q, return_dict, flag):
             elif pe_f is None:
                 try:
                     pe = pefile.PE(f_path)
-                    #DB에 담길 pe meta data -> pe_info_DB에 담음
                     info, pe_info_DB = extract_pe.Pe_Feature(f_path, pe).all()  # pe 속성 출력
                     with open(r"C:\malware\all_result\pe" + "\\" + file_filter2 + ".txt", 'w') as makefile:
                         json.dump(info, makefile, ensure_ascii=False, indent='\t')
-                    print('시발 왜 에러뜸')
                     pe_file.pe_filepath = pe_file_path + file_filter2
                     pe_file.save()
                     print('pe없음')
@@ -220,9 +218,6 @@ class Exract_Feature:
                 with open(r"C:\malware\all_result\pe"+"\\" + dict_list['file_name'] + ".txt", 'w') as makefile:
                     json.dump(dict_list, makefile, ensure_ascii=False, indent='\t')
 
-                # 실제론 db 저장(?)
-                #
-                #
             return export_pe
         else:
             return False
@@ -319,18 +314,25 @@ def out_xlsx(path, result_dict):
 def create_folder():
     # mal_exe는 drag&drop할 때 먼저 생성됨
     # mal_idb, all_result(idb, pe) 가 없으면 생성
-    # 있으면 폴더 내 파일 전체 제거
-    root_path = r"C:\malware"
-    default_path = [r"C:\malware\mal_idb",r"C:\malware\all_result", r"C:\malware\all_result\idb", r"C:\malware\all_result\pe"]
+
+    default_path = ["C:\\malware\\mal_idb\\","C:\\malware\\all_result\\", "C:\\malware\\all_result\\idb", "C:\\malware\\all_result\\pe\\"]
     for path in default_path:
         if os.path.exists(path):
-            os.chmod(path, 0o777)
-            shutil.rmtree(path)
-            os.makedirs(path)
+            continue
         else:
-            os.chmod(root_path, 0o777)
             os.makedirs(path)
 
+def delete_file():
+    default_path = ["C:\\malware\\mal_idb\\", "C:\\malware\\mal_exe\\"]
+
+    for path in default_path:
+        if os.path.exists(path):
+            for file in os.scandir(path):
+                print(file.path)
+                os.remove(file.path)
+            print('Remove All File')
+        else:
+            print('Directory Not Found')
 
 def start_engine():
     '''
@@ -377,6 +379,7 @@ def start_engine():
     all_result = analyze.calculate_heuristic(result_idb, result_pe)
 
     #out_xlsx(r"C:\malware\result\test.xlsx", all_result)
+    delete_file()
 
     return all_result
 

@@ -34,12 +34,10 @@ def call_main(request):
         result_file = open(r"C:\malware\all_result\result.txt", 'rb').read()
         result = json.loads(result_file)
     else:
-        result_engine = main_engine.start_engine()
+        result = main_engine.start_engine()
 
         with open(r"C:\malware\all_result\result.txt", 'w') as res:
-            json.dump(result_engine, res, ensure_ascii=False, indent='\t')
-        result = json.dumps(result_engine, indent=4, default=str)
-    #result = main_engine.start_engine()
+            json.dump(result, res, ensure_ascii=False, indent='\t')
 
     pe_ = PE_info.objects.order_by('timenum').all()
 
@@ -94,3 +92,6 @@ def handle_uploaded_file(file):
     with open('C:\\malware\\mal_exe\\'+file.name, 'wb+') as uploaded_file:
         for chunk in file.chunks():
             uploaded_file.write(chunk)
+
+def test(request):
+    return render(request, 'Main_engine/result.html')

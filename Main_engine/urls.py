@@ -8,7 +8,7 @@ from Main_engine import main_engine
 urlpatterns = [
     path('', views.showindex),
     path('upload', views.upload_file_dropzone, name='upload'), #파일 업로드 기능 구현
-    path('result', views.call_main, name='result'),
+    path('result', views.test, name='result'),
     path('recent', views.recent, name='recent'),
     path('pe', views.pe, name='pe'),
     path('cfg', views.cfg, name='cfg'),
