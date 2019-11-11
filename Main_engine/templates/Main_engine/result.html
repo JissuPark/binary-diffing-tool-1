@@ -41,6 +41,7 @@
     </div>
 </div>
 
+<br>
 <h5 id="timeline2">time line</h5>
 <div id="tileline_frame">
   <div id="timeline">
@@ -71,8 +72,9 @@
 </div>
 {#휴리스틱 스코어부분 #}
 <!--원래 있던 차트 부분-->
-<br>
-<h5 id="heuristic" class="mt-2 mb-3">휴리스틱 점수</h5>
+<br><br>
+
+<hr class="my-hr3"><h5 id="heuristic" class="mt-2 mb-3" style="font-weight: bold;">휴리스틱 점수</h5><hr class="my-hr3">
 <!--원래 있던 차트 부분-->
 <div class="justify-content-center ml-5" style="display: inline-flex;">
     <div class="row ml-3 mr-5">
@@ -103,9 +105,10 @@
         </div>
     </div>
 </div>
+<br>
+<br>
 
-{#휴리스틱 스코어 종료#}
-<h5 id="scoretable" class="mt-2 mb-3">나머지 타겟점수</h5>
+<hr class="my-hr3"><h5 id="scoretable" class="mt-2 mb-3" style="font-weight: bold;">나머지 타겟점수</h5><hr class="my-hr3">
 <div class="table-responsive">
     {% csrf_token %}
     {% if result %}

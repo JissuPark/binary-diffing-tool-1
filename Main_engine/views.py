@@ -17,10 +17,10 @@ def showindex(request):
     return render(request, 'Main_engine/index.html')
 
 def recent(request):
-    return render(request, 'Main_engine/recent.html')
+    return render(request, 'Main_engine/index.html')
 
 def pe(request):
-    pe_list = PE_info.objects.all()
+    pe_list = PE_info.objects.order_by('timenum').all()
 
     paginator = Paginator(pe_list, 1)
 
