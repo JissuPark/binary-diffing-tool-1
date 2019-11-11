@@ -186,7 +186,8 @@ class Pe_Feature:
             'File Certification': Cert
         }
 
-        PE_info.objects.create(filename=f_name, filesize=file_size, filetype=file_type,sha_256=sha256,timestamp=TimeStamp,year=Year, timenum=TimeInNum)
+        PE_info.objects.create(filename=f_name, filesize=file_size, filetype=file_type,sha_256=sha256,timestamp=TimeStamp,year=Year, timenum=TimeInNum,
+                               ssdeep=ssdeep_hash,sha_1=sha1,md5=MD5)
 
         return pe_features, pe_features_for_DB
 
