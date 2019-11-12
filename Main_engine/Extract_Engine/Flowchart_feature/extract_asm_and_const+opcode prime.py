@@ -167,7 +167,7 @@ def main(api, file_name):
     for fva in api.idautils.Functions():
         # 함수이름 출력
         fname = api.idc.GetFunctionName(fva).lower()
-        if 'dllentry' in fname or fname[:3] == 'sub' or fname[:5] == 'start' or fname.find('main') != -1:
+        if fname[:3] == 'sub' or 'dllentry' in fname or fname[:5] == 'start' or fname.find('main') != -1:
             # main or start or sub_***** function. not library function
             print(f"func_name is {fname}")
             basicblock = basic_block(api, fva, fname)

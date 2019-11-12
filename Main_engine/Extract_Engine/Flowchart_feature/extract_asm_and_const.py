@@ -139,7 +139,7 @@ def main(api, file_name):
 
         fname = api.idc.GetFunctionName(fva).lower()
 
-        if 'dllentry' in fname or fname[:3] == 'sub' or fname[:5] == 'start' or fname.find('main') != -1:
+        if fname[:3] == 'sub' or 'dllentry' in fname or fname[:5] == 'start' or fname.find('main') != -1:
             # main or start or sub_***** function. not library function
             basicblock = basic_block(api, fva, fname)
 
