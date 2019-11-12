@@ -32,6 +32,8 @@ class basic_block(idb_info):
         function_dicts = dict()
         idb_info = dict()
         func_name_dicts[self.func_name] = dict()
+        flow_branch = list()
+
         # 함수 내에서 플로우 차트 추출
         try:
             function_flowchart = self.api.idaapi.FlowChart(self.function)
@@ -44,7 +46,6 @@ class basic_block(idb_info):
             try:
                 curaddr = basicblock.startEA
                 endaddr = basicblock.endEA
-
                 # if (endaddr - curaddr) < 30:  # 최소 바이트 50이상 할것
                 #     continue
 
@@ -53,6 +54,11 @@ class basic_block(idb_info):
                 disasms = list()
                 block_constant = list()  # block 단위의 상수 (ascii string 뽑기)
                 function_dicts[hex(curaddr)] = dict()
+
+
+                ''' 베이직 블로 브런치 추출 '''
+                for succ in basicblock.succs():
+                    flow_branch.append((hex(curaddr), hex(succ.startEA)))
 
                 # 베이직 블록 내 어셈블리어 추출
                 while curaddr < endaddr:
@@ -125,6 +131,7 @@ class basic_block(idb_info):
             func_name_dicts[self.func_name].update({'flow_opString': ' '.join(flow_opcode)})
             # flow_opString 붙이는 부분에서 상수 strings도 붙여야 함수단위 상수셋팅 가능
             func_name_dicts[self.func_name].update({'flow_constants': ' '.join(flow_constants)})
+            func_name_dicts[self.func_name].update({'flow_branches': flow_branch})
 
         idb_info['file_name'] = file_name
         idb_info['func_name'] = func_name_dicts
@@ -169,7 +176,7 @@ def basicblock_idb_info_extraction(FROM_FILE):
 if __name__ == "__main__":
 
     s = timeit.default_timer()  # start time
-    PATH = r"C:\malware\mal_idb\3e7715ac57003f8a80119ab348a7a7b260afde749cad3c56bd2d9ab931288f92.idb"
+    PATH = r"C:\malware\mal_idb\49B769536224F160B6087DC866EDF6445531C6136AB76B9D5079CE622B043200.idb"
     idb_sub_function_info = basicblock_idb_info_extraction(PATH)
 
     with open(r"C:\malware\all_result\test.txt", 'w') as makefile:
