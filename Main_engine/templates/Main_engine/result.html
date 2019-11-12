@@ -105,15 +105,12 @@
         </div>
     </div>
 </div>
-<br>
-<br>
-
+<br><br><br><br><br>
 <hr class="my-hr3"><h5 id="scoretable" class="mt-2 mb-3" style="font-weight: bold;">나머지 타겟점수</h5><hr class="my-hr3">
 <div class="table-responsive">
     {% csrf_token %}
     {% if result %}
     <div id="result_json">
-        this is result!
         <form name="select_form">
             <select id="select_file" onchange="change_table()"></select>
         </form>
@@ -121,7 +118,6 @@
             <thead>
             <tr>
                 <th rowspan="2" align=center>File Name</th>
-                <th rowspan="2">Timestamp</th>
                 <th colspan="2">Algorithm</th>
                 <th colspan="6">PE META data</th>
             </tr>
