@@ -36,9 +36,11 @@ def pe(request):
 
     return render(request, 'Main_engine/pe.html', {'pe_': pe_, 'lists': lists})
 
+
 def cfg(request):
-    with open(r"C:\malware\test.txt", 'rb') as test:
+    with open(r"C:\malware\all_result\test.txt", 'rb') as test:
         cfg_ = json.loads(test.read())
+
     return render(request, 'Main_engine/cfg.html', {'cfg_': cfg_})
 
 
