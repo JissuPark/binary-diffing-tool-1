@@ -44,6 +44,13 @@ def cfg(request):
     return render(request, 'Main_engine/cfg.html', {'cfg_': cfg_})
 
 
+def cg(request):
+    with open(r'C:\malware\all_result\cg.txt', 'rb') as cg:
+        cg_ = json.loads(cg.read())
+
+    return render(request, 'Main_engine/cg.html', {'cg': cg_})
+
+
 def call_main(request):
 
     if os.path.isfile(r"C:\malware\all_result\result.txt"):

@@ -56,7 +56,7 @@ class basic_block(idb_info):
                 function_dicts[hex(curaddr)] = dict()
 
 
-                ''' 베이직 블로 브런치 추출 '''
+                ''' 베이직 블로 브랜치 추출 '''
                 for succ in basicblock.succs():
                     flow_branch.append((hex(curaddr), hex(succ.startEA)))
 
@@ -140,11 +140,29 @@ class basic_block(idb_info):
 
 def main(api, file_name):
     function_dicts = dict()
-
+    func_name = list()
+    func_branch = list()
+    cg_dict = dict()
     for fva in api.idautils.Functions():
         # 함수이름 출력
 
         fname = api.idc.GetFunctionName(fva).lower()
+        func_name.append(fname)
+        for addr in api.idautils.XrefsTo(fva, 0):
+            try:
+                if not api.idc.GetDisasm(addr.src).find('call'):
+                    print(f"T : From {api.ida_funcs.get_func_name(api.ida_funcs.get_func(addr.src).startEA)}({hex(addr.src)}): To {fname}({hex(addr.dst)}) :{api.idc.GetDisasm(addr.src)}")
+                    func_branch.append((api.ida_funcs.get_func_name(api.ida_funcs.get_func(addr.src).startEA), fname))
+            except:
+                print(f"Error in {addr.src}")
+
+        # for addr in api.idautils.XrefsFrom(fva, 0):
+        #     try:
+        #         if not api.idc.GetDisasm(addr.src).find('call'):
+        #             print(
+        #                 f"F : From {fname}({hex(addr.src)}): To {api.ida_funcs.get_func_name(api.ida_funcs.get_func(addr.dst).startEA)}({hex(addr.dst)}) :{api.idc.GetDisasm(addr.src)}")
+        #     except:
+        #         print(f"Error in {addr.src}")
 
         if 'dllentry' in fname or fname[:3] == 'sub' or fname[:5] == 'start' or fname.find('main') != -1:
             # main or start or sub_***** function. not library function
@@ -152,7 +170,10 @@ def main(api, file_name):
 
             # 베이직 블록 정보 추출 함수 실행
             basicblock_function_dicts = basicblock.bbs(function_dicts, file_name)
-
+        cg_dict['f_name'] = func_name
+        cg_dict['f_branch'] = func_branch
+        with open(r'C:\malware\all_result\cg.txt', 'w') as file:
+            json.dump(cg_dict, file, ensure_ascii=False, indent='\t')
     return basicblock_function_dicts
 
 
