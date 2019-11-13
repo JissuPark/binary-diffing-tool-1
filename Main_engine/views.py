@@ -18,10 +18,11 @@ def showindex(request):
     return render(request, 'Main_engine/index.html')
 
 def recent(request):
-    return render(request, 'Main_engine/recent.html')
+    return render(request, 'Main_engine/index.html')
 
 def pe(request):
-    pe_list = PE_info.objects.all() #pe_info 모든글을 대상으로
+    pe_list = PE_info.objects.order_by('timenum').all()
+
 
     paginator = Paginator(pe_list, 1) #모든 pe_list 객체를 한개 단위로 페이지에 자르기
 
@@ -47,9 +48,12 @@ def heuristic(request):
         return render(request, 'Main_engine/result.html', {'json_data': json_data})
 
 
+
 def cfg(request):
-    with open(r"C:\malware\test.txt", 'rb') as test:
+
+    with open(r"C:\malware\all_result\test.txt", 'rb') as test:
         cfg_ = json.loads(test.read())
+
     return render(request, 'Main_engine/cfg.html', {'cfg_': cfg_})
 
 

@@ -41,6 +41,7 @@
     </div>
 </div>
 
+<br>
 <h5 id="timeline2">time line</h5>
 <div id="tileline_frame">
   <div id="timeline">
@@ -71,8 +72,9 @@
 </div>
 {#휴리스틱 스코어부분 #}
 <!--원래 있던 차트 부분-->
-<br>
-<h5 id="heuristic" class="mt-2 mb-3">휴리스틱 점수</h5>
+<br><br>
+
+<hr class="my-hr3"><h5 id="heuristic" class="mt-2 mb-3" style="font-weight: bold;">휴리스틱 점수</h5><hr class="my-hr3">
 <!--원래 있던 차트 부분-->
 {#<div class="justify-content-center ml-5" style="display: inline-flex;">#}
 	<div class="card-deck ml-3 mr-3 mt-4">
@@ -110,29 +112,12 @@
             <p>{{ json.1 }}</p>
         {% endfor %}
     </div>
-    <br>
-    		  <div class="mr-4" style="float: right;">
-			  		  <nav>
-				<ul class="pagination">
-				  <li class="page-item">
-					<a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-				  </li>
-				  <li class="page-item"><a class="page-link" href="/pe">1</a></li>
-				  <li class="page-item" aria-current="page">
-					<a class="page-link" href="#">2 <span class="sr-only">(current)</span></a>
-				  </li>
-				  <li class="page-item"><a class="page-link" href="#">3</a></li>
-				  <li class="page-item">
-					<a class="page-link" href="#">Next</a>
-				  </li>
-				</ul>
-			  </nav>
-			</div>
-{#</div>#}
+</div>
+<br>
+<br>
 
-{#휴리스틱 스코어 종료#}
-    <br>
-<h5 id="scoretable" class="mt-2 mb-3">나머지 타겟점수</h5>
+<hr class="my-hr3"><h5 id="scoretable" class="mt-2 mb-3" style="font-weight: bold;">나머지 타겟점수</h5><hr class="my-hr3">
+
 <div class="table-responsive">
     {% csrf_token %}
     {% if result %}
@@ -145,7 +130,7 @@
             <thead>
             <tr>
                 <th rowspan="2" align=center>File Name</th>
-                <th rowspan="2">Timestamp</th>
+<!--                <th rowspan="2">Timestamp</th>-->
                 <th colspan="2">Algorithm</th>
                 <th colspan="6">PE META data</th>
             </tr>
@@ -203,24 +188,24 @@
                             var new_row = res_table.insertRow(res_table.rows.length);
                             /* 행에 열 추가 */
                             var filename = new_row.insertCell(0);
-                            var timestamp = new_row.insertCell(1);
-                            var bbh = new_row.insertCell(2);
-                            var constvalue = new_row.insertCell(3);
-                            var section = new_row.insertCell(4);
-                            var cert = new_row.insertCell(5);
-                            var pdb = new_row.insertCell(6);
-                            var imph = new_row.insertCell(7);
-                            var xor = new_row.insertCell(8);
+                            //var timestamp = new_row.insertCell(1);
+                            var bbh = new_row.insertCell(1);
+                            var constvalue = new_row.insertCell(2);
+                            var section = new_row.insertCell(3);
+                            var cert = new_row.insertCell(4);
+                            var pdb = new_row.insertCell(5);
+                            var imph = new_row.insertCell(6);
+                            var xor = new_row.insertCell(7);
                             /* 열에 데이터 입력 */
                             filename.innerHTML = json_res[standard][target][0];
-                            timestamp.innerHTML = json_res[standard][target][1];
-                            bbh.innerHTML = json_res[standard][target][2];
-                            constvalue.innerHTML = json_res[standard][target][3];
-                            section.innerHTML = json_res[standard][target][4];
-                            cert.innerHTML = json_res[standard][target][5];
-                            pdb.innerHTML = json_res[standard][target][6];
-                            imph.innerHTML = json_res[standard][target][7];
-                            xor.innerHTML = json_res[standard][target][8];
+                            //timestamp.innerHTML = json_res[standard][target][1];
+                            bbh.innerHTML = json_res[standard][target][1];
+                            constvalue.innerHTML = json_res[standard][target][2];
+                            section.innerHTML = json_res[standard][target][3];
+                            cert.innerHTML = json_res[standard][target][4];
+                            pdb.innerHTML = json_res[standard][target][5];
+                            imph.innerHTML = json_res[standard][target][6];
+                            xor.innerHTML = json_res[standard][target][7];
                             /*
                             출력해서 맞는지 확인
                             for(var data in json_res[standard][target]){
