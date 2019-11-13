@@ -8,7 +8,8 @@ from collections import OrderedDict
 from .models import PE_info
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
-import json, os
+import json
+import os
 
 from Main_engine.models import Result
 
@@ -22,18 +23,30 @@ def recent(request):
 def pe(request):
     pe_list = PE_info.objects.order_by('timenum').all()
 
-    paginator = Paginator(pe_list, 1)
 
-    page = request.GET.get('page', 1)
+    paginator = Paginator(pe_list, 1) #모든 pe_list 객체를 한개 단위로 페이지에 자르기
+
+    page = request.GET.get('page', 1) #request 된 페이지가 뭔지를 알아내고(request 페이지를 변수에 담아내고)
 
     try:
-        lists = paginator.get_page(page)
+        lists = paginator.get_page(page) #request된 페이지를 얻어온 뒤 return
     except PageNotAnInteger:
         lists = paginator.page(1)
     except EmptyPage:
         lists = paginator.page(paginator.num_pages)
 
-    return render(request, 'Main_engine/pe.html', {'lists': lists})
+    return render(request, 'Main_engine/pe.html', {'lists': lists}) #요청된 페이지 return
+
+def heuristic(request):
+     with open(r"C:\malware\all_result\result.txt", "r") as json_file:
+        json_data = json.load(json_file)
+        #
+        # for key in json_data:
+        #     for vkey in json_data[key]:
+        #         a = json_data[key][vkey][2]
+
+        return render(request, 'Main_engine/result.html', {'json_data': json_data})
+
 
 
 def cfg(request):
@@ -46,7 +59,7 @@ def cfg(request):
 
 def call_main(request):
 
-    if os.path.isfile(r"C:\malware\all_result\result.txt"):
+    if os.path.isfile(r"C:\malware\all_result\result.txt"): #경로가 파일인지 아닌지 검사
         result_file = open(r"C:\malware\all_result\result.txt", 'rb').read()
         result = json.loads(result_file)
     else:
