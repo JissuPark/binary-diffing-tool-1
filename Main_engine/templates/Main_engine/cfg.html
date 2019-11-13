@@ -8,61 +8,95 @@
 {% endblock head %}
 
 {% block section %}
-<div class="mt-5" id="graph" style="text-align: left;"></div>
+<div style="display: flex;">
+    <div class="mt-5" id="tab" style="width: 30%;"></div>
+    <div class="mt-5" id="base-graph" style="width: 70%;"></div>
+</div>
 {% if cfg_ %}
 <script>
-    var cfgdata = "{{cfg_}}";
-    // document.write(cfgdata)
-    var text_res = cfgdata.replace(/\n/gi, '\\n').replace(/&#39;/gi, '"').replace(/\t/gi, '\\t');
+    var boxes = {};
 
-    // document.write(text_res);
+    /* 그래프 그리기 위한 변수 생성 */
+    function boxing(array, branches) {
+        var box = 'graph {\n' +
+            'node [shape=box style=filled ]; ';
+        for (var item in array) {
+            box = box + '\"' + item + '\"' + ' [label="' + array[item] + '", color=green];\n';
+        }
+
+        for (var branch in branches) {
+            var start = [];
+            var end = [];
+            var leaf = branches[branch].toString().split(',');
+            // document.write(leaf+"<br>");
+            for (var l in leaf) {
+                if (l % 2 == 0) {
+                    start.push(leaf[l].toString().split('x')[1]);
+                    // document.write(start+"<br>");
+                } else {
+                    end.push(leaf[l].toString().split('x')[1]);
+                    // document.write(end[1]+"<br>");
+                }
+            }
+            for (var index = 0; index < start.length; index++) {
+                box = box + '\"' + start[index] + '\"' + " -- " + '\"' + end[index] + '\"' + ';\n';
+            }
+        }
+        box = box + '}';
+        return box;
+    }
+
+    /* 그래프 그리는 함수 */
+    function draw(graph) {
+        d3.select("#base-graph").graphviz()
+            .renderDot(graph);
+    }
+
+    /* 함수이름 버튼 만드는 함수 */
+    function makebt(fname) {
+        var btn = document.createElement("button");
+        btn.id = fname;
+        btn.textContent = fname;
+        btn.setAttribute('style', "display: block;");
+        btn.onclick = function () {
+            draw(boxes[fname]);
+        };
+        // btn.addEventListener('onclick', draw(boxes[fname]));
+        /* 동적 이벤트 추가 */
+        document.getElementById('tab').appendChild(btn);
+    }
+
+    var cfgdata = "{{cfg_}}";
+    var text_res = cfgdata.replace(/\n/gi, '\\n').replace(/&#39;/gi, '"').replace(/\t/gi, '\\t');
     var json_res = JSON.parse(text_res);
 
-    document.write('<br>');
-    var array = {};
-    var branches = [];
+
     for (var funcname in json_res['func_name']) {
-        document.write(funcname + "<br>");
+        makebt(funcname);
+        var array = {};
+        var branches = [];
+        // document.write(funcname + "<br>");
         for (var startaddr in json_res['func_name'][funcname]) {
             if (startaddr != "flow_opString" && startaddr != "flow_constants" && startaddr != "flow_branches") {
-                document.write(startaddr+"<br>");
+                // document.write(startaddr+"<br>");
                 var block = startaddr + "\n";
                 for (var curaddr in json_res['func_name'][funcname][startaddr]['disasms']) {
                     // document.write(json_res[startaddr]['disasms'][curaddr]+'<br>')
                     block = block + json_res['func_name'][funcname][startaddr]['disasms'][curaddr] + '\n';
                 }
-                array[startaddr] = block;
+                var addrsplit = startaddr.split('x');
+                array[addrsplit[1]] = block;
             }
-            if (startaddr == "flow_branches" && json_res['func_name'][funcname][startaddr].length != 0){
+            if (startaddr == "flow_branches" && json_res['func_name'][funcname][startaddr].length != 0) {
                 branches.push(json_res['func_name'][funcname][startaddr]);
-                document.write(branches+"<br>");
+                // document.write(branches+"<br>");
             }
         }
-    }
-    document.write("<br>");
-
-    var box = 'graph { node [shape=box style=filled ] ';
-    for (var item in array){
-        // document.write(item);
-        box = box + item + ' [label="'    +array[item] + '", color=green];\n';
-        // var next = parseInt(item) + 1;
-        // if(next < array.length) {
-        //     box = box + item + '--' + next + ';\n';
-        // }
+        graph = boxing(array, branches);
+        boxes[funcname] = graph;
+        // draw(boxes[funcname]);
     }
 
-        document.write("<br>before");
-        document.write(branches);
-        document.write("<br>after");
-
-    // branches = branches.split(',');
-    for (var leaf in branches){
-        box = box + branches[leaf][0] + " -- " + branches[leaf][1] + ';\n';
-        document.write(branches[leaf]);
-    }
-    box = box + '}';
-    d3.select("#graph").graphviz()
-        .renderDot(box);
 
 </script>
 {% else %}
