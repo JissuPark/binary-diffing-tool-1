@@ -8,25 +8,74 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'Main_engine/css/dropzone.css' %}">
+    <style>
+        @import url("https://fonts.googleapis.com/css?family=Noto+Sans+KR&display=swap");
 
+        html, body {
+            height: 100%;
+            overflow: auto;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            /*background-image: url('../Main_engine/static/Main_engine/images/bg.png');*/
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-color: darkgray;
+        }
+
+        h1, h2, h3, table th, table th .header {
+            font-size: 3rem;
+            color: black;
+            line-height: 2.2rem;
+        }
+
+        html, body {
+            margin: 0;
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        header, footer {
+            flex: none;
+        }
+
+        main {
+            flex: auto;
+        }
+
+        .strings_try {
+            text-align: center;
+            /*word-break:nowrap;*/
+            display: inline-block;
+            text-overflow: clip;
+            white-space: nowrap;
+            color: white;
+        }
+    </style>
 </head>
 <body>
+
 <style>
     #container {
         display: flex;
     }
 
-    .diagonal {
-        -webkit-transform: rotate(15deg);
-        -moz-transform: rotate(15deg);
-        -o-transform: rotate(15deg);
-        -ms-transform: rotate(15deg);
-        transform: rotate(15deg);
-    }
+    /*.diagonal {*/
+    /*    -webkit-transform: rotate(15deg);*/
+    /*    -moz-transform: rotate(15deg);*/
+    /*    -o-transform: rotate(15deg);*/
+    /*    -ms-transform: rotate(15deg);*/
+    /*    transform: rotate(15deg);*/
+    /*}*/
 
     input {
-        background: #1AAB8A;
-        color: #fff;
+        background: darkgray;
+        color: white;
         border: none;
         position: relative;
         height: 60px;
@@ -38,8 +87,8 @@
     }
 
     input:hover {
-        background: #fff;
-        color: #1AAB8A;
+        background: white;
+        color: black;
     }
 
     input:before, input:after {
@@ -49,7 +98,7 @@
         right: 0;
         height: 2px;
         width: 0;
-        background: #1AAB8A;
+        background: darkgray;
         transition: 400ms ease all;
     }
 
@@ -69,21 +118,20 @@
 <header>
     <div id='header container' style="text-align: center">
         <div id="header1" style="float: left; width:50%;">
-            <img src="{% static 'Main_engine/images/service_logo.png' %}" style="width: 100%; height: auto;"></div>
+            <img src="{% static 'Main_engine/images/service_logo_grey.png' %}" style="width: 100%; height: auto; margin-top: 7px; margin-left: 20px;"></div>
 
         <div id="header2" style="float: right; width:50%;">
-            <img src="{% static 'Main_engine/images/team_logo.png' %}" style="width: 40%; height: auto; float: right;"
+            <img src="{% static 'Main_engine/images/team_logo_grey.png' %}" style="width: 40%; height: auto; float: right; margin-top: 20px; margin-right: 20px;"
                  class="diagonal"></div>
     </div>
-    <h1 style="text-align:center">&nbsp;</h1>
+<!--    <h1 style="text-align:center">&nbsp;</h1>-->
 </header>
 <!-- header end -->
 <!-- section -->
-<main class="row align-items-center row justify-content-md-center" style="width: 100%; padding: 3%;">
-
+<main class="row align-items-center row justify-content-md-center" style="width: 100%; padding-top: 3%;padding-left: 5%;padding-right: 3%;">
     <div id='container' style="text-align: center; width: 100%;">
         <div style="float:left; width:50%; padding:15px; vertical-align: middle">
-            <h1 id="Try-it-out-1" class="strings_try">Stand Binary Try it out!</h1>
+            <h2 id="Try-it-out-1" class="strings_try">Base</h2>
             <div id="dropzone 1">
                 <form action="{% url 'upload' %}" class="dropzone needsclick dz-clickable" id="upload-1">
                     {% csrf_token %}
@@ -99,8 +147,8 @@
         </div>
 
         <!-- <div style=" float: right; width: 5%; padding:10px; font-size: 4rem; text-align: center;"> </div> -->
-        <div style="float:right; width: 50%; padding:15px; vertical-align: middle">
-            <h1 id="Try-it-out-2" class="strings_try">Tartget Binary Try it out!</h1>
+        <div style="float:left; width: 50%; padding:15px; vertical-align: middle">
+            <h2 id="Try-it-out-2" class="strings_try">Tartget</h2>
             <div id="dropzone 2">
                 <form action="{% url 'upload' %}" class="dropzone needsclick dz-clickable" id="upload-2">
                     {% csrf_token %}
@@ -130,43 +178,5 @@
 <!-- Footer end -->
 </body>
 </html>
-<!--
-<style>
-@import url("https://fonts.googleapis.com/css?family=Noto+Sans+KR&display=swap");
-html, body {
-    height:100%; overflow:hidden
-}
-body{
-    font-family: 'Noto Sans KR', sans-serif;
-    background-image: url('../Main_engine/static/Main_engine/images/bg.png');
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-h1, h2, h3, table th, table th .header {
-    font-size: 3rem;
-    color: #0087F7;
-    line-height: 2.2rem;
-}
-html, body {
-  margin: 0;
-  height: 100%;
-}
-body {
-  display: flex;
-  flex-direction: column;
-}
-header, footer {
-  flex: none;
-}
-main {
-    flex: auto;
-}
-.strings_try{
-    text-align:center;
-    word-break:nowrap;
-    display:inline-block;
-    text-overflow:clip;
-    white-space:nowrap;
-}
-</style>
--->
+
+
