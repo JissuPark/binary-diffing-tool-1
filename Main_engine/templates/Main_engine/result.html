@@ -12,7 +12,7 @@
 <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>-->
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="{% static 'Main_engine/js/jquery.timelinr-0.9.7.js' %}"></script>
-<script src="{% static 'Main_engine/js/fakeLoader.js' %}"></script>
+<script src="{% static 'Main_engine/js/about_chart.js' %}"></script>
 <script>
     $(function () {
         $().timelinr({
@@ -76,39 +76,48 @@
 
 <hr class="my-hr3"><h5 id="heuristic" class="mt-2 mb-3" style="font-weight: bold;">휴리스틱 점수</h5><hr class="my-hr3">
 <!--원래 있던 차트 부분-->
-<div class="justify-content-center ml-5" style="display: inline-flex;">
-    <div class="row ml-3 mr-5">
+{#<div class="justify-content-center ml-5" style="display: inline-flex;">#}
+	<div class="card-deck ml-3 mr-3 mt-4">
+		<div class="card">
+            <canvas id="mychart0" width="200" height="200"></canvas>
+		  <div class="card-body">
+			<h5 class="card-title">Target File</h5>
+			<p class="card-text">대상파일 : </p>
+		  </div>
+		</div>
+		<div class="card">
+            <canvas id="mychart1" width="200" height="200"></canvas>
+		  <div class="card-body">
+			<h5 class="card-title">Target File</h5>
+			<p class="card-text">대상파일 : </p>
+		  </div>
+		</div>
+		<div class="card">
+            <canvas id="mychart2" width="200" height="200"></canvas>
+		  <div class="card-body">
+			<h5 class="card-title">Target File</h5>
+			<p class="card-text">대상파일 : </p>
+		  </div>
+		</div>
+		<div class="card">
+            <canvas id="mychart3" width="200" height="200"></canvas>
+			<div class="card-body">
+			<h5 class="card-title">Target File</h5>
+			<p class="card-text">대상파일 : </p>
+			</div>
+		  </div>
+	  </div>
         <div>
-            <canvas id="myChart" width="500" height="500"></canvas>
-        </div>
-    </div>
-
-    <div class="container mt-5">
-        <div class="row">
-            <div class="ml-5 mr-5">
-                <canvas id="myPieChart" width="200" height="200"></canvas>
-            </div>
-            <div class="ml-5 mr-5">
-                <canvas id="myPieChart2" width="200" height="200"></canvas>
-            </div>
-            <div class="ml-5 mr-5">
-                <canvas id="myPieChart3" width="200" height="200"></canvas>
-            </div>
-        </div>
-        <div class="row justify-content-center">
-            <div class="ml-5 mr-5">
-                <canvas id="myPieChart4" width="200" height="200"></canvas>
-            </div>
-            <div class="ml-5 mr-5">
-                <canvas id="myPieChart5" width="200" height="200"></canvas>
-            </div>
-        </div>
+        {% for json in json_data %}
+            <p>{{ json.1 }}</p>
+        {% endfor %}
     </div>
 </div>
 <br>
 <br>
 
 <hr class="my-hr3"><h5 id="scoretable" class="mt-2 mb-3" style="font-weight: bold;">나머지 타겟점수</h5><hr class="my-hr3">
+
 <div class="table-responsive">
     {% csrf_token %}
     {% if result %}
@@ -137,6 +146,8 @@
             </thead>
         </table>
         <script>
+            var dictionary = "{{ json_data }}";
+            document.write(dictionary);
             /* 엔진에서 받아온 값 */
             var result = "{{result}}";
             /* JSON.parse()에서 따옴표 있으면 오류남 */
@@ -207,7 +218,9 @@
                 }
             }
             change_table();
+
         </script>
+
     </div>
     {% else %}
     <h1>There is not result!</h1>
