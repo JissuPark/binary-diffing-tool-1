@@ -25,6 +25,9 @@ class PE_info(models.Model):
     timenum = models.BigIntegerField(null=True)
     imphash = models.TextField(null=True)
     cdate = models.DateTimeField(auto_now_add=True)
+    Targetmachine = models.TextField(null=True)
+    EntryPoint = models.BigIntegerField(null=True)
+    ContainedSections = models.BigIntegerField(null=True)
 
 class Result(models.Model):
     filehash = models.CharField(max_length=100, primary_key=True)
