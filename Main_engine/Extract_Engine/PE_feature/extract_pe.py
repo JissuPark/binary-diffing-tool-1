@@ -205,11 +205,15 @@ class Pe_Feature:
             'Contained Sections': Section_num
         }
         print(pe_header)
+        pdb_name = PDB['pe_pdb_Name']
+        pdb_guid = PDB['pe_pdb_GUID']
+        pdb_age = PDB['pe_pdb_Age']
+        pdb_path = PDB['pe_pdb_Pdbpath']
 
         PE_info.objects.create(filename=f_name, imphash=ImpHash, filesize=file_size, filetype=file_type, sha_256=sha256,
                                timestamp=TimeStamp, year=Year, timenum=TimeInNum,
                                ssdeep=ssdeep_hash, sha_1=sha1, md5=MD5, Targetmachine=mac, EntryPoint=Ent_point,
-                               ContainedSections=Section_num)
+                               ContainedSections=Section_num, pdbname=pdb_name, pdbguid=pdb_guid, pdbage=pdb_age, pdbpath=pdb_path)
 
         return pe_features, pe_features_for_DB
 
