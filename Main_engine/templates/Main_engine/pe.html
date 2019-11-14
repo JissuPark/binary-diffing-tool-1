@@ -3,18 +3,19 @@
 {% block head %}
 {% load static %}
 <link href="{% static 'Main_engine/css/pe.css' %}" rel="stylesheet">
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link crossorigin="anonymous" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" rel="stylesheet">
 {% endblock %}
 
 {% block section %}
 <br><br><br>
-<div id="wrapper">
+<div id="wrapper" style="padding: 10px">
     <div class="header">
         <h3 align="left">Basic Properties</h3>
     </div>
     <div class="detail">
         {% for pe in lists %}
-        <table align="left" class="table table-borderless" height="400" width="800">
+        <table height=300px width=1500px>
             <tr>
                 <th>File name</th>
                 <td>{{pe.filename}}</td>
@@ -47,17 +48,104 @@
                 <th>SSDEEP</th>
                 <td>{{pe.ssdeep}}</td>
             </tr>
-            <tr>
-                <th>TimeStamp</th>
-                <td>{{pe.timestamp}}</td>
-            </tr>
         </table>
-        {% endfor %}
+
     </div>
 </div>
-<div class="header">
-    <h3 align="left">Portable Executable Info</h3>
+
+<div id="wrapper1" style="padding: 10px">
+    <div class="header">
+        <h3 align="left">Portable Executable Info</h3>
+    </div>
+    <div class="detail">
+
+        <table height=160px width=770px>
+            <div style="margin-top: 20px">
+                <h4 top=50px>Header</h4>
+            </div>
+            <tr>
+                <th>Target Machine</th>
+                <td>{{pe.Targetmachine}}</td>
+            </tr>
+            <tr>
+                <th>Compilation Time</th>
+                <td>{{pe.timestamp}}</td>
+            </tr>
+            <tr>
+                <th>Entry Point</th>
+                <td>{{pe.EntryPoint}}</td>
+            </tr>
+            <tr>
+                <th>Contained Sections</th>
+                <td>{{pe.ContainedSections}}</td>
+            </tr>
+        </table>
+    </div>
 </div>
+
+<div id="wrapper2" style="padding: 10px">
+    <div class="detail">
+        <table id="section_table" height=160px width=1000px>
+            <thead>
+            <div style="margin-top: 20px">
+                <h4 top=50px>Sections</h4>
+            </div>
+            <tr>
+                <th>Name</th>
+                <th>Virtual Address</th>
+                <th>Virtual Size</th>
+                <th>Raw Size</th>
+                <th>Entropy</th>
+                <th>MD5</th>
+            </tr>
+            </thead>
+        </table>
+        {% if p_dict %}
+        <script>
+            var pe_result = "{{p_dict}}";
+            /*
+            document.write(pe_result);
+            */
+            var text_pe_res = pe_result.replace(/&#39;/gi, '"');
+            var pe_t = document.getElementById("section_table");
+
+            var json_pe = JSON.parse(text_pe_res);
+            /* 파일 이름이 다르면 테이블이 변경됨 */
+
+            function change_page(){
+                pe_filename = "{{pe.filename}}";
+                for (var fname in json_pe) {
+                    if (fname == pe_filename) {
+                        for (var section in json_pe[fname]) {
+                            var new_row = pe_t.insertRow(pe_t.rows.length);
+
+                            var Name = new_row.insertCell(0);
+                            var Virtual_add = new_row.insertCell(1);
+                            var Virtual_size = new_row.insertCell(2);
+                            var Raw_size = new_row.insertCell(3);
+                            var Entropy = new_row.insertCell(4);
+                            var md5 = new_row.insertCell(5);
+
+                            Name.innerHTML = json_pe[fname][section]['section_name'];
+                            Virtual_add.innerHTML = json_pe[fname][section]['virtual_address'];
+                            Virtual_size.innerHTML = json_pe[fname][section]['virtual_size'];
+                            Raw_size.innerHTML = json_pe[fname][section]['raw_size'];
+                            Entropy.innerHTML = json_pe[fname][section]['entropy'];
+                            md5.innerHTML = json_pe[fname][section]['hash_md5'];
+
+                        }
+                    }
+                }
+            }
+            change_page();
+        </script>
+        {% else %}
+        <h1>no result</h1>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+
 {% endblock section %}
 
 {% block foot %}
@@ -75,12 +163,12 @@
             </li>
             {% endif %}
             {% for i in lists.paginator.page_range %}
-                {% if lists.number == i %}
-                    <li class="page-item active" aria-current="page">
-                        <span class="page-link">{{ i }}<span class="sr-only">(current)</span></span></li>
-                {% else %}
-                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
-                {% endif %}
+            {% if lists.number == i %}
+            <li aria-current="page" class="page-item active">
+                <span class="page-link">{{ i }}<span class="sr-only">(current)</span></span></li>
+            {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
             {% endfor %}
             {% if lists.has_next %}
             <li class="page-item">
