@@ -117,7 +117,7 @@ class basic_block(idb_info):
                     'end_address': hex(basicblock.endEA),
                     'block_constant': ' '.join(block_constant)
                 }
-                flow_opcode.append(mutex_opcode)
+                #flow_opcode.append(mutex_opcode)
                 function_dicts[hex(basicblock.startEA)] = basicblock_dics
                 if block_constant:
                     flow_constants.append(' '.join(block_constant))
