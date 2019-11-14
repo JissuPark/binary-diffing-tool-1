@@ -9,7 +9,8 @@ from .models import PE_info
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from pprint import pprint
 
-import json, os
+import json
+import os
 
 from Main_engine.models import Result
 
@@ -51,12 +52,27 @@ def pe(request):
 
     return render(request, 'Main_engine/pe.html', {'lists': lists, 'p_dict': p_dict})
 
+def heuristic(request):
+     with open(r"C:\malware\all_result\result.txt", "r") as json_file:
+        json_data = json.load(json_file)
+        #
+        # for key in json_data:
+        #     for vkey in json_data[key]:
+        #         a = json_data[key][vkey][2]
+
+        return render(request, 'Main_engine/result.html', {'json_data': json_data})
+
 def cfg(request):
-    return render(request, 'Main_engine/cfg.html')
+
+    with open(r"C:\malware\all_result\test.txt", 'rb') as test:
+        cfg_ = json.loads(test.read())
+
+    return render(request, 'Main_engine/cfg.html', {'cfg_': cfg_})
+
 
 def call_main(request):
 
-    if os.path.isfile(r"C:\malware\all_result\result.txt"):
+    if os.path.isfile(r"C:\malware\all_result\result.txt"): #경로가 파일인지 아닌지 검사
         result_file = open(r"C:\malware\all_result\result.txt", 'rb').read()
         result = json.loads(result_file)
     else:

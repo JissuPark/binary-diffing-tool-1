@@ -12,7 +12,7 @@
 <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>-->
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="{% static 'Main_engine/js/jquery.timelinr-0.9.7.js' %}"></script>
-<script src="{% static 'Main_engine/js/fakeLoader.js' %}"></script>
+<script src="{% static 'Main_engine/js/about_chart.js' %}"></script>
 <script>
     $(function () {
         $().timelinr({
@@ -76,44 +76,50 @@
 
 <hr class="my-hr3"><h5 id="heuristic" class="mt-2 mb-3" style="font-weight: bold;">휴리스틱 점수</h5><hr class="my-hr3">
 <!--원래 있던 차트 부분-->
-<div class="justify-content-center ml-5" style="display: inline-flex;">
-    <div class="row ml-3 mr-5">
-        <div>
-            <canvas id="myChart" width="500" height="500"></canvas>
+   <div class="card-deck ml-3 mr-3 mt-4">
+      <div class="card">
+            <canvas id="mychart0" width="200" height="200"></canvas>
+        <div class="card-body">
+         <h5 class="card-title">Target File</h5>
+         <p class="card-text">대상파일 : </p>
         </div>
+      </div>
+      <div class="card">
+            <canvas id="mychart1" width="200" height="200"></canvas>
+        <div class="card-body">
+         <h5 class="card-title">Target File</h5>
+         <p class="card-text">대상파일 : </p>
+        </div>
+      </div>
+      <div class="card">
+            <canvas id="mychart2" width="200" height="200"></canvas>
+        <div class="card-body">
+         <h5 class="card-title">Target File</h5>
+         <p class="card-text">대상파일 : </p>
+        </div>
+      </div>
+      <div class="card">
+            <canvas id="mychart3" width="200" height="200"></canvas>
+         <div class="card-body">
+         <h5 class="card-title">Target File</h5>
+         <p class="card-text">대상파일 : </p>
+         </div>
+        </div>
+     </div>
+   <div>
+        {% for json in json_data %}
+            <p>{{ json.1 }}</p>
+        {% endfor %}
     </div>
-
-    <div class="container mt-5">
-        <div class="row">
-            <div class="ml-5 mr-5">
-                <canvas id="myPieChart" width="200" height="200"></canvas>
-            </div>
-            <div class="ml-5 mr-5">
-                <canvas id="myPieChart2" width="200" height="200"></canvas>
-            </div>
-            <div class="ml-5 mr-5">
-                <canvas id="myPieChart3" width="200" height="200"></canvas>
-            </div>
-        </div>
-        <div class="row justify-content-center">
-            <div class="ml-5 mr-5">
-                <canvas id="myPieChart4" width="200" height="200"></canvas>
-            </div>
-            <div class="ml-5 mr-5">
-                <canvas id="myPieChart5" width="200" height="200"></canvas>
-            </div>
-        </div>
-    </div>
-</div>
 <br>
 <br>
 
 <hr class="my-hr3"><h5 id="scoretable" class="mt-2 mb-3" style="font-weight: bold;">나머지 타겟점수</h5><hr class="my-hr3">
+
 <div class="table-responsive">
     {% csrf_token %}
     {% if result %}
     <div id="result_json">
-        this is result!
         <form name="select_form">
             <select id="select_file" onchange="change_table()"></select>
         </form>
@@ -121,7 +127,7 @@
             <thead>
             <tr>
                 <th rowspan="2" align=center>File Name</th>
-                <th rowspan="2">Timestamp</th>
+<!--                <th rowspan="2">Timestamp</th>-->
                 <th colspan="2">Algorithm</th>
                 <th colspan="6">PE META data</th>
             </tr>
@@ -137,6 +143,8 @@
             </thead>
         </table>
         <script>
+            var dictionary = "{{ json_data }}";
+            document.write(dictionary);
             /* 엔진에서 받아온 값 */
             var result = "{{result}}";
             /* JSON.parse()에서 따옴표 있으면 오류남 */
@@ -177,24 +185,24 @@
                             var new_row = res_table.insertRow(res_table.rows.length);
                             /* 행에 열 추가 */
                             var filename = new_row.insertCell(0);
-                            var timestamp = new_row.insertCell(1);
-                            var bbh = new_row.insertCell(2);
-                            var constvalue = new_row.insertCell(3);
-                            var section = new_row.insertCell(4);
-                            var cert = new_row.insertCell(5);
-                            var pdb = new_row.insertCell(6);
-                            var imph = new_row.insertCell(7);
-                            var xor = new_row.insertCell(8);
+                            //var timestamp = new_row.insertCell(1);
+                            var bbh = new_row.insertCell(1);
+                            var constvalue = new_row.insertCell(2);
+                            var section = new_row.insertCell(3);
+                            var cert = new_row.insertCell(4);
+                            var pdb = new_row.insertCell(5);
+                            var imph = new_row.insertCell(6);
+                            var xor = new_row.insertCell(7);
                             /* 열에 데이터 입력 */
                             filename.innerHTML = json_res[standard][target][0];
-                            timestamp.innerHTML = json_res[standard][target][1];
-                            bbh.innerHTML = json_res[standard][target][2];
-                            constvalue.innerHTML = json_res[standard][target][3];
-                            section.innerHTML = json_res[standard][target][4];
-                            cert.innerHTML = json_res[standard][target][5];
-                            pdb.innerHTML = json_res[standard][target][6];
-                            imph.innerHTML = json_res[standard][target][7];
-                            xor.innerHTML = json_res[standard][target][8];
+                            //timestamp.innerHTML = json_res[standard][target][1];
+                            bbh.innerHTML = json_res[standard][target][1];
+                            constvalue.innerHTML = json_res[standard][target][2];
+                            section.innerHTML = json_res[standard][target][3];
+                            cert.innerHTML = json_res[standard][target][4];
+                            pdb.innerHTML = json_res[standard][target][5];
+                            imph.innerHTML = json_res[standard][target][6];
+                            xor.innerHTML = json_res[standard][target][7];
                             /*
                             출력해서 맞는지 확인
                             for(var data in json_res[standard][target]){
@@ -207,7 +215,9 @@
                 }
             }
             change_table();
+
         </script>
+
     </div>
     {% else %}
     <h1>There is not result!</h1>
