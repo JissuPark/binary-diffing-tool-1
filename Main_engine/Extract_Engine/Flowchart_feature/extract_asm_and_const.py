@@ -140,7 +140,7 @@ class basic_block(idb_info):
 
 def main(api, file_name):
     function_dicts = dict()
-    func_name = set()
+    func_name = list()
     func_branch = list()
     cg_dict = dict()
     for fva in api.idautils.Functions():
@@ -162,10 +162,13 @@ def main(api, file_name):
 
             # 베이직 블록 정보 추출 함수 실행
             basicblock_function_dicts = basicblock.bbs(function_dicts, file_name)
-        cg_dict['f_name'] = func_name
-        cg_dict['f_branch'] = func_branch
 
-    with open(r'C:\malware\all_result\cg' + "\\" +file_name + '.txt', 'w') as file:
+    # func_name = set(func_name)
+    cg_dict['f_name'] = func_name
+    cg_dict['f_branch'] = func_branch
+
+
+    with open(r'C:\malware\all_result\cg' + "\\" + file_name + '.txt', 'w') as file:
         json.dump(cg_dict, file, ensure_ascii=False, indent='\t')
 
     return basicblock_function_dicts
