@@ -44,79 +44,82 @@
 <br>
 <h5 id="timeline2">time line</h5>
 <div id="tileline_frame">
-  <div id="timeline">
-    <ul id="dates">
-    {% for pe in pe_%}
-    <li><a href=#{{pe.year}} style="color: #ffcc00;">{{pe.year}}</a></li>
-    {%endfor%}
-    </ul>
-    <ul id="issues">
-    {% for pe in pe_%}
-    <li id={{pe.timestamp}}>
-      <img src="{% static 'Main_engine/images/test1.png' %}" width="256" height="256" />
-      <h1>{{pe.timestamp}}</h1>
-<!--      <p> File Name : {{pe.filename}}</p>-->
-      <p> File Size : {{pe.filesize}}</p>
-      <p> File Type : {{pe.filetype}}</p>
-<!--      <p> File Sha-256 :{{pe.sha_256}}</p>-->
-      <p> TimeStamp : {{pe.timestamp}}</p>
-    </li>
-    {%endfor%}
-    </ul>
+    <div id="timeline">
+        <ul id="dates">
+            {% for pe in pe_%}
+            <li><a href=#{{pe.year}} style="color: #ffcc00;">{{pe.year}}</a></li>
+            {%endfor%}
+        </ul>
+        <ul id="issues">
+            {% for pe in pe_%}
+            <li id={{pe.timestamp}}>
+                <img src="{% static 'Main_engine/images/test1.png' %}" width="256" height="256"/>
+                <h1>{{pe.timestamp}}</h1>
+                <!--      <p> File Name : {{pe.filename}}</p>-->
+                <p> File Size : {{pe.filesize}}</p>
+                <p> File Type : {{pe.filetype}}</p>
+                <!--      <p> File Sha-256 :{{pe.sha_256}}</p>-->
+                <p> TimeStamp : {{pe.timestamp}}</p>
+            </li>
+            {%endfor%}
+        </ul>
 
-  <div id="grad_left"></div>
-  <div id="grad_right"></div>
-  <a href="#" id="next">+</a>
-  <a href="#" id="prev">-</a>
-  </div>
+        <div id="grad_left"></div>
+        <div id="grad_right"></div>
+        <a href="#" id="next">+</a>
+        <a href="#" id="prev">-</a>
+    </div>
 </div>
 {#휴리스틱 스코어부분 #}
 <!--원래 있던 차트 부분-->
 <br><br>
 
-<hr class="my-hr3"><h5 id="heuristic" class="mt-2 mb-3" style="font-weight: bold;">휴리스틱 점수</h5><hr class="my-hr3">
+<hr class="my-hr3"><h5 id="heuristic" class="mt-2 mb-3" style="font-weight: bold;">휴리스틱 점수</h5>
+<hr class="my-hr3">
 <!--원래 있던 차트 부분-->
-{#<div class="justify-content-center ml-5" style="display: inline-flex;">#}
-	<div class="card-deck ml-3 mr-3 mt-4">
-		<div class="card">
+{#
+<div class="justify-content-center ml-5" style="display: inline-flex;">#}
+    <div class="card-deck ml-3 mr-3 mt-4">
+        <div class="card">
             <canvas id="mychart0" width="200" height="200"></canvas>
-		  <div class="card-body">
-			<h5 class="card-title">Target File</h5>
-			<p class="card-text">대상파일 : </p>
-		  </div>
-		</div>
-		<div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Target File</h5>
+                <p class="card-text">대상파일 : </p>
+            </div>
+        </div>
+        <div class="card">
             <canvas id="mychart1" width="200" height="200"></canvas>
-		  <div class="card-body">
-			<h5 class="card-title">Target File</h5>
-			<p class="card-text">대상파일 : </p>
-		  </div>
-		</div>
-		<div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Target File</h5>
+                <p class="card-text">대상파일 : </p>
+            </div>
+        </div>
+        <div class="card">
             <canvas id="mychart2" width="200" height="200"></canvas>
-		  <div class="card-body">
-			<h5 class="card-title">Target File</h5>
-			<p class="card-text">대상파일 : </p>
-		  </div>
-		</div>
-		<div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Target File</h5>
+                <p class="card-text">대상파일 : </p>
+            </div>
+        </div>
+        <div class="card">
             <canvas id="mychart3" width="200" height="200"></canvas>
-			<div class="card-body">
-			<h5 class="card-title">Target File</h5>
-			<p class="card-text">대상파일 : </p>
-			</div>
-		  </div>
-	  </div>
-        <div>
+            <div class="card-body">
+                <h5 class="card-title">Target File</h5>
+                <p class="card-text">대상파일 : </p>
+            </div>
+        </div>
+    </div>
+    <div>
         {% for json in json_data %}
-            <p>{{ json.1 }}</p>
+        <p>{{ json.1 }}</p>
         {% endfor %}
     </div>
 </div>
 <br>
 <br>
 
-<hr class="my-hr3"><h5 id="scoretable" class="mt-2 mb-3" style="font-weight: bold;">나머지 타겟점수</h5><hr class="my-hr3">
+<hr class="my-hr3"><h5 id="scoretable" class="mt-2 mb-3" style="font-weight: bold;">나머지 타겟점수</h5>
+<hr class="my-hr3">
 
 <div class="table-responsive">
     {% csrf_token %}
@@ -130,7 +133,7 @@
             <thead>
             <tr>
                 <th rowspan="2" align=center>File Name</th>
-<!--                <th rowspan="2">Timestamp</th>-->
+                <!--                <th rowspan="2">Timestamp</th>-->
                 <th colspan="2">Algorithm</th>
                 <th colspan="6">PE META data</th>
             </tr>
@@ -170,6 +173,7 @@
                 select_file.appendChild(option);
             }
             select_file.selectedIndex = 0;
+
             /* 기준이 변하면 테이블이 변경될 수 있도록 */
             function change_table() {
                 /* 기준이 변할때마다 테이블을 지우고 새로 시작 */
@@ -217,6 +221,7 @@
                     }
                 }
             }
+
             change_table();
 
         </script>

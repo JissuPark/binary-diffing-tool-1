@@ -8,7 +8,8 @@
 {% endblock head %}
 
 {% block section %}
-<div style="display: flex;">
+<div style="display: block;">
+    <div class="mt-5" id="file-name" style="display: flex"></div>
     <div class="mt-5" id="base-graph" style="width: 100%; overflow: auto"></div>
 </div>
 {% if cg %}
@@ -56,25 +57,28 @@
         var btn = document.createElement("button");
         btn.id = fname;
         btn.textContent = fname;
-        btn.setAttribute('style', "display: block;");
+        btn.setAttribute('style', "display: flex;");
         btn.onclick = function () {
             draw(boxes[fname]);
         };
         // btn.addEventListener('onclick', draw(boxes[fname]));
         /* 동적 이벤트 추가 */
-        document.getElementById('tab').appendChild(btn);
+        document.getElementById('file-name').appendChild(btn);
     }
 
-    var cfgdata = "{{cg}}";
-    var text_res = cfgdata.replace(/\n/gi, '\\n').replace(/&#39;/gi, '"').replace(/\t/gi, '\\t');
+    var cgdata = "{{cg}}";
+    var text_res = cgdata.replace(/\n/gi, '\\n').replace(/&#39;/gi, '"').replace(/\t/gi, '\\t');
     var json_res = JSON.parse(text_res);
 
     var array = {};
     var branches = [];
-    for (var funcname in json_res['f_name']) {
-        array[funcname] = json_res['f_name'][funcname];
+    for (var file in json_res) {
+        makebt(file);
+        for (var funcname in json_res[file]['f_name']) {
+            array[json_res[file]['f_name'][funcname]] = json_res[file]['f_name'][funcname];
+       }
+        branches = json_res[file]['f_branch'];
     }
-    branches = json_res['f_branch'];
 
 
     graph = boxing(array, branches);

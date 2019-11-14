@@ -58,10 +58,14 @@ def cfg(request):
 
 
 def cg(request):
-    with open(r'C:\malware\all_result\cg.txt', 'rb') as cg:
-        cg_ = json.loads(cg.read())
+    cg_list = dict()
+    PATH = r'C:\malware\all_result\cg'
+    for file in os.listdir(PATH):
+        file_path = os.path.join(PATH, file)
+        with open(file_path, 'rb') as cg:
+            cg_list[file] = json.loads(cg.read())
 
-    return render(request, 'Main_engine/cg.html', {'cg': cg_})
+    return render(request, 'Main_engine/cg.html', {'cg': cg_list})
 
 
 def call_main(request):

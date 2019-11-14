@@ -140,7 +140,7 @@ class basic_block(idb_info):
 
 def main(api, file_name):
     function_dicts = dict()
-    func_name = list()
+    func_name = set()
     func_branch = list()
     cg_dict = dict()
     for fva in api.idautils.Functions():
@@ -151,18 +151,10 @@ def main(api, file_name):
         for addr in api.idautils.XrefsTo(fva, 0):
             try:
                 if not api.idc.GetDisasm(addr.src).find('call'):
-                    print(f"T : From {api.ida_funcs.get_func_name(api.ida_funcs.get_func(addr.src).startEA)}({hex(addr.src)}): To {fname}({hex(addr.dst)}) :{api.idc.GetDisasm(addr.src)}")
+                    # print(f"T : From {api.ida_funcs.get_func_name(api.ida_funcs.get_func(addr.src).startEA)}({hex(addr.src)}): To {fname}({hex(addr.dst)}) :{api.idc.GetDisasm(addr.src)}")
                     func_branch.append((api.ida_funcs.get_func_name(api.ida_funcs.get_func(addr.src).startEA), fname))
             except:
                 print(f"Error in {addr.src}")
-
-        # for addr in api.idautils.XrefsFrom(fva, 0):
-        #     try:
-        #         if not api.idc.GetDisasm(addr.src).find('call'):
-        #             print(
-        #                 f"F : From {fname}({hex(addr.src)}): To {api.ida_funcs.get_func_name(api.ida_funcs.get_func(addr.dst).startEA)}({hex(addr.dst)}) :{api.idc.GetDisasm(addr.src)}")
-        #     except:
-        #         print(f"Error in {addr.src}")
 
         if 'dllentry' in fname or fname[:3] == 'sub' or fname[:5] == 'start' or fname.find('main') != -1:
             # main or start or sub_***** function. not library function
@@ -172,8 +164,10 @@ def main(api, file_name):
             basicblock_function_dicts = basicblock.bbs(function_dicts, file_name)
         cg_dict['f_name'] = func_name
         cg_dict['f_branch'] = func_branch
-        with open(r'C:\malware\all_result\cg.txt', 'w') as file:
-            json.dump(cg_dict, file, ensure_ascii=False, indent='\t')
+
+    with open(r'C:\malware\all_result\cg' + "\\" +file_name + '.txt', 'w') as file:
+        json.dump(cg_dict, file, ensure_ascii=False, indent='\t')
+
     return basicblock_function_dicts
 
 
