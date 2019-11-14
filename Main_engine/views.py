@@ -7,6 +7,7 @@ from Main_engine import main_engine
 from collections import OrderedDict
 from .models import PE_info
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from pprint import pprint
 
 import json, os
 
@@ -20,11 +21,25 @@ def recent(request):
     return render(request, 'Main_engine/index.html')
 
 def pe(request):
+    f = open(r"C:\malware\all_result\pe_all.txt", 'w')
     pe_list = PE_info.objects.order_by('timenum').all()
-
+    #print(pe_list)
     paginator = Paginator(pe_list, 1)
 
     page = request.GET.get('page', 1)
+    p_dict = dict()
+    pe_result_list = os.listdir(r"C:\malware\all_result\pe")
+    for file in pe_result_list:
+        if os.path.isfile(r"C:\malware\all_result\pe" + "\\" + file):
+            result_pe = open(r"C:\malware\all_result\pe" + "\\" + file, 'rb').read()
+            pe_data = json.loads(result_pe)
+            for p,p_ in pe_data.items():
+                if p == "cmp_section":
+                    #print(p_)
+                    p_dict[pe_data['file_name']] = p_
+            json.dump(pe_data, f, ensure_ascii=False, indent='\t')
+                #print(p, p_)
+    #print(json.dumps(p_dict, indent=4))
 
     try:
         lists = paginator.get_page(page)
@@ -32,8 +47,9 @@ def pe(request):
         lists = paginator.page(1)
     except EmptyPage:
         lists = paginator.page(paginator.num_pages)
+    f.close()
 
-    return render(request, 'Main_engine/pe.html', {'lists': lists})
+    return render(request, 'Main_engine/pe.html', {'lists': lists, 'p_dict': p_dict})
 
 def cfg(request):
     return render(request, 'Main_engine/cfg.html')
