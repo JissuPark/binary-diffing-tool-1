@@ -7,6 +7,7 @@ from Main_engine import main_engine
 from collections import OrderedDict
 from .models import PE_info
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from pprint import pprint
 
 import json
 import os
@@ -21,21 +22,35 @@ def recent(request):
     return render(request, 'Main_engine/index.html')
 
 def pe(request):
+    f = open(r"C:\malware\all_result\pe_all.txt", 'w')
     pe_list = PE_info.objects.order_by('timenum').all()
+    #print(pe_list)
+    paginator = Paginator(pe_list, 1)
 
-
-    paginator = Paginator(pe_list, 1) #모든 pe_list 객체를 한개 단위로 페이지에 자르기
-
-    page = request.GET.get('page', 1) #request 된 페이지가 뭔지를 알아내고(request 페이지를 변수에 담아내고)
+    page = request.GET.get('page', 1)
+    p_dict = dict()
+    pe_result_list = os.listdir(r"C:\malware\all_result\pe")
+    for file in pe_result_list:
+        if os.path.isfile(r"C:\malware\all_result\pe" + "\\" + file):
+            result_pe = open(r"C:\malware\all_result\pe" + "\\" + file, 'rb').read()
+            pe_data = json.loads(result_pe)
+            for p,p_ in pe_data.items():
+                if p == "cmp_section":
+                    #print(p_)
+                    p_dict[pe_data['file_name']] = p_
+            json.dump(pe_data, f, ensure_ascii=False, indent='\t')
+                #print(p, p_)
+    #print(json.dumps(p_dict, indent=4))
 
     try:
-        lists = paginator.get_page(page) #request된 페이지를 얻어온 뒤 return
+        lists = paginator.get_page(page)
     except PageNotAnInteger:
         lists = paginator.page(1)
     except EmptyPage:
         lists = paginator.page(paginator.num_pages)
+    f.close()
 
-    return render(request, 'Main_engine/pe.html', {'lists': lists}) #요청된 페이지 return
+    return render(request, 'Main_engine/pe.html', {'lists': lists, 'p_dict': p_dict})
 
 def heuristic(request):
      with open(r"C:\malware\all_result\result.txt", "r") as json_file:
@@ -46,8 +61,6 @@ def heuristic(request):
         #         a = json_data[key][vkey][2]
 
         return render(request, 'Main_engine/result.html', {'json_data': json_data})
-
-
 
 def cfg(request):
 

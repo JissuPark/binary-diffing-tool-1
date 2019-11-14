@@ -1,54 +1,50 @@
-	for(var i=0; i<=4; i++){
-	var id_str = "mychart" + i;
-	  var ctx = document.getElementById(id_str).getContext('2d');
-	  id_str = new Chart(ctx, {
-		  type: 'bar',
-		  data: {
-			  labels: ['bbh', 'cg', '상수', 'pe'],
-			  datasets: [{
-				  label: '# 유사도',
-				  data: [80,40,30,20],
-				  backgroundColor: [
-					  'rgba(255, 99, 132, 0.2)',
-					  'rgba(54, 162, 235, 0.2)',
-					  'rgba(255, 206, 86, 0.2)',
-					  'rgba(75, 192, 192, 0.2)',
-					  'rgba(153, 102, 255, 0.2)',
-					  'rgba(255, 159, 64, 0.2)'
-				  ],
-				  borderColor: [
-					  'rgba(255, 99, 132, 1)',
-					  'rgba(54, 162, 235, 1)',
-					  'rgba(255, 206, 86, 1)',
-					  'rgba(75, 192, 192, 1)',
-					  'rgba(153, 102, 255, 1)',
-					  'rgba(255, 159, 64, 1)'
-				  ],
-				  borderWidth: 1
-			  }]
-		  },
-		  options: {
-				  responsive: false,
-				  scales: {
-    yAxes: [{
-      barPercentage: 0.5,
-      gridLines: {
-        display: false
-	  },
-	  ticks: {
-        min: 0,
-        max: 100,
-        stepSize: 10
+for(var i=0; i<=4; i++){
+var id_str = "mychart" + i;
+  var ctx = document.getElementById(id_str).getContext('2d');
+  id_str = new Chart(ctx, {
+      type: 'bar',
+      data: {
+          labels: ['bbh', 'cg', '상수', 'pe'],
+          datasets: [{
+              label: '# 유사도',
+              data: [80,40,30,20],
+              backgroundColor: [
+                  'rgba(255, 99, 132, 0.2)',
+                  'rgba(54, 162, 235, 0.2)',
+                  'rgba(255, 206, 86, 0.2)',
+                  'rgba(75, 192, 192, 0.2)',
+                  'rgba(153, 102, 255, 0.2)',
+                  'rgba(255, 159, 64, 0.2)'
+              ],
+              borderColor: [
+                  'rgba(255, 99, 132, 1)',
+                  'rgba(54, 162, 235, 1)',
+                  'rgba(255, 206, 86, 1)',
+                  'rgba(75, 192, 192, 1)',
+                  'rgba(153, 102, 255, 1)',
+                  'rgba(255, 159, 64, 1)'
+              ],
+              borderWidth: 1
+          }]
       },
-	}],
+      options: {
+              responsive: false,
+              scales: {
+yAxes: [{
+  barPercentage: 0.5,
+  gridLines: {
+    display: false
+  },
+  ticks: {
+    min: 0,
+    max: 100,
+    stepSize: 10
+  },
+}],
 }
-		  }
-	  });
-	}
-
-
-var dictionary = "{{ json_data }}";
-document.write(dictionary);
+      }
+  });
+}
 /* 엔진에서 받아온 값 */
 var result = "{{result}}";
 /* JSON.parse()에서 따옴표 있으면 오류남 */
@@ -89,33 +85,26 @@ function change_table() {
                 var new_row = res_table.insertRow(res_table.rows.length);
                 /* 행에 열 추가 */
                 var filename = new_row.insertCell(0);
-                var timestamp = new_row.insertCell(1);
-                var bbh = new_row.insertCell(2);
-                var constvalue = new_row.insertCell(3);
-                var section = new_row.insertCell(4);
-                var cert = new_row.insertCell(5);
-                var pdb = new_row.insertCell(6);
-                var imph = new_row.insertCell(7);
-                var xor = new_row.insertCell(8);
+                //var timestamp = new_row.insertCell(1);
+                var bbh = new_row.insertCell(1);
+                var constvalue = new_row.insertCell(2);
+                var section = new_row.insertCell(3);
+                var cert = new_row.insertCell(4);
+                var pdb = new_row.insertCell(5);
+                var imph = new_row.insertCell(6);
+                var xor = new_row.insertCell(7);
                 /* 열에 데이터 입력 */
                 filename.innerHTML = json_res[standard][target][0];
-                timestamp.innerHTML = json_res[standard][target][1];
-                bbh.innerHTML = json_res[standard][target][2];
-                constvalue.innerHTML = json_res[standard][target][3];
-                section.innerHTML = json_res[standard][target][4];
-                cert.innerHTML = json_res[standard][target][5];
-                pdb.innerHTML = json_res[standard][target][6];
-                imph.innerHTML = json_res[standard][target][7];
-                xor.innerHTML = json_res[standard][target][8];
-                /*
-                출력해서 맞는지 확인
-                for(var data in json_res[standard][target]){
-                    document.write("data is "+ data +" "+ json_res[standard][target][data] + "<br>");
-                    console.log(typeof json_res[standard][target][data])
-                }
-                */
+                bbh.innerHTML = json_res[standard][target][1];
+                constvalue.innerHTML = json_res[standard][target][2];
+                section.innerHTML = json_res[standard][target][3];
+                cert.innerHTML = json_res[standard][target][4];
+                pdb.innerHTML = json_res[standard][target][5];
+                imph.innerHTML = json_res[standard][target][6];
+                xor.innerHTML = json_res[standard][target][7];
             }
         }
     }
 }
 change_table();
+

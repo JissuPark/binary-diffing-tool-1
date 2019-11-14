@@ -10,6 +10,9 @@ import pefile
 from Main_engine.Extract_Engine.PE_feature import pe_pdb, pe_rsrc, pe_rich
 from Main_engine.models import PE_info
 
+HEX_M_32 = 0x14c
+HEX_M_64_IA = 0x200
+HEX_M_64_AMD = 0x8664
 
 class Pe_Feature:
     def __init__(self, file_name, pe):
@@ -186,8 +189,27 @@ class Pe_Feature:
             'File Certification': Cert
         }
 
-        PE_info.objects.create(filename=f_name, imphash=ImpHash, filesize=file_size, filetype=file_type,sha_256=sha256,timestamp=TimeStamp,year=Year, timenum=TimeInNum,
-                               ssdeep=ssdeep_hash,sha_1=sha1,md5=MD5)
+        machine_bit = self.pe.FILE_HEADER.Machine
+        mac = ""
+        if machine_bit == HEX_M_32:
+            mac = "Intel 386 or later processors and compatible processors"
+        elif machine_bit == HEX_M_64_AMD or machine_bit == HEX_M_64_IA:
+            mac = "x64"
+        Ent_point = self.pe.OPTIONAL_HEADER.AddressOfEntryPoint
+        Section_num = self.pe.FILE_HEADER.NumberOfSections
+
+        pe_header = {
+            'Target Machine': mac,
+            'File Creation Time': TimeStamp,
+            'Enrty Point': Ent_point,
+            'Contained Sections': Section_num
+        }
+        print(pe_header)
+
+        PE_info.objects.create(filename=f_name, imphash=ImpHash, filesize=file_size, filetype=file_type, sha_256=sha256,
+                               timestamp=TimeStamp, year=Year, timenum=TimeInNum,
+                               ssdeep=ssdeep_hash, sha_1=sha1, md5=MD5, Targetmachine=mac, EntryPoint=Ent_point,
+                               ContainedSections=Section_num)
 
         return pe_features, pe_features_for_DB
 

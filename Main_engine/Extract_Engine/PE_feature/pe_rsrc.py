@@ -335,8 +335,12 @@ class RsrcParser:
                 section_name = section.Name.decode().split('\x00')[0]
                 entropy = section.get_entropy()
                 hash_ssdeep = ssdeep.hash(section.get_data())
+                hash_md5 = hashlib.md5(section.get_data()).hexdigest().upper()
                 offset = hex(section.PointerToRawData)
                 character = hex(section.Characteristics)[2:]
+                virtual_address = section.VirtualAddress
+                virtual_size = section.Misc_VirtualSize
+                raw_size = section.SizeOfRawData
                 # data = ""
                 # print("")
                 # print(f"{section_name}")
@@ -353,10 +357,11 @@ class RsrcParser:
             section_dict[section_name] = {
                 'section_name': section_name,
                 'entropy': entropy,
-                #'hash_256': hash_256,
-                #'data' : data,
+                'virtual_address': virtual_address,
+                'virtual_size': virtual_size,
+                'raw_size': raw_size,
+                'hash_md5': hash_md5,
                 'hash_ssdeep': hash_ssdeep,
-                #'hash_sdhash': hash_sdhash,
                 'offset': offset,
                 'character': character
             }
