@@ -173,6 +173,112 @@
         </table>
     </div>
 </div>
+
+<div style="padding: 10px">
+    <div class="detail">
+        <table height=160px id="contained_resource_table" width=200px>
+            <thead>
+            <div style="margin-top: 20px">
+                <h4 top=50px>Contained Resources By Type</h4>
+            </div>
+            <tr>
+                <th>Resource Name</th>
+                <th>Count</th>
+            </tr>
+            </thead>
+        </table>
+        {% if p_dict %}
+        <script>
+            var pe_result = "{{p_dict}}";
+            /*
+            document.write(pe_result);
+            */
+            var text_pe_res = pe_result.replace(/&#39;/gi, '"');
+            var pe_t = document.getElementById("contained_resource_table");
+
+            var json_pe = JSON.parse(text_pe_res);
+            /* 파일 이름이 다르면 테이블이 변경됨 */
+
+            function change_page(){
+                pe_filename = "{{pe.filename}}";
+                for (var fname in json_pe) {
+                    if (fname == pe_filename) {
+                        for (var rsrc in json_pe[fname]) {
+                            //document.write(rsrc[0])
+                            //resource 부분만 출력하기 위한 if문
+                            if(rsrc[0] == '_'){
+                                var new_row = pe_t.insertRow(pe_t.rows.length);
+
+                                var Resource_name = new_row.insertCell(0);
+                                var Count = new_row.insertCell(1);
+
+                                Resource_name.innerHTML = rsrc;
+                                Count.innerHTML = json_pe[fname][rsrc];
+                            }
+                        }
+                    }
+                }
+            }
+            change_page();
+        </script>
+        {% else %}
+        <h1>no result</h1>
+        {% endif %}
+    </div>
+</div>
+
+<div style="padding: 10px">
+    <div class="detail">
+        <table height=160px id="contained_resource_language_table" width=300px>
+            <thead>
+            <div style="margin-top: 20px">
+                <h4 top=50px>Contained Resources By Language</h4>
+            </div>
+            <tr>
+                <th>Resource Language</th>
+                <th>Count</th>
+            </tr>
+            </thead>
+        </table>
+        {% if p_dict %}
+        <script>
+            var pe_result = "{{p_dict}}";
+            /*
+            document.write(pe_result);
+            */
+            var text_pe_res = pe_result.replace(/&#39;/gi, '"');
+            var pe_t = document.getElementById("contained_resource_language_table");
+
+            var json_pe = JSON.parse(text_pe_res);
+            /* 파일 이름이 다르면 테이블이 변경됨 */
+
+            function change_page(){
+                pe_filename = "{{pe.filename}}";
+                for (var fname in json_pe) {
+                    if (fname == pe_filename) {
+                        for (var rsrc in json_pe[fname]) {
+                            //resource 부분만 출력하기 위한 if문
+                            if(rsrc[0] != '_' && rsrc[0] != '.'){
+                                var new_row = pe_t.insertRow(pe_t.rows.length);
+
+                                var Resource_lang = new_row.insertCell(0);
+                                var Count = new_row.insertCell(1);
+
+                                Resource_lang.innerHTML = rsrc;
+                                Count.innerHTML = json_pe[fname][rsrc];
+                            }
+                        }
+                    }
+                }
+            }
+            change_page();
+        </script>
+        {% else %}
+        <h1>no result</h1>
+        {% endif %}
+    </div>
+</div>
+
 {% endfor %}
 </div>
 

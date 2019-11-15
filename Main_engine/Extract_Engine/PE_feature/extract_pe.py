@@ -32,8 +32,8 @@ class Pe_Feature:
     def extract_rsrc(self):
 
         rsrc = pe_rsrc.RsrcParser(self.file_name)
-        rsrc_result = rsrc.get_resource()
-        return rsrc_result
+        rsrc_result, rs, rl = rsrc.get_resource()
+        return rsrc_result, rs, rl
 
 
     def ex_auth(self):
@@ -105,9 +105,9 @@ class Pe_Feature:
 
                 return xor_key, prod_list
             else:
-                return ""
+                return "", ""
         except:
-            return ""
+            return "", ""
 
     def filetypes(self):
         '''
@@ -143,7 +143,7 @@ class Pe_Feature:
         cert = self.Certificateinfo()
         rich_xor_key, rich_prodid = self.extract_rich()
         pdb_info = self.extract_pdb()
-        rsrc_info = self.extract_rsrc()
+        rsrc_info, rs, rl = self.extract_rsrc()
         time_info, TimeInNum = self.extract_time()
 
         f_name = self.file_name[self.file_name.rfind('\\') + 1:]
@@ -159,7 +159,9 @@ class Pe_Feature:
             'pdb_info': pdb_info,
             'time_date_stamp': time_info,
             'time in num': TimeInNum,
-            'rsrc_info': rsrc_info
+            'rsrc_info': rsrc_info,
+            'rsrc_count': rs,
+            'rsrc_lang': rl
         }
         file_size = os.path.getsize(self.file_name)
         file_size = self.convert_size(file_size)

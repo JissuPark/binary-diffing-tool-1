@@ -142,7 +142,7 @@ class AnalyzePE:
         '''
         xor_score = 0
         prodid_score = 0
-        if standard['rich_xor_key'] == {} or target['rich_xor_key'] == {}:
+        if standard['rich_xor_key'] == "" or target['rich_xor_key'] == "":
             return 0
         else:
             #rich header의 xor key 유사도(True or False)

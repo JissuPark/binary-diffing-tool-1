@@ -38,10 +38,16 @@ def pe(request):
                 if p == "cmp_section":
                     #print(p_)
                     p_dict[pe_data['file_name']] = p_
+                elif p == "rsrc_count":
+                    #print(p_)
+                    p_dict[pe_data['file_name']].update(p_)
+                elif p == 'rsrc_lang':
+                    #print(p_)
+                    p_dict[pe_data['file_name']].update(p_)
 
             json.dump(pe_data, f, ensure_ascii=False, indent='\t')
-                #print(p, p_)
-    print(json.dumps(p_dict, indent=4))
+
+    #print(json.dumps(p_dict, indent=4))
 
     try:
         lists = paginator.get_page(page)
