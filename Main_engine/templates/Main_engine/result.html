@@ -5,14 +5,11 @@
 
 {% block head %}
 {% load static %} <!-- static files are loaded -->
-<link href="{% static 'Main_engine/css/result_sort.css' %}" rel="stylesheet">
 <link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet" media="screen">
 <link href="{% static 'Main_engine/css/fakeLoaer.css' %}">
-
-<script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-
+<script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="{% static 'Main_engine/js/jquery.timelinr-0.9.7.js' %}"></script>
 <script src="{% static 'Main_engine/css/hightchart.css' %}"></script>
 
@@ -83,39 +80,34 @@
 
    <div class="card-deck ml-3 mr-3 mt-4">
       <div class="card">
-            <canvas id="mychart0" width="200" height="200"></canvas>
+            <div id="mychart0"></div>
         <div class="card-body">
          <h5 class="card-title">Target File</h5>
          <p class="card-text">대상파일 : </p>
         </div>
       </div>
       <div class="card">
-            <canvas id="mychart1" width="200" height="200"></canvas>
+          <div id="mychart1"></div>
         <div class="card-body">
          <h5 class="card-title">Target File</h5>
          <p class="card-text">대상파일 : </p>
         </div>
       </div>
       <div class="card">
-            <canvas id="mychart2" width="200" height="200"></canvas>
+            <div id="mychart2"></div>
         <div class="card-body">
          <h5 class="card-title">Target File</h5>
          <p class="card-text">대상파일 : </p>
         </div>
       </div>
       <div class="card">
-            <canvas id="mychart3" width="200" height="200"></canvas>
+           <div id="mychart3"></div>
          <div class="card-body">
          <h5 class="card-title">Target File</h5>
          <p class="card-text">대상파일 : </p>
          </div>
         </div>
      </div>
-   <div>
-        {% for json in json_data %}
-            <p>{{ json.1 }}</p>
-        {% endfor %}
-    </div>
 <br>
 <br>
 
@@ -295,7 +287,7 @@ Highcharts.chart(id_str, {
         }
     ],
 });
-
+document.write(id_str)
 i++;
 }
 }
