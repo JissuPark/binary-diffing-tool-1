@@ -294,14 +294,14 @@ class RsrcParser:
 
     def get_resource(self):
         #리소스 정보를 저장할 리스트
-        self.resource = []
+        self.resource = dict()
         rsrc_count = list()
         rsrc_lang = list()
 
         #리소스 엔트리를 가지고 있는지 확인
         if not hasattr(self.pe, 'DIRECTORY_ENTRY_RESOURCE'):
             print('PE doesn\'t has DIRECTORY_ENTRY_RESOURCE')
-            return -1
+            return 0, 0, 0
 
         #가지고 있는 엔트리만큼 반복
         for resource_type in self.pe.DIRECTORY_ENTRY_RESOURCE.entries:
@@ -328,9 +328,9 @@ class RsrcParser:
                     type = match_type(resource_type.id)
                     #print(f'Resource Language is {resource_lang.id} : {country}')#{resource_lang.struct}')
 
-                    rsrc_entry['Resource Type'] = type
+                    rsrc_entry['&Resource Type'] = type
                     rsrc_entry['Resource NameID'] = resource_id.id
-                    rsrc_entry['Resource Language'] = country
+                    rsrc_entry['&Resource Language'] = country
 
                     #여기서부터 데이터 추출
                     data = self.pe.get_data(resource_lang.data.struct.OffsetToData,
@@ -339,7 +339,8 @@ class RsrcParser:
                     #이 시부레 새끼도 ssdeep 조져야함 중요한 건 ssdeep 조져야 하는 애들이 byte type이라 json에 넣을 수 없단거임
                     #resouce 데이터(해시화) 출력 성공
                     data = data.decode('Latin-1').replace(u"\u0000", u"").replace(u"\u000B", u"")
-                    rsrc_entry['sha-256'] = hashlib.sha256(data.encode()).hexdigest()
+                    sha_256 = hashlib.sha256(data.encode()).hexdigest()
+                    rsrc_entry['&sha-256'] = hashlib.sha256(data.encode()).hexdigest()
                     rsrc_entry['ssdeep'] = ssdeep.hash(data)
                     #print(f'data : {data}')
                     size = resource_lang.data.struct.Size
@@ -350,14 +351,24 @@ class RsrcParser:
                     entropy = self.get_entropy(data)
                     #print(f'entropy : {entropy}')
                     rsrc_entry['entropy'] = entropy
-                    self.resource.append(rsrc_entry)
-                    for c in rsrc_entry:
-                        # print(f"c :: {c}")
-                        if c == "Resource Type":
-                            # print(rsrc_entry[c])
-                            rsrc_count.append(rsrc_entry[c])
-                        elif c == "Resource Language":
-                            rsrc_lang.append(rsrc_entry[c])
+                    sha = '$' + sha_256
+                    self.resource[sha] = {
+                        '&Resource Type': type,
+                        'Resource NameID': resource_id.id,
+                        '&Resource Language': country,
+                        '&sha-256': sha_256,
+                        'ssdeep': ssdeep.hash(data),
+                        'size': size,
+                        'entropy': entropy
+                    }
+
+                for c in rsrc_entry:
+                    # print(f"c :: {c}")
+                    if c == "&Resource Type":
+                        print(rsrc_entry[c])
+                        rsrc_count.append(rsrc_entry[c])
+                    elif c == "&Resource Language":
+                        rsrc_lang.append(rsrc_entry[c])
         rs = dict()
         for ce in rsrc_count:
             rs[ce] = rsrc_count.count(ce)

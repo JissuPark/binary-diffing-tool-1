@@ -99,14 +99,15 @@ class AnalyzePE:
         '''
         size = len(standard)
         flag = 0
-        for i in range(len(standard)):
-            for j in range(len(target)):
-                #1번의 경우(리소스에 쉘코드가 없는 경우)
-                if standard[i]['Resource Type'] == target[j]['Resource Type']:
-                    if standard[i]['sha-256'] == target[j]['sha-256']:
+
+        for key in standard.keys() and target.keys():
+            if key in standard and key in target:
+                if standard[key]['&Resource Type'] == target[key]['&Resource Type']:
+                    if standard[key]['&sha-256'] == target[key]['&sha-256']:
                         flag += 1
                     else:
                         continue
+
 
         '''
         리소스에 쉘코드가 삽입되어 있는 경우
@@ -123,15 +124,6 @@ class AnalyzePE:
         if flag > 0:
             return flag / size * 100
         else:
-            print("There could be SHELLCODE in resource section!!")
-            for i in range(len(standard)):
-                for j in range(len(target)):
-                    #2번의 경우(리소스에 쉘코드가 삽입되어 있는 경우)
-                    score += ssdeep.compare(standard[i]['ssdeep'], target[j]['ssdeep'])
-
-                    #if score > 0:
-                        # score_str = "standard rsrc num " + str(i) + " and " + "target rsrc num " + str(j) + " " + str(score)
-            #return score / len(standard)
             return score
 
     def analyze_rich(self, standard, target):
