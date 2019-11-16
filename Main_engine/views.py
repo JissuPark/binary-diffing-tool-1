@@ -1,3 +1,5 @@
+import timeit
+
 from django.http import HttpResponse, Http404, HttpResponseRedirect, HttpRequest
 from django.template import loader
 from django.shortcuts import get_object_or_404, render, render_to_response
@@ -71,7 +73,7 @@ def cfg(request):
 
 
 def call_main(request):
-
+    start = timeit.default_timer()
     if os.path.isfile(r"C:\malware\all_result\result.txt"): #경로가 파일인지 아닌지 검사
         result_file = open(r"C:\malware\all_result\result.txt", 'rb').read()
         result = json.loads(result_file)
@@ -82,7 +84,9 @@ def call_main(request):
             json.dump(result, res, ensure_ascii=False, indent='\t')
 
     pe_ = PE_info.objects.order_by('timenum').all()
-
+    stop = timeit.default_timer()
+    print('time is ????')
+    print(stop - start)
     return render(request, 'Main_engine/result.html', {'result': result, 'pe_':pe_})
 
 

@@ -271,7 +271,7 @@ class RsrcParser:
         #리소스 엔트리를 가지고 있는지 확인
         if not hasattr(self.pe, 'DIRECTORY_ENTRY_RESOURCE'):
             print('PE doesn\'t has DIRECTORY_ENTRY_RESOURCE')
-            return -1
+            return 0
 
         #가지고 있는 엔트리만큼 반복
         for resource_type in self.pe.DIRECTORY_ENTRY_RESOURCE.entries:

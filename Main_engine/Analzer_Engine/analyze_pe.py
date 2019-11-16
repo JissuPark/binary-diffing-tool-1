@@ -97,16 +97,21 @@ class AnalyzePE:
         리소스 데이터를 각각 ssdeep으로 비교해서 결과를 반환하는 함수
         :return: score list with weight
         '''
-        size = len(standard)
-        flag = 0
-        for i in range(len(standard)):
-            for j in range(len(target)):
-                #1번의 경우(리소스에 쉘코드가 없는 경우)
-                if standard[i]['Resource Type'] == target[j]['Resource Type']:
-                    if standard[i]['sha-256'] == target[j]['sha-256']:
-                        flag += 1
-                    else:
-                        continue
+
+        if standard == 0 or target == 0:
+            return 0
+        else:
+            size = len(standard)
+            flag = 0
+            for i in range(len(standard)):
+                for j in range(len(target)):
+                    # 1번의 경우(리소스에 쉘코드가 없는 경우)
+                    if standard[i]['Resource Type'] == target[j]['Resource Type']:
+                        if standard[i]['sha-256'] == target[j]['sha-256']:
+                            flag += 1
+                        else:
+                            continue
+
 
         '''
         리소스에 쉘코드가 삽입되어 있는 경우
@@ -123,15 +128,19 @@ class AnalyzePE:
         if flag > 0:
             return flag / size * 100
         else:
-            print("There could be SHELLCODE in resource section!!")
-            for i in range(len(standard)):
-                for j in range(len(target)):
-                    #2번의 경우(리소스에 쉘코드가 삽입되어 있는 경우)
-                    score += ssdeep.compare(standard[i]['ssdeep'], target[j]['ssdeep'])
+            if standard == 0 or target == 0:
+                return 0
+            else:
+                print("There could be SHELLCODE in resource section!!")
+                for i in range(len(standard)):
+                    for j in range(len(target)):
+                        # 2번의 경우(리소스에 쉘코드가 삽입되어 있는 경우)
+                        score += ssdeep.compare(standard[i]['ssdeep'], target[j]['ssdeep'])
 
-                    #if score > 0:
+                        # if score > 0:
                         # score_str = "standard rsrc num " + str(i) + " and " + "target rsrc num " + str(j) + " " + str(score)
-            #return score / len(standard)
+                # return score / len(standard)
+
             return score
 
     def analyze_rich(self, standard, target):
