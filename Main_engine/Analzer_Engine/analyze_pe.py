@@ -108,7 +108,6 @@ class AnalyzePE:
                     else:
                         continue
 
-
         '''
         리소스에 쉘코드가 삽입되어 있는 경우
         어느 리소스에 쉘코드가 들어있는지 모르고
@@ -147,8 +146,7 @@ class AnalyzePE:
                     else:
                         continue
         return str(xor_score) + "," + str(prodid_score / len(standard['rich_prodid']))
-        # #print(json.dumps(standard, indent=4))
-        # #print(json.dumps(target, indent=4))
+
 
 
     def analyze_section(self, dict_s, dict_t):
