@@ -50,7 +50,6 @@ class AnalyzePE:
         '''
         score = 0
         if dict_s.get('hash') == None or dict_t.get('hash') == None:
-            #print("No Certificate")
             return score
         else:
             if dict_s['hash'] == dict_t['hash']:
@@ -159,16 +158,8 @@ class AnalyzePE:
         for key in dict_s.keys() and dict_t.keys():                                 #키의 이름이 다를 때의 예외처리가 필요
             if key in dict_s and key in dict_t:
                 if dict_s[key]['section_name'] == dict_t[key]['section_name']:
-                    #print(f"{dict_s[key]['section_name']}, {dict_t[key]['section_name']}")
                     score = ssdeep.compare(dict_s[key]['hash_ssdeep'], dict_t[key]['hash_ssdeep'])
                     comp += score
-                # print(f"{key} :: {score}")
-                # 섹션 이름이 다르면 그 전까지의 섹션별 비교 수치는 버려야 하나 가져가야 하나?
-                # if key in dict_s == key in dict_t:
-                #     score = ssdeep.compare(dict_s[key]['hash_ssdeep'], dict_t[key]['hash_ssdeep'])
-                #     comp += score
-                # #print(f"{key} :: {score}")
-                # # 섹션 이름이 다르면 그 전까지의 섹션별 비교 수치는 버려야 하나 가져가야 하나?
             else:
                 continue
         return comp
@@ -192,16 +183,12 @@ class AnalyzePE:
 
                 yun_t['timestamp'] = pe_info_t['time_date_stamp']
                 yun_t['timestamp_num'] = pe_info_t['time in num']
-                #yun[pe_info_t['file_name']] = yun_t
-                yun_me[pe_info_t['file_name']] = yun_t
 
-                ###########################
+                yun_me[pe_info_t['file_name']] = yun_t
 
                 pe_t['imphash'] = self.analyze_imphash(pe_info_s, pe_info_t)
                 pe_t['rich'] = self.analyze_rich(pe_info_s, pe_info_t)
-                #print(f"{pe_info_s['file_name']} vs {pe_info_t['file_name']}")
                 pe_t['section_score'] = self.analyze_section(pe_info_s['cmp_section'], pe_info_t['cmp_section'])
-                #print("")
                 pe_t['auth_score'] = self.analyze_auth(pe_info_s['auto'], pe_info_t['auto'])
                 pe_t['pdb_score'] = self.analyze_pdb(pe_info_s['pdb_info'], pe_info_t['pdb_info'])
                 pe_t['rsrc'] = self.analyze_rsrc(pe_info_s['rsrc_info'], pe_info_t['rsrc_info'])
