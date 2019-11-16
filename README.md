@@ -4,7 +4,8 @@
 
 ## 전체 구상도
 
-![](Untitled-db5f762c-405a-48fe-9e8e-bf5caaac7806.png)
+![Untitled-db5f762c-405a-48fe-9e8e-bf5caaac7806](https://user-images.githubusercontent.com/35132299/68992411-5add3680-08ae-11ea-9313-544ab20c467d.png)
+
 
 ---
 
