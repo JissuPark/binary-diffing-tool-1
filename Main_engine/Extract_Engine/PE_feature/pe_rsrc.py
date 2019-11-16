@@ -398,15 +398,6 @@ class RsrcParser:
                 virtual_address = section.VirtualAddress
                 virtual_size = section.Misc_VirtualSize
                 raw_size = section.SizeOfRawData
-                # data = ""
-                # print("")
-                # print(f"{section_name}")
-                # for i in range(0, 100000):
-                #     data += hex(section.get_data()[i]) + " "
-                #     if i != 0 and i % 16 == 0:
-                #         print("")
-                #     print("%02x" % section.get_data()[i] + " ", end="")
-                # print('\n')
             except:
                 continue
             #권한 확인 부분 삭제
