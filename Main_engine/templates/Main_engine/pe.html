@@ -342,6 +342,73 @@
     </div>
 </div>
 
+<div style="padding: 10px">
+    <div class="detail">
+        <table height=160px id="Import_dll_list_table" width=1000px>
+            <thead>
+            <div style="margin-top: 20px">
+            <h4 top=50px>Imports</h4>
+        </div>
+            <tr>
+                <th>imports</th>
+            </tr>
+            <lu id="dll_list">
+
+            </lu>
+            </thead>
+        </table>
+
+        {% if p_dll_list %}
+        <script>
+            var pe_result = "{{p_dll_list}}";
+            //document.write(pe_result)
+            /*
+            document.write(pe_result);
+            */
+            var text_pe_res = pe_result.replace(/&#39;/gi, '"');
+            var pe_t = document.getElementById("Import_dll_list_table");
+
+            var json_pe = JSON.parse(text_pe_res);
+            /* 파일 이름이 다르면 테이블이 변경됨 */
+
+            function change_page(){
+                pe_filename = "{{pe.filename}}";
+                for (var fname in json_pe) {
+                    if (fname == pe_filename) {
+                        for (var list in json_pe[fname]) {
+                            //document.write(fname)
+                            //resource 부분만 출력하기 위한 if문
+                            //list = list.toLowerCase()
+                            if(list.substr(list.length - 4, list.length - 1) == ".dll" || list.substr(list.length - 4, list.length - 1) == ".DLL"){
+                                var new_row = pe_t.insertRow(pe_t.rows.length);
+
+                                //var imp = new_row.insertCell(0);
+                                //var li = new_row.insertCell(1);
+
+                                //imp.innerHTML = list
+                                //li.innerHTML = json_pe[fname][list];
+                                document.write(list);
+                                document.write(json_pe[fname][list].length);
+                                for (var i in json_pe[fname][list]) {
+                                    //var l = document.createElement('div');
+                                    //l.createTextNode('test');
+
+                                    //document.getElementById('dll_list').appendChild(l);
+                                    document.write(json_pe[fname][list][i]);
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+            change_page();
+        </script>
+        {% else %}
+        <h1>no result</h1>
+        {% endif %}
+    </div>
+</div>
 
 {% endfor %}
 </div>
