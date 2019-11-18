@@ -273,44 +273,6 @@ class Analyze_files:
 
         return pe_result, yun_pe
 
-'''
-    total score to the excel file
-'''
-def out_xlsx(path, result_dict):
-    try:
-        wb = load_workbook(path)
-    except:
-        wb = Workbook()
-    ws = wb.create_sheet()
-    ws = wb.active
-
-    ws.title = 'result_xlsx'
-    title = ['BASE_FILE', 'COMP_FILE', 'FILE HASH', 'TIME STAMP', 'BB HASH', 'CONSTANT', 'SECTION', 'AUTH', 'PDB', 'IMPORT HASH', 'RICH']
-    cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K']
-
-    for i in range(len(title)):
-        ws[f'{cols[i]}1'] = title[i]
-    target_count = len(result_dict) - 1
-    start_row_num = 2
-
-    for base, targets in result_dict.items():
-        current_row_num = start_row_num
-        ws[f'A{current_row_num}'] = base
-        for t_name, t_infos in targets.items():
-            ws[f'B{current_row_num}'] = t_name
-            current_info = 0
-            for t_info in t_infos:
-                ws[f'{cols[current_info + 2]}{current_row_num}'] = t_info
-                current_info += 1
-            current_row_num += 1
-        ws.merge_cells(f"A{start_row_num}:A{current_row_num - 1}")
-        current_row_num += 1
-        start_row_num = current_row_num
-
-    #    wb.remove(wb['Sheet1'])
-    wb.save(path)
-
-
 def create_folder():
     # mal_exe는 drag&drop할 때 먼저 생성됨
     # mal_idb, all_result(idb, pe) 가 없으면 생성
@@ -337,8 +299,6 @@ def delete_file():
 def start_engine():
     '''
     웹 서버에서 메인 엔진을 호출하면 엔진을 돌리기위한 함수
-    * 백앤드 엔진에서는 사용되지 않음
-    * 지금은 서버 테스트만을 위해서 만든 것이므로 무시
     '''
     PATH = r"C:\malware\mal_exe"
     IDB_PATH = r"C:\malware\mal_idb"
@@ -367,7 +327,7 @@ def start_engine():
     result_idb, yun_all = analyze.analyze_idb(yun_pe)
 
 
-    # 6. 결과 csv 저장 (임시)
+    # 6. 결과 저장
     all_result = analyze.calculate_heuristic(result_idb, result_pe)
 
     delete_file()
@@ -413,8 +373,6 @@ if __name__ == "__main__":
 
     # 6. 결과 csv 저장 (임시)
     all_result = analyze.calculate_heuristic(result_idb, result_pe)
-
-    out_xlsx(r"C:\malware\result\test.xlsx", all_result)
     start_engine()
 
 
