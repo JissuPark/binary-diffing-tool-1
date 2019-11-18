@@ -45,40 +45,39 @@
 
 <h5 id="timeline2">Time Line</h5>
 <div id="tileline_frame">
-  <div id="timeline">
-    <ul id="dates">
-    {% for pe in pe_%}
-    <li><a href=#{{pe.year}} style="color: #ffcc00;">{{pe.year}}</a></li>
-    {%endfor%}
-    </ul>
-    <ul id="issues">
-    {% for pe in pe_%}
-    <li id={{pe.timestamp}}>
-      <img src="{% static 'Main_engine/images/test1.png' %}" width="256" height="256" />
-      <h1>{{pe.timestamp}}</h1>
-<!--      <p> File Name : {{pe.filename}}</p>-->
-      <p> File Size : {{pe.filesize}}</p>
-      <p> File Type : {{pe.filetype}}</p>
-<!--      <p> File Sha-256 :{{pe.sha_256}}</p>-->
-      <p> TimeStamp : {{pe.timestamp}}</p>
-    </li>
-    {%endfor%}
-    </ul>
+    <div id="timeline">
+        <ul id="dates">
+            {% for pe in pe_%}
+            <li><a href=#{{pe.year}} style="color: #ffcc00;">{{pe.year}}</a></li>
+            {%endfor%}
+        </ul>
+        <ul id="issues">
+            {% for pe in pe_%}
+            <li id={{pe.timestamp}}>
+                <img src="{% static 'Main_engine/images/test1.png' %}" width="256" height="256"/>
+                <h1>{{pe.timestamp}}</h1>
+                <!--      <p> File Name : {{pe.filename}}</p>-->
+                <p> File Size : {{pe.filesize}}</p>
+                <p> File Type : {{pe.filetype}}</p>
+                <!--      <p> File Sha-256 :{{pe.sha_256}}</p>-->
+                <p> TimeStamp : {{pe.timestamp}}</p>
+            </li>
+            {%endfor%}
+        </ul>
 
-  <div id="grad_left"></div>
-  <div id="grad_right"></div>
-  <a href="#" id="next">+</a>
-  <a href="#" id="prev">-</a>
-  </div>
+        <div id="grad_left"></div>
+        <div id="grad_right"></div>
+        <a href="#" id="next">+</a>
+        <a href="#" id="prev">-</a>
+    </div>
 </div>
 {#휴리스틱 스코어부분 #}
 <!--원래 있던 차트 부분-->
 <br>
 
+
 <hr class="my-hr3"><h5 id="heuristic" class="mt-2 mb-3" style="font-weight: bold;">Heuristic Score</h5><hr class="my-hr3">
 <!--원래 있던 차트 부분-->
-
-
      <div class="card-deck ml-3 mr-3 mt-4">
       <div class="card">
             <div id="mychart0"></div>
@@ -126,7 +125,7 @@
             <thead>
             <tr>
                 <th rowspan="2" align=center>File Name</th>
-<!--                <th rowspan="2">Timestamp</th>-->
+                <!--                <th rowspan="2">Timestamp</th>-->
                 <th colspan="2">Algorithm</th>
                 <th colspan="6">PE META data</th>
             </tr>
@@ -146,7 +145,6 @@
         </div>
         <script>
             var dictionary = "{{ json_data }}";
-            {#document.write(dictionary);#}
             /* 엔진에서 받아온 값 */
             var result = "{{result}}";
             /* JSON.parse()에서 따옴표 있으면 오류남 */
@@ -169,20 +167,22 @@
                 select_file.appendChild(option);
             }
             select_file.selectedIndex = 0;
+
             /* 기준이 변하면 테이블이 변경될 수 있도록 */
-            function change_table() {
+            $("#select_file").change(function () {
                 /* 기준이 변할때마다 테이블을 지우고 새로 시작 */
                 for (var row = res_table.rows.length - 1; row > 1; row--) {
                     res_table.deleteRow(row);
                 }
                 for (var standard in json_res) {
-                    /*document.write("standard is " + standard +"<br>");*/
+                    // document.write(standard + "<br>");
                     var sel = document.getElementById("select_file");
-                    if (standard == sel.options[sel.selectedIndex].value) {
+                    var selected = $(this).children("option:selected").text();
+                    if (standard == selected) {
+                        // document.write(sel.selectedIndex + " is " + "<br>");
+
                         /* 대상이 변할때마다 */
                         for (var target in json_res[standard]) {
-                            /*document.write("target is " + target + "<br>");*/
-                            /*document.write(json_res[standard][target]+ "<br>");*/
                             /* 하단에 행 추가 */
                             var new_row = res_table.insertRow(res_table.rows.length);
                             /* 행에 열 추가 */
@@ -213,8 +213,7 @@
                         }
                     }
                 }
-            }
-            change_table();
+            });
 
 var i=0;
 for(var key in json_res){

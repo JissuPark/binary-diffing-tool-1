@@ -78,11 +78,24 @@ def heuristic(request):
         return render(request, 'Main_engine/result.html', {'json_data': json_data})
 
 def cfg(request):
+    cfg_dict = dict()
+    PATH = r'C:\malware\all_result\idb'
+    for file in os.listdir(PATH):
+        file_path = os.path.join(PATH, file)
+        with open(file_path, 'rb') as cfg:
+            cfg_dict[file] = json.loads(cfg.read())
+    return render(request, 'Main_engine/cfg.html', {'cfg': cfg_dict})
 
-    with open(r"C:\malware\all_result\test.txt", 'rb') as test:
-        cfg_ = json.loads(test.read())
 
-    return render(request, 'Main_engine/cfg.html', {'cfg_': cfg_})
+def cg(request):
+    cg_dict = dict()
+    PATH = r'C:\malware\all_result\cg'
+    for file in os.listdir(PATH):
+        file_path = os.path.join(PATH, file)
+        with open(file_path, 'rb') as cg:
+            cg_dict[file] = json.loads(cg.read())
+
+    return render(request, 'Main_engine/cg.html', {'cg': cg_dict})
 
 
 def call_main(request):

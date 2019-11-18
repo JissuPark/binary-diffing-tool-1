@@ -5,21 +5,53 @@
 <script src="//d3js.org/d3.v4.min.js"></script>
 <script src="https://unpkg.com/viz.js@1.8.1/viz.js" type="javascript/worker"></script>
 <script src="https://unpkg.com/d3-graphviz@2.6.1/build/d3-graphviz.js"></script>
+<style>
+    .paint {
+        display: block;
+        width: 100%;
+        height: 800px;
+    }
+    .paint-vertical{
+        display: flex;
+    }
+    .graph {
+        margin: 5px;
+        width: 25%;
+        height: 800px;
+        border: 1px solid grey;
+    }
+</style>
 {% endblock head %}
 
 {% block section %}
-<div style="display: flex;">
-    <div class="mt-5" id="tab" style="width: 30%;"></div>
-    <div class="mt-5" id="base-graph" style="width: 70%;"></div>
+<div class="paint">
+    <div class="mt-5 paint-vertical" id="tab"></div>
+    <div class="paint-vertical">
+        <div class="graph" id="base-graph"></div>
+        <div class="graph" id="target1-graph"></div>
+        <div class="graph" id="target2-graph"></div>
+        <div class="graph" id="target3-graph"></div>
+    </div>
 </div>
-{% if cfg_ %}
+<!--<div class="paint">-->
+<!--    <div class="mt-5 paint-vertical" id="tab"></div>-->
+<!--    <div class="paint-vertical">-->
+<!--        <div class="graph" id="base-graph"></div>-->
+<!--        <div class="graph" id="target1-graph"></div>-->
+<!--    </div>-->
+<!--    <div class="paint-vertical">-->
+<!--        <div class="graph" id="target2-graph"></div>-->
+<!--        <div class="graph" id="target3-graph"></div>-->
+<!--    </div>-->
+<!--</div>-->
+{% if cfg %}
 <script>
     var boxes = {};
 
     /* 그래프 그리기 위한 변수 생성 */
     function boxing(array, branches) {
         var box = 'graph {\n' +
-            'node [shape=box style=filled ]; ';
+            'node [shape=box]; ';
         for (var item in array) {
             box = box + '\"' + item + '\"' + ' [label="' + array[item] + '", color=green];\n';
         }
@@ -50,6 +82,13 @@
     function draw(graph) {
         d3.select("#base-graph").graphviz()
             .renderDot(graph);
+        d3.select("#target1-graph").graphviz()
+            .renderDot(graph);
+        d3.select("#target2-graph").graphviz()
+            .renderDot(graph);
+        d3.select("#target3-graph").graphviz()
+            .renderDot(graph);
+
     }
 
     /* 함수이름 버튼 만드는 함수 */
@@ -66,37 +105,37 @@
         document.getElementById('tab').appendChild(btn);
     }
 
-    var cfgdata = "{{cfg_}}";
+    var cfgdata = "{{cfg}}";
     var text_res = cfgdata.replace(/\n/gi, '\\n').replace(/&#39;/gi, '"').replace(/\t/gi, '\\t');
     var json_res = JSON.parse(text_res);
 
-
-    for (var funcname in json_res['func_name']) {
-        makebt(funcname);
-        var array = {};
-        var branches = [];
-        // document.write(funcname + "<br>");
-        for (var startaddr in json_res['func_name'][funcname]) {
-            if (startaddr != "flow_opString" && startaddr != "flow_constants" && startaddr != "flow_branches") {
-                // document.write(startaddr+"<br>");
-                var block = startaddr + "\n";
-                for (var curaddr in json_res['func_name'][funcname][startaddr]['disasms']) {
-                    // document.write(json_res[startaddr]['disasms'][curaddr]+'<br>')
-                    block = block + json_res['func_name'][funcname][startaddr]['disasms'][curaddr] + '\n';
+    for (var file in json_res) {
+        for (var funcname in json_res[file]['func_name']) {
+            makebt(funcname);
+            var array = {};
+            var branches = [];
+            // document.write(funcname + "<br>");
+            for (var startaddr in json_res[file]['func_name'][funcname]) {
+                if (startaddr != "flow_opString" && startaddr != "flow_constants" && startaddr != "flow_branches") {
+                    // document.write(startaddr+"<br>");
+                    var block = startaddr + "\n";
+                    for (var curaddr in json_res[file]['func_name'][funcname][startaddr]['disasms']) {
+                        // document.write(json_res[startaddr]['disasms'][curaddr]+'<br>')
+                        block = block + json_res[file]['func_name'][funcname][startaddr]['disasms'][curaddr] + '\n';
+                    }
+                    var addrsplit = startaddr.split('x');
+                    array[addrsplit[1]] = block;
                 }
-                var addrsplit = startaddr.split('x');
-                array[addrsplit[1]] = block;
+                if (startaddr == "flow_branches" && json_res[file]['func_name'][funcname][startaddr].length != 0) {
+                    branches.push(json_res[file]['func_name'][funcname][startaddr]);
+                    // document.write(branches+"<br>");
+                }
             }
-            if (startaddr == "flow_branches" && json_res['func_name'][funcname][startaddr].length != 0) {
-                branches.push(json_res['func_name'][funcname][startaddr]);
-                // document.write(branches+"<br>");
-            }
+            graph = boxing(array, branches);
+            boxes[funcname] = graph;
+            // draw(boxes[funcname]);
         }
-        graph = boxing(array, branches);
-        boxes[funcname] = graph;
-        // draw(boxes[funcname]);
     }
-
 
 </script>
 {% else %}

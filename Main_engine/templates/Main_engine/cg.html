@@ -1,0 +1,92 @@
+{% extends "Main_engine/layout.html" %}
+
+{% block title %} CG page {% endblock %}
+{% block head %}
+<script src="//d3js.org/d3.v4.min.js"></script>
+<script src="https://unpkg.com/viz.js@1.8.1/viz.js" type="javascript/worker"></script>
+<script src="https://unpkg.com/d3-graphviz@2.6.1/build/d3-graphviz.js"></script>
+{% endblock head %}
+
+{% block section %}
+<div style="display: block;">
+    <div class="mt-5" id="file-name" style="display: flex"></div>
+    <div class="mt-5" id="base-graph" style="width: 100%; overflow: auto"></div>
+</div>
+{% if cg %}
+<script>
+    var boxes = {};
+
+    /* 그래프 그리기 위한 변수 생성 */
+    function boxing(array, branches) {
+        var box = 'graph {\n' +
+            'node [shape=box]; ';
+        for (var item in array) {
+            box = box + '\"' + item + '\"' + ' [label="' + array[item] + '"];\n';
+        }
+        // document.write(box);
+        for (var branch in branches) {
+            var start = [];
+            var end = [];
+            var leaf = branches[branch].toString().split(',');
+            // document.write(leaf+"<br>");
+            for (var l in leaf) {
+                if (l % 2 == 0) {
+                    start.push(leaf[l]);
+                    // document.write(start+"<br>");
+                } else {
+                    end.push(leaf[l]);
+                    // document.write(end[1]+"<br>");
+                }
+            }
+            for (var index = 0; index < start.length; index++) {
+                box = box + '\"' + start[index] + '\"' + " -- " + '\"' + end[index] + '\"' + ';\n';
+            }
+        }
+        box = box + '}';
+        return box;
+    }
+
+    /* 그래프 그리는 함수 */
+    function draw(graph) {
+        d3.select("#base-graph").graphviz()
+            .renderDot(graph);
+    }
+
+    /* 함수이름 버튼 만드는 함수 */
+    function makebt(fname) {
+        var btn = document.createElement("button");
+        btn.id = fname;
+        btn.textContent = fname;
+        btn.setAttribute('style', "display: flex;");
+        btn.onclick = function () {
+            draw(boxes[fname]);
+        };
+        // btn.addEventListener('onclick', draw(boxes[fname]));
+        /* 동적 이벤트 추가 */
+        document.getElementById('file-name').appendChild(btn);
+    }
+
+    var cgdata = "{{cg}}";
+    var text_res = cgdata.replace(/\n/gi, '\\n').replace(/&#39;/gi, '"').replace(/\t/gi, '\\t');
+    var json_res = JSON.parse(text_res);
+
+    var array = {};
+    var branches = [];
+    for (var file in json_res) {
+        makebt(file);
+        for (var funcname in json_res[file]['f_name']) {
+            array[json_res[file]['f_name'][funcname]] = json_res[file]['f_name'][funcname];
+       }
+        branches = json_res[file]['f_branch'];
+    }
+
+
+    graph = boxing(array, branches);
+    boxes[funcname] = graph;
+    draw(boxes[funcname]);
+
+</script>
+{% else %}
+<h2>Nope!</h2>
+{% endif %}
+{% endblock section %}
