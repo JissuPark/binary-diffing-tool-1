@@ -31,6 +31,7 @@ def pe(request):
 
     page = request.GET.get('page', 1)
     p_dict = dict()
+    p_dll_list = dict()
     pe_result_list = os.listdir(r"C:\malware\all_result\pe")
     for file in pe_result_list:
         if os.path.isfile(r"C:\malware\all_result\pe" + "\\" + file):
@@ -49,10 +50,12 @@ def pe(request):
                 elif p == 'rsrc_lang':
                     #print(p_)
                     p_dict[pe_data['file_name']].update(p_)
+                elif p == 'Imports':
+                    p_dll_list[pe_data['file_name']] = p_
 
             json.dump(pe_data, f, ensure_ascii=False, indent='\t')
 
-    #print(json.dumps(p_dict, indent=4))
+    print(json.dumps(p_dll_list, indent=4))
 
     try:
         lists = paginator.get_page(page)
@@ -62,7 +65,7 @@ def pe(request):
         lists = paginator.page(paginator.num_pages)
     f.close()
 
-    return render(request, 'Main_engine/pe.html', {'lists': lists, 'p_dict': p_dict})
+    return render(request, 'Main_engine/pe.html', {'lists': lists, 'p_dict': p_dict, 'p_dll_list': p_dll_list})
 
 def heuristic(request):
      with open(r"C:\malware\all_result\result.txt", "r") as json_file:
