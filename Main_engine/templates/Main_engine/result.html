@@ -5,21 +5,23 @@
 
 {% block head %}
 {% load static %} <!-- static files are loaded -->
-<link href="{% static 'Main_engine/css/result_sort.css' %}" rel="stylesheet">
 <link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet" media="screen">
 <link href="{% static 'Main_engine/css/fakeLoaer.css' %}">
-
-<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="{% static 'Main_engine/js/jquery.timelinr-0.9.7.js' %}"></script>
-<script src="{% static 'Main_engine/js/about_chart.js' %}"></script>
+<script src="{% static 'Main_engine/css/hightchart.css' %}"></script>
+
 <script>
     $(function () {
         $().timelinr({
             arrowKeys: 'true'
         })
     });
+
 </script>
+
 {% endblock head %}
 
 {% block section %}
@@ -28,7 +30,7 @@
 
 
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-5">
-    <h3>분석 결과</h3>
+    <h3>Result</h3>
     <div class="btn-toolbar mb-2 mb-md-0">
         <div class="btn-group mr-2">
             <button type="button" class="btn btn-sm btn-outline-secondary">high</button>
@@ -41,8 +43,7 @@
     </div>
 </div>
 
-<br>
-<h5 id="timeline2">time line</h5>
+<h5 id="timeline2">Time Line</h5>
 <div id="tileline_frame">
   <div id="timeline">
     <ul id="dates">
@@ -72,58 +73,56 @@
 </div>
 {#휴리스틱 스코어부분 #}
 <!--원래 있던 차트 부분-->
-<br><br>
+<br>
 
-<hr class="my-hr3"><h5 id="heuristic" class="mt-2 mb-3" style="font-weight: bold;">휴리스틱 점수</h5><hr class="my-hr3">
+<hr class="my-hr3"><h5 id="heuristic" class="mt-2 mb-3" style="font-weight: bold;">Heuristic Score</h5><hr class="my-hr3">
 <!--원래 있던 차트 부분-->
-   <div class="card-deck ml-3 mr-3 mt-4">
+
+
+     <div class="card-deck ml-3 mr-3 mt-4">
       <div class="card">
-            <canvas id="mychart0" width="200" height="200"></canvas>
+            <div id="mychart0"></div>
         <div class="card-body">
          <h5 class="card-title">Target File</h5>
-         <p class="card-text">대상파일 : </p>
+         <p class="card-text">대상파일 : 630d925fd51964cae86892647069f3555874f48cba2f7be0920c9293b376f0af</p>
         </div>
       </div>
       <div class="card">
-            <canvas id="mychart1" width="200" height="200"></canvas>
+          <div id="mychart1"></div>
         <div class="card-body">
          <h5 class="card-title">Target File</h5>
-         <p class="card-text">대상파일 : </p>
+         <p class="card-text">대상파일 : 7b6c34896babba1bee97387a862dfd60d243d711000f3837dcbf3dd7b0e838a4</p>
         </div>
       </div>
       <div class="card">
-            <canvas id="mychart2" width="200" height="200"></canvas>
+            <div id="mychart2"></div>
         <div class="card-body">
          <h5 class="card-title">Target File</h5>
-         <p class="card-text">대상파일 : </p>
+         <p class="card-text">대상파일 : cec477937ea389408749cf7969f27e3dbd1136d888b3c99f8c5c5f843a40b731</p>
         </div>
       </div>
       <div class="card">
-            <canvas id="mychart3" width="200" height="200"></canvas>
+           <div id="mychart3"></div>
          <div class="card-body">
          <h5 class="card-title">Target File</h5>
-         <p class="card-text">대상파일 : </p>
+         <p class="card-text">대상파일 : d3ee9cf0ad24519e40f3788fdc453074344c82effebb7c0ea1c4343b4f4dc9d9</p>
          </div>
         </div>
      </div>
-   <div>
-        {% for json in json_data %}
-            <p>{{ json.1 }}</p>
-        {% endfor %}
-    </div>
 <br>
 <br>
 
-<hr class="my-hr3"><h5 id="scoretable" class="mt-2 mb-3" style="font-weight: bold;">나머지 타겟점수</h5><hr class="my-hr3">
-
-<div class="table-responsive">
+<hr class="my-hr3"><h5 id="scoretable" class="mt-2 mb-3" style="font-weight: bold;">Detail</h5><hr class="my-hr3">
+<div class="container-fluid">
+<div class="table-responsive container-fluid">
     {% csrf_token %}
     {% if result %}
     <div id="result_json">
         <form name="select_form">
             <select id="select_file" onchange="change_table()"></select>
         </form>
-        <table id="result_table" class="table table-striped table-bordered">
+        <br>
+        <table id="result_table" class="table table-corderless" style="text-align: center;">
             <thead>
             <tr>
                 <th rowspan="2" align=center>File Name</th>
@@ -142,9 +141,12 @@
             </tr>
             </thead>
         </table>
+    </div>
+    </div>
+        </div>
         <script>
             var dictionary = "{{ json_data }}";
-            document.write(dictionary);
+            {#document.write(dictionary);#}
             /* 엔진에서 받아온 값 */
             var result = "{{result}}";
             /* JSON.parse()에서 따옴표 있으면 오류남 */
@@ -214,6 +216,81 @@
             }
             change_table();
 
+var i=0;
+for(var key in json_res){
+    for(var vkey in json_res[key]){
+        var name = json_res[key][vkey][0];
+        var a = json_res[key][vkey][2];
+        var b = json_res[key][vkey][3];
+        var id_str = "mychart" + i;
+// Create the chart
+Highcharts.chart(id_str, {
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: 'similarity'
+    },
+    xAxis: {
+        type: 'category'
+    },
+    yAxis: {
+        title: {
+            text: 'similarity'
+        }
+
+    },
+    legend: {
+        enabled: false
+    },
+    plotOptions: {
+        series: {
+            borderWidth: 0,
+            dataLabels: {
+                enabled: true,
+                format: '{point.y:.4f}%'
+            }
+        }
+    },
+
+    tooltip: {
+        headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+        pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
+    },
+
+    series: [
+        {
+            name: "similarity",
+            colorByPoint: true,
+            data: [
+                {
+                    name: "BBH",
+                    y: a,
+                    drilldown: "Chrome"
+                },
+                {
+                    name: "CG",
+                    y: b,
+                    drilldown: "Firefox"
+                },
+                {
+                    name: "상수",
+                    y: 7.23,
+                    drilldown: "Internet Explorer"
+                },
+                {
+                    name: "PE",
+                    y: 10.58,
+                    drilldown: "Safari"
+                },
+            ]
+        }
+    ],
+});
+        i++;
+}
+    i = 0;
+}
         </script>
 
     </div>
