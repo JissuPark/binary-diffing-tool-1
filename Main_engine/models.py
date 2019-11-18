@@ -28,6 +28,10 @@ class PE_info(models.Model):
     Targetmachine = models.TextField(null=True)
     EntryPoint = models.BigIntegerField(null=True)
     ContainedSections = models.BigIntegerField(null=True)
+    pdbname = models.TextField(null=True)
+    pdbguid = models.TextField(null=True)
+    pdbage = models.BigIntegerField(null=True)
+    pdbpath = models.TextField(null=True)
 
 class Result(models.Model):
     filehash = models.CharField(max_length=100, primary_key=True)

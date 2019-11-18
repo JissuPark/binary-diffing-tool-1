@@ -342,8 +342,7 @@ def start_engine():
     '''
     PATH = r"C:\malware\mal_exe"
     IDB_PATH = r"C:\malware\mal_idb"
-    RESUT_IDB_PATH = r"C:\malware\all_result_idb"
-    RESUT_PE_PATH = r"C:\malware\all_result_pe"
+
     # 0. 없는 폴더 먼저 생성
     create_folder()
     # 1. pe 해시 체크 (동일한 파일 필터), 2.패킹 체크
@@ -361,24 +360,16 @@ def start_engine():
     else:
         print('convert_idb is error')
 
-    # 만약 5개의 파일이 들어왔을때 그중 convert_idb 에러뜨는 것들은 제외시키고 나머지 것들만 다음 로직 수행되도록
-    # 변경해야함.
-
     # 5. 분석 하기
     analyze = Analyze_files(all_idb_info, all_pe_info)
 
-    yun_sorted_pe = dict()
     result_pe, yun_pe = analyze.analyze_pe()
     result_idb, yun_all = analyze.analyze_idb(yun_pe)
-    #yun_sorted_pe = sorted(yun_all.items(), key=lambda x: x[1]['timestamp_num'])
-    #print(f"sorted_yun :: {json.dumps(yun_sorted_pe, indent=4)}")
 
-    # print(f"yun_all :: {json.dumps(yun_all, indent=4)}")
 
     # 6. 결과 csv 저장 (임시)
     all_result = analyze.calculate_heuristic(result_idb, result_pe)
 
-    #out_xlsx(r"C:\malware\result\test.xlsx", all_result)
     delete_file()
 
     return all_result
