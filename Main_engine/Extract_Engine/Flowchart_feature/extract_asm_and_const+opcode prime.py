@@ -42,10 +42,6 @@ class basic_block(idb_info):
             for basicblock in function_flowchart:
                 curaddr = basicblock.startEA
                 endaddr = basicblock.endEA
-                # for succ in basicblock.succs():
-                #     print(f"{hex(curaddr)} -> {hex(succ.startEA)}, {hex(succ.endEA)}")
-                # if (endaddr - curaddr) < 30:  # 최소 바이트 50이상 할것
-                #     continue
 
                 opcodes = list()
                 hex_opcodes = list()
@@ -69,14 +65,6 @@ class basic_block(idb_info):
                         ''' 요기 예외 처리 로직 넣어야함'''
                     else:
                         except_list.add(opcode)
-                    ######################################################
-                    # Comprehension 이전 버전임                            #
-                    # if opcode_prime in basic_block_prime:              #
-                    #     prime_count = basic_block_prime[opcode_prime]  #
-                    # else:                                              #
-                    #     prime_count = 0                                #
-                    # basic_block_prime[opcode_prime] = prime_count+1    #
-                    ######################################################
 
                     '''--- 상수값 추출 시작 ---'''
                     if opcode in const_filter_indexs.indexs:  # instruction white list
@@ -85,7 +73,6 @@ class basic_block(idb_info):
                             unpack_1, unpack_2 = operand  # unpacking list
                             operand_1 = unpack_1.strip()  # 공백제거
                             operand_2 = unpack_2.strip()
-                            # print(f'01 ::: {operand_1}, 02::: {operand_2}') # 테스트코드
                             if operand_1 not in const_filter_indexs.pointer:  # esp, esi, ebp가 아니여야 입장
                                 if "ptr" not in operand_2 and operand_2 not in const_filter_indexs.logic:
                                     if operand_2 not in const_filter_indexs.registers and "[" not in operand_2 and "]" not in operand_2:
@@ -132,7 +119,6 @@ class basic_block(idb_info):
                 }
                 opcode_flow.append(mutex_opcode)
                 function_dicts[hex(basicblock.startEA)] = basicblock_dics
-                #function_name['funct_name'] = function_dicts
         except:
             print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
         ''' ================================ END ONE Flowchart ================================'''
@@ -145,20 +131,6 @@ class basic_block(idb_info):
 
         idb_info['file_name'] = file_name
         idb_info['func_name'] = func_name_dicts
-        #idb_info['func_name'] = func_name_dicts
-        #idb_info['func_name'] = func_name_dicts
-
-
-        # del(opcodes)
-        # del(hex_opcodes)
-        # del(disasms)
-        # del(block_constant)
-        # del(function_dicts)
-        # del(mutex_opcode_list)
-        # del(opcode_flow)
-        # del(function_dicts)
-        # del(func_name_dicts)
-
         return idb_info
 
 
@@ -263,14 +235,6 @@ def diff_prime_set(standard, target):
                     s_diff, s_diffcnt = factorization(bunmo)
                     s_score = (s_opcnt - s_diffcnt) / s_opcnt
                     t_score = (t_opcnt - t_diffcnt) / t_opcnt
-
-                    # print(f"[diff] Diffing between {t_addr} and {s_addr}")
-                    # print(f"기준블록({t_addr})")
-                    # print(f" o 유사도 : {s_opcnt - s_diffcnt}/{s_opcnt} = {s_score}")
-                    # print(f" o 다른 부분 :{s_diff}")
-                    # print(f"대상블록({s_addr})")
-                    # print(f" o 유사도 : {t_opcnt - t_diffcnt}/{t_opcnt} = {t_score}")
-                    # print(f" o 다른 부분diff :{t_diff}\n")
 
                     bb_score_list.append((s_score, s_addr, t_addr))
                     # 두개가 완전히 같으면 둘 다 제외

@@ -50,7 +50,6 @@ class AnalyzePE:
         '''
         score = 0
         if dict_s.get('hash') == None or dict_t.get('hash') == None:
-            #print("No Certificate")
             return score
         else:
             if dict_s['hash'] == dict_t['hash']:
@@ -99,11 +98,11 @@ class AnalyzePE:
         '''
         size = len(standard)
         flag = 0
-        for i in range(len(standard)):
-            for j in range(len(target)):
-                #1번의 경우(리소스에 쉘코드가 없는 경우)
-                if standard[i]['Resource Type'] == target[j]['Resource Type']:
-                    if standard[i]['sha-256'] == target[j]['sha-256']:
+
+        for key in standard.keys() and target.keys():
+            if key in standard and key in target:
+                if standard[key]['&Resource Type'] == target[key]['&Resource Type']:
+                    if standard[key]['&sha-256'] == target[key]['&sha-256']:
                         flag += 1
                     else:
                         continue
@@ -123,15 +122,6 @@ class AnalyzePE:
         if flag > 0:
             return flag / size * 100
         else:
-            print("There could be SHELLCODE in resource section!!")
-            for i in range(len(standard)):
-                for j in range(len(target)):
-                    #2번의 경우(리소스에 쉘코드가 삽입되어 있는 경우)
-                    score += ssdeep.compare(standard[i]['ssdeep'], target[j]['ssdeep'])
-
-                    #if score > 0:
-                        # score_str = "standard rsrc num " + str(i) + " and " + "target rsrc num " + str(j) + " " + str(score)
-            #return score / len(standard)
             return score
 
     def analyze_rich(self, standard, target):
@@ -142,7 +132,7 @@ class AnalyzePE:
         '''
         xor_score = 0
         prodid_score = 0
-        if standard['rich_xor_key'] == {} or target['rich_xor_key'] == {}:
+        if standard['rich_xor_key'] == "" or target['rich_xor_key'] == "":
             return 0
         else:
             #rich header의 xor key 유사도(True or False)
@@ -155,8 +145,7 @@ class AnalyzePE:
                     else:
                         continue
         return str(xor_score) + "," + str(prodid_score / len(standard['rich_prodid']))
-        # #print(json.dumps(standard, indent=4))
-        # #print(json.dumps(target, indent=4))
+
 
 
     def analyze_section(self, dict_s, dict_t):
@@ -169,16 +158,8 @@ class AnalyzePE:
         for key in dict_s.keys() and dict_t.keys():                                 #키의 이름이 다를 때의 예외처리가 필요
             if key in dict_s and key in dict_t:
                 if dict_s[key]['section_name'] == dict_t[key]['section_name']:
-                    #print(f"{dict_s[key]['section_name']}, {dict_t[key]['section_name']}")
                     score = ssdeep.compare(dict_s[key]['hash_ssdeep'], dict_t[key]['hash_ssdeep'])
                     comp += score
-                # print(f"{key} :: {score}")
-                # 섹션 이름이 다르면 그 전까지의 섹션별 비교 수치는 버려야 하나 가져가야 하나?
-                # if key in dict_s == key in dict_t:
-                #     score = ssdeep.compare(dict_s[key]['hash_ssdeep'], dict_t[key]['hash_ssdeep'])
-                #     comp += score
-                # #print(f"{key} :: {score}")
-                # # 섹션 이름이 다르면 그 전까지의 섹션별 비교 수치는 버려야 하나 가져가야 하나?
             else:
                 continue
         return comp
@@ -202,16 +183,12 @@ class AnalyzePE:
 
                 yun_t['timestamp'] = pe_info_t['time_date_stamp']
                 yun_t['timestamp_num'] = pe_info_t['time in num']
-                #yun[pe_info_t['file_name']] = yun_t
-                yun_me[pe_info_t['file_name']] = yun_t
 
-                ###########################
+                yun_me[pe_info_t['file_name']] = yun_t
 
                 pe_t['imphash'] = self.analyze_imphash(pe_info_s, pe_info_t)
                 pe_t['rich'] = self.analyze_rich(pe_info_s, pe_info_t)
-                #print(f"{pe_info_s['file_name']} vs {pe_info_t['file_name']}")
                 pe_t['section_score'] = self.analyze_section(pe_info_s['cmp_section'], pe_info_t['cmp_section'])
-                #print("")
                 pe_t['auth_score'] = self.analyze_auth(pe_info_s['auto'], pe_info_t['auto'])
                 pe_t['pdb_score'] = self.analyze_pdb(pe_info_s['pdb_info'], pe_info_t['pdb_info'])
                 pe_t['rsrc'] = self.analyze_rsrc(pe_info_s['rsrc_info'], pe_info_t['rsrc_info'])
