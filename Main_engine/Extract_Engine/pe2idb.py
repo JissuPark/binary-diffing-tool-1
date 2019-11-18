@@ -199,7 +199,6 @@ def clear_folder(EXE_F_PATH, IDA_F_PATH):
     try:
         for f in exe_list:
             if os.path.splitext(f)[-1] == ".idb" or os.path.splitext(f)[-1] == ".i64":
-                # f_path=os.path.join(EXE_F_PATH,f) 사용할까 아님 이대로 할까 고민중..
                 shutil.copy(os.path.join(EXE_F_PATH, f), os.path.join(IDA_F_PATH, f))
                 os.remove(os.path.join(EXE_F_PATH, f))
             elif '.asm' in f:

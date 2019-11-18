@@ -24,7 +24,6 @@ def sample_packer_type_detect(sample_path):
     # CSV Write DATA
     with open(result_csv_path, 'w+', newline='', encoding='utf-8') as csv_file:
         count = 1
-       # print(sample_path)
 
         read_mal = open(sample_path, "rb")
         read_data = read_mal.read()
