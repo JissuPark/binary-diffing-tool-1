@@ -139,6 +139,7 @@ class Pe_Feature:
         func_list = self.ImportDll()
         file_type = magic.from_file(self.file_name)
         imphash = self.imphash_data()
+        implist = self.ImportDll()
         cmp_section_data = self.cmp_section_data()
         cert = self.Certificateinfo()
         rich_xor_key, rich_prodid = self.extract_rich()
@@ -152,6 +153,7 @@ class Pe_Feature:
             'file_name': f_name,
             'file_hash': hashlib.sha256(open(self.file_name, 'rb').read()).hexdigest(),
             'imp_hash': imphash,
+            'Imports': implist,
             'cmp_section': cmp_section_data,
             'auto': cert,
             'rich_xor_key': rich_xor_key,

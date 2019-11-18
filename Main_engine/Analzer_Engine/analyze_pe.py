@@ -97,16 +97,21 @@ class AnalyzePE:
         리소스 데이터를 각각 ssdeep으로 비교해서 결과를 반환하는 함수
         :return: score list with weight
         '''
-        size = len(standard)
-        flag = 0
-
-        for key in standard.keys() and target.keys():
-            if key in standard and key in target:
-                if standard[key]['&Resource Type'] == target[key]['&Resource Type']:
-                    if standard[key]['&sha-256'] == target[key]['&sha-256']:
-                        flag += 1
-                    else:
-                        continue
+        if standard != 0 and target != 0:
+            size = len(standard)
+            flag = 0
+            for key in standard.keys() and target.keys():
+                if key in standard and key in target:
+                    if standard[key]['&Resource Type'] == target[key]['&Resource Type']:
+                        if standard[key]['&Resource Type'] == '<unknown>' and target[key]['&Resource Type'] == '<unknown>':
+                            return ssdeep.compare(standard[key]['ssdeep'], target[key]['ssdeep'])
+                        else:
+                            if standard[key]['&sha-256'] == target[key]['&sha-256']:
+                                flag += 1
+                            else:
+                                continue
+        else:
+            return 0
 
         '''
         리소스에 쉘코드가 삽입되어 있는 경우
