@@ -265,9 +265,9 @@ def find_wCertificateType(c):
     return wCertificateType_kind[c] if c in wCertificateType_kind else "<NONE>"
 
 class RsrcParser:
-    def __init__(self, filename):
+    def __init__(self, filename, pe):
         self.filename = filename
-        self.pe = pefile.PE(self.filename)
+        self.pe = pe
 
     def get_timestamp(self):
         #print(f"TimeDateStamp : {self.pe.FILE_HEADER.dump_dict()['TimeDateStamp']['Value'].split('[')[1][:-1]}")

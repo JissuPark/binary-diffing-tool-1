@@ -120,11 +120,15 @@ class pe_features():
             return ['0','0']
 
     def file_size_16(self,filepath):
-        if len(open(filepath, 'rb').read()) % 16==0:
+        fp=open(filepath, 'rb')
+        if len(fp.read()) % 16==0:
+            fp.close()
             return ['0']
-        elif (len(open(filepath,'rb').read())+4)%16==0:
+        elif (len(fp.read())+4)%16==0:
+            fp.close()
             return ['0']
         else:
+            fp.close()
             return ['1']
 
 
@@ -692,6 +696,7 @@ class pe_features():
         fp = open(files, 'rb')
         bindata = fp.read()
         bindata = str(bindata)
+        fp.close()
         regex=None
         if regex is None:
             regex = re.compile("[\w\~\!\@\#\$\%\^\&\*\(\)\-_=\+ \/\.\,\?\s]{4,}")
@@ -972,6 +977,7 @@ def exstrings(FILENAME,regex=None):
     bindata = fp.read()
     entropys=get_entropy(bindata)
     bindata=str(bindata )
+    fp.close()
 
     if regex is None:
         regex = re.compile("[\w\~\!\@\#\$\%\^\&\*\(\)\-_=\+ \/\.\,\?\s]{4,}")
@@ -1889,3 +1895,6 @@ def size_label(FILENAME):
         file_size_result[0]=9
         return file_size_result
 
+mutex_file.close()
+mutex_file2.close()
+mutex_file3.close()

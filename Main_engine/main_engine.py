@@ -95,9 +95,12 @@ class Pe_Files_Check:
 
     def get_unique_pe_list(self):
         exe_list = os.listdir(self.pe_dir_path)
+
         for f in exe_list:
             f_path = os.path.join(self.pe_dir_path, f)
-            f_hash = hashlib.sha256(open(f_path, 'rb').read()).hexdigest()
+            fp = open(f_path, 'rb')
+            f_hash = hashlib.sha256(fp.read()).hexdigest()
+            fp.close()
 
             # file hash 중복 = 완전히 같은 파일
             # 해당 파일은 삭제(이미 diffing할 동일 파일이 존재하므로)
@@ -170,8 +173,9 @@ def multiprocess_file(q, return_dict, flag):
                 file = None
 
             if file is not None:
-                fd1 = open(file.idb_filepath + ".txt", "rb").read()
-                info = json.loads(fd1, encoding='utf-8')
+                fd1 = open(file.idb_filepath + ".txt", "rb")
+                info = json.loads(fd1.read(), encoding='utf-8')
+                fd1.close()
                 #print('idb존재함')
             elif file is None:
                 info = extract_asm_and_const.basicblock_idb_info_extraction(f_path)  # 함수대표값 및 상수값 출력
@@ -197,8 +201,9 @@ def multiprocess_file(q, return_dict, flag):
                 pe_f = None
 
             if pe_f is not None:
-                fd1 = open(pe_file.pe_filepath + ".txt", "rb").read()
-                info = json.loads(fd1, encoding='utf-8')
+                fd1 = open(pe_file.pe_filepath + ".txt", "rb")
+                info = json.loads(fd1.read(), encoding='utf-8')
+                fd1.close()
                 print('pe존재함')
             elif pe_f is None:
                 try:
@@ -208,11 +213,11 @@ def multiprocess_file(q, return_dict, flag):
                         json.dump(info, makefile, ensure_ascii=False, indent='\t')
                     pe_file.pe_filepath = pe_file_path + file_filter2
                     pe_file.save()
+                    pe.close()
                     print('pe없음')
                 except:
                     print('pe error !')
                     continue
-
 
         return_dict[f_path] = info
 
@@ -373,6 +378,7 @@ def start_engine():
         all_pe_info = Features.export_pe_info('pe')
         print("5) Machine Learning")
         ML_result_data=idb_pe_feature(all_idb_info, all_pe_info)
+        print(ML_result_data)
     else:
         print('convert_idb is error')
 
@@ -396,7 +402,7 @@ def start_engine():
 
 
 def idb_pe_feature(all_idb_info,all_pe_info):
-    print("allPeinfo:{}".format(all_pe_info))
+    #print("allPeinfo:{}".format(all_pe_info))
     extract_pe_class = new_getinfo_pe.getinfo_pe()
     model = joblib.load(os.getcwd()+"\\Main_engine\\ML\\"+'ML_model2.pkl')
 
@@ -404,8 +410,8 @@ def idb_pe_feature(all_idb_info,all_pe_info):
     for pe_info in all_pe_info.keys():
         file_full_path=all_pe_info[pe_info]['file_path']
         file_base_name = all_pe_info[pe_info]['file_name']
-        print(file_full_path)
-        print(file_base_name)
+        # print(file_full_path)
+        # print(file_base_name)
         for idb_info in all_idb_info.keys():
 
             if all_idb_info[idb_info]['file_name']==file_base_name:

@@ -383,7 +383,7 @@ class ML_jobs_class:
                     result_csv_writer.writerow([file_hash,predict_labels])
                 except:
                     continue
-
+        predict_csv_file_handle.close()
     #######################################################
 def DL():
     #result_csv_file_path1 = "D:\\Allinone\\Programing\\Python\\project\\r_d_challenge\ML\\train.csv"

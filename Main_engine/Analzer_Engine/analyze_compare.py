@@ -36,6 +36,7 @@ class AnalyzeFlowchart:
             for y in bloc_dict["func_name"][x]:
 
                 if y != "flow_opString" and y != "flow_constants":
+
                     block_hash = bloc_dict["func_name"][x][y]['block_sha256']
                     if block_hash in white.list:
                         # print(f'[sensing] white_list -> {block_hash} : {white.list[block_hash]}')

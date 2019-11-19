@@ -154,6 +154,7 @@ class getinfo_pe:
         result_data += size_label
         result_data+=[label]
 
+        pe.close()
         return result_data
 
     def read_label_file(self):
@@ -164,6 +165,8 @@ class getinfo_pe:
             if not line_txt: break
             split_text = line_txt.split('\t')
             dict_label[split_text[0]] = split_text[1]
+
+        label_file_handle.close()
         return dict_label
 
 
@@ -216,7 +219,7 @@ class getinfo_pe:
         result_data+=RichHeader
         #result_data += opcode_histogram
         result_data += size_label
-
+        pe.close()
         return result_data
 
     def predict_write_header_set(self):

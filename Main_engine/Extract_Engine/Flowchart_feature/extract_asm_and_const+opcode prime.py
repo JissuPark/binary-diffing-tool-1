@@ -262,13 +262,13 @@ def diff_prime_set(standard, target):
             #print(f"[diff] Diffing between {s_fname} and {t_fname}")
             #print(f"[debug] 함수 총점 : {bb_result_score}/{len(bb_score_list)}")
             bb_result_score /= len(s_fdata)
-            print(f"[debug] {t_fname} 대상 블록 수 : {len(t_fdata)}")
-            print(f"[debug] {s_fname} 기준 블록 수 : {len(s_fdata)}")
-            print(f"[debug] 함수 score : {bb_result_score}")
+            #print(f"[debug] {t_fname} 대상 블록 수 : {len(t_fdata)}")
+            #print(f"[debug] {s_fname} 기준 블록 수 : {len(s_fdata)}")
+            #print(f"[debug] 함수 score : {bb_result_score}")
             f_score_list.append((bb_result_score, s_fname, t_fname, bb_score_list))
-            print(f"\x1b[1;31m{f_score_list}\x1b[1;m")
+            #print(f"\x1b[1;31m{f_score_list}\x1b[1;m")
 
-    print(f"\x1b[1;33m{f_score_list}\x1b[1;m")
+    #print(f"\x1b[1;33m{f_score_list}\x1b[1;m")
     f_score_list.sort(reverse=True)
     for a in range(len(f_score_list)):
         rmvcnt = 0
@@ -276,7 +276,7 @@ def diff_prime_set(standard, target):
             if f_score_list[a][1] == f_score_list[b-rmvcnt][1] or f_score_list[a][2] == f_score_list[b-rmvcnt][2]:
                 f_score_list.remove(f_score_list[b-rmvcnt])
                 rmvcnt += 1
-    print(f"\x1b[1;35m{f_score_list}\x1b[1;m")
+    #print(f"\x1b[1;35m{f_score_list}\x1b[1;m")
     f_result_score = 0
     for f_score in f_score_list:
         f_result_score += f_score[0]

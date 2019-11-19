@@ -67,6 +67,7 @@ def pe_check(PE_F_PATH):
             return IDAT
         elif m_bit == HEX_M_64_AMD or m_bit == HEX_M_64_IA:
             return IDAT64
+        pe.close()
 
     except:
         # pe format인데, 패킹되어 있는 경우 except로 들어올 것임.
@@ -155,7 +156,7 @@ def exe_to_idb(exe_q, pack_path, unpack_path,):  ### Multiprocessing할 때, tar
 
         try:
             # 정상파일인지 체크용
-            pefile.PE(f_path)
+            pe_ = pefile.PE(f_path)
 
             pe_flag = pe_check(f_path)
 
@@ -178,6 +179,7 @@ def exe_to_idb(exe_q, pack_path, unpack_path,):  ### Multiprocessing할 때, tar
                 packer_check(f_path, pack_path, unpack_path)
 
                 p = exec_idat(f_path, pe_flag)
+                pe_.close()
             else:
                 pass
                 #print(f_path+'  '+'pe error')

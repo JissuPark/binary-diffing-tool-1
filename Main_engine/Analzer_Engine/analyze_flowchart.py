@@ -35,8 +35,9 @@ class AnalyzeFlowchart:
 
             for y in bloc_dict["func_name"][x]:
 
-                if y != "flow_opString" and y != "flow_constants":
-                    block_hash = bloc_dict["func_name"][x][y]['block_sha256']
+                if y != "flow_opString" and y != "flow_constants" and y != "flow_branches":
+
+                    block_hash = bloc_dict["func_name"][x][y]["block_sha256"]
                     if block_hash in white.list:
                         # print(f'[sensing] white_list -> {block_hash} : {white.list[block_hash]}')
                         matched_dic[x].update({y: {block_hash: white.list[block_hash]}})
@@ -120,6 +121,7 @@ class AnalyzeFlowchart:
             return true_dic
 
     def compare_bbh(self, s_flow_data, t_flow_data):
+        print(type(s_flow_data))
         s_name = list(s_flow_data.keys())[0]
         t_name = list(t_flow_data.keys())[0]
 
@@ -203,10 +205,10 @@ class AnalyzeFlowchart:
             print(t_hash_dict[t_fname][t_sAddr])
             print(f"ㄴ[debug] stand_values : {sum(list(t_hash_dict[t_fname][t_sAddr].values()))}   {t_fname}-{t_sAddr}")
             '''
-            if (matched / total_len) < 1.0:
-                print(f"[debug] unmatched constants :: {s_hash_dict[s_fname][s_sAddr]} --- {t_hash_dict[t_fname][t_sAddr]}")
-                print(f"ㄴ[debug] constants find diff :: {s_comp_set} --- {t_comp_set}")
-                print(f" ")
+            #if (matched / total_len) < 1.0:
+                #print(f"[debug] unmatched constants :: {s_hash_dict[s_fname][s_sAddr]} --- {t_hash_dict[t_fname][t_sAddr]}")
+                #print(f"ㄴ[debug] constants find diff :: {s_comp_set} --- {t_comp_set}")
+                #print(f" ")
         return round((matched / total_len), 2)
 
     def analyze_bbh(self, s_flow_data, t_flow_data):
@@ -214,8 +216,8 @@ class AnalyzeFlowchart:
         basic block hash(함수 대표값)을 비교해서 점수에 가중치를 매겨 반환하는 함수
         '''
 
-        s_cmp_dic = self.parser_bbh(s_flow_data)
-        t_cmp_dic = self.parser_bbh(t_flow_data)
+        s_cmp_dic, whitelist_matched_dic = self.parser_bbh(s_flow_data)
+        t_cmp_dic, whitelist_matched_dic = self.parser_bbh(t_flow_data)
 
         cmp_s, cmp_t, true_bb_const_sim = self.compare_bbh(s_cmp_dic, t_cmp_dic)
 

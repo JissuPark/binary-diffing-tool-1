@@ -78,7 +78,7 @@ def sample_packer_counting():
         if not line_txt: break
         split_text = line_txt.split('\t')
         dict_label[split_text[0]] = split_text[1]
-
+    label_file_handle.close()
     '''
     malware_full_path_list = []
     malware_full_path_list += [os.path.join(csv_2017, malware) for malware in os.listdir(csv_2017)]
