@@ -209,20 +209,11 @@ class Pe_Feature:
             'Enrty Point': Ent_point,
             'Contained Sections': Section_num
         }
-<<<<<<< HEAD
-        #print(pe_header)
-=======
-        print(pe_header)
+
         pdb_name = PDB['pe_pdb_Name']
         pdb_guid = PDB['pe_pdb_GUID']
         pdb_age = PDB['pe_pdb_Age']
         pdb_path = PDB['pe_pdb_Pdbpath']
-
-        # print(f"timenum : {type(TimeInNum)}::{TimeInNum}")
-        # print(f"EntryPoint : {type(Ent_point)}::{Ent_point}")
-        # print(f"ContainedSections : {type(Section_num)}::{Section_num}")
-        # print(f"pdbage : {type(pdb_age)}::{pdb_age}")
->>>>>>> upstream/master
 
         PE_info.objects.create(filename=f_name, imphash=ImpHash, filesize=file_size, filetype=file_type, sha_256=sha256,
                                timestamp=TimeStamp, year=Year, timenum=TimeInNum,

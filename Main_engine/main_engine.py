@@ -384,12 +384,8 @@ def start_engine():
     result_idb, yun_all = analyze.analyze_idb(yun_pe)
 
 
-<<<<<<< HEAD
     print("7) Result Csv SAVE")
-    # 6. 결과 csv 저장 (임시)
-=======
     # 6. 결과 저장
->>>>>>> upstream/master
     all_result = analyze.calculate_heuristic(result_idb, result_pe)
 
     delete_file()
