@@ -37,7 +37,7 @@ def fileter_split(block_constant):
                 y.append(y4)
                 #print(y)
                 test = [chr(int(q, 16)) for q in y]
-                print(*(test[::-1]))
+                #print(*(test[::-1]))
             elif len(x) == 6:
                 a = (x.split('0x')[1:])
                 y1 = '0x'+(a[0][:2])
@@ -46,10 +46,10 @@ def fileter_split(block_constant):
                 y.append(y1)
                 y.append(y2)
                 test = [chr(int(q, 16)) for q in y]
-                print(*(test[::-1]))
+                #print(*(test[::-1]))
             else:
                 strings.append(chr(int(x, 16)))
-        print(''.join(strings))
+        #print(''.join(strings))
 
 
 def const_to_ascii(PATH):

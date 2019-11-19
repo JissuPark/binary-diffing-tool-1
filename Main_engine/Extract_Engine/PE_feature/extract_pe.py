@@ -150,6 +150,7 @@ class Pe_Feature:
         f_name = self.file_name[self.file_name.rfind('\\') + 1:]
 
         pe_features = {
+            'file_path':self.file_name,
             'file_name': f_name,
             'file_hash': hashlib.sha256(open(self.file_name, 'rb').read()).hexdigest(),
             'imp_hash': imphash,
@@ -208,16 +209,11 @@ class Pe_Feature:
             'Enrty Point': Ent_point,
             'Contained Sections': Section_num
         }
-        print(pe_header)
+
         pdb_name = PDB['pe_pdb_Name']
         pdb_guid = PDB['pe_pdb_GUID']
         pdb_age = PDB['pe_pdb_Age']
         pdb_path = PDB['pe_pdb_Pdbpath']
-
-        # print(f"timenum : {type(TimeInNum)}::{TimeInNum}")
-        # print(f"EntryPoint : {type(Ent_point)}::{Ent_point}")
-        # print(f"ContainedSections : {type(Section_num)}::{Section_num}")
-        # print(f"pdbage : {type(pdb_age)}::{pdb_age}")
 
         PE_info.objects.create(filename=f_name, imphash=ImpHash, filesize=file_size, filetype=file_type, sha_256=sha256,
                                timestamp=TimeStamp, year=Year, timenum=TimeInNum,
