@@ -85,6 +85,7 @@ class Pe_Feature:
 
     def extract_rich(self):
         rich = pe_rich.ParseRichHeader(self.file_name)
+        rich_dict = dict()
         try:
             flag = rich.parse()
 
@@ -94,6 +95,7 @@ class Pe_Feature:
                 prod_list = list()
                 #print(f'XorKey : {xor_key}')
                 #print("ProID    name              count")
+                rich_dict['xor key'] = xor_key
                 for key in rich.info_list.keys():
                     count = rich.info_list[key]
                     mcv = (key << 16)
@@ -101,9 +103,9 @@ class Pe_Feature:
                     prod_list.append(prodid)
                     prodid_name = pe_rich.PRODID_MAP[prodid] if prodid in pe_rich.PRODID_MAP else "<unknown>"
                     #print('%6d   %-15s %5d     %6d' % (prodid, prodid_name, count, mcv))
-                    #rich_dict[key] = count
+                    rich_dict[prodid_name] = count
 
-                return xor_key, prod_list
+                return xor_key, prod_list ,rich_dict
             else:
                 return "", ""
         except:
@@ -142,7 +144,7 @@ class Pe_Feature:
         implist = self.ImportDll()
         cmp_section_data = self.cmp_section_data()
         cert = self.Certificateinfo()
-        rich_xor_key, rich_prodid = self.extract_rich()
+        rich_xor_key, rich_prodid, rich_dict = self.extract_rich()
         pdb_info = self.extract_pdb()
         rsrc_info, rs, rl = self.extract_rsrc()
         time_info, TimeInNum = self.extract_time()
@@ -158,6 +160,7 @@ class Pe_Feature:
             'auto': cert,
             'rich_xor_key': rich_xor_key,
             'rich_prodid': rich_prodid,
+            'rich header': rich_dict,
             'pdb_info': pdb_info,
             'time_date_stamp': time_info,
             'time in num': TimeInNum,
