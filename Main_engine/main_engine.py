@@ -398,7 +398,7 @@ def start_engine():
 def idb_pe_feature(all_idb_info,all_pe_info):
     print("allPeinfo:{}".format(all_pe_info))
     extract_pe_class = new_getinfo_pe.getinfo_pe()
-    model = joblib.load('C:\\Users\\vm\\Desktop\\Breakers\\binary-diffing-tool\\Main_engine\\ML\\ML_model2.pkl')
+    model = joblib.load(os.getcwd()+"\\Main_engine\\ML\\"+'ML_model2.pkl')
 
     ML_result_data = dict()
     for pe_info in all_pe_info.keys():

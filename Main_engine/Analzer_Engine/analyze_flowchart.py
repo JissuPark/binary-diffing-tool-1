@@ -1,3 +1,4 @@
+import copy
 import json
 import operator
 import timeit
@@ -17,72 +18,208 @@ class AnalyzeFlowchart:
         for f_name, f_info in idb_dict:
             self.idb_list.append(f_info)
 
-    def block_hash_parser(self, bloc_dict):
-        s = timeit.default_timer()  # start time
+    def parser_bbh(self, bloc_dict):
+        ### s = timeit.default_timer()
+
+        file_name = bloc_dict["file_name"]
+        print(f'[info] {file_name} WhiteList Filtering & Block hash/constants SET Create')
         block_hash_dic = dict()
+        matched_dic = dict()
+        block_constants_dic = dict()
+        whitelist_matched_dic = dict()
 
         for x in bloc_dict["func_name"]:
-            block_hash_dic[x] = {}
+            block_hash_dic[x] = dict()
+            block_constants_dic[x] = dict()
+            matched_dic[x] = dict()
+
             for y in bloc_dict["func_name"][x]:
-                if y != "flow_opString":
-                    # 화이트 리스트 처리
-                    try:
-                        if bloc_dict["func_name"][x][y]['block_sha256'] in white.list:
-                            continue
-                        block_hash_dic[x].update({y: {bloc_dict["func_name"][x][y]['block_sha256']: False}})
-                    except:
-                        continue
-        return block_hash_dic
+
+                if y != "flow_opString" and y != "flow_constants":
+                    block_hash = bloc_dict["func_name"][x][y]['block_sha256']
+                    if block_hash in white.list:
+                        # print(f'[sensing] white_list -> {block_hash} : {white.list[block_hash]}')
+                        matched_dic[x].update({y: {block_hash: white.list[block_hash]}})
+                    else:
+                        block_hash_dic[x].update({y: {block_hash: False}})
+                        temp_dic = dict()
+                        for constant in bloc_dict['func_name'][x][y]['block_constant'].split(' '):
+                            if constant in temp_dic:
+                                temp_dic[constant] += 1
+                                continue
+                            else:
+                                temp_dic.update({constant: 1})
+                                continue
+                            temp_dic.update({constant: 1})
+                        block_constants_dic[x].update({y: temp_dic})
+                        del temp_dic
+
+            if not matched_dic[x]:
+                del matched_dic[x]
+            if not block_hash_dic[x]:
+                del block_hash_dic[x]
+            if not block_constants_dic[x]:
+                del block_constants_dic[x]
+
+        ### print(f'[info] END block hash set & filter_list : {timeit.default_timer() - s}')
+
+        # [variable_information] #
+        # whitelist_matched_dic (type: dict) #
+        # 한 바이너리의 블록해시들 중 whitelist에 매칭된 블록정보들을 담고있음.
+        # 코드를 활성화 -> whitelist_matched_dic.update({file_name: matched_dic})
+        whitelist_matched_dic.update({file_name: matched_dic})
+
+        # white_list에 매칭된 블럭의 수를 카운트하려면 아래 코드를 활성화
+
+        '''
+        matched_count = 0
+        for a, b in whitelist_matched_dic.items():
+            for c, d in b.items():
+                matched_count += len(d)
+        print(f'[debug] white_list matched count : {matched_count}')
+        '''
+
+        bbh_result_dic = dict()
+        bbh_result_dic[file_name] = dict()
+        bbh_result_dic[file_name].update({"bbh": block_hash_dic})
+        bbh_result_dic[file_name].update({"constant": block_constants_dic})
+
+        return bbh_result_dic, whitelist_matched_dic
+
+    def parser_bbh_T_F(self, _hash_dict, match_flag=False):
+        # print(f'[debug] match_flag : {match_flag}')
+        real_hash_dict = _hash_dict
+        file_name = list(_hash_dict.keys())[0]
+
+        # create False hash set
+        if match_flag == 0:
+            false_dic = copy.deepcopy(_hash_dict)
+            for func_name, val_1 in real_hash_dict[file_name].items():
+                for startAddr, val_2 in val_1.items():
+                    for block_hash, flag in val_2.items():
+                        if flag == 1:
+                            del false_dic[file_name][func_name][startAddr][block_hash]
+                    if not false_dic[file_name][func_name][startAddr]:
+                        del false_dic[file_name][func_name][startAddr]
+                if not false_dic[file_name][func_name]:
+                    del false_dic[file_name][func_name]
+            return false_dic
+
+        # create True hash set
+        elif match_flag == 1:
+            true_dic = copy.deepcopy(_hash_dict)
+            for func_name, val_1 in real_hash_dict[file_name].items():
+                for startAddr, val_2 in val_1.items():
+                    for block_hash, flag in val_2.items():
+                        if flag == 0:
+                            del true_dic[file_name][func_name][startAddr][block_hash]
+                    if not true_dic[file_name][func_name][startAddr]:
+                        del true_dic[file_name][func_name][startAddr]
+                if not true_dic[file_name][func_name]:
+                    del true_dic[file_name][func_name]
+            return true_dic
+
+    def compare_bbh(self, s_flow_data, t_flow_data):
+        s_name = list(s_flow_data.keys())[0]
+        t_name = list(t_flow_data.keys())[0]
+
+        s_hash_dict = copy.deepcopy(s_flow_data)
+        t_hash_dict = copy.deepcopy(t_flow_data)
+
+        print(f'[info] Compare Block hash SET ({s_name} ↔ {t_name})')
+        matched_block_dic = dict()
+
+        for s_fname, s_valueSet in s_hash_dict[s_name]['bbh'].items():
+            matched_block_dic[s_fname] = dict()
+            for s_sAddr, s_hashSet in s_valueSet.items():
+                for s_hash in s_hashSet:
+                    for t_fname, t_valueSet in t_hash_dict[t_name]['bbh'].items():
+                        for t_sAddr, t_hashSet in t_valueSet.items():
+                            for t_hash in t_hashSet:
+                                if s_hash == t_hash and s_hashSet[s_hash] == 0 and t_hashSet[t_hash] == 0:
+                                    s_hashSet[s_hash] = True
+                                    t_hashSet[t_hash] = True
+                                    const_sim = self.compare_bb_constants(list([s_fname, s_sAddr]), list([t_fname, t_sAddr]), \
+                                                                     s_hash_dict[s_name]["constant"],
+                                                                     t_hash_dict[t_name]["constant"])
+                                    matched_block_dic[s_fname].update({s_sAddr: {t_fname + "-" + t_sAddr: const_sim}})
+
+            if not matched_block_dic[s_fname]:
+                del matched_block_dic[s_fname]
+
+        # pprint(matched_block_dic)
+
+        # parser_bbh_T_F(dict({s_name: s_hash_dict}))
+        # parser_bbh_T_F(dict({t_name: t_hash_dict}))
+
+        return dict({s_name: s_hash_dict[s_name]['bbh']}), dict({t_name: t_hash_dict[t_name]['bbh']}), matched_block_dic
+
+
+    def compare_bb_constants(self, stand_list, target_list, s_hash_dict, t_hash_dict):
+
+        s_fname, s_sAddr = stand_list
+        t_fname, t_sAddr = target_list
+        ##################################################################################################################
+        s_const_set = s_hash_dict[s_fname][s_sAddr]
+        t_const_set = t_hash_dict[t_fname][t_sAddr]
+        ##################################################################################################################
+        s_comp_set = copy.deepcopy(s_const_set)
+        t_comp_set = copy.deepcopy(t_const_set)
+        ##################################################################################################################
+        matched = 0
+        total_len = 0
+        ##################################################################################################################
+        # 상세 비교 전 dict 통째 비교 전처리
+        if s_const_set == t_const_set:
+            return 1.0
+        else:
+            total_len = sum(list(s_const_set.values())) + sum(list(t_const_set.values()))
+
+            for s_const in s_const_set:
+                for t_const in t_const_set:
+                    if s_const == t_const:
+                        temp = s_const_set[s_const] - t_const_set[t_const]
+                        if temp == 0:
+                            matched += s_const_set[s_const] + t_const_set[t_const]
+                            del s_comp_set[s_const]
+                            del t_comp_set[t_const]
+                        elif temp < 0:
+                            matched += (s_const_set[s_const] * 2)
+                            t_comp_set[t_const] = t_comp_set[t_const] - s_comp_set[s_const]
+                            del s_comp_set[s_const]
+                        elif temp > 0:
+                            matched += t_const_set[t_const]
+                            s_comp_set[s_const] = s_comp_set[s_const] - t_comp_set[t_const]
+                            del t_comp_set[t_const]
+
+            # print(f" total: {total_len}  matched: {matched}  sim: {matched/total_len}")
+            # pprint(s_comp_set)
+            # pprint(t_comp_set)
+            # print(" ************************** ")
+            '''
+            print(s_hash_dict[s_fname][s_sAddr])
+            print(f"ㄴ[debug] stand_values : {sum(list(s_hash_dict[s_fname][s_sAddr].values()))}   {s_fname}-{s_sAddr}")
+            <- <- <- <- <- <- 1칸 <- <- <- <- <- <-
+            print(t_hash_dict[t_fname][t_sAddr])
+            print(f"ㄴ[debug] stand_values : {sum(list(t_hash_dict[t_fname][t_sAddr].values()))}   {t_fname}-{t_sAddr}")
+            '''
+            if (matched / total_len) < 1.0:
+                print(f"[debug] unmatched constants :: {s_hash_dict[s_fname][s_sAddr]} --- {t_hash_dict[t_fname][t_sAddr]}")
+                print(f"ㄴ[debug] constants find diff :: {s_comp_set} --- {t_comp_set}")
+                print(f" ")
+        return round((matched / total_len), 2)
 
     def analyze_bbh(self, s_flow_data, t_flow_data):
         '''
         basic block hash(함수 대표값)을 비교해서 점수에 가중치를 매겨 반환하는 함수
         '''
 
-        s_hash_dict = self.block_hash_parser(s_flow_data)
-        t_hash_dict = self.block_hash_parser(t_flow_data)
-        stand_hash_count = 0
-        target_dict = dict()
-        stand_dict = dict()
-        stand_f = OrderedDict()
-        target_f = OrderedDict()
-        correction_score = 0
+        s_cmp_dic = self.parser_bbh(s_flow_data)
+        t_cmp_dic = self.parser_bbh(t_flow_data)
 
-        for s_fname, s_valueSet in s_hash_dict.items():
-            stand_list = list()
-            for s_sAddr, s_hashSet in s_valueSet.items():
-                for s_hash in s_hashSet:
-                    stand_hash_count += 1
-                    for t_fname, t_valueSet in t_hash_dict.items():
-                        target_list = list()
-                        for t_tAddr, t_hashSet in t_valueSet.items():
-                            for t_hash in t_hashSet:
-                                if s_hash == t_hash:
-                                    s_hashSet[s_hash] = True
-                                    t_hashSet[t_hash] = True
-                                    stand_list.append(s_sAddr)
-                                    stand_dict[s_fname] = stand_list
-                                    target_list.append(t_tAddr)
-                                    target_dict[t_fname] = target_list
-                                else:
-                                    if s_hashSet[s_hash] == False and t_hashSet[t_hash] == False:
-                                        sim = NGram.compare(' '.join(s_flow_data['func_name'][s_fname][s_sAddr]['opcodes']),\
-                                                            ' '.join(t_flow_data['func_name'][t_fname][t_tAddr]['opcodes']), N=3)
-                                        if sim > 0.89:
-                                            # 유사블럭 보정점수 모아서 리턴,
-                                            # 따로 유사블럭에 대한 Flag는 변경하지 않음. 추후 필요하면 요기에 추가
-                                            correction_score = correction_score + 1
+        cmp_s, cmp_t, true_bb_const_sim = self.compare_bbh(s_cmp_dic, t_cmp_dic)
 
-        stand_f[s_flow_data['file_name']] = stand_dict
-        target_f[t_flow_data['file_name']] = target_dict
-        stand_f.update(target_f)
-
-
-
-        with open(r"C:\malware\all_result\dict_test.txt", 'a') as makefile:
-            json.dump(stand_f, makefile, ensure_ascii=False, indent='\t')
-
-        return algo.get_func_similarity(s_hash_dict, t_hash_dict, stand_hash_count, correction_score)
+        return algo.get_func_similarity(cmp_s, )
 
     def analyze_constant(self, standard, target):
         const_score = algo.get_string_similarity(standard['constant'], target['constant'])
@@ -100,16 +237,10 @@ class AnalyzeFlowchart:
 
                 if index_1 == index_2:
                     continue
+
                 idb_t['bbh'] = self.analyze_bbh(idb_info_s, idb_info_t)
-
-                ######   연대기 추가  ######
-                for var in yun_sorted_pe:
-                    if idb_t['bbh'] >= 0.85:
-                        yun_s['comp_file_name'] = idb_info_t['file_name']
-                        yun_s['comp_bbh'] = idb_t['bbh']
-                        yun_sorted_pe[idb_info_s['file_name']].update(yun_s)
-
                 idb_t['const_value'] = self.analyze_constant(idb_info_s, idb_info_t)
+
                 idb_s[idb_info_t['file_name']] = idb_t
 
             idb_all[idb_info_s['file_name']] = idb_s

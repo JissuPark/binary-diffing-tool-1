@@ -228,5 +228,6 @@ if __name__ == "__main__":
     # 리턴1, 리턴2,       리턴3        =         파서가 리턴한1,  리턴2
     cmp_s, cmp_t, true_bb_const_sim = compare_bbh(s_cmp_dic, t_cmp_dic)
 
+    get_func_similarity(cmp_s, )
 
     print(f'[info] END Compare Block hash set : {timeit.default_timer() - st}')

@@ -16,7 +16,7 @@ import sys
 #import distorm3
 from multiprocessing import Process, current_process ,Queue, Pool
 
-from Main_engine.ML import new_getinfo_pe
+from Main_engine.ML import *
 
 class pe_features():
 
@@ -779,13 +779,15 @@ def get_entropy(data):
 
     return entropy
 
-mutex_file = open('C:\\Users\\vm\\Desktop\\Breakers\\binary-diffing-tool\\Main_engine\\ML\\mutex_strings_lists.txt', 'r')
+#mutex_file = open('C:\\Users\\vm\\Desktop\\Breakers\\binary-diffing-tool\\Main_engine\\ML\\mutex_strings_lists.txt', 'r')
+mutex_file = open(os.getcwd()+"\\Main_engine\\ML\\"+"mutex_strings_lists.txt", 'r')
 mutex_list = [line[:-1] for line in mutex_file]
 
-mutex_file2 = open('C:\\Users\\vm\\Desktop\\Breakers\\binary-diffing-tool\\Main_engine\\ML\\win32api_alphabet.txt', 'r')
+#mutex_file2 = open('C:\\Users\\vm\\Desktop\\Breakers\\binary-diffing-tool\\Main_engine\\ML\\win32api_alphabet.txt', 'r')
+mutex_file2 = open(os.getcwd()+"\\Main_engine\\ML\\"+'win32api_alphabet.txt', 'r')
 mutex_list2 = [line2[:-1] for line2 in mutex_file2]
 
-mutex_file3 = open('C:\\Users\\vm\\Desktop\\Breakers\\binary-diffing-tool\\Main_engine\\ML\\win32api_category.txt', 'r')
+mutex_file3 = open(os.getcwd()+"\\Main_engine\\ML\\"+'win32api_category.txt', 'r')
 mutex_list3 = [line3[:-1] for line3 in mutex_file3]
 
 ipaddress_re = re.compile('^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$')
