@@ -111,7 +111,7 @@ def exe_list_to_queue(PE_D_PATH, q):
 
 
 def exec_idat(EXE_F_PATH, pe_flag):
-    print(pe_flag)
+    #print(pe_flag)
     if pe_flag == IDAT or pe_flag == IDAT64:
         # -A :
         # -B : batch mode. IDA는 .IDB와 .ASM 파일을 자동 생성한다.
@@ -167,7 +167,7 @@ def exe_to_idb(exe_q, pack_path, unpack_path,):  ### Multiprocessing할 때, tar
             # exec_idat을 호출해서 diat을 실행하고
             #if pe_flag == IDB_FLAG:
             #    continue
-            print(pe_flag)
+            #print(pe_flag)
             if pe_flag != PE_CHECK_ERROR:
                 # exec_idat을 실행하고 해당 자식프로세스가 끝날 때까지 기다린다.
                 # 기다렸다가 idat 실행 후, 생성되는 파일을 정리해야하기 때문에
@@ -175,17 +175,18 @@ def exe_to_idb(exe_q, pack_path, unpack_path,):  ### Multiprocessing할 때, tar
 
                 # 1. 파일 패킹 정보 저장 로직
                 tmp = sample_packer_type_detect(f_path)
-                print(tmp)
+                #print(tmp)
 
                 # 2. 파일 언팩 수행 로직
-                print('unpacke!!!!!!!!!!!!!!')
+                #print('unpacke!!!!!!!!!!!!!!')
                 packer_check(f_path, pack_path, unpack_path)
 
                 p = exec_idat(f_path, pe_flag)
             else:
-                print(f_path+'  '+'pe error')
-        except:
-            print('this pe is error pefile!!')
+                pass
+                #print(f_path+'  '+'pe error')
+        except:pass
+            #print('this pe is error pefile!!')
 
 
 '''

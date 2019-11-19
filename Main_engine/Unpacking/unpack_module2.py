@@ -121,28 +121,28 @@ def packer_check(sample_path, pack_path, unpack_path):
 
     else:
         yara_match_result = str(matches_list['main'][0]['rule']).lower()
-        print(yara_match_result)
+        #print(yara_match_result)
 
         File_Data = str(open(sample_path, 'rb').read(0x300)).lower()
 
         if 'fsg' in File_Data or 'fsg' in yara_match_result:
-            print("FSG")
+            #print("FSG")
             Unpacks_sub_process(sample_path, 1, sample_unpack_path)
 
         elif 'upx' in yara_match_result:
-            print("UPX")
+            #print("UPX")
             Unpacks_sub_process(sample_path, 2, sample_unpack_path, pack_path, sample_basename)
 
         elif 'aspack' in yara_match_result:
-            print("ASPACK")
+            #print("ASPACK")
             Unpacks_sub_process(sample_path, 3, sample_unpack_path)
 
         else:
             yara_tag=os.path.join(pack_path, yara_match_result)[:-1]
-            print(yara_tag)
+            #print(yara_tag)
             if not (os.path.isdir(yara_tag)): os.makedirs(yara_tag)
             yara_tag_sample_path=os.path.join(yara_tag,sample_basename)
-            print(yara_tag_sample_path)
+            #print(yara_tag_sample_path)
             shutil.copy(sample_path, yara_tag_sample_path)
 
     return
@@ -164,12 +164,12 @@ def Unpacks_sub_process(sample_path, flags, sample_unpack_path, pack_path, sampl
 
     elif flags==2:
         process_flag = subprocess.Popen(["upx.exe", "-d", sample_path], shell=True).wait()
-        print(sample_path)
-        print(process_flag)
+        #print(sample_path)
+        #print(process_flag)
         time.sleep(2)
         if process_flag != 0:
             upx_error = os.path.join(pack_path, 'unknownn')[:-1]
-            print(upx_error)
+            #print(upx_error)
             if not (os.path.isdir(upx_error)): os.makedirs(upx_error)
             upx_tag_sample_path = os.path.join(upx_error, sample_basename)
             shutil.copy(sample_path, upx_tag_sample_path)
@@ -179,7 +179,7 @@ def Unpacks_sub_process(sample_path, flags, sample_unpack_path, pack_path, sampl
     elif flags==3:
         process_flag = subprocess.Popen(["MNM_Unpacker.exe", "f", sample_path], shell=True).wait()
         if process_flag == 1:
-            print("Process Not Run")
+            #print("Process Not Run")
             mnm3_error = os.path.join(pack_path, 'unknownn')[:-1]
             if not (os.path.isdir(mnm3_error)): os.makedirs(mnm3_error)
             mnm3_tag_sample_path = os.path.join(mnm3_error, sample_basename)

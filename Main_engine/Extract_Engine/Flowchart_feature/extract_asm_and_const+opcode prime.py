@@ -279,7 +279,7 @@ def diff_prime_set(standard, target):
                         standard_dict[s_fname][s_addr][1] = True
             if len(bb_score_list) == 0:
                 continue
-            print(f"\x1b[1;34m{bb_score_list}\x1b[1;m")
+            #print(f"\x1b[1;34m{bb_score_list}\x1b[1;m")
             # 리스트를 유사도 순으로 정렬
             bb_score_list.sort(reverse=True)
 
@@ -291,12 +291,12 @@ def diff_prime_set(standard, target):
                      if bb_score_list[a][1] == bb_score_list[b-rmvcnt][1] or bb_score_list[a][2] == bb_score_list[b-rmvcnt][2]:
                         bb_score_list.remove(bb_score_list[b-rmvcnt])
                         rmvcnt += 1
-            print(f"\x1b[1;32m{bb_score_list}\x1b[1;m")
+            #print(f"\x1b[1;32m{bb_score_list}\x1b[1;m")
             bb_result_score = 0
             for bb_score in bb_score_list:
                 bb_result_score += bb_score[0]
-            print(f"[diff] Diffing between {s_fname} and {t_fname}")
-            print(f"[debug] 함수 총점 : {bb_result_score}/{len(bb_score_list)}")
+            #print(f"[diff] Diffing between {s_fname} and {t_fname}")
+            #print(f"[debug] 함수 총점 : {bb_result_score}/{len(bb_score_list)}")
             bb_result_score /= len(s_fdata)
             print(f"[debug] {t_fname} 대상 블록 수 : {len(t_fdata)}")
             print(f"[debug] {s_fname} 기준 블록 수 : {len(s_fdata)}")
