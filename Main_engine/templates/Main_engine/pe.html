@@ -110,15 +110,16 @@
             var pe_t = document.getElementById("section_table");
 
             var json_pe = JSON.parse(text_pe_res);
+
             /* 파일 이름이 다르면 테이블이 변경됨 */
 
-            function change_page(){
+            function change_page() {
                 pe_filename = "{{pe.filename}}";
                 for (var fname in json_pe) {
                     if (fname == pe_filename) {
                         for (var section in json_pe[fname]) {
                             //section 부분만 출력하기 위한 if문
-                            if(section[0] == '.'){
+                            if (section[0] == '.') {
                                 var new_row = pe_t.insertRow(pe_t.rows.length);
 
                                 var Name = new_row.insertCell(0);
@@ -139,6 +140,7 @@
                     }
                 }
             }
+
             change_page();
 
         </script>
@@ -197,16 +199,17 @@
             var pe_t = document.getElementById("contained_resource_table");
 
             var json_pe = JSON.parse(text_pe_res);
+
             /* 파일 이름이 다르면 테이블이 변경됨 */
 
-            function change_page(){
+            function change_page() {
                 pe_filename = "{{pe.filename}}";
                 for (var fname in json_pe) {
                     if (fname == pe_filename) {
                         for (var rsrc in json_pe[fname]) {
                             //document.write(rsrc[0])
                             //resource 부분만 출력하기 위한 if문
-                            if(rsrc[0] == '_'){
+                            if (rsrc[0] == '_') {
                                 var new_row = pe_t.insertRow(pe_t.rows.length);
 
                                 var Resource_name = new_row.insertCell(0);
@@ -219,6 +222,7 @@
                     }
                 }
             }
+
             change_page();
         </script>
         {% else %}
@@ -250,15 +254,16 @@
             var pe_t = document.getElementById("contained_resource_language_table");
 
             var json_pe = JSON.parse(text_pe_res);
+
             /* 파일 이름이 다르면 테이블이 변경됨 */
 
-            function change_page(){
+            function change_page() {
                 pe_filename = "{{pe.filename}}";
                 for (var fname in json_pe) {
                     if (fname == pe_filename) {
                         for (var rsrc in json_pe[fname]) {
                             //resource 부분만 출력하기 위한 if문
-                            if(rsrc[0] != '_' && rsrc[0] != '.' && rsrc[0] != '$'){
+                            if (rsrc[0] != '_' && rsrc[0] != '.' && rsrc[0] != '$') {
                                 var new_row = pe_t.insertRow(pe_t.rows.length);
 
                                 var Resource_lang = new_row.insertCell(0);
@@ -271,6 +276,7 @@
                     }
                 }
             }
+
             change_page();
         </script>
         {% else %}
@@ -304,16 +310,17 @@
             var pe_t = document.getElementById("contained_resource_list_table");
 
             var json_pe = JSON.parse(text_pe_res);
+
             /* 파일 이름이 다르면 테이블이 변경됨 */
 
-            function change_page(){
+            function change_page() {
                 pe_filename = "{{pe.filename}}";
                 for (var fname in json_pe) {
                     if (fname == pe_filename) {
                         for (var rsrc in json_pe[fname]) {
                             //document.write(fname)
                             //resource 부분만 출력하기 위한 if문
-                            if(rsrc[0] == '$'){
+                            if (rsrc[0] == '$') {
                                 //document.write(rsrc[0])
                                 //document.write(json_pe[fname][rsrc]['&amp;Resource Type'])
                                 var new_row = pe_t.insertRow(pe_t.rows.length);
@@ -322,9 +329,9 @@
                                 var Resource_type = new_row.insertCell(1);
                                 var Resource_Lang = new_row.insertCell(2);
 
-                                sha = '&amp;sha-256'
-                                type = '&amp;Resource Type'
-                                lang = '&amp;Resource Language'
+                                sha = '&amp;sha-256';
+                                type = '&amp;Resource Type';
+                                lang = '&amp;Resource Language';
 
                                 Resource_sha256.innerHTML = json_pe[fname][rsrc][sha];
                                 Resource_type.innerHTML = json_pe[fname][rsrc][type].substr(1, json_pe[fname][rsrc][type].length - 1);
@@ -334,6 +341,7 @@
                     }
                 }
             }
+
             change_page();
         </script>
         {% else %}
@@ -345,17 +353,9 @@
 <div style="padding: 10px">
     <div class="detail">
         <table height=160px id="Import_dll_list_table" width=1000px>
-            <thead>
             <div style="margin-top: 20px">
-            <h4 top=50px>Imports</h4>
-        </div>
-            <tr>
-                <th>imports</th>
-            </tr>
-            <lu id="dll_list">
-
-            </lu>
-            </thead>
+                <h4 top=50px>Imports</h4>
+            </div>
         </table>
 
         {% if p_dll_list %}
@@ -369,9 +369,10 @@
             var pe_t = document.getElementById("Import_dll_list_table");
 
             var json_pe = JSON.parse(text_pe_res);
+
             /* 파일 이름이 다르면 테이블이 변경됨 */
 
-            function change_page(){
+            function change_page() {
                 pe_filename = "{{pe.filename}}";
                 for (var fname in json_pe) {
                     if (fname == pe_filename) {
@@ -379,29 +380,33 @@
                             //document.write(fname)
                             //resource 부분만 출력하기 위한 if문
                             //list = list.toLowerCase()
-                            if(list.substr(list.length - 4, list.length - 1) == ".dll" || list.substr(list.length - 4, list.length - 1) == ".DLL"){
-                                var new_row = pe_t.insertRow(pe_t.rows.length);
-
+                            if (list.substr(list.length - 4, list.length - 1) == ".dll" || list.substr(list.length - 4, list.length - 1) == ".DLL") {
+                                //var new_row = pe_t.insertRow(pe_t.rows.length);
                                 //var imp = new_row.insertCell(0);
-                                //var li = new_row.insertCell(1);
 
-                                //imp.innerHTML = list
-                                //li.innerHTML = json_pe[fname][list];
-                                document.write(list);
-                                document.write(json_pe[fname][list].length);
+                                //h6 태그 생성
+                                var dll = document.createElement('h6');
+                                //태그에 넣을 문자열 생성
+                                var d = document.createTextNode(list);
+                                //태그에 문자열 삽입
+                                dll.appendChild(d);
+                                //태그를 html에 삽입
+                                document.getElementById('Import_dll_list_table').appendChild(dll);
+
                                 for (var i in json_pe[fname][list]) {
-                                    //var l = document.createElement('div');
-                                    //l.createTextNode('test');
 
-                                    //document.getElementById('dll_list').appendChild(l);
-                                    document.write(json_pe[fname][list][i]);
+                                    var new_li = document.createElement('li');
+                                    var l = document.createTextNode(json_pe[fname][list][i]);
+
+                                    new_li.appendChild(l);
+                                    document.getElementById('Import_dll_list_table').appendChild(new_li);
                                 }
-
                             }
                         }
                     }
                 }
             }
+
             change_page();
         </script>
         {% else %}
