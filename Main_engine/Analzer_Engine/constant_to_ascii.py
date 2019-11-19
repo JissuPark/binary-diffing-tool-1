@@ -20,11 +20,9 @@ def fileter_split(block_constant):
 
     for i in split_const:
         if (len(i) == 4 or len(i) == 10 or len(i) == 6) and stand.match(i):
-        #if stand.match(i):
             filter_const.append(i)
 
     if filter_const and len(filter_const) > 4:
-        #print(filter_const)
         for x in filter_const:
             if len(x) == 10:
                 a = (x.split('0x')[1:])

@@ -1,3 +1,5 @@
+import timeit
+
 from django.http import HttpResponse, Http404, HttpResponseRedirect, HttpRequest
 from django.template import loader
 from django.shortcuts import get_object_or_404, render, render_to_response
@@ -29,6 +31,7 @@ def pe(request):
 
     page = request.GET.get('page', 1)
     p_dict = dict()
+    p_dll_list = dict()
     pe_result_list = os.listdir(r"C:\malware\all_result\pe")
     for file in pe_result_list:
         if os.path.isfile(r"C:\malware\all_result\pe" + "\\" + file):
@@ -38,9 +41,21 @@ def pe(request):
                 if p == "cmp_section":
                     #print(p_)
                     p_dict[pe_data['file_name']] = p_
+                elif p == 'rsrc_info':
+                    #print(p_)
+                    p_dict[pe_data['file_name']].update(p_)
+                elif p == "rsrc_count":
+                    #print(p_)
+                    p_dict[pe_data['file_name']].update(p_)
+                elif p == 'rsrc_lang':
+                    #print(p_)
+                    p_dict[pe_data['file_name']].update(p_)
+                elif p == 'Imports':
+                    p_dll_list[pe_data['file_name']] = p_
+
             json.dump(pe_data, f, ensure_ascii=False, indent='\t')
-                #print(p, p_)
-    #print(json.dumps(p_dict, indent=4))
+
+    print(json.dumps(p_dll_list, indent=4))
 
     try:
         lists = paginator.get_page(page)
@@ -50,7 +65,7 @@ def pe(request):
         lists = paginator.page(paginator.num_pages)
     f.close()
 
-    return render(request, 'Main_engine/pe.html', {'lists': lists, 'p_dict': p_dict})
+    return render(request, 'Main_engine/pe.html', {'lists': lists, 'p_dict': p_dict, 'p_dll_list': p_dll_list})
 
 def heuristic(request):
      with open(r"C:\malware\all_result\result.txt", "r") as json_file:
@@ -63,15 +78,28 @@ def heuristic(request):
         return render(request, 'Main_engine/result.html', {'json_data': json_data})
 
 def cfg(request):
+    cfg_dict = dict()
+    PATH = r'C:\malware\all_result\idb'
+    for file in os.listdir(PATH):
+        file_path = os.path.join(PATH, file)
+        with open(file_path, 'rb') as cfg:
+            cfg_dict[file] = json.loads(cfg.read())
+    return render(request, 'Main_engine/cfg.html', {'cfg': cfg_dict})
 
-    with open(r"C:\malware\all_result\test.txt", 'rb') as test:
-        cfg_ = json.loads(test.read())
 
-    return render(request, 'Main_engine/cfg.html', {'cfg_': cfg_})
+def cg(request):
+    cg_dict = dict()
+    PATH = r'C:\malware\all_result\cg'
+    for file in os.listdir(PATH):
+        file_path = os.path.join(PATH, file)
+        with open(file_path, 'rb') as cg:
+            cg_dict[file] = json.loads(cg.read())
+
+    return render(request, 'Main_engine/cg.html', {'cg': cg_dict})
 
 
 def call_main(request):
-
+    start = timeit.default_timer()
     if os.path.isfile(r"C:\malware\all_result\result.txt"): #경로가 파일인지 아닌지 검사
         result_file = open(r"C:\malware\all_result\result.txt", 'rb').read()
         result = json.loads(result_file)
@@ -82,7 +110,9 @@ def call_main(request):
             json.dump(result, res, ensure_ascii=False, indent='\t')
 
     pe_ = PE_info.objects.order_by('timenum').all()
-
+    stop = timeit.default_timer()
+    print('time is ????')
+    print(stop - start)
     return render(request, 'Main_engine/result.html', {'result': result, 'pe_':pe_})
 
 

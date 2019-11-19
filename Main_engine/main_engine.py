@@ -321,49 +321,11 @@ class Analyze_files:
 
         return pe_result, yun_pe
 
-'''
-    total score to the excel file
-'''
-def out_xlsx(path, result_dict):
-    try:
-        wb = load_workbook(path)
-    except:
-        wb = Workbook()
-    ws = wb.create_sheet()
-    ws = wb.active
-
-    ws.title = 'result_xlsx'
-    title = ['BASE_FILE', 'COMP_FILE', 'FILE HASH', 'TIME STAMP', 'BB HASH', 'CONSTANT', 'SECTION', 'AUTH', 'PDB', 'IMPORT HASH', 'RICH']
-    cols = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K']
-
-    for i in range(len(title)):
-        ws[f'{cols[i]}1'] = title[i]
-    target_count = len(result_dict) - 1
-    start_row_num = 2
-
-    for base, targets in result_dict.items():
-        current_row_num = start_row_num
-        ws[f'A{current_row_num}'] = base
-        for t_name, t_infos in targets.items():
-            ws[f'B{current_row_num}'] = t_name
-            current_info = 0
-            for t_info in t_infos:
-                ws[f'{cols[current_info + 2]}{current_row_num}'] = t_info
-                current_info += 1
-            current_row_num += 1
-        ws.merge_cells(f"A{start_row_num}:A{current_row_num - 1}")
-        current_row_num += 1
-        start_row_num = current_row_num
-
-    #    wb.remove(wb['Sheet1'])
-    wb.save(path)
-
-
 def create_folder():
     # mal_exe는 drag&drop할 때 먼저 생성됨
     # mal_idb, all_result(idb, pe) 가 없으면 생성
 
-    default_path = ["C:\\malware\\mal_idb\\","C:\\malware\\all_result\\", "C:\\malware\\all_result\\idb", "C:\\malware\\all_result\\pe\\"]
+    default_path = ["C:\\malware\\mal_idb\\","C:\\malware\\all_result\\", "C:\\malware\\all_result\\idb", "C:\\malware\\all_result\\pe\\", "C:\\malware\\all_result\\cg\\"]
     for path in default_path:
         if os.path.exists(path):
             continue
@@ -385,13 +347,10 @@ def delete_file():
 def start_engine():
     '''
     웹 서버에서 메인 엔진을 호출하면 엔진을 돌리기위한 함수
-    * 백앤드 엔진에서는 사용되지 않음
-    * 지금은 서버 테스트만을 위해서 만든 것이므로 무시
     '''
     PATH = r"C:\malware\mal_exe"
     IDB_PATH = r"C:\malware\mal_idb"
-    RESUT_IDB_PATH = r"C:\malware\all_result_idb"
-    RESUT_PE_PATH = r"C:\malware\all_result_pe"
+
     # 0. 없는 폴더 먼저 생성
     create_folder()
     # 1. pe 해시 체크 (동일한 파일 필터), 2.패킹 체크
@@ -417,26 +376,22 @@ def start_engine():
     else:
         print('convert_idb is error')
 
-    # 만약 5개의 파일이 들어왔을때 그중 convert_idb 에러뜨는 것들은 제외시키고 나머지 것들만 다음 로직 수행되도록
-    # 변경해야함.
-
     # 5. 분석 하기
     print("6) Analyze file")
     analyze = Analyze_files(all_idb_info, all_pe_info)
 
-    yun_sorted_pe = dict()
     result_pe, yun_pe = analyze.analyze_pe()
     result_idb, yun_all = analyze.analyze_idb(yun_pe)
-    #yun_sorted_pe = sorted(yun_all.items(), key=lambda x: x[1]['timestamp_num'])
-    #print(f"sorted_yun :: {json.dumps(yun_sorted_pe, indent=4)}")
 
-    # print(f"yun_all :: {json.dumps(yun_all, indent=4)}")
 
+<<<<<<< HEAD
     print("7) Result Csv SAVE")
     # 6. 결과 csv 저장 (임시)
+=======
+    # 6. 결과 저장
+>>>>>>> upstream/master
     all_result = analyze.calculate_heuristic(result_idb, result_pe)
 
-    #out_xlsx(r"C:\malware\result\test.xlsx", all_result)
     delete_file()
 
     return all_result
@@ -540,8 +495,6 @@ if __name__ == "__main__":
 
     # 6. 결과 csv 저장 (임시)
     all_result = analyze.calculate_heuristic(result_idb, result_pe)
-
-    out_xlsx(r"C:\malware\result\test.xlsx", all_result)
     start_engine()
 
 

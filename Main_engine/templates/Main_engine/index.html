@@ -13,18 +13,20 @@
         html, body {
             height: 100%;
             overflow: auto;
+            font-family: Consolas;
         }
         body {
-            font-family: 'Noto Sans KR', sans-serif;
+            font-family: Consolas;
             /*background-image: url('../Main_engine/static/Main_engine/images/bg.png');*/
             background-repeat: no-repeat;
             background-size: cover;
-            background-color: darkgray;
+            background-color: #a4a09f;
+
         }
         h1, h2, h3, table th, table th .header {
-            font-size: 3rem;
-            color: black;
-            line-height: 2.2rem;
+            font-family: consolas;
+            font-size: 2rem;
+
         }
         html, body {
             margin: 0;
@@ -64,13 +66,15 @@
     /*    transform: rotate(15deg);*/
     /*}*/
     input {
-        background: darkgray;
+        font-weight: bolder;
+        background: #a4a09f;
         color: white;
+        border-radius: 10px;
+        width: 100px;
         border: none;
         position: relative;
-        height: 60px;
-        font-size: 1.6em;
-        padding: 0 2em;
+        height: 50px;
+        font-size: 1.5em;
         cursor: pointer;
         transition: 800ms ease all;
         outline: none;
@@ -103,11 +107,11 @@
 <!-- header -->
 <header>
     <div id='header container' style="text-align: center">
-        <div id="header1" style="float: left; width:50%;">
-            <img src="{% static 'Main_engine/images/service_logo_grey.png' %}" style="width: 100%; height: auto; margin-top: 7px; margin-left: 20px;"></div>
+        <div id="header1" style="float: left; width:40%;">
+            <img src="{% static 'Main_engine/images/service_logo_grey.png' %}" style="float:left; margin-left:45px; width: 70%; height: auto; margin-top: 30px;"></div>
 
-        <div id="header2" style="float: right; width:50%;">
-            <img src="{% static 'Main_engine/images/team_logo_grey.png' %}" style="width: 40%; height: auto; float: right; margin-top: 20px; margin-right: 20px;"
+        <div id="header2" style="float: right; width:25%;">
+            <img src="{% static 'Main_engine/images/team_logo_grey.png' %}" style="width: 40%; height: auto; float: right; margin-top: 40px; margin-right: 40px;"
                  class="diagonal"></div>
     </div>
 <!--    <h1 style="text-align:center">&nbsp;</h1>-->
@@ -118,16 +122,16 @@
     <div id='container' style="text-align: center; width: 100%;">
         <div style="float:left; width:50%; padding:15px; vertical-align: middle">
 
-            <h2 id="Try-it-out-1" class="strings_try">Base</h2>
+            <h2 id="Try-it-out-1" class="strings_try">BASE</h2>
 
             <div id="dropzone 1">
                 <form action="{% url 'upload' %}" class="dropzone needsclick dz-clickable" id="upload-1">
                     {% csrf_token %}
                     <div class="dz-message needsclick">
-                        Comparison standard file drop zone<br>
+                        Comparison <strong>base file</strong> drop zone<br>
                         (Drop only Windows PE File)<br>
                         <div class="dz-message info">
-                            <em>(This is demo service. File size limit:<strong> 2MB / 1EA</strong>)</em>
+                           (This is demo service. File size limit:<strong> 2MB / 1EA</strong>)
                         </div>
                     </div>
                 </form>
@@ -136,15 +140,15 @@
 
         <!-- <div style=" float: right; width: 5%; padding:10px; font-size: 4rem; text-align: center;"> </div> -->
         <div style="float:left; width: 50%; padding:15px; vertical-align: middle">
-            <h2 id="Try-it-out-2" class="strings_try">Tartget</h2>
+            <h2 id="Try-it-out-2" class="strings_try">TARGET</h2>
             <div id="dropzone 2">
                 <form action="{% url 'upload' %}" class="dropzone needsclick dz-clickable" id="upload-2">
                     {% csrf_token %}
                     <div class="dz-message needsclick">
-                        Comparison target file drop zone<br>
+                        Comparison <strong>target file</strong> drop zone<br>
                         (Drop only Windows PE File)<br>
                         <div class="dz-message info">
-                            <em>(This is demo service. File size limit:<strong> 2MB / 3EA</strong>)</em>
+                            (This is demo service. File size limit:<strong> 2MB / 3EA</strong>)
                         </div>
                     </div>
                 </form>
@@ -152,15 +156,15 @@
         </div>
     </div>
     <div style="float: left; padding: 10px;">
-        <input class="" type="submit" value="start" onclick="location.href='{% url 'result' %}'">
+        <input type="submit" value="start" onclick="location.href='{% url 'result' %}'">
     </div>
 </main>
 
 <!-- section end -->
 <!-- Footer -->
 <footer>
-    <p style="text-align: center; font-size: 1.5rem; color:black"><strong>Recent Scans | About</strong></p>
-    <p style="text-align: center; color:black">© 2019 Best of the Best Team. Breakers – WinBinary Diffing Tools v0.1
+    <p style="text-align: center; font-size: 1.2rem; color: #cacaca"><strong>Recent Scans | About</strong></p>
+    <p style="text-align: center; font-size: 0.9rem; color: #cacaca">© 2019 Best of the Best Team. Breakers – WinBinary Diffing Tools v0.1
         Beta. All Rights Reserved</p>
 </footer>
 <!-- Footer end -->

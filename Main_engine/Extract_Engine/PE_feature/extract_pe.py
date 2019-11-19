@@ -32,8 +32,8 @@ class Pe_Feature:
     def extract_rsrc(self):
 
         rsrc = pe_rsrc.RsrcParser(self.file_name)
-        rsrc_result = rsrc.get_resource()
-        return rsrc_result
+        rsrc_result, rs, rl = rsrc.get_resource()
+        return rsrc_result, rs, rl
 
 
     def ex_auth(self):
@@ -105,9 +105,9 @@ class Pe_Feature:
 
                 return xor_key, prod_list
             else:
-                return ""
+                return "", ""
         except:
-            return ""
+            return "", ""
 
     def filetypes(self):
         '''
@@ -139,11 +139,12 @@ class Pe_Feature:
         func_list = self.ImportDll()
         file_type = magic.from_file(self.file_name)
         imphash = self.imphash_data()
+        implist = self.ImportDll()
         cmp_section_data = self.cmp_section_data()
         cert = self.Certificateinfo()
         rich_xor_key, rich_prodid = self.extract_rich()
         pdb_info = self.extract_pdb()
-        rsrc_info = self.extract_rsrc()
+        rsrc_info, rs, rl = self.extract_rsrc()
         time_info, TimeInNum = self.extract_time()
 
         f_name = self.file_name[self.file_name.rfind('\\') + 1:]
@@ -153,6 +154,7 @@ class Pe_Feature:
             'file_name': f_name,
             'file_hash': hashlib.sha256(open(self.file_name, 'rb').read()).hexdigest(),
             'imp_hash': imphash,
+            'Imports': implist,
             'cmp_section': cmp_section_data,
             'auto': cert,
             'rich_xor_key': rich_xor_key,
@@ -160,7 +162,9 @@ class Pe_Feature:
             'pdb_info': pdb_info,
             'time_date_stamp': time_info,
             'time in num': TimeInNum,
-            'rsrc_info': rsrc_info
+            'rsrc_info': rsrc_info,
+            'rsrc_count': rs,
+            'rsrc_lang': rl
         }
         file_size = os.path.getsize(self.file_name)
         file_size = self.convert_size(file_size)
@@ -205,12 +209,25 @@ class Pe_Feature:
             'Enrty Point': Ent_point,
             'Contained Sections': Section_num
         }
+<<<<<<< HEAD
         #print(pe_header)
+=======
+        print(pe_header)
+        pdb_name = PDB['pe_pdb_Name']
+        pdb_guid = PDB['pe_pdb_GUID']
+        pdb_age = PDB['pe_pdb_Age']
+        pdb_path = PDB['pe_pdb_Pdbpath']
+
+        # print(f"timenum : {type(TimeInNum)}::{TimeInNum}")
+        # print(f"EntryPoint : {type(Ent_point)}::{Ent_point}")
+        # print(f"ContainedSections : {type(Section_num)}::{Section_num}")
+        # print(f"pdbage : {type(pdb_age)}::{pdb_age}")
+>>>>>>> upstream/master
 
         PE_info.objects.create(filename=f_name, imphash=ImpHash, filesize=file_size, filetype=file_type, sha_256=sha256,
                                timestamp=TimeStamp, year=Year, timenum=TimeInNum,
                                ssdeep=ssdeep_hash, sha_1=sha1, md5=MD5, Targetmachine=mac, EntryPoint=Ent_point,
-                               ContainedSections=Section_num)
+                               ContainedSections=Section_num, pdbname=pdb_name, pdbguid=pdb_guid, pdbage=pdb_age, pdbpath=pdb_path)
 
         return pe_features, pe_features_for_DB
 

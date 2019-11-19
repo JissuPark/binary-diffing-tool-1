@@ -19,7 +19,6 @@ class AnalyzeFlowchart:
 
     def block_hash_parser(self, bloc_dict):
         s = timeit.default_timer()  # start time
-        #print(f'[info] Making Block hash SET & Filter White List')
         block_hash_dic = dict()
 
         for x in bloc_dict["func_name"]:
@@ -27,14 +26,12 @@ class AnalyzeFlowchart:
             for y in bloc_dict["func_name"][x]:
                 if y != "flow_opString":
                     # 화이트 리스트 처리
-                    # 해당 코드 로직 개선해야합니다(후순위) - 현목 -
                     try:
                         if bloc_dict["func_name"][x][y]['block_sha256'] in white.list:
                             continue
                         block_hash_dic[x].update({y: {bloc_dict["func_name"][x][y]['block_sha256']: False}})
                     except:
                         continue
-        #print(f'[info] END block hash set & filter_list : {timeit.default_timer() - s}')
         return block_hash_dic
 
     def analyze_bbh(self, s_flow_data, t_flow_data):
@@ -107,7 +104,6 @@ class AnalyzeFlowchart:
 
                 ######   연대기 추가  ######
                 for var in yun_sorted_pe:
-                    #print("found :: ", var)
                     if idb_t['bbh'] >= 0.85:
                         yun_s['comp_file_name'] = idb_info_t['file_name']
                         yun_s['comp_bbh'] = idb_t['bbh']

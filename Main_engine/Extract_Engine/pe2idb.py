@@ -58,26 +58,22 @@ def pe_check(PE_F_PATH):
     f.close()
 
     # MZ signature & PE signature 확인
-    if f_data[0:2] == BYTES_SIG_MZ and f_data[2:512].find(BYTES_SIG_PE) != -1:
-        try:
-            # pe format인거 확인 후, pefile 열기
-            pe = pefile.PE(PE_F_PATH, fast_load=True)
-            m_bit = pe.FILE_HEADER.Machine
-            pe.close()
-            if m_bit == HEX_M_32:
-                return IDAT
-            elif m_bit == HEX_M_64_AMD or m_bit == HEX_M_64_IA:
-                return IDAT64
+    try:
+        # pe format인거 확인 후, pefile 열기
+        pe = pefile.PE(PE_F_PATH, fast_load=True)
+        m_bit = pe.FILE_HEADER.Machine
+        pe.close()
+        if m_bit == HEX_M_32:
+            return IDAT
+        elif m_bit == HEX_M_64_AMD or m_bit == HEX_M_64_IA:
+            return IDAT64
 
-        except:
-            # pe format인데, 패킹되어 있는 경우 except로 들어올 것임.
-            # pefile 모듈을 사용할 수 없기 때문
-            # 이 경우 일단 idat.exe 돌리고, exception나면 idat64.exe으로..!
-            print("PE_UNKNOWN - PACKING")
-            return PE_UNKNOWN
-    else:
-        print("PE_CHECK_ERROR")        
-        return PE_CHECK_ERROR
+    except:
+        # pe format인데, 패킹되어 있는 경우 except로 들어올 것임.
+        # pefile 모듈을 사용할 수 없기 때문
+        # 이 경우 일단 idat.exe 돌리고, exception나면 idat64.exe으로..!
+        print("PE_UNKNOWN - PACKING")
+        return PE_UNKNOWN
 
 
 
@@ -204,7 +200,6 @@ def clear_folder(EXE_F_PATH, IDA_F_PATH):
     try:
         for f in exe_list:
             if os.path.splitext(f)[-1] == ".idb" or os.path.splitext(f)[-1] == ".i64":
-                # f_path=os.path.join(EXE_F_PATH,f) 사용할까 아님 이대로 할까 고민중..
                 shutil.copy(os.path.join(EXE_F_PATH, f), os.path.join(IDA_F_PATH, f))
                 os.remove(os.path.join(EXE_F_PATH, f))
             elif '.asm' in f:
