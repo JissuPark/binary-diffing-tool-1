@@ -7,18 +7,22 @@
 <script src="https://unpkg.com/d3-graphviz@2.6.1/build/d3-graphviz.js"></script>
 <style>
     .paint {
+        overflow: auto;
         display: block;
         width: 100%;
-        height: 800px;
+        /*height: 700px;*/
     }
-    .paint-vertical{
+
+    .paint-vertical {
         display: flex;
+        width: 100%;
     }
+
     .graph {
         margin: 5px;
-        width: 25%;
-        height: 800px;
-        border: 1px solid grey;
+        width: 100%;
+        /*height: 100%;*/
+        border: 3px solid grey;
     }
 </style>
 {% endblock head %}
@@ -26,12 +30,20 @@
 {% block section %}
 <div class="paint">
     <div class="mt-5 paint-vertical" id="tab"></div>
-    <div class="paint-vertical">
-        <div class="graph" id="base-graph"></div>
-        <div class="graph" id="target1-graph"></div>
-        <div class="graph" id="target2-graph"></div>
-        <div class="graph" id="target3-graph"></div>
-    </div>
+    <article class="paint-vertical">
+        <section class="graph">
+            <div id="base-graph"></div>
+        </section>
+        <section class="graph">
+            <div  id="target1-graph"></div>
+        </section>
+        <section class="graph">
+            <div  id="target2-graph"></div>
+        </section>
+        <section class="graph">
+            <div id="target3-graph"></div>
+        </section>
+    </article>
 </div>
 <!--<div class="paint">-->
 <!--    <div class="mt-5 paint-vertical" id="tab"></div>-->

@@ -149,16 +149,18 @@ def main(api, file_name):
         # 함수이름 출력
 
         fname = api.idc.GetFunctionName(fva).lower()
-        func_name.append(fname)
-        for addr in api.idautils.XrefsTo(fva, 0):
-            try:
-                if not api.idc.GetDisasm(addr.src).find('call'):
-                    # print(f"T : From {api.ida_funcs.get_func_name(api.ida_funcs.get_func(addr.src).startEA)}({hex(addr.src)}): To {fname}({hex(addr.dst)}) :{api.idc.GetDisasm(addr.src)}")
-                    func_branch.append((api.ida_funcs.get_func_name(api.ida_funcs.get_func(addr.src).startEA), fname))
-            except:
-                print(f"Error in {addr.src}")
 
-        if fname[:3] == 'sub' or 'dllentry' in fname or fname[:5] == 'start' or fname.find('main') != -1:
+        if 'dllentry' in fname or fname[:3] == 'sub' or fname[:5] == 'start' or fname.find('main') != -1:
+            func_name.append(fname)
+            for addr in api.idautils.XrefsTo(fva, 0):
+                try:
+                    if not api.idc.GetDisasm(addr.src).find('call'):
+                        # print(f"T : From {api.ida_funcs.get_func_name(api.ida_funcs.get_func(addr.src).startEA)}({hex(addr.src)}): To {fname}({hex(addr.dst)}) :{api.idc.GetDisasm(addr.src)}")
+                        func_branch.append(
+                            (api.ida_funcs.get_func_name(api.ida_funcs.get_func(addr.src).startEA), fname))
+                except:
+                    pass
+
             # main or start or sub_***** function. not library function
             basicblock = basic_block(api, fva, fname)
 

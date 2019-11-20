@@ -8,9 +8,9 @@
 {% endblock head %}
 
 {% block section %}
-<div style="display: block;">
+<div style="display: block; overflow: auto;">
     <div class="mt-5" id="file-name" style="display: flex"></div>
-    <div class="mt-5" id="base-graph" style="width: 100%; overflow: auto"></div>
+    <div class="mt-5" id="base-graph" style="width: 100%;"></div>
 </div>
 {% if cg %}
 <script>
@@ -59,6 +59,7 @@
         btn.textContent = fname;
         btn.setAttribute('style', "display: flex;");
         btn.onclick = function () {
+            // document.write(boxes[fname]);
             draw(boxes[fname]);
         };
         // btn.addEventListener('onclick', draw(boxes[fname]));
@@ -78,12 +79,13 @@
             array[json_res[file]['f_name'][funcname]] = json_res[file]['f_name'][funcname];
        }
         branches = json_res[file]['f_branch'];
+        graph = boxing(array, branches);
+        boxes[file] = graph;
     }
 
 
-    graph = boxing(array, branches);
-    boxes[funcname] = graph;
-    draw(boxes[funcname]);
+
+    // draw(boxes[funcname]);
 
 </script>
 {% else %}
