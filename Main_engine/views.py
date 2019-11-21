@@ -58,7 +58,6 @@ def pe(request):
 
             json.dump(pe_data, f, ensure_ascii=False, indent='\t')
 
-    print(json.dumps(p_dll_list, indent=4))
 
     try:
         lists = paginator.get_page(page)
