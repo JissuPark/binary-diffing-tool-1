@@ -209,7 +209,7 @@ class AnalyzeFlowchart:
                 #print(f"[debug] unmatched constants :: {s_hash_dict[s_fname][s_sAddr]} --- {t_hash_dict[t_fname][t_sAddr]}")
                 #print(f"ㄴ[debug] constants find diff :: {s_comp_set} --- {t_comp_set}")
                 #print(f" ")
-        return round((matched / total_len), 2)
+        return float(str(matched / total_len)[:4])
 
     def analyze_bbh(self, s_flow_data, t_flow_data):
         '''
@@ -221,7 +221,7 @@ class AnalyzeFlowchart:
 
         cmp_s, cmp_t, true_bb_const_sim = self.compare_bbh(s_cmp_dic, t_cmp_dic)
 
-        return algo.get_func_similarity(cmp_s, )
+        return algo.get_bbh_similarity(cmp_s, )
 
     def analyze_constant(self, standard, target):
         const_score = algo.get_string_similarity(standard['constant'], target['constant'])
