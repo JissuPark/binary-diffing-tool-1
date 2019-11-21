@@ -26,7 +26,7 @@ class basic_block(idb_info):
         self.func_name = func_name
 
     def bbs(self, func_name_dicts, file_name):
-        mutex_opcode_list = list()
+        # mutex_opcode_list = list()
         flow_opcode = list()
         flow_constants = list()
         function_dicts = dict()
@@ -46,6 +46,8 @@ class basic_block(idb_info):
             try:
                 curaddr = basicblock.startEA
                 endaddr = basicblock.endEA
+
+                # 30bytes 이하 블럭 필터 비활성화
                 # if (endaddr - curaddr) < 30:  # 최소 바이트 50이상 할것
                 #     continue
 
@@ -99,13 +101,13 @@ class basic_block(idb_info):
                     disasms.append(disasm)
                     curaddr = self.api.idc.NextHead(curaddr)
                 ''' ================================ END ONE BLOCK ================================'''
-                # 중복 값 제어
-                mutex_opcode = ' '.join(opcodes)  # mutex_opcode -> type(str)
-                if mutex_opcode in mutex_opcode_list:
-                    del function_dicts[hex(basicblock.startEA)]  # del 안하면 비어있는 딕셔너리 생김 ex) 0x402034 = {}
-                    continue
-                else:
-                    mutex_opcode_list.append(mutex_opcode)
+                # 중복 값 제어 비활성화
+                # mutex_opcode = ' '.join(opcodes)  # mutex_opcode -> type(str)
+                # if mutex_opcode in mutex_opcode_list:
+                #     del function_dicts[hex(basicblock.startEA)]  # del 안하면 비어있는 딕셔너리 생김 ex) 0x402034 = {}
+                #     continue
+                # else:
+                #     mutex_opcode_list.append(mutex_opcode)
 
                 basicblock_dics = {
                     'opcodes': opcodes,
@@ -115,7 +117,7 @@ class basic_block(idb_info):
                     'end_address': hex(basicblock.endEA),
                     'block_constant': ' '.join(block_constant)
                 }
-                flow_opcode.append(mutex_opcode)
+                #flow_opcode.append(mutex_opcode)
                 function_dicts[hex(basicblock.startEA)] = basicblock_dics
                 if block_constant:
                     flow_constants.append(' '.join(block_constant))
@@ -156,7 +158,7 @@ def main(api, file_name):
             except:
                 print(f"Error in {addr.src}")
 
-        if 'dllentry' in fname or fname[:3] == 'sub' or fname[:5] == 'start' or fname.find('main') != -1:
+        if fname[:3] == 'sub' or 'dllentry' in fname or fname[:5] == 'start' or fname.find('main') != -1:
             # main or start or sub_***** function. not library function
             basicblock = basic_block(api, fva, fname)
 

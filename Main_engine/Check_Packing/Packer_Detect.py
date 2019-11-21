@@ -21,7 +21,6 @@ def sample_packer_type_detect():
     with open(result_csv_path, 'w+', newline='', encoding='utf-8') as csv_file:
         for sample in Sample_List:
             count = 0
-            print(sample)
 
             sample_full_path=os.path.join(Sample_dir_Full_path,sample)
 

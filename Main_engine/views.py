@@ -35,8 +35,8 @@ def pe(request):
     pe_result_list = os.listdir(r"C:\malware\all_result\pe")
     for file in pe_result_list:
         if os.path.isfile(r"C:\malware\all_result\pe" + "\\" + file):
-            result_pe = open(r"C:\malware\all_result\pe" + "\\" + file, 'rb').read()
-            pe_data = json.loads(result_pe)
+            result_pe = open(r"C:\malware\all_result\pe" + "\\" + file, 'rb')
+            pe_data = json.loads(result_pe.read())
             for p,p_ in pe_data.items():
                 if p == "cmp_section":
                     #print(p_)
@@ -63,6 +63,7 @@ def pe(request):
         lists = paginator.page(1)
     except EmptyPage:
         lists = paginator.page(paginator.num_pages)
+    result_pe.close()
     f.close()
 
     return render(request, 'Main_engine/pe.html', {'lists': lists, 'p_dict': p_dict, 'p_dll_list': p_dll_list})
@@ -101,8 +102,9 @@ def cg(request):
 def call_main(request):
     start = timeit.default_timer()
     if os.path.isfile(r"C:\malware\all_result\result.txt"): #경로가 파일인지 아닌지 검사
-        result_file = open(r"C:\malware\all_result\result.txt", 'rb').read()
-        result = json.loads(result_file)
+        result_file = open(r"C:\malware\all_result\result.txt", 'rb')
+        result = json.loads(result_file.read())
+        result_file.close()
     else:
         result = main_engine.start_engine()
 

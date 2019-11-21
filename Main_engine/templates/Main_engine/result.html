@@ -4,6 +4,7 @@
 
 
 {% block head %}
+<<<<<<< HEAD
     {% load static %} <!-- static files are loaded -->
     <link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet" media="screen">
     <link href="{% static 'Main_engine/css/fakeLoaer.css' %}">
@@ -21,6 +22,22 @@
         });
 
     </script>
+=======
+{% load static %} <!-- static files are loaded -->
+<link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet" media="screen">
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="{% static 'Main_engine/js/jquery.timelinr-0.9.7.js' %}"></script>
+<script src="{% static 'Main_engine/css/hightchart.css' %}"></script>
+
+<script>
+    $(function () {
+        $().timelinr({
+            arrowKeys: 'true'
+        })
+    });
+
+</script>
+>>>>>>> upstream/master
 
 {% endblock head %}
 
@@ -43,32 +60,42 @@
         </div>
     </div>
 
-    <h5 id="timeline2">Time Line</h5>
-    <div id="tileline_frame">
-        <div id="timeline">
-            <ul id="dates">
-                {% for pe in pe_ %}
-                    <li><a href=#{{ pe.year }} style="color: #ffcc00;">{{ pe.year }}</a></li>
-                {% endfor %}
-            </ul>
-            <ul id="issues">
-                {% for pe in pe_ %}
-                    <li id={{ pe.timestamp }}>
-                        <img src="{% static 'Main_engine/images/test1.png' %}" width="256" height="256"/>
-                        <h1>{{ pe.timestamp }}</h1>
-                        <!--      <p> File Name : {{pe.filename}}</p>-->
-                        <p> File Size : {{ pe.filesize }}</p>
-                        <p> File Type : {{ pe.filetype }}</p>
-                        <!--      <p> File Sha-256 :{{pe.sha_256}}</p>-->
-                        <p> TimeStamp : {{ pe.timestamp }}</p>
-                    </li>
-                {% endfor %}
-            </ul>
+</div>
+{#휴리스틱 스코어부분 #}
+<!--원래 있던 차트 부분-->
+<br>
 
-            <div id="grad_left"></div>
-            <div id="grad_right"></div>
-            <a href="#" id="next">+</a>
-            <a href="#" id="prev">-</a>
+<hr class="my-hr3"><h5 id="heuristic" class="mt-2 mb-3" style="font-weight: bold;">Heuristic Score</h5><hr class="my-hr3">
+<!--원래 있던 차트 부분-->
+     <div class="card-deck ml-3 mr-3 mt-4">
+      <div class="card">
+            <div id="mychart0"></div>
+        <div class="card-body">
+         <h5 class="card-title">Target File</h5>
+         <p class="card-text">대상파일 : 630d925fd51964cae86892647069f3555874f48cba2f7be0920c9293b376f0af</p>
+        </div>
+      </div>
+      <div class="card">
+          <div id="mychart1"></div>
+        <div class="card-body">
+         <h5 class="card-title">Target File</h5>
+         <p class="card-text">대상파일 : 7b6c34896babba1bee97387a862dfd60d243d711000f3837dcbf3dd7b0e838a4</p>
+        </div>
+      </div>
+      <div class="card">
+            <div id="mychart2"></div>
+        <div class="card-body">
+         <h5 class="card-title">Target File</h5>
+         <p class="card-text">대상파일 : cec477937ea389408749cf7969f27e3dbd1136d888b3c99f8c5c5f843a40b731</p>
+        </div>
+      </div>
+      <div class="card">
+           <div id="mychart3"></div>
+         <div class="card-body">
+         <h5 class="card-title">Target File</h5>
+         <p class="card-text">대상파일 : d3ee9cf0ad24519e40f3788fdc453074344c82effebb7c0ea1c4343b4f4dc9d9</p>
+         </div>
+
         </div>
     </div>
     {#휴리스틱 스코어부분 #}

@@ -18,6 +18,54 @@ from openpyxl import load_workbook, Workbook
 from Main_engine.Check_Packing import Packer_Detect2
 from Main_engine.Unpacking import unpack_module
 from Main_engine.models import *
+from Main_engine.ML import new_check_pe
+from Main_engine.ML import new_getinfo_pe
+
+
+
+import pandas as pd
+import numpy as np
+import pickle
+import sklearn.ensemble as ske
+from sklearn.model_selection import train_test_split
+from sklearn import tree
+from sklearn.feature_selection import SelectFromModel
+import os
+from sklearn.externals import joblib
+from sklearn.naive_bayes import GaussianNB
+import tensorflow as tf
+from sklearn.metrics import confusion_matrix
+import json
+#from xgboost import XGBClassifier
+#import xgboost as xgb
+from sklearn.ensemble import VotingClassifier
+from sklearn.linear_model import LogisticRegression
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.layers import Dropout
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.svm import SVC
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import VotingClassifier
+import csv
+from sklearn.model_selection import GridSearchCV
+from lightgbm import LGBMClassifier
+from tensorflow import keras
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_breast_cancer
+import pandas_profiling as pp  # pip install pandas_profiling
+from multiprocessing import Process, current_process, Queue, Pool
+from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import OneHotEncoder
+import datetime
+from logging import handlers
+
+import logging
+
 
 idb_file_path = "C:\\malware\\all_result\\idb\\"
 pe_file_path = "C:\\malware\\all_result\\pe\\"
@@ -47,9 +95,12 @@ class Pe_Files_Check:
 
     def get_unique_pe_list(self):
         exe_list = os.listdir(self.pe_dir_path)
+
         for f in exe_list:
             f_path = os.path.join(self.pe_dir_path, f)
-            f_hash = hashlib.sha256(open(f_path, 'rb').read()).hexdigest()
+            fp = open(f_path, 'rb')
+            f_hash = hashlib.sha256(fp.read()).hexdigest()
+            fp.close()
 
             # file hash 중복 = 완전히 같은 파일
             # 해당 파일은 삭제(이미 diffing할 동일 파일이 존재하므로)
@@ -57,7 +108,7 @@ class Pe_Files_Check:
                 os.remove(f_path)
             else:
                 #os.rename(f_path, os.path.join(self.pe_dir_path, f_hash))
-                print('a')
+                pass
 
                 # 파일은 삭제하지만 해당 파일명(절대경로)와 해시정보는 DB에 있어야함.
             # 추후 시각화할 때 정보 필요
@@ -122,15 +173,16 @@ def multiprocess_file(q, return_dict, flag):
                 file = None
 
             if file is not None:
-                fd1 = open(file.idb_filepath + ".txt", "rb").read()
-                info = json.loads(fd1, encoding='utf-8')
-                print('idb존재함')
+                fd1 = open(file.idb_filepath + ".txt", "rb")
+                info = json.loads(fd1.read(), encoding='utf-8')
+                fd1.close()
+                #print('idb존재함')
             elif file is None:
                 info = extract_asm_and_const.basicblock_idb_info_extraction(f_path)  # 함수대표값 및 상수값 출력
                 with open(r"C:\malware\all_result\idb" + "\\" + file_filter + ".txt", 'w') as makefile:
                     json.dump(info, makefile, ensure_ascii=False, indent='\t')
                 Filter.objects.create(filehash=info['file_name'], idb_filepath=idb_file_path + file_filter)
-                print('idb없음')
+                #print('idb없음')
 
         elif flag == 'pe':
 
@@ -140,7 +192,7 @@ def multiprocess_file(q, return_dict, flag):
                 pe_file = Filter.objects.get(filehash=file_filter2)
                 print(pe_file)
             except Filter.DoesNotExist:
-                print('jaeho')
+                print('pe_errir')
                 pe_file = None
 
             try:
@@ -149,8 +201,9 @@ def multiprocess_file(q, return_dict, flag):
                 pe_f = None
 
             if pe_f is not None:
-                fd1 = open(pe_file.pe_filepath + ".txt", "rb").read()
-                info = json.loads(fd1, encoding='utf-8')
+                fd1 = open(pe_file.pe_filepath + ".txt", "rb")
+                info = json.loads(fd1.read(), encoding='utf-8')
+                fd1.close()
                 print('pe존재함')
             elif pe_f is None:
                 try:
@@ -160,11 +213,11 @@ def multiprocess_file(q, return_dict, flag):
                         json.dump(info, makefile, ensure_ascii=False, indent='\t')
                     pe_file.pe_filepath = pe_file_path + file_filter2
                     pe_file.save()
+                    pe.close()
                     print('pe없음')
                 except:
                     print('pe error !')
                     continue
-
 
         return_dict[f_path] = info
 
@@ -306,27 +359,38 @@ def start_engine():
     # 0. 없는 폴더 먼저 생성
     create_folder()
     # 1. pe 해시 체크 (동일한 파일 필터), 2.패킹 체크
+    print("1) hash check")
     pe_check = Pe_Files_Check(PATH)
+    print("2) packing check")
     file_hash_dict = pe_check.get_unique_pe_list()
 
+
+
     # 3. pe파일(+패킹 체크) -> idb 변환
+    print("3) idb converter")
     flag = convert_idb(PATH, IDB_PATH)
     Features = Exract_Feature(PATH, IDB_PATH)
 
     # 4. 정보 추출(idb,pe)
     if flag == True:
+        print("4) extract IDB and PE")
         all_idb_info = Features.export_idb_info('idb')
         all_pe_info = Features.export_pe_info('pe')
+        print("5) Machine Learning")
+        ML_result_data=idb_pe_feature(all_idb_info, all_pe_info)
+        print(ML_result_data)
     else:
         print('convert_idb is error')
 
     # 5. 분석 하기
+    print("6) Analyze file")
     analyze = Analyze_files(all_idb_info, all_pe_info)
 
     result_pe, yun_pe = analyze.analyze_pe()
     result_idb, yun_all = analyze.analyze_idb(yun_pe)
 
 
+    print("7) Result Csv SAVE")
     # 6. 결과 저장
     all_result = analyze.calculate_heuristic(result_idb, result_pe)
 
@@ -334,6 +398,58 @@ def start_engine():
 
     return all_result
 
+#####################################
+
+
+def idb_pe_feature(all_idb_info,all_pe_info):
+    #print("allPeinfo:{}".format(all_pe_info))
+    extract_pe_class = new_getinfo_pe.getinfo_pe()
+    model = joblib.load(os.getcwd()+"\\Main_engine\\ML\\"+'ML_model2.pkl')
+
+    ML_result_data = dict()
+    for pe_info in all_pe_info.keys():
+        file_full_path=all_pe_info[pe_info]['file_path']
+        file_base_name = all_pe_info[pe_info]['file_name']
+        # print(file_full_path)
+        # print(file_base_name)
+        for idb_info in all_idb_info.keys():
+
+            if all_idb_info[idb_info]['file_name']==file_base_name:
+            #if idb_info['file_name']==file_base_name:
+                result_opcoded_count_dict = {'MOV': 0, 'LEA': 0, 'ANDL': 0, 'JE': 0, 'ADD': 0, 'SBB': 0, 'SUB': 0, 'INT3': 0,\
+                                             'SHR': 0, 'OR': 0, 'JB': 0, 'DEC': 0, 'DECL': 0, 'INCL': 0, 'FXCH': 0, 'JP': 0, \
+                                             'FSTP': 0, 'NOT': 0, 'PUSHF': 0, 'XCHG': 0, 'ADC': 0, 'CLC': 0, 'LCALL': 0, 'AAA': 0, \
+                                             'FIADDL': 0, 'OUTSL': 0, 'XLAT': 0, 'ROLL': 0, 'LES': 0, 'OUTSB': 0, 'AAM': 0, 'DAS': 0, \
+                                             'CLD': 0, 'NOTB': 0, 'IRET': 0, 'FSTPS': 0, 'SS': 0, 'CMC': 0, 'RORB': 0, 'FNSAVE': 0,\
+                                             'FLDS': 0, 'FIADD': 0, 'JNO': 0, 'INCB': 0, 'CMPW': 0, 'ABCL': 0, 'MOVSWL': 0, 'SHRL': 0, \
+                                             'CPUID': 0, 'FIMUL': 0, 'RORL': 0, 'SAL': 0, 'FNCLEX': 0, 'SETG': 0, 'FSUBL': 0, 'FCMOVU': 0,\
+                                             'PSUBB': 0, 'DIVB': 0, 'RCRL': 0, 'MOVQ': 0, 'RDTSC': 0, 'RDPMC': 0, 'PCMPEQB': 0, 'FBLD': 0, \
+                                             'FCMOVB': 0, 'FUCOMI': 0, 'FLDLG2': 0, 'FABS': 0, 'FCHS': 0, 'PREFETCHNTA': 0, 'XGETBV': 0, \
+                                             'PI2FW': 0, 'FSTSW': 0, 'ADDPD': 0, 'DIVSD': 0, 'PALIGNR': 0, 'GETSEC': 0}
+
+                for fname, value_1 in all_idb_info[idb_info]['func_name'].items():
+                    if fname != "constant":
+                        for sAddr, value_2 in value_1.items():
+                            if sAddr != "flow_opString" and sAddr != "flow_constants" and sAddr != "flow_branches":
+                                opcode_list=[opcode.upper() for opcode in all_idb_info[idb_info]['func_name'][fname][sAddr]['opcodes']]
+                                for opcode in opcode_list:
+                                    try:
+                                        result_opcoded_count_dict[opcode]+=1
+                                    except KeyError:continue
+                op_list_count = list(result_opcoded_count_dict.values())
+
+                pe_result_data=extract_pe_class.predict_peature_get_info(file_full_path)
+                size_label=pe_result_data[-1:]
+                pe_result_data=pe_result_data[:-1]
+                pe_result_data+=op_list_count
+                pe_result_data +=size_label
+                predict_labels = model.predict([pe_result_data])[0]
+                #predict_labels 0 은 비악성 1은 악성
+                ML_result_data[file_base_name]=predict_labels
+    return ML_result_data
+
+
+'''
 if __name__ == "__main__":
 
     s = timeit.default_timer()
@@ -342,17 +458,25 @@ if __name__ == "__main__":
     IDB_PATH = r"C:\malware\mal_idb"
 
     # 1. pe 해시 체크 (동일한 파일 필터), 2.패킹 체크
+    print("1) hash check")
     pe_check = Pe_Files_Check(PATH)
+
+    print("2) packing check")
     file_hash_dict = pe_check.get_unique_pe_list()
 
+    print("3) idb converter")
     # 3. pe파일(+패킹 체크) -> idb 변환
     flag = convert_idb(PATH, IDB_PATH)
     Features = Exract_Feature(PATH, IDB_PATH)
 
+
     # 4. 정보 추출(idb,pe)
     if flag == True:
+        print("4) extract IDB and PE")
         all_idb_info = Features.export_idb_info('idb')
         all_pe_info = Features.export_pe_info('pe')
+        idb_pe_feature(all_idb_info,all_pe_info)
+
     else:
         print('convert_idb is error')
 
@@ -379,3 +503,4 @@ if __name__ == "__main__":
     print(f"[+]time : {timeit.default_timer() - s}")
 
 
+'''
