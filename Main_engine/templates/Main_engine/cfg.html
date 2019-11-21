@@ -2,10 +2,21 @@
 
 {% block title %} CFG page {% endblock %}
 {% block head %}
-<script src="//d3js.org/d3.v4.min.js"></script>
-<script src="https://unpkg.com/viz.js@1.8.1/viz.js" type="javascript/worker"></script>
-<script src="https://unpkg.com/d3-graphviz@2.6.1/build/d3-graphviz.js"></script>
+<script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
 <style>
+    #view {
+        width: 200px;
+        height: 300px;
+        background-color: #6c757d;
+        overflow: hidden;
+    }
+
+    #scrollblind {
+        width: 230px;
+        height: 100%;
+        overflow-y: scroll;
+    }
+
     .paint {
         overflow: auto;
         display: block;
@@ -20,8 +31,8 @@
 
     .graph {
         margin: 5px;
-        width: 100%;
-        /*height: 100%;*/
+        width: 25%;
+        height: 800px;
         border: 3px solid grey;
     }
 </style>
@@ -30,44 +41,55 @@
 {% block section %}
 <div class="paint">
     <div class="mt-5 paint-vertical" id="tab"></div>
-    <article class="paint-vertical">
-        <section class="graph">
-            <div id="base-graph"></div>
-        </section>
-        <section class="graph">
-            <div  id="target1-graph"></div>
-        </section>
-        <section class="graph">
-            <div  id="target2-graph"></div>
-        </section>
-        <section class="graph">
-            <div id="target3-graph"></div>
-        </section>
-    </article>
+    <div class="paint-vertical">
+        <div class="graph" id="base-graph"></div>
+        <div class="graph" id="target1-graph"></div>
+        <div class="graph" id="target2-graph"></div>
+        <div class="graph" id="target3-graph"></div>
+    </div>
 </div>
-<!--<div class="paint">-->
-<!--    <div class="mt-5 paint-vertical" id="tab"></div>-->
-<!--    <div class="paint-vertical">-->
-<!--        <div class="graph" id="base-graph"></div>-->
-<!--        <div class="graph" id="target1-graph"></div>-->
-<!--    </div>-->
-<!--    <div class="paint-vertical">-->
-<!--        <div class="graph" id="target2-graph"></div>-->
-<!--        <div class="graph" id="target3-graph"></div>-->
-<!--    </div>-->
-<!--</div>-->
+
 {% if cfg %}
 <script>
     var boxes = {};
+    var idiv = document.createElement('div');
+    idiv.id = 'view';
+    document.getElementById('nav-cfg').appendChild(idiv);
+    var jdiv = document.createElement('div');
+    jdiv.id = 'scrollblind';
+    document.getElementById('view').appendChild(jdiv);
+
+    /* 함수이름 버튼 만드는 함수 */
+    function makebt(fname) {
+        var btn = document.createElement("a");
+        btn.id = fname;
+        btn.textContent = fname;
+        btn.className = 'nav-link';
+        btn.setAttribute('style', "font-style: inherit; color: #ffffff; display: block;");
+        btn.onclick = function () {
+            draw(boxes[fname]);
+        };
+
+        // btn.addEventListener('onclick', draw(boxes[fname]));
+        /* 동적 이벤트 추가 */
+        document.getElementById('scrollblind').appendChild(btn);
+    }
 
     /* 그래프 그리기 위한 변수 생성 */
     function boxing(array, branches) {
-        var box = 'graph {\n' +
-            'node [shape=box]; ';
+        var nodes = [];
         for (var item in array) {
-            box = box + '\"' + item + '\"' + ' [label="' + array[item] + '", color=green];\n';
+            var node_dict = {};
+            node_dict['id'] = item;
+            node_dict['size'] = 300;
+            node_dict['label'] = array[item];
+            node_dict['shape'] = 'box';
+            node_dict['font'] = {'face': 'monospace', 'align': 'left'};
+            nodes.push(node_dict);
         }
+        var Nodes = new vis.DataSet(nodes);
 
+        var edges = [];
         for (var branch in branches) {
             var start = [];
             var end = [];
@@ -83,47 +105,61 @@
                 }
             }
             for (var index = 0; index < start.length; index++) {
-                box = box + '\"' + start[index] + '\"' + " -- " + '\"' + end[index] + '\"' + ';\n';
+                var edge_dict = {};
+                edge_dict['from'] = start[index];
+                edge_dict['to'] = end[index];
+                edge_dict['arrows'] = 'to';
+                edge_dict['physics'] = false;
+                edge_dict['smooth'] = {'type': 'cubicBezier'};
+                edges.push(edge_dict);
             }
         }
-        box = box + '}';
-        return box;
+
+        var Edges = new vis.DataSet(edges);
+        return [Nodes, Edges];
     }
 
     /* 그래프 그리는 함수 */
     function draw(graph) {
-        d3.select("#base-graph").graphviz()
-            .renderDot(graph);
-        d3.select("#target1-graph").graphviz()
-            .renderDot(graph);
-        d3.select("#target2-graph").graphviz()
-            .renderDot(graph);
-        d3.select("#target3-graph").graphviz()
-            .renderDot(graph);
+        var container1 = document.getElementById('base-graph');
+        var container2 = document.getElementById('target1-graph');
+        var container3 = document.getElementById('target2-graph');
+        var container4 = document.getElementById('target3-graph');
 
-    }
-
-    /* 함수이름 버튼 만드는 함수 */
-    function makebt(fname) {
-        var btn = document.createElement("button");
-        btn.id = fname;
-        btn.textContent = fname;
-        btn.setAttribute('style', "display: block;");
-        btn.onclick = function () {
-            draw(boxes[fname]);
+        var data = {
+            nodes: graph[0],
+            edges: graph[1]
         };
-        // btn.addEventListener('onclick', draw(boxes[fname]));
-        /* 동적 이벤트 추가 */
-        document.getElementById('tab').appendChild(btn);
+        var options = {
+            manipulation: false,
+            layout: {
+                hierarchical: {
+                    enabled: true,
+                    levelSeparation: 300,
+                }
+            },
+            physics: {
+                hierarchicalRepulsion: {
+                    nodeDistance: 300
+                }
+            }
+        };
+        var network1 = new vis.Network(container1, data, options);
+        var network2 = new vis.Network(container2, data, options);
+        var network3 = new vis.Network(container3, data, options);
+        var network4 = new vis.Network(container4, data, options);
     }
 
     var cfgdata = "{{cfg}}";
     var text_res = cfgdata.replace(/\n/gi, '\\n').replace(/&#39;/gi, '"').replace(/\t/gi, '\\t');
     var json_res = JSON.parse(text_res);
 
+    var index = 0;
     for (var file in json_res) {
         for (var funcname in json_res[file]['func_name']) {
-            makebt(funcname);
+            if (index == 0) {
+                makebt(funcname);
+            }
             var array = {};
             var branches = [];
             // document.write(funcname + "<br>");
@@ -143,12 +179,14 @@
                     // document.write(branches+"<br>");
                 }
             }
-            graph = boxing(array, branches);
-            boxes[funcname] = graph;
+            var box = "";
+            box = boxing(array, branches);
+            boxes[funcname] = box;
+
             // draw(boxes[funcname]);
         }
+        index++;
     }
-
 </script>
 {% else %}
 <h2>Nope!</h2>

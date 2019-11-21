@@ -262,89 +262,12 @@
                             }
                         ]
                     });
-
-
                     index++;
                 }
             }
         }
     });
-    //
-    // var i = 0;
-    // for (var key in json_res) {
-    //     for (var vkey in json_res[key]) {
-    //         var name = json_res[key][vkey][0];
-    //         var a = json_res[key][vkey][2];
-    //         var b = json_res[key][vkey][3];
-    //         var id_str = "mychart" + i;
-    //
-    //         Highcharts.chart(id_str, {
-    //             chart: {
-    //                 type: 'column'
-    //             },
-    //             title: {
-    //                 text: 'similarity'
-    //             },
-    //             xAxis: {
-    //                 type: 'category'
-    //             },
-    //             yAxis: {
-    //                 title: {
-    //                     text: 'similarity'
-    //                 }
-    //
-    //             },
-    //             legend: {
-    //                 enabled: false
-    //             },
-    //             plotOptions: {
-    //                 series: {
-    //                     borderWidth: 0,
-    //                     dataLabels: {
-    //                         enabled: true,
-    //                         format: '{point.y:.4f}%'
-    //                     }
-    //                 }
-    //             },
-    //
-    //             tooltip: {
-    //                 headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-    //                 pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
-    //             },
-    //
-    //             series: [
-    //                 {
-    //                     name: "similarity",
-    //                     colorByPoint: true,
-    //                     data: [
-    //                         {
-    //                             name: "BBH",
-    //                             y: a,
-    //                             drilldown: "Chrome"
-    //                         },
-    //                         {
-    //                             name: "CG",
-    //                             y: b,
-    //                             drilldown: "Firefox"
-    //                         },
-    //                         {
-    //                             name: "상수",
-    //                             y: 7.23,
-    //                             drilldown: "Internet Explorer"
-    //                         },
-    //                         {
-    //                             name: "PE",
-    //                             y: 10.58,
-    //                             drilldown: "Safari"
-    //                         },
-    //                     ]
-    //                 }
-    //             ],
-    //         });
-    //         i++;
-    //     }
-    //     i = 0;
-    // }
+
 </script>
 
 </div>
