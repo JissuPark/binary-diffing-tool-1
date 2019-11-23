@@ -149,11 +149,6 @@ class AnalyzeFlowchart:
             if not matched_block_dic[s_fname]:
                 del matched_block_dic[s_fname]
 
-        # pprint(matched_block_dic)
-
-        # parser_bbh_T_F(dict({s_name: s_hash_dict}))
-        # parser_bbh_T_F(dict({t_name: t_hash_dict}))
-
         return dict({s_name: s_hash_dict[s_name]['bbh']}), dict({t_name: t_hash_dict[t_name]['bbh']}), matched_block_dic
 
 
@@ -216,8 +211,8 @@ class AnalyzeFlowchart:
         basic block hash(함수 대표값)을 비교해서 점수에 가중치를 매겨 반환하는 함수
         '''
 
-        s_cmp_dic, whitelist_matched_dic = self.parser_bbh(s_flow_data)
-        t_cmp_dic, whitelist_matched_dic = self.parser_bbh(t_flow_data)
+        s_cmp_dic, whitelist_matched_dic1 = self.parser_bbh(s_flow_data)
+        t_cmp_dic, whitelist_matched_dic2 = self.parser_bbh(t_flow_data)
 
         cmp_s, cmp_t, true_bb_const_sim = self.compare_bbh(s_cmp_dic, t_cmp_dic)
 
