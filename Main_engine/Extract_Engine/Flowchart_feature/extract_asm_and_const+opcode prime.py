@@ -56,7 +56,7 @@ class basic_block(idb_info):
                     opcode = self.api.idc.GetMnem(curaddr)
                     disasm = self.api.idc.GetDisasm(curaddr)
 
-                    ''' opcode_prime 추출(임시면 BBP(basic block prime) '''
+                    ''' opcode_prime 추출(임시명 BBP(basic block prime) '''
                     if opcode in const_filter_indexs.prime_set.keys():
                         basic_block_prime *= const_filter_indexs.prime_set[opcode]
                         opcode_prime = const_filter_indexs.prime_set[opcode]    # opcode에 해당하는 소수
