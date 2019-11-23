@@ -7,11 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
     {% block head %}
     {% endblock head %}
-
 </head>
 <body>
 <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
@@ -21,12 +21,13 @@
 
 <div class="container-fluid">
     <div class="row">
-        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-            <div class="sidebar-sticky"> <!--사이드바 고정-->
-                <ul class="nav flex-column mt-5" style="position: fixed">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar mt-5">
+            <div> <!--사이드바 고정-->
+                <ul id="navbar" class="nav flex-column" style="position: fixed">
                     <li class="nav-item" style="font-weight: bolder;">
-                        <a class="nav-link active" href="result#timeline2" style="font-style: inherit; color: #1b1e21">
-                           - Time Line
+                        <a class="nav-link active" href="result#timeline2"
+                           style="font-style: inherit; color: #1b1e21">
+                            - Time Line
                         </a>
                     </li>
                     <!--드롭다운 메뉴 -->
@@ -47,36 +48,17 @@
                             - PE
                         </a>
                     </li>
-                    <li class="nav-item" style="font-weight: bolder;">
+                    <li class="nav-item" id="nav-cfg" style="font-weight: bolder;">
                         <a class="nav-link" href="cfg" style="font-style: inherit; color: #1b1e21">
                             - CFG
                         </a>
                     </li>
-                    <li class="nav-item" style="font-style: oblique;font-weight: bold;">
+                    <li class="nav-item" id="nav-cg" style="font-style: oblique;font-weight: bold;">
                         <a class="nav-link" href="cg">
                             - Call Graph
                         </a>
                     </li>
-                    <br><br><br><br>
-                    <li>
-                        <p style= "margin-top: 6px; font-size: large; font-weight: bold;">select base file : &nbsp &nbsp &nbsp</p>
-                        <select class="selectpicker" data-live-search="true" data-width="240px" data-size="5" title="Choose base">
-                          <option data-tokens="ketchup mustard">안다리엘1</option>
-                          <option data-tokens="mustard">안다리엘2</option>
-                          <option data-tokens="frosting">안다리엘3</option>
-                          <option data-tokens="frosting">안다리엘4</option>
-                        </select>
-                    </li>
-                    <br>
-                    <li>
-                        <p style= "margin-top: 6px; font-size: large; font-weight: bold;">select target file : &nbsp &nbsp &nbsp</p>
-                        <select class="selectpicker" data-width="240px" data-size="5" multiple title="Choose targets">
-                          <option>안다리엘1</option>
-                          <option>안다리엘2</option>
-                          <option>안다리엘3</option>
-                          <option>안다리엘4</option>
-                        </select>
-                    </li>
+
                 </ul>
             </div>
         </nav>

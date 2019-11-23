@@ -9,7 +9,7 @@
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="{% static 'Main_engine/js/jquery.timelinr-0.9.7.js' %}"></script>
 <script src="{% static 'Main_engine/css/hightchart.css' %}"></script>
-
+<script src="{% static 'Main_engine/js/bootstrap-select.min.js' %}"></script>
 <script>
     $(function () {
         $().timelinr({
@@ -68,117 +68,108 @@
         <a href="#" id="prev">-</a>
     </div>
 </div>
+
 {#휴리스틱 스코어부분 #}
 <!--원래 있던 차트 부분-->
 <br>
+<div style="display:inline-flex">
+    <p style="margin-top: 6px; margin-left:10px; font-size: large; font-weight: bold;">select base file : &nbsp &nbsp
+        &nbsp</p>
+    <select id="select_base" class="selectpicker" data-live-search="true" data-width="200px" data-size="5"
+            title="Choose base"></select>
+    <p style="margin-top: 6px; font-size: large; margin-left:90px; font-weight: bold;">select target file : &nbsp
+        &nbsp &nbsp</p>
+    <select id="select_target" class="selectpicker" data-width="200px" data-size="5" multiple
+            title="Choose targets"></select>
+</div>
+<hr class="my-hr3"><h5 id="heuristic" class="mt-2 mb-3" style="font-weight: bold;">Heuristic Score</h5>
+<hr class="my-hr3">
 
-<hr class="my-hr3"><h5 id="heuristic" class="mt-2 mb-3" style="font-weight: bold;">Heuristic Score</h5><hr class="my-hr3">
 <!--원래 있던 차트 부분-->
-     <div class="card-deck ml-3 mr-3 mt-4">
-      <div class="card">
-            <div id="mychart0"></div>
-        <div class="card-body">
-         <h5 class="card-title">Target File</h5>
-         <p class="card-text">대상파일 : 630d925fd51964cae86892647069f3555874f48cba2f7be0920c9293b376f0af</p>
-        </div>
-      </div>
-      <div class="card">
-          <div id="mychart1"></div>
-        <div class="card-body">
-         <h5 class="card-title">Target File</h5>
-         <p class="card-text">대상파일 : 7b6c34896babba1bee97387a862dfd60d243d711000f3837dcbf3dd7b0e838a4</p>
-        </div>
-      </div>
-      <div class="card">
-            <div id="mychart2"></div>
-        <div class="card-body">
-         <h5 class="card-title">Target File</h5>
-         <p class="card-text">대상파일 : cec477937ea389408749cf7969f27e3dbd1136d888b3c99f8c5c5f843a40b731</p>
-        </div>
-      </div>
-      <div class="card">
-           <div id="mychart3"></div>
-         <div class="card-body">
-         <h5 class="card-title">Target File</h5>
-         <p class="card-text">대상파일 : d3ee9cf0ad24519e40f3788fdc453074344c82effebb7c0ea1c4343b4f4dc9d9</p>
-         </div>
-        </div>
-     </div>
+<div class="card-deck ml-3 mr-3 mt-4" id="test">
+
+</div>
+
 <br>
 <br>
 
-<hr class="my-hr3"><h5 id="scoretable" class="mt-2 mb-3" style="font-weight: bold;">Detail</h5><hr class="my-hr3">
+<hr class="my-hr3"><h5 id="scoretable" class="mt-2 mb-3" style="font-weight: bold;">Detail</h5>
+<hr class="my-hr3">
 <div class="container-fluid">
-<div class="table-responsive container-fluid">
-    {% csrf_token %}
-    {% if result %}
-    <div id="result_json">
-        <form name="select_form">
-            <select id="select_file" onchange="change_table()"></select>
-        </form>
-        <br>
-        <table id="result_table" class="table table-corderless" style="text-align: center;">
-            <thead>
-            <tr>
-                <th rowspan="2" align=center>File Name</th>
-                <!--                <th rowspan="2">Timestamp</th>-->
-                <th colspan="2">Algorithm</th>
-                <th colspan="6">PE META data</th>
-            </tr>
-            <tr>
-                <th>BBH</th>
-                <th>Constant</th>
-                <th>Section data</th>
-                <th>certification</th>
-                <th>PDB</th>
-                <th>imp-hash</th>
-                <th>Rich-xorkey</th>
-            </tr>
-            </thead>
-        </table>
-    </div>
-    </div>
+    <div class="table-responsive container-fluid">
+        {% csrf_token %}
+        {% if result %}
+        <div id="result_json">
+            <table id="result_table" class="table table-corderless" style="text-align: center;">
+                <thead>
+                <tr>
+                    <th rowspan="2" align=center>File Name</th>
+                    <!--                <th rowspan="2">Timestamp</th>-->
+                    <th colspan="2">Algorithm</th>
+                    <th colspan="6">PE META data</th>
+                </tr>
+                <tr>
+                    <th>BBH</th>
+                    <th>Constant</th>
+                    <th>Section data</th>
+                    <th>certification</th>
+                    <th>PDB</th>
+                    <th>imp-hash</th>
+                    <th>Rich-xorkey</th>
+                </tr>
+                </thead>
+            </table>
         </div>
-        <script>
-            var dictionary = "{{ json_data }}";
-            /* 엔진에서 받아온 값 */
-            var result = "{{result}}";
-            /* JSON.parse()에서 따옴표 있으면 오류남 */
-            var text_res = result.replace(/&#39;/gi, '"');
-            /* 결과값 파싱해서 테이블 추가하는 부분 */
-            /* 테이블 불러오기 */
-            var res_table = document.getElementById("result_table");
-            /* 결과 데이터 파싱 */
-            var json_res = JSON.parse(text_res);
-            /* 기준 파일을 선택할 select 태그 생성
-            var select_file = document.createElement("SELECT");
-            select_file.id = "standard_file";
-            document.select_form.appendChild(select_file);
-            */
-            var select_file = document.getElementById("select_file");
-            for (var standard in json_res) {
-                var option = document.createElement("option");
-                option.value = standard;
-                option.text = standard;
-                select_file.appendChild(option);
-            }
-            select_file.selectedIndex = 0;
+    </div>
+</div>
+<script>
+    var dictionary = "{{ json_data }}";
+    /* 엔진에서 받아온 값 */
+    var result = "{{result}}";
+    /* JSON.parse()에서 따옴표 있으면 오류남 */
+    var text_res = result.replace(/&#39;/gi, '"');
+    /* 결과값 파싱해서 테이블 추가하는 부분 */
+    /* 테이블 불러오기 */
+    var res_table = document.getElementById("result_table");
+    /* 결과 데이터 파싱 */
+    var json_res = JSON.parse(text_res);
+    /* 기준 파일을 선택할 select 태그 생성
+    var select_file = document.createElement("SELECT");
+    select_file.id = "standard_file";
+    document.select_form.appendChild(select_file);
+    */
+    /* 파일에 맞게 동적으로 dropdown에 option 추가해주는 부분 */
+    var pickerclass = document.getElementsByClassName("selectpicker");
+    for (var picker = 0; picker < pickerclass.length; picker++) {
+        for (var standard in json_res) {
+            var option = document.createElement("option");
+            option.value = standard;
+            option.text = standard;
+            pickerclass.item(picker).appendChild(option);
+        }
+    }
 
-            /* 기준이 변하면 테이블이 변경될 수 있도록 */
-            $("#select_file").change(function () {
-                /* 기준이 변할때마다 테이블을 지우고 새로 시작 */
-                for (var row = res_table.rows.length - 1; row > 1; row--) {
-                    res_table.deleteRow(row);
-                }
-                for (var standard in json_res) {
-                    // document.write(standard + "<br>");
-                    var sel = document.getElementById("select_file");
-                    var selected = $(this).children("option:selected").text();
-                    if (standard == selected) {
-                        // document.write(sel.selectedIndex + " is " + "<br>");
+    /* 기준이 변하면 테이블이 변경될 수 있도록 */
+    $("#select_base").on('changed.bs.select', function () {
+        var targets = $('#select_target').val();
+        /* 기준이 변할때마다 테이블을 지우고 새로 시작 */
+        for (var row = res_table.rows.length - 1; row > 1; row--) {
+            res_table.deleteRow(row);
+        }
+        for (var standard in json_res) {
+            // document.write(standard + "<br>");
 
-                        /* 대상이 변할때마다 */
-                        for (var target in json_res[standard]) {
+            var sel = document.getElementById("select_file");
+            var selected = $(this).children("option:selected").text();
+            if (standard == selected) {
+                // document.write(sel.selectedIndex + " is " + "<br>");
+                var index = 0;
+                /* 대상이 변할때마다 */
+                for (var target in json_res[standard]) {
+                    for (var t in targets) {
+                        // document.write(targets[t]);
+                        if (target == targets[t]) {
+
                             /* 하단에 행 추가 */
                             var new_row = res_table.insertRow(res_table.rows.length);
                             /* 행에 열 추가 */
@@ -206,92 +197,98 @@
                                 console.log(typeof json_res[standard][target][data])
                             }
                             */
+
+                            var card = document.createElement("div");
+                            card.className = 'card';
+                            card.id = "card" + index;
+                            document.getElementById("test").appendChild(card);
+                            var chart = document.createElement("div");
+                            chart.id = "mychart" + index;
+                            document.getElementById("card" + index).appendChild(chart);
+                            var a = json_res[standard][target][2];
+                            var b = json_res[standard][target][3];
+                            var c = json_res[standard][target][0];
+                            // var card
+                            Highcharts.chart("mychart" + index, {
+                                chart: {
+                                    type: 'column'
+                                },
+                                title: {
+                                    text: 'similarity'
+                                },
+                                xAxis: {
+                                    type: 'category'
+                                },
+                                yAxis: {
+                                    title: {
+                                        text: 'similarity'
+                                    }
+
+                                },
+                                legend: {
+                                    enabled: false
+                                },
+                                plotOptions: {
+                                    series: {
+                                        borderWidth: 0,
+                                        dataLabels: {
+                                            enabled: true,
+                                            format: '{point.y:.4f}%'
+                                        }
+                                    }
+                                },
+
+                                tooltip: {
+                                    headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                                    pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
+                                },
+
+                                series: [
+                                    {
+                                        name: "similarity",
+                                        colorByPoint: true,
+                                        data: [
+                                            {
+                                                name: "BBH",
+                                                y: a,
+                                                drilldown: "Chrome"
+                                            },
+                                            {
+                                                name: "CG",
+                                                y: b,
+                                                drilldown: "Firefox"
+                                            },
+                                            {
+                                                name: "상수",
+                                                y: 7.23,
+                                                drilldown: "Internet Explorer"
+                                            },
+                                            {
+                                                name: "PE",
+                                                y: 10.58,
+                                                drilldown: "Safari"
+                                            },
+                                        ]
+                                    }
+                                ]
+                            });
+                            index++;
                         }
+
                     }
                 }
-            });
-
-var i=0;
-for(var key in json_res){
-    for(var vkey in json_res[key]){
-        var name = json_res[key][vkey][0];
-        var a = json_res[key][vkey][2];
-        var b = json_res[key][vkey][3];
-        var id_str = "mychart" + i;
-// Create the chart
-Highcharts.chart(id_str, {
-    chart: {
-        type: 'column'
-    },
-    title: {
-        text: 'similarity'
-    },
-    xAxis: {
-        type: 'category'
-    },
-    yAxis: {
-        title: {
-            text: 'similarity'
-        }
-
-    },
-    legend: {
-        enabled: false
-    },
-    plotOptions: {
-        series: {
-            borderWidth: 0,
-            dataLabels: {
-                enabled: true,
-                format: '{point.y:.4f}%'
             }
         }
-    },
+    });
 
-    tooltip: {
-        headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-        pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
-    },
+    $('#select_base').find('option:first').attr('selected', 'selected');
 
-    series: [
-        {
-            name: "similarity",
-            colorByPoint: true,
-            data: [
-                {
-                    name: "BBH",
-                    y: a,
-                    drilldown: "Chrome"
-                },
-                {
-                    name: "CG",
-                    y: b,
-                    drilldown: "Firefox"
-                },
-                {
-                    name: "상수",
-                    y: 7.23,
-                    drilldown: "Internet Explorer"
-                },
-                {
-                    name: "PE",
-                    y: 10.58,
-                    drilldown: "Safari"
-                },
-            ]
-        }
-    ],
-});
-        i++;
-}
-    i = 0;
-}
-        </script>
+</script>
 
-    </div>
-    {% else %}
-    <h1>There is not result!</h1>
-    {% endif %}
+</div>
+{% else %}
+<h1>There is not result!</h1>
+{% endif %}
 </div>
 
 {% endblock section %}
