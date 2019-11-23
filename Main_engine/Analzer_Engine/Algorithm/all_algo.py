@@ -17,7 +17,7 @@ def get_string_similarity(standard, target):  # input json path string 1, 2
     return result
 
 
-def get_func_similarity(_s_dict, correction_score=0):
+def get_bbh_similarity(_s_dict, correction_score=0):
     '''
     해쉬값을 넣어주면 비교해서 얼마나 같은지 점수로 반환해주는 함수
     :param stand_hash_dict: stand value for compare
@@ -43,6 +43,23 @@ def get_func_similarity(_s_dict, correction_score=0):
     # print(f'기준 바이너리 hash 수 : {stand_hash_count}')
 
     return round((true_count / stand_hash_count), 2)
+
+def get_bb_const_similarity(_dict):
+
+    # st = timeit.default_timer()  # start time
+
+    total_sim = 0
+    total_count = 0
+
+    for a, b in _dict.items():
+        for c, d in b.items():
+            total_sim += (list(d.values())[0])
+            total_count += 1
+    # print(" ")
+    # print(f'[debug] -> -> -> -> const sim = ({total_sim}/{total_count}) : {float(str(total_sim / total_count)[:4])}')
+    # print(f'ㄴ[debug] get const similarity time -> {timeit.default_timer() - st}')
+    # print(" ")
+    return float(str(total_sim / total_count)[:4])
 
 
 def get_data_similarity(self, stand_data, target_data):
