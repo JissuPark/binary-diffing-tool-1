@@ -20,7 +20,6 @@ class AnalyzePE:
         :return: none
         '''
         pe_list = list()
-        pe_all_dict = OrderedDict()
 
         pe_all_dict = sorted(self.pe_all.items(), key=operator.itemgetter(0))
         for f_name, f_info in pe_all_dict:
@@ -42,6 +41,23 @@ class AnalyzePE:
             return 1
         else:
             return 0
+
+    def analyze_implist(self, standard, target):
+        '''
+        imp list에서 두 바이너리가 공동으로 사용하는 dll과 내부의 함수를 보여줄 생각
+        :return :: import dll list, 점수로도 치환하는 것이 좋을까?
+        '''
+        same_dict = dict()
+        if standard != {} and target != {}:
+            for key1 in standard.keys():
+                for key2 in target.keys():
+                    if key1 == key2:
+                        for i in standard[key1]:
+                            if i in target[key2]:
+                                same_dict[key1] = i
+
+        # 두 바이너리에서 공통으로 사용하는 dll과 내부의 함수들을 딕셔너리 형태로 리턴
+        return same_dict
 
     def analyze_auth(self, dict_s, dict_t):
         '''
@@ -96,7 +112,7 @@ class AnalyzePE:
         리소스 데이터를 각각 ssdeep으로 비교해서 결과를 반환하는 함수
         :return: score list with weight
         '''
-        if standard != 0 and target != 0:
+        if standard != {} and target != {}:
             size = len(standard)
             flag = 0
             for key in standard.keys() and target.keys():
@@ -192,6 +208,7 @@ class AnalyzePE:
                 yun_me[pe_info_t['file_name']] = yun_t
 
                 pe_t['imphash'] = self.analyze_imphash(pe_info_s, pe_info_t)
+                pe_t['implist'] = self.analyze_implist(pe_info_s['Imports'], pe_info_t['Imports'])
                 pe_t['rich'] = self.analyze_rich(pe_info_s, pe_info_t)
                 pe_t['section_score'] = self.analyze_section(pe_info_s['cmp_section'], pe_info_t['cmp_section'])
                 pe_t['auth_score'] = self.analyze_auth(pe_info_s['auto'], pe_info_t['auto'])
