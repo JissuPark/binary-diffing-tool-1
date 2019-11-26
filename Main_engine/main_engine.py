@@ -300,7 +300,7 @@ class Analyze_files:
                 semifinal[2] = (value_i[1]['bbh'])
                 semifinal[3] = (value_i[1]['const_value'])
                 semifinal[4] = (value_pe[1]['section_score'])
-                semifinal[5] = (value_pe[1]['auth_score'])
+                semifinal[5] = (value_pe[1]['cert_score'])
                 semifinal[6] = (value_pe[1]['pdb_score'])
                 semifinal[7] = (value_pe[1]['imphash'])
                 semifinal[8] = (value_pe[1]['rich'])
