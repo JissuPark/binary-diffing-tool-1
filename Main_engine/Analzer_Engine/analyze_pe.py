@@ -3,6 +3,115 @@ from collections import OrderedDict
 import ssdeep
 from ngram import NGram
 import operator
+import numpy as np
+
+'''
+                pe_t['imphash'] = res_imphash
+                pe_t['implist'] = res_implist
+                pe_t['rich'] = res_rich
+                pe_t['section_score'] = res_sec
+                pe_t['cert_score'] = res_cert
+                pe_t['pdb_score'] = res_pdb
+                pe_t['rsrc'] = res_rsrc
+'''
+
+def Calc_All(pe_t):
+    #모든 요소가 있는 경우
+    score = 0
+    score += round(pe_t['imphash'] * 1 / 7, 2)
+    score += round(pe_t['implist'] * 1 / 7, 2)
+    score += round(pe_t['rich'] * 1 / 7, 2)
+    score += round(pe_t['section_score'] * 1 / 7, 2)
+    score += round(pe_t['cert_score'] * 1 / 7, 2)
+    score += round(pe_t['pdb_score'] * 1 / 7, 2)
+    score += round(pe_t['rsrc'] * 1 / 7, 2)
+    print(f"score for all :: {score}")
+    return score
+
+def Calc_Without_Pdb(pe_t):
+    score = 0
+    if np.isnan(pe_t['rsrc']):
+        #pdb와 rsrc가 없는 경우
+        Calc_Without_Pdb_and_Rsrc(pe_t)
+    else:
+        #pdb만 없는 경우 가중치 부여
+        score += round(pe_t['imphash'] * 1 / 6, 2)
+        score += round(pe_t['implist'] * 1 / 6, 2)
+        score += round(pe_t['rich'] * 1 / 6, 2)
+        score += round(pe_t['section_score'] * 1 / 6, 2)
+        score += round(pe_t['cert_score'] * 1 / 6, 2)
+        score += round(pe_t['rsrc'] * 1 / 6, 2)
+        print(f"score without pdb :: {score}")
+        return score
+
+def Calc_Without_Pdb_and_Rsrc(pe_t):
+    score = 0
+    if np.isnan(pe_t['cert_score']):
+        #pdb, rsrc, cert 모두 없는 경우
+        Calc_Without_All(pe_t)
+    else:
+        #pdb, rsrc 없는 경우의 가중치 부여
+        score += round(pe_t['imphash'] * 1 / 5, 2)
+        score += round(pe_t['implist'] * 1 / 5, 2)
+        score += round(pe_t['rich'] * 1 / 5, 2)
+        score += round(pe_t['section_score'] * 1 / 5, 2)
+        score += round(pe_t['cert_score'] * 1 / 5, 2)
+        print(f"score without pdb and rsrc :: {score}")
+        return score
+
+def Calc_Without_All(pe_t):
+    score = 0
+    score += round(pe_t['imphash'] * 1 / 4, 2)
+    score += round(pe_t['implist'] * 1 / 4, 2)
+    score += round(pe_t['rich'] * 1 / 4, 2)
+    score += round(pe_t['section_score'] * 1 / 4, 2)
+    print(f"score without pdb, rsrc and cert :: {score}")
+
+    return score
+
+def Calc_Without_Rsrc(pe_t):
+    score = 0
+    if np.isnan(pe_t['cert_score']):
+        #rsrc와 cert가 없는 경우
+        Calc_Without_Rsrc_and_Cert(pe_t)
+    else:
+        #rsrc만 없는 경우 가중치 부여
+        score += round(pe_t['imphash'] * 1 / 6, 2)
+        score += round(pe_t['implist'] * 1 / 6, 2)
+        score += round(pe_t['rich'] * 1 / 6, 2)
+        score += round(pe_t['section_score'] * 1 / 6, 2)
+        score += round(pe_t['cert_score'] * 1 / 6, 2)
+        score += round(pe_t['pdb_score'] * 1 / 6, 2)
+        print(f"score without rsrc :: {score}")
+        return score
+
+def Calc_Without_Rsrc_and_Cert(pe_t):
+    score = 0
+
+    score += round(pe_t['imphash'] * 1 / 5, 2)
+    score += round(pe_t['implist'] * 1 / 5, 2)
+    score += round(pe_t['rich'] * 1 / 5, 2)
+    score += round(pe_t['section_score'] * 1 / 5, 2)
+    score += round(pe_t['pdb_score'] * 1 / 5, 2)
+    print(f"score without rsrc and cert :: {score}")
+
+    return score
+
+def Calc_Without_Cert(pe_t):
+    #cert만 없는 경우
+    score = 0
+
+    score += round(pe_t['imphash'] * 1 / 6, 2)
+    score += round(pe_t['implist'] * 1 / 6, 2)
+    score += round(pe_t['rich'] * 1 / 6, 2)
+    score += round(pe_t['section_score'] * 1 / 6, 2)
+    score += round(pe_t['pdb_score'] * 1 / 6, 2)
+    score += round(pe_t['rsrc'] * 1 / 6, 2)
+    print(f"score without cert :: {score}")
+
+    return score
+
+
 
 class AnalyzePE:
     def __init__(self, pe_all):
@@ -38,7 +147,7 @@ class AnalyzePE:
         #         s = var
 
         if standard['imp_hash'] == target['imp_hash']:
-            return 1
+            return 100
         else:
             return 0
 
@@ -48,6 +157,10 @@ class AnalyzePE:
         :return :: import dll list, 점수로도 치환하는 것이 좋을까?
         '''
         same_dict = dict()
+        Fsize = 0
+        score = 0
+        for k in standard.keys():
+            Fsize += len(k)
         if standard != {} and target != {}:
             for key1 in standard.keys():
                 for key2 in target.keys():
@@ -55,7 +168,16 @@ class AnalyzePE:
                         for i in standard[key1]:
                             if i in target[key2]:
                                 same_dict[key1] = i
+                                score += len(same_dict[key1])
+                            else:
+                                continue
+                    else:
+                        continue
+            return score / Fsize * 100
+        else:
+            return 0
 
+        print(same_dict)
         # 두 바이너리에서 공통으로 사용하는 dll과 내부의 함수들을 딕셔너리 형태로 리턴
         return same_dict
 
@@ -64,12 +186,11 @@ class AnalyzePE:
         인증서의 data 자체를 ssdeep으로 비교해서 얼마나 같은지 계산해 반환하는 함수
         :return: score with weight
         '''
-        score = 0
         if dict_s.get('hash') == None or dict_t.get('hash') == None:
-            return score
+            return np.nan
         else:
             if dict_s['hash'] == dict_t['hash']:
-                score = 1
+                score = 100
                 return score
             else:
                 score = 0
@@ -89,21 +210,21 @@ class AnalyzePE:
         guid_score = 0
         path_score = 0
         if dict_s['pe_pdb_GUID'] == "" or dict_t['pe_pdb_GUID'] == "":
-            guid_score += 0
+            return np.nan
         else:
             s_guid = hashlib.md5(dict_s['pe_pdb_GUID'].encode()).hexdigest()
             t_guid = hashlib.md5(dict_t['pe_pdb_GUID'].encode()).hexdigest()
             if s_guid == t_guid:
-                guid_score += 1
+                guid_score += 50
             else:
                 guid_score += 0
         if dict_s['pe_pdb_Pdbpath'] == "" or dict_t['pe_pdb_Pdbpath'] == "":
             path_score += 0
         else:
-            path_score += NGram.compare(dict_s['pe_pdb_Pdbpath'], dict_t['pe_pdb_Pdbpath'], N=2)
+            path_score += NGram.compare(dict_s['pe_pdb_Pdbpath'], dict_t['pe_pdb_Pdbpath'], N=2) * 50
 
-        #score = (guid_score + path_score)
-        score = str(guid_score)+','+str(path_score)
+        score = (guid_score + path_score)
+        #score = str(guid_score)+','+str(path_score)     #하나로 묶어야 함
 
         return score
 
@@ -126,7 +247,7 @@ class AnalyzePE:
                             else:
                                 continue
         else:
-            return 0
+            return np.nan
 
         '''
         리소스에 쉘코드가 삽입되어 있는 경우
@@ -154,20 +275,23 @@ class AnalyzePE:
         xor_score = 0
         prodid_score = 0
         if standard['rich_xor_key'] == "" or target['rich_xor_key'] == "":
-            return 0
+            return np.nan
         else:
             #rich header의 xor key 유사도(True or False)
             if standard['rich_xor_key'] == target['rich_xor_key']:
-                xor_score += 1
+                xor_score += 50
             else:
-                for prod in range(len(standard['rich_prodid'])):
-                    if prod in target['rich_prodid']:
-                        prodid_score += 1
-                    else:
-                        continue
-        return str(xor_score) + "," + str(prodid_score / len(standard['rich_prodid']))
+                xor_score += 0
 
+            for prod in range(len(standard['rich_prodid'])):
+                if prod in target['rich_prodid']:
+                    prodid_score += 1
+                else:
+                    continue
+        prodid_score = prodid_score / len(standard['rich_prodid']) * 50
+        score = xor_score + prodid_score
 
+        return score
 
     def analyze_section(self, dict_s, dict_t):
         '''
@@ -179,7 +303,7 @@ class AnalyzePE:
         for key in dict_s.keys() and dict_t.keys():                                 #키의 이름이 다를 때의 예외처리가 필요
             if key in dict_s and key in dict_t:
                 if dict_s[key]['section_name'] == dict_t[key]['section_name']:
-                    score = ssdeep.compare(dict_s[key]['hash_ssdeep'], dict_t[key]['hash_ssdeep'])
+                    score = ssdeep.compare(dict_s[key]['hash_ssdeep'], dict_t[key]['hash_ssdeep']) / len(dict_s.keys())
                     comp += score
             else:
                 continue
@@ -207,16 +331,35 @@ class AnalyzePE:
 
                 yun_me[pe_info_t['file_name']] = yun_t
 
-                pe_t['imphash'] = self.analyze_imphash(pe_info_s, pe_info_t)
-                pe_t['implist'] = self.analyze_implist(pe_info_s['Imports'], pe_info_t['Imports'])
-                pe_t['rich'] = self.analyze_rich(pe_info_s, pe_info_t)
-                pe_t['section_score'] = self.analyze_section(pe_info_s['cmp_section'], pe_info_t['cmp_section'])
-                pe_t['auth_score'] = self.analyze_auth(pe_info_s['auto'], pe_info_t['auto'])
-                pe_t['pdb_score'] = self.analyze_pdb(pe_info_s['pdb_info'], pe_info_t['pdb_info'])
-                pe_t['rsrc'] = self.analyze_rsrc(pe_info_s['rsrc_info'], pe_info_t['rsrc_info'])
+                ### 가중치 부여 ###
+
+                res_imphash = self.analyze_imphash(pe_info_s, pe_info_t)
+                res_implist = self.analyze_implist(pe_info_s['Imports'], pe_info_t['Imports'])
+                res_rich = self.analyze_rich(pe_info_s, pe_info_t)
+                res_sec = self.analyze_section(pe_info_s['cmp_section'], pe_info_t['cmp_section'])
+                res_cert = self.analyze_auth(pe_info_s['auto'], pe_info_t['auto'])
+                res_pdb = self.analyze_pdb(pe_info_s['pdb_info'], pe_info_t['pdb_info'])
+                res_rsrc = self.analyze_rsrc(pe_info_s['rsrc_info'], pe_info_t['rsrc_info'])
+
+                pe_t['imphash'] = res_imphash
+                pe_t['implist'] = res_implist
+                pe_t['rich'] = res_rich
+                pe_t['section_score'] = res_sec
+                pe_t['cert_score'] = res_cert
+                pe_t['pdb_score'] = res_pdb
+                pe_t['rsrc'] = res_rsrc
                 pe_s[pe_info_t['file_name']] = pe_t
 
-            pe_all[pe_info_s['file_name']] = pe_s
+                if np.isnan(pe_t['pdb_score']):
+                    all_score = Calc_Without_Pdb(pe_t)
+                elif np.isnan(pe_t['rsrc']):
+                    all_score = Calc_Without_Rsrc(pe_t)
+                elif np.isnan(pe_t['cert_score']):
+                    all_score = Calc_Without_Cert(pe_t)
+                else:
+                    all_score = Calc_All(pe_t)
+
+        pe_all[pe_info_s['file_name']] = pe_s
 
         return pe_all, yun_me
 
