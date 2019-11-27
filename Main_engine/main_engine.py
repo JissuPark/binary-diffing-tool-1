@@ -192,7 +192,7 @@ def multiprocess_file(q, return_dict, flag):
                 pe_file = Filter.objects.get(filehash=file_filter2)
                 print(pe_file)
             except Filter.DoesNotExist:
-                print('pe_errir')
+                print('pe no db')
                 pe_file = None
 
             try:
@@ -300,7 +300,7 @@ class Analyze_files:
                 semifinal[2] = (value_i[1]['bbh'])
                 semifinal[3] = (value_i[1]['const_value'])
                 semifinal[4] = (value_pe[1]['section_score'])
-                semifinal[5] = (value_pe[1]['auth_score'])
+                semifinal[5] = (value_pe[1]['cert_score'])
                 semifinal[6] = (value_pe[1]['pdb_score'])
                 semifinal[7] = (value_pe[1]['imphash'])
                 semifinal[8] = (value_pe[1]['rich'])
@@ -448,59 +448,3 @@ def idb_pe_feature(all_idb_info,all_pe_info):
                 ML_result_data[file_base_name]=predict_labels
     return ML_result_data
 
-
-'''
-if __name__ == "__main__":
-
-    s = timeit.default_timer()
-
-    PATH = r"C:\malware\mal_exe"
-    IDB_PATH = r"C:\malware\mal_idb"
-
-    # 1. pe 해시 체크 (동일한 파일 필터), 2.패킹 체크
-    print("1) hash check")
-    pe_check = Pe_Files_Check(PATH)
-
-    print("2) packing check")
-    file_hash_dict = pe_check.get_unique_pe_list()
-
-    print("3) idb converter")
-    # 3. pe파일(+패킹 체크) -> idb 변환
-    flag = convert_idb(PATH, IDB_PATH)
-    Features = Exract_Feature(PATH, IDB_PATH)
-
-
-    # 4. 정보 추출(idb,pe)
-    if flag == True:
-        print("4) extract IDB and PE")
-        all_idb_info = Features.export_idb_info('idb')
-        all_pe_info = Features.export_pe_info('pe')
-        idb_pe_feature(all_idb_info,all_pe_info)
-
-    else:
-        print('convert_idb is error')
-
-    # 만약 5개의 파일이 들어왔을때 그중 convert_idb 에러뜨는 것들은 제외시키고 나머지 것들만 다음 로직 수행되도록
-    # 변경해야함.
-
-    # 5. 분석 하기
-    analyze = Analyze_files(all_idb_info, all_pe_info)
-
-    yun_sorted_pe = dict()
-    result_pe, yun_pe = analyze.analyze_pe()
-    result_idb, yun_all = analyze.analyze_idb(yun_pe)
-
-    yun_sorted_pe = sorted(yun_all.items(), key=lambda x: x[1]['timestamp_num'])
-
-    #print(f"sorted_yun :: {json.dumps(yun_sorted_pe, indent=4)}")
-
-
-    # 6. 결과 csv 저장 (임시)
-    all_result = analyze.calculate_heuristic(result_idb, result_pe)
-    start_engine()
-
-
-    print(f"[+]time : {timeit.default_timer() - s}")
-
-
-'''

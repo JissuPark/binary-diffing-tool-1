@@ -32,8 +32,3 @@ class PE_info(models.Model):
     pdbguid = models.TextField(null=True)
     pdbage = models.TextField(null=True)
     pdbpath = models.TextField(null=True)
-
-class Result(models.Model):
-    filehash = models.CharField(max_length=100, primary_key=True)
-    result_filepath = models.TextField()
-    cdate = models.DateTimeField(auto_now_add=True)

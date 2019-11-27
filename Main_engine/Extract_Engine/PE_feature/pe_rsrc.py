@@ -301,7 +301,7 @@ class RsrcParser:
         #리소스 엔트리를 가지고 있는지 확인
         if not hasattr(self.pe, 'DIRECTORY_ENTRY_RESOURCE'):
             print('PE doesn\'t has DIRECTORY_ENTRY_RESOURCE')
-            return 0, 0, 0
+            return {}, {}, {}
 
         #가지고 있는 엔트리만큼 반복
         for resource_type in self.pe.DIRECTORY_ENTRY_RESOURCE.entries:
@@ -365,7 +365,7 @@ class RsrcParser:
                 for c in rsrc_entry:
                     # print(f"c :: {c}")
                     if c == "&Resource Type":
-                        print(rsrc_entry[c])
+                        #print(rsrc_entry[c])
                         rsrc_count.append(rsrc_entry[c])
                     elif c == "&Resource Language":
                         rsrc_lang.append(rsrc_entry[c])
@@ -375,7 +375,7 @@ class RsrcParser:
         rl = dict()
         for cl in rsrc_lang:
             rl[cl] = rsrc_lang.count(cl)
-        print(rl)
+        #print(rl)
 
         return self.resource, rs, rl
 

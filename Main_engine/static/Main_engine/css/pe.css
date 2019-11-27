@@ -9,3 +9,17 @@
 h4{
   font-weight: bold;
 }
+
+table{
+  padding-left: 10px;
+}
+
+summary{
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+p{
+  margin-bottom: 0rem !important;
+  margin-left: 25px;
+}

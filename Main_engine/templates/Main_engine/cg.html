@@ -5,16 +5,36 @@
 <script src="//d3js.org/d3.v4.min.js"></script>
 <script src="https://unpkg.com/viz.js@1.8.1/viz.js" type="javascript/worker"></script>
 <script src="https://unpkg.com/d3-graphviz@2.6.1/build/d3-graphviz.js"></script>
+<style>
+    #view {
+        width: 200px;
+        height: 300px;
+        background-color: #6c757d;
+        overflow: hidden;
+    }
+
+    #scrollblind {
+        width: 230px;
+        height: 100%;
+        overflow-y: scroll;
+    }
+</style>
 {% endblock head %}
 
 {% block section %}
-<div style="display: block;">
+<div style="display: block; overflow: auto;">
     <div class="mt-5" id="file-name" style="display: flex"></div>
-    <div class="mt-5" id="base-graph" style="width: 100%; overflow: auto"></div>
+    <div class="mt-5" id="base-graph" style="width: 100%;"></div>
 </div>
 {% if cg %}
 <script>
     var boxes = {};
+    var idiv = document.createElement('div');
+    idiv.id = 'view';
+    document.getElementById('nav-cg').appendChild(idiv);
+    var jdiv = document.createElement('div');
+    jdiv.id = 'scrollblind';
+    document.getElementById('view').appendChild(jdiv);
 
     /* 그래프 그리기 위한 변수 생성 */
     function boxing(array, branches) {
@@ -54,16 +74,18 @@
 
     /* 함수이름 버튼 만드는 함수 */
     function makebt(fname) {
-        var btn = document.createElement("button");
+        var btn = document.createElement("a");
         btn.id = fname;
         btn.textContent = fname;
-        btn.setAttribute('style', "display: flex;");
+        btn.className = 'nav-link';
+        btn.setAttribute('style', "font-style: inherit; color: #ffffff; display: block;");
         btn.onclick = function () {
+            // document.write(boxes[fname]);
             draw(boxes[fname]);
         };
         // btn.addEventListener('onclick', draw(boxes[fname]));
         /* 동적 이벤트 추가 */
-        document.getElementById('file-name').appendChild(btn);
+        document.getElementById('scrollblind').appendChild(btn);
     }
 
     var cgdata = "{{cg}}";
@@ -76,14 +98,14 @@
         makebt(file);
         for (var funcname in json_res[file]['f_name']) {
             array[json_res[file]['f_name'][funcname]] = json_res[file]['f_name'][funcname];
-       }
+        }
         branches = json_res[file]['f_branch'];
+        graph = boxing(array, branches);
+        boxes[file] = graph;
     }
 
 
-    graph = boxing(array, branches);
-    boxes[funcname] = graph;
-    draw(boxes[funcname]);
+    // draw(boxes[funcname]);
 
 </script>
 {% else %}

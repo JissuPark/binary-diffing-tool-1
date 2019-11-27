@@ -5,8 +5,9 @@ import timeit
 
 from Main_engine.Analzer_Engine.Algorithm import all_algo as algo
 from Main_engine.Analzer_Engine import whitelist_bbhs as white
+from Main_engine.Extract_Engine.Flowchart_feature import const_filter_indexs
 from collections import OrderedDict
-from ngram import NGram
+from fractions import Fraction
 
 
 class AnalyzeFlowchart:
@@ -141,21 +142,16 @@ class AnalyzeFlowchart:
                                 if s_hash == t_hash and s_hashSet[s_hash] == 0 and t_hashSet[t_hash] == 0:
                                     s_hashSet[s_hash] = True
                                     t_hashSet[t_hash] = True
-                                    const_sim = self.compare_bb_constants(list([s_fname, s_sAddr]), list([t_fname, t_sAddr]), \
-                                                                     s_hash_dict[s_name]["constant"],
-                                                                     t_hash_dict[t_name]["constant"])
+                                    const_sim = self.compare_bb_constants(list([s_fname, s_sAddr]),
+                                                                          list([t_fname, t_sAddr]),
+                                                                          s_hash_dict[s_name]["constant"],
+                                                                          t_hash_dict[t_name]["constant"])
                                     matched_block_dic[s_fname].update({s_sAddr: {t_fname + "-" + t_sAddr: const_sim}})
 
             if not matched_block_dic[s_fname]:
                 del matched_block_dic[s_fname]
 
-        # pprint(matched_block_dic)
-
-        # parser_bbh_T_F(dict({s_name: s_hash_dict}))
-        # parser_bbh_T_F(dict({t_name: t_hash_dict}))
-
         return dict({s_name: s_hash_dict[s_name]['bbh']}), dict({t_name: t_hash_dict[t_name]['bbh']}), matched_block_dic
-
 
     def compare_bb_constants(self, stand_list, target_list, s_hash_dict, t_hash_dict):
 
@@ -203,29 +199,104 @@ class AnalyzeFlowchart:
             print(f"ㄴ[debug] stand_values : {sum(list(s_hash_dict[s_fname][s_sAddr].values()))}   {s_fname}-{s_sAddr}")
             <- <- <- <- <- <- 1칸 <- <- <- <- <- <-
             print(t_hash_dict[t_fname][t_sAddr])
-            print(f"ㄴ[debug] stand_values : {sum(list(t_hash_dict[t_fname][t_sAddr].values()))}   {t_fname}-{t_sAddr}")
+            print(f"ㄴ[debug] Sstand_values : {sum(list(t_hash_dict[t_fname][t_sAddr].values()))}   {t_fname}-{t_sAddr}")
             '''
+
             #if (matched / total_len) < 1.0:
                 #print(f"[debug] unmatched constants :: {s_hash_dict[s_fname][s_sAddr]} --- {t_hash_dict[t_fname][t_sAddr]}")
                 #print(f"ㄴ[debug] constants find diff :: {s_comp_set} --- {t_comp_set}")
                 #print(f" ")
-        return round((matched / total_len), 2)
+        return float(str(matched / total_len)[:4])
 
     def analyze_bbh(self, s_flow_data, t_flow_data):
         '''
         basic block hash(함수 대표값)을 비교해서 점수에 가중치를 매겨 반환하는 함수
         '''
 
-        s_cmp_dic, whitelist_matched_dic = self.parser_bbh(s_flow_data)
-        t_cmp_dic, whitelist_matched_dic = self.parser_bbh(t_flow_data)
+        s_cmp_dic, whitelist_matched_dic1 = self.parser_bbh(s_flow_data)
+        t_cmp_dic, whitelist_matched_dic2 = self.parser_bbh(t_flow_data)
 
         cmp_s, cmp_t, true_bb_const_sim = self.compare_bbh(s_cmp_dic, t_cmp_dic)
 
-        return algo.get_func_similarity(cmp_s, )
+        c_score = self.compare_prime(self.parser_bbh_T_F(cmp_s, ), self.parser_bbh_T_F(cmp_t, ), s_flow_data, t_flow_data)
+
+        return algo.get_bbh_similarity(cmp_s, c_score)
+
 
     def analyze_constant(self, standard, target):
         const_score = algo.get_string_similarity(standard['constant'], target['constant'])
         return const_score['2-Gram']
+
+    def compare_prime(self, base, target, base_idb, target_idb):
+        s_cm_dic, whitelist_dic1 = self.parser_bbh(base_idb)
+        t_cm_dic, whitelist_dic2 = self.parser_bbh(target_idb)
+        s_name = list(base.keys())[0]
+        t_name = list(target.keys())[0]
+        # diffing
+        f_score_list = list()
+        for s_value in base.values():
+            for s_fname, s_fdata in s_value.items():  # 기준 함수 선택
+                for t_value in target.values():
+                    for t_fname, t_fdata in t_value.items():  # 대상 함수 선택
+                        for s_addr in s_fdata.keys():  # 기준 함수의 베이직 블록 선택
+                            for t_addr in t_fdata.keys():  # 대상 함수의 베이직 블록 선택
+                                s_prime = base_idb['func_name'][s_fname][s_addr]['block_prime']
+                                t_prime = target_idb['func_name'][t_fname][t_addr]['block_prime']
+
+                                ''' 소수 분해하고 나누는 과정'''
+                                # 기준과 대상의 소수를 소인수 분해하여 opcode 딕셔너리와 총 갯수로 나눔
+                                s_opcodes, s_opcnt = self.factorization(s_prime)
+                                t_opcodes, t_opcnt = self.factorization(t_prime)
+                                # 나누기를 통해서 기준(분모), 대상(분자)가 가지는 서로 다른 opcode를 찾는다
+                                bunmo = Fraction(t_prime, s_prime).denominator
+                                bunja = Fraction(t_prime, s_prime).numerator
+                                t_diff, t_diffcnt = self.factorization(bunja)
+                                s_diff, s_diffcnt = self.factorization(bunmo)
+                                # 전체 opcode 개수중에 같은 것의 갯수를 점수로 환산
+                                score = (s_opcnt - s_diffcnt + t_opcnt - t_diffcnt) / (s_opcnt + t_opcnt) * 100
+                                # 기준과 대상에 대해서 유사도 점수를 저장
+                                f_score_list.append((score, s_fname, s_addr, t_fname, t_addr))
+
+        ''' 유사도가 저장된 리스트 정제하는 과정 '''
+        # 비었으면 0 반환
+        if len(f_score_list) == 0:
+            return 0
+        # 유사도 순으로 정렬
+        f_score_list.sort(reverse=True)
+        # 블럭을 1:1 매칭시키기위해서 중복되는 블럭을 제거
+        for a in range(len(f_score_list)):
+            rmvcnt = 0
+            for b in range(a + 1, len(f_score_list)):
+                if f_score_list[a][2] == f_score_list[b - rmvcnt][2] or f_score_list[a][4] == f_score_list[b - rmvcnt][4]:
+                    f_score_list.remove(f_score_list[b - rmvcnt])
+                    rmvcnt += 1
+        # 정제가 끝난 리스트에서 유사도가 80%이상인 것만 세서 반환
+        s_list = list()
+        t_list = list()
+        cnt = 0
+        for f_score in f_score_list:
+            const_score = self.compare_bb_constants(list((f_score[1], f_score[2])), list((f_score[3], f_score[4])),
+                                                    s_cm_dic[s_name]['constant'], t_cm_dic[t_name]['constant'])
+            if (f_score[0] > 80) and (const_score > 0):
+                cnt += 1
+                print(f_score, const_score)
+        return cnt
+
+    def factorization(self, num):
+        # 전체 opcode 갯수 중에서 mod 연산했을 시 0이 나오는 것을 세어 유사도 점수를 측정
+        opdict = dict()
+        full_count = 0
+        for opcode, prime in const_filter_indexs.prime_set.items():
+            count = 0
+            while num % prime == 0:
+                num //= prime
+                count += 1
+            if count > 0:
+                opdict[opcode] = count
+                full_count += count
+            if num == 1:
+                break
+        return opdict, full_count
 
     def analyze_all(self, yun_sorted_pe):
 
@@ -248,4 +319,5 @@ class AnalyzeFlowchart:
             idb_all[idb_info_s['file_name']] = idb_s
 
         return idb_all, yun_sorted_pe
+
 
