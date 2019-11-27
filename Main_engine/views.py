@@ -27,7 +27,7 @@ def pe(request):
     f = open(r"C:\malware\all_result\pe_all.txt", 'w')
     pe_list = PE_info.objects.order_by('timenum').all()
     #print(pe_list)
-    paginator = Paginator(pe_list, 1)
+    paginator = Paginator(pe_list, 1) #페이지당 1개씩의 pe_info
 
     page = request.GET.get('page', 1)
     p_dict = dict()
@@ -68,15 +68,15 @@ def pe(request):
 
     return render(request, 'Main_engine/pe.html', {'lists': lists, 'p_dict': p_dict, 'p_dll_list': p_dll_list})
 
-def heuristic(request):
-     with open(r"C:\malware\all_result\result.txt", "r") as json_file:
-        json_data = json.load(json_file)
-        #
-        # for key in json_data:
-        #     for vkey in json_data[key]:
-        #         a = json_data[key][vkey][2]
-
-        return render(request, 'Main_engine/result.html', {'json_data': json_data})
+# def heuristic(request):
+#      with open(r"C:\malware\all_result\result.txt", "r") as json_file:
+#         json_data = json.load(json_file)
+#         #
+#         # for key in json_data:
+#         #     for vkey in json_data[key]:
+#         #         a = json_data[key][vkey][2]
+#
+#         return render(request, 'Main_engine/result.html', {'json_data': json_data})
 
 def cfg(request):
     cfg_dict = dict()
@@ -111,7 +111,11 @@ def call_main(request):
         with open(r"C:\malware\all_result\result.txt", 'w') as res:
             json.dump(result, res, ensure_ascii=False, indent='\t')
 
+    h_paginator = Paginator(result, 4)
+    print(test)
+    print(type(test))
     pe_ = PE_info.objects.order_by('timenum').all()
+    #print(pe_)
     stop = timeit.default_timer()
     print('time is ????')
     print(stop - start)

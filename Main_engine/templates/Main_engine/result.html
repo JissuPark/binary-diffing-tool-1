@@ -4,15 +4,12 @@
 
 
 {% block head %}
-<<<<<<< HEAD
     {% load static %} <!-- static files are loaded -->
     <link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet" media="screen">
-    <link href="{% static 'Main_engine/css/fakeLoaer.css' %}">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="{% static 'Main_engine/js/jquery.timelinr-0.9.7.js' %}"></script>
     <script src="{% static 'Main_engine/css/hightchart.css' %}"></script>
+
 
     <script>
         $(function () {
@@ -22,22 +19,6 @@
         });
 
     </script>
-=======
-{% load static %} <!-- static files are loaded -->
-<link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet" media="screen">
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="{% static 'Main_engine/js/jquery.timelinr-0.9.7.js' %}"></script>
-<script src="{% static 'Main_engine/css/hightchart.css' %}"></script>
-
-<script>
-    $(function () {
-        $().timelinr({
-            arrowKeys: 'true'
-        })
-    });
-
-</script>
->>>>>>> upstream/master
 
 {% endblock head %}
 
@@ -49,59 +30,48 @@
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-5">
         <h3>Result</h3>
         <div class="btn-toolbar mb-2 mb-md-0">
-            <div class="btn-group mr-2">
-                <button type="button" class="btn btn-sm btn-outline-secondary">high</button>
+            <div class="btn-group mr-2">-sm btn-outline-secondary">high</button>
                 <button type="button" class="btn btn-sm btn-outline-secondary">all</button>
             </div>
-            <!--<button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+            <!--<button type="button" class="btn bt
+                <button type="button" class="btn btnn-sm btn-outline-secondary dropdown-toggle">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
               This week
             </button>-->
         </div>
     </div>
 
-</div>
-{#휴리스틱 스코어부분 #}
-<!--원래 있던 차트 부분-->
-<br>
+    <h5 id="timeline2">Time Line</h5>
+    <div id="tileline_frame">
+        <div id="timeline">
+            <ul id="dates">
+                {% for pe in pe_ %}
+                    <li><a href=#{{ pe.year }} style="color: #ffcc00;">{{ pe.year }}</a></li>
+                {% endfor %}
+            </ul>
+            <ul id="issues">
+                {% for pe in pe_ %}
+                    <li id={{ pe.timestamp }}>
+                        <img src="{% static 'Main_engine/images/test1.png' %}" width="256" height="256"/>
+                        <h1>{{ pe.timestamp }}</h1>
+                        <!--      <p> File Name : {{pe.filename}}</p>-->
+                        <p> File Size : {{ pe.filesize }}</p>
+                        <p> File Type : {{ pe.filetype }}</p>
+                        <!--      <p> File Sha-256 :{{pe.sha_256}}</p>-->
+                        <p> TimeStamp : {{ pe.timestamp }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
 
-<hr class="my-hr3"><h5 id="heuristic" class="mt-2 mb-3" style="font-weight: bold;">Heuristic Score</h5><hr class="my-hr3">
-<!--원래 있던 차트 부분-->
-     <div class="card-deck ml-3 mr-3 mt-4">
-      <div class="card">
-            <div id="mychart0"></div>
-        <div class="card-body">
-         <h5 class="card-title">Target File</h5>
-         <p class="card-text">대상파일 : 630d925fd51964cae86892647069f3555874f48cba2f7be0920c9293b376f0af</p>
-        </div>
-      </div>
-      <div class="card">
-          <div id="mychart1"></div>
-        <div class="card-body">
-         <h5 class="card-title">Target File</h5>
-         <p class="card-text">대상파일 : 7b6c34896babba1bee97387a862dfd60d243d711000f3837dcbf3dd7b0e838a4</p>
-        </div>
-      </div>
-      <div class="card">
-            <div id="mychart2"></div>
-        <div class="card-body">
-         <h5 class="card-title">Target File</h5>
-         <p class="card-text">대상파일 : cec477937ea389408749cf7969f27e3dbd1136d888b3c99f8c5c5f843a40b731</p>
-        </div>
-      </div>
-      <div class="card">
-           <div id="mychart3"></div>
-         <div class="card-body">
-         <h5 class="card-title">Target File</h5>
-         <p class="card-text">대상파일 : d3ee9cf0ad24519e40f3788fdc453074344c82effebb7c0ea1c4343b4f4dc9d9</p>
-         </div>
-
+            <div id="grad_left"></div>
+            <div id="grad_right"></div>
+            <a href="#" id="next">+</a>
+            <a href="#" id="prev">-</a>
         </div>
     </div>
     {#휴리스틱 스코어부분 #}
     <!--원래 있던 차트 부분-->
     <br>
-
 
     <hr class="my-hr3"><h5 id="heuristic" class="mt-2 mb-3" style="font-weight: bold;">Heuristic Score</h5>
     <hr class="my-hr3">
@@ -122,6 +92,8 @@
             {% csrf_token %}
             {% if result %}
                 <div id="result_json">
+
+                    <br>
                     <table id="result_table" class="table table-corderless" style="text-align: center;">
                         <thead>
                         <tr>
@@ -145,7 +117,6 @@
                 </div>
                 </div>
                 <script>
-                    var dictionary = "{{ json_data }}";
                     /* 엔진에서 받아온 값 */
                     var result = "{{result}}";
                     /* JSON.parse()에서 따옴표 있으면 오류남 */
@@ -160,9 +131,9 @@
                     select_file.id = "standard_file";
                     document.select_form.appendChild(select_file);
                     */
+
                     var i = 0;
                     var add = 0;
-
                     var select_file = document.getElementById("select_file");
                     for (var standard in json_res) {
                         var option = document.createElement("option");
@@ -172,26 +143,22 @@
                     }
                     select_file.selectedIndex = 0;
 
-                    /* 기준이 변하면 테이블, 그래프가 변경될 수 있도록 */
+                    /* 기준이 변하면 테이블이 변경될 수 있도록 */
                     $("#select_file").change(function () {
-
                         /* 기준이 변할때마다 테이블을 지우고 새로 시작 */
                         for (var row = res_table.rows.length - 1; row > 1; row--) {
                             res_table.deleteRow(row);
-                            $("#test").empty(); /*기준이 변할때마다 그래프 부분(card)까지 전부다 초기화*/
+                            $("#test").empty();
                         }
-
                         for (var standard in json_res) {
                             // document.write(standard + "<br>");
                             var sel = document.getElementById("select_file");
                             var selected = $(this).children("option:selected").text();
-
                             if (standard == selected) {
                                 // document.write(sel.selectedIndex + " is " + "<br>");
 
                                 /* 대상이 변할때마다 */
                                 for (var target in json_res[standard]) {
-
                                     /* 하단에 행 추가 */
                                     var new_row = res_table.insertRow(res_table.rows.length);
                                     /* 행에 열 추가 */
@@ -219,12 +186,9 @@
                                         console.log(typeof json_res[standard][target][data])
                                     }
                                     */
-
                                     var a = json_res[standard][target][2];
                                     var b = json_res[standard][target][3];
-
-// Create the chart
-
+                                    var name =json_res[standard][target][0];
                                     var card = document.createElement("div");
                                     card.className = "card";
                                     card.id = "card" + add;
@@ -232,9 +196,7 @@
 
                                     var mychart = document.createElement("div");
                                     mychart.id = "mychart" + i;
-                                    mychart.style.maxWidth = "100%";
-                                    mychart.style.minWidth = "100%";
-                                    mychart.style.height = "auto";
+
                                     document.getElementById("card" + add).appendChild(mychart);
 
                                     var card_body = document.createElement("div");
@@ -252,14 +214,17 @@
                                     card_text.className = "card_text";
                                     card_text.id = "card_text";
                                     card_text.textContent = "Target File : ";
+                                    card_text.innerHTML = "Target File : " + name;
                                     document.getElementById("card_body" + add).appendChild(card_text);
+
+
+                                    // Create the chart
                                     Highcharts.chart(mychart.id, {
                                         chart: {
                                             type: 'column'
                                         },
                                         title: {
                                             text: 'similarity'
-
                                         },
                                         xAxis: {
                                             type: 'category'
@@ -278,14 +243,14 @@
                                                 borderWidth: 0,
                                                 dataLabels: {
                                                     enabled: true,
-                                                    format: '{point.y:.4f}%'
+                                                    format: '{point.y:.2f}%'
                                                 }
                                             }
                                         },
 
                                         tooltip: {
-                                            headerFormat: '<span style="font-size:8px">{series.name}</span><br>',
-                                            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.5f}%</b> of total<br/>'
+                                            headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                                            pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
                                         },
 
                                         series: [
@@ -319,17 +284,19 @@
                                     });
                                     i++;
                                     add++;
+
                                 }
-                            //document.write("card" + add);
+
                                 i = 0;
-
+                                add = 0;
                             }
-
                         }
-                    })
-                    ;
+
+                    });
+
 
                 </script>
+
                 </div>
             {% else %}
                 <h1>There is not result!</h1>
