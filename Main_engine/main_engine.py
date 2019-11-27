@@ -23,48 +23,13 @@ from Main_engine.ML import new_getinfo_pe
 
 
 
-import pandas as pd
-import numpy as np
-import pickle
-import sklearn.ensemble as ske
-from sklearn.model_selection import train_test_split
-from sklearn import tree
-from sklearn.feature_selection import SelectFromModel
 import os
 from sklearn.externals import joblib
-from sklearn.naive_bayes import GaussianNB
-import tensorflow as tf
-from sklearn.metrics import confusion_matrix
-import json
-#from xgboost import XGBClassifier
-#import xgboost as xgb
-from sklearn.ensemble import VotingClassifier
-from sklearn.linear_model import LogisticRegression
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.layers import Dropout
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.ensemble import GradientBoostingClassifier
-from sklearn.svm import SVC
-from sklearn.ensemble import AdaBoostClassifier
-from sklearn.metrics import accuracy_score
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import VotingClassifier
-import csv
-from sklearn.model_selection import GridSearchCV
-from lightgbm import LGBMClassifier
-from tensorflow import keras
-import matplotlib.pyplot as plt
-from sklearn.datasets import load_breast_cancer
-import pandas_profiling as pp  # pip install pandas_profiling
-from multiprocessing import Process, current_process, Queue, Pool
-from sklearn.preprocessing import LabelEncoder
-from sklearn.preprocessing import OneHotEncoder
-import datetime
-from logging import handlers
 
-import logging
+import json
+
+from multiprocessing import Process, current_process, Queue, Pool
+
 
 
 idb_file_path = "C:\\malware\\all_result\\idb\\"

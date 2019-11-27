@@ -98,6 +98,8 @@ def cg(request):
 
     return render(request, 'Main_engine/cg.html', {'cg': cg_dict})
 
+def loading(request):
+    return render(request, 'Main_engine/loading.html')
 
 def call_main(request):
     start = timeit.default_timer()

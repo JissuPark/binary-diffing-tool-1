@@ -3,24 +3,6 @@
 {% block title %} 결과 페이지 {% endblock %}
 
 {% block head %}
-    <<<<<<< HEAD
-    {% load static %} <!-- static files are loaded -->
-    <link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet" media="screen">
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="{% static 'Main_engine/js/jquery.timelinr-0.9.7.js' %}"></script>
-    <script src="{% static 'Main_engine/css/hightchart.css' %}"></script>
-
-
-    <script>
-        $(function () {
-            $().timelinr({
-                arrowKeys: 'true'
-            })
-        });
-
-    </script>
-
-    =======
     {% load static %} <!-- static files are loaded -->
     <link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet" media="screen">
     <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -64,7 +46,6 @@
             text-align: center;
         }
     </style>
-    >>>>>>> upstream/master
 {% endblock head %}
 
 {% block section %}
@@ -189,27 +170,6 @@
                                     for (var t in targets) {
                                         // 선택된 대상에 대해서만 보여줌
                                         if (target == targets[t]) {
-
-                                            /* 하단에 행 추가 */
-                                            var new_row = res_table.insertRow(res_table.rows.length);
-                                            /* 행에 열 추가 */
-                                            var filename = new_row.insertCell(0);
-                                            var bbh = new_row.insertCell(1);
-                                            var constvalue = new_row.insertCell(2);
-                                            var section = new_row.insertCell(3);
-                                            var cert = new_row.insertCell(4);
-                                            var pdb = new_row.insertCell(5);
-                                            var imph = new_row.insertCell(6);
-                                            var xor = new_row.insertCell(7);
-                                            /* 열에 데이터 입력 */
-                                            filename.innerHTML = json_res[standard][target][0];
-                                            bbh.innerHTML = json_res[standard][target][2];
-                                            constvalue.innerHTML = json_res[standard][target][3];
-                                            section.innerHTML = json_res[standard][target][4];
-                                            cert.innerHTML = json_res[standard][target][5];
-                                            pdb.innerHTML = json_res[standard][target][6];
-                                            imph.innerHTML = json_res[standard][target][7];
-                                            xor.innerHTML = json_res[standard][target][8];
 
                                             //그래프 맹드는 부분
                                             var card = document.createElement("div");
