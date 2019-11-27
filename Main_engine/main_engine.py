@@ -192,7 +192,7 @@ def multiprocess_file(q, return_dict, flag):
                 pe_file = Filter.objects.get(filehash=file_filter2)
                 print(pe_file)
             except Filter.DoesNotExist:
-                print('pe_errir')
+                print('pe no db')
                 pe_file = None
 
             try:

@@ -428,7 +428,7 @@ class AnalyzePE:
                 else:
                     all_score = Calc_All(pe_t)
 
-        pe_all[pe_info_s['file_name']] = pe_s
+            pe_all[pe_info_s['file_name']] = pe_s
 
         return pe_all, yun_me
 

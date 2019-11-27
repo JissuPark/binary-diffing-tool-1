@@ -365,7 +365,7 @@ class RsrcParser:
                 for c in rsrc_entry:
                     # print(f"c :: {c}")
                     if c == "&Resource Type":
-                        print(rsrc_entry[c])
+                        #print(rsrc_entry[c])
                         rsrc_count.append(rsrc_entry[c])
                     elif c == "&Resource Language":
                         rsrc_lang.append(rsrc_entry[c])
@@ -375,7 +375,7 @@ class RsrcParser:
         rl = dict()
         for cl in rsrc_lang:
             rl[cl] = rsrc_lang.count(cl)
-        print(rl)
+        #print(rl)
 
         return self.resource, rs, rl
 
