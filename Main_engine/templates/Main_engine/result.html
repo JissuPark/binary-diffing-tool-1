@@ -145,25 +145,15 @@
     </div>
 </div>
 <script>
-    var dictionary = "{{ json_data }}";
+    // var dictionary = "{{ json_data }}";
     /* 엔진에서 받아온 값 */
     var result = "{{result}}";
-    /* JSON.parse()에서 따옴표 있으면 오류남 */
-    var text_res = result.replace(/&#39;/gi, '"');
+    /* JSON.parse()에서 따옴표, nan 기타 등등 있으면 오류남 */
+    var text_res = result.replace(/&#39;/gi, '"').replace(/\t/gi, "\\t").replace(/\r/gi, "\\r").replace(/\n/gi, "\\n").replace(/nan/gi, '"nan"');
     /* 결과값 파싱해서 테이블 추가하는 부분 */
     /* 테이블 불러오기 */
     var res_table = document.getElementById("result_table");
     /* 결과 데이터 파싱 */
-    text_res = text_res.replace(/\\n/g, "\\n")
-               .replace(/\\'/g, "\\'")
-               .replace(/\\"/g, '\\"')
-               .replace(/\\&/g, "\\&")
-               .replace(/\\r/g, "\\r")
-               .replace(/\\t/g, "\\t")
-               .replace(/\\b/g, "\\b")
-               .replace(/\\f/g, "\\f");
-    // remove non-printable and other non-valid JSON chars
-    text_res = text_res.replace(/[\u0000-\u0019]+/g,"");
 
     var json_res = JSON.parse(text_res);
     /* 파일에 맞게 동적으로 dropdown에 option 추가해주는 부분 */
