@@ -8,7 +8,7 @@ import pefile
 from Main_engine.Extract_Engine.Flowchart_feature import const_filter_indexs
 
 glo_constant = list()  # PE 전체의 constant 값을 담을 global list
-
+except_list = set() # 없는 opcode 저장용
 
 class idb_info(object):
     def __init__(self, api, fva):
@@ -56,7 +56,8 @@ class basic_block(idb_info):
                 disasms = list()
                 block_constant = list()  # block 단위의 상수 (ascii string 뽑기)
                 function_dicts[hex(curaddr)] = dict()
-
+                basic_block_prime = 1
+                prime_dict = dict()
 
                 ''' 베이직 블로 브랜치 추출 '''
                 for succ in basicblock.succs():
@@ -66,6 +67,16 @@ class basic_block(idb_info):
                 while curaddr < endaddr:
                     opcode = self.api.idc.GetMnem(curaddr)
                     disasm = self.api.idc.GetDisasm(curaddr)
+
+                    ''' opcode_prime 추출(임시명 BBP(basic block prime) '''
+                    if opcode in const_filter_indexs.prime_set.keys():
+                        basic_block_prime *= const_filter_indexs.prime_set[opcode]
+                        opcode_prime = const_filter_indexs.prime_set[opcode]  # opcode에 해당하는 소수
+                        # 이미 있는 opcode면 +1해주고 없으면 0으로 세팅해서 +1
+                        prime_dict[opcode_prime] = prime_dict[opcode_prime] + 1 if opcode_prime in prime_dict else 1
+                        ''' 요기 예외 처리 로직 넣어야함'''
+                    else:
+                        except_list.add(opcode)
 
                     '''--- 상수값 추출 시작 ---'''
                     if opcode in const_filter_indexs.indexs:  # instruction white list
@@ -115,7 +126,9 @@ class basic_block(idb_info):
                     'block_sha256': hashlib.sha256(hex(sum(hex_opcodes)).encode()).hexdigest(),  # add my codes
                     'start_address': hex(basicblock.startEA),
                     'end_address': hex(basicblock.endEA),
-                    'block_constant': ' '.join(block_constant)
+                    'block_constant': ' '.join(block_constant),
+                    'block_prime': basic_block_prime,
+                    'prime_dict': prime_dict,
                 }
                 #flow_opcode.append(mutex_opcode)
                 function_dicts[hex(basicblock.startEA)] = basicblock_dics

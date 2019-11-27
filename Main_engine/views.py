@@ -14,8 +14,6 @@ from pprint import pprint
 import json
 import os
 
-from Main_engine.models import Result
-
 
 def showindex(request):
     return render(request, 'Main_engine/index.html')
