@@ -3,7 +3,7 @@
 {% block title %} 결과 페이지 {% endblock %}
 
 {% block head %}
-<<<<<<< HEAD
+    <<<<<<< HEAD
     {% load static %} <!-- static files are loaded -->
     <link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet" media="screen">
     <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -20,286 +20,310 @@
 
     </script>
 
-=======
-{% load static %} <!-- static files are loaded -->
-<link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet" media="screen">
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="{% static 'Main_engine/js/jquery.timelinr-0.9.7.js' %}"></script>
-<script src="{% static 'Main_engine/css/hightchart.css' %}"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
-<script src="{% static 'Main_engine/js/bootstrap-select.min.js' %}"></script>
-<script src="{% static 'Main_engine/js/defaults-ko_KR.min.js' %}"></script>
-<script src="{% static 'Main_engine/js/bootstrap-select.min.js' %}"></script>
-<script>
-    $(function () {
-        $().timelinr({
-            arrowKeys: 'true'
-        })
-    });
-</script>
-<style>
-    button#select-oper{
-        background-color: lightgray;
-        border-radius: 5px;
-        font-weight: bold;
-        font-size: large;
-        width: 20%;
-        margin-left: 20px;
-        margin-right: 20px;
-        text-align: center;
-    }
-    button#select-oper:hover{
-        background-color: #d8d8d8;
-        color: red;
-        border: white;
-    }
-    p.file_text{
-        width:20%;
-        margin:6px;
-        font-size: large;
-        font-weight: bold;
-        text-align: center;
-    }
-</style>
->>>>>>> upstream/master
+    =======
+    {% load static %} <!-- static files are loaded -->
+    <link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet" media="screen">
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="{% static 'Main_engine/js/jquery.timelinr-0.9.7.js' %}"></script>
+    <script src="{% static 'Main_engine/css/hightchart.css' %}"></script>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
+    <script src="{% static 'Main_engine/js/bootstrap-select.min.js' %}"></script>
+    <script src="{% static 'Main_engine/js/defaults-ko_KR.min.js' %}"></script>
+    <script src="{% static 'Main_engine/js/bootstrap-select.min.js' %}"></script>
+    <script>
+        $(function () {
+            $().timelinr({
+                arrowKeys: 'true'
+            })
+        });
+    </script>
+    <style>
+        button#select-oper {
+            background-color: lightgray;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: large;
+            width: 20%;
+            margin-left: 20px;
+            margin-right: 20px;
+            text-align: center;
+        }
+
+        button#select-oper:hover {
+            background-color: #d8d8d8;
+            color: red;
+            border: white;
+        }
+
+        p.file_text {
+            width: 20%;
+            margin: 6px;
+            font-size: large;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+    >>>>>>> upstream/master
 {% endblock head %}
 
 {% block section %}
 
-{% load static %}
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-5">
-    <h3>Result</h3>
-    <div class="btn-toolbar mb-2 mb-md-0">
-        <div class="btn-group mr-2">
-            <button type="button" class="btn btn-sm btn-outline-secondary">high</button>
-            <button type="button" class="btn btn-sm btn-outline-secondary">all</button>
+    {% load static %}
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-5">
+        <h3>Result</h3>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group mr-2">
+                <button type="button" class="btn btn-sm btn-outline-secondary">high</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary">all</button>
+            </div>
         </div>
     </div>
-</div>
 
-{#휴리스틱 스코어부분 #}
-<!--원래 있던 차트 부분-->
-<br>
+    {#휴리스틱 스코어부분 #}
+    <!--원래 있던 차트 부분-->
+    <br>
 
-<div style="display:inline-flex; width:100%;">
-    <p class="file_text">select base file : </p>
-    <select id="select_base" class="selectpicker" data-live-search="true" data-width="20%" data-size="5"
-            title="Choose base"></select>
-    <p class="file_text">select target file : </p>
-    <select id="select_target" class="selectpicker" data-width="20%" data-size="5" multiple
-            title="Choose targets"></select>
-    <button id="select-oper">select</button>
-</div>
-<hr class="my-hr3"><h5 id="heuristic" class="mt-2 mb-3" style="font-weight: bold;">Heuristic Score</h5>
-<hr class="my-hr3">
-
-<!--원래 있던 차트 부분-->
-<div class="card-deck ml-3 mr-3 mt-4" id="test">
-
-</div>
-
-<br>
-<br>
-
-<hr class="my-hr3"><h5 id="scoretable" class="mt-2 mb-3" style="font-weight: bold;">Detail</h5>
-<hr class="my-hr3">
-<div class="container-fluid">
-    <div class="table-responsive container-fluid">
-        {% csrf_token %}
-        {% if result %}
-        <div id="result_json">
-            <table id="result_table" class="table table-corderless" style="text-align: center;">
-                <thead>
-                <tr>
-                    <th rowspan="2" align=center>File Name</th>
-                    <!--                <th rowspan="2">Timestamp</th>-->
-                    <th colspan="2">Algorithm</th>
-                    <th colspan="6">PE META data</th>
-                </tr>
-                <tr>
-                    <th>BBH</th>
-                    <th>Constant</th>
-                    <th>Section data</th>
-                    <th>certification</th>
-                    <th>PDB</th>
-                    <th>imp-hash</th>
-                    <th>Rich-xorkey</th>
-                </tr>
-                </thead>
-            </table>
-        </div>
+    <div style="display:inline-flex; width:100%;">
+        <p class="file_text">select base file : </p>
+        <select id="select_base" class="selectpicker" data-live-search="true" data-width="20%" data-size="5"
+                title="Choose base"></select>
+        <p class="file_text">select target file : </p>
+        <select id="select_target" class="selectpicker" data-width="20%" data-size="5" multiple
+                title="Choose targets"></select>
+        <button id="select-oper">select</button>
     </div>
-</div>
-<script>
-    var dictionary = "{{ json_data }}";
-    /* 엔진에서 받아온 값 */
-    var result = "{{result}}";
-    /* JSON.parse()에서 따옴표 있으면 오류남 */
-    var text_res = result.replace(/&#39;/gi, '"');
-    /* 결과값 파싱해서 테이블 추가하는 부분 */
-    /* 테이블 불러오기 */
-    var res_table = document.getElementById("result_table");
-    /* 결과 데이터 파싱 */
-    text_res = text_res.replace(/\\n/g, "\\n")
-               .replace(/\\'/g, "\\'")
-               .replace(/\\"/g, '\\"')
-               .replace(/\\&/g, "\\&")
-               .replace(/\\r/g, "\\r")
-               .replace(/\\t/g, "\\t")
-               .replace(/\\b/g, "\\b")
-               .replace(/\\f/g, "\\f");
-    // remove non-printable and other non-valid JSON chars
-    text_res = text_res.replace(/[\u0000-\u0019]+/g,"");
+    <hr class="my-hr3"><h5 id="heuristic" class="mt-2 mb-3" style="font-weight: bold;">Heuristic Score</h5>
+    <hr class="my-hr3">
 
-    var json_res = JSON.parse(text_res);
-    /* 파일에 맞게 동적으로 dropdown에 option 추가해주는 부분 */
-    var pickerclass = document.getElementsByClassName("selectpicker");
-    for (var picker = 0; picker < pickerclass.length; picker++) {
-        for (var standard in json_res) {
-            var option = document.createElement("option");
-            option.value = standard;
-            option.text = standard;
-            pickerclass.item(picker).appendChild(option);
-        }
-    }
-    /* 버튼 클릭하면 데이터 변하게 하는 함수 */
-    $("#select-oper").click(function () {
-        $all_select();
-    });
-    /* 기준이 변하면 테이블이 변경될 수 있도록 */
-    $all_select = function () {
-        var targets = $('#select_target').val();
-        /* 기준이 변할때마다 테이블을 지우고 새로 시작 */
-        for (var row = res_table.rows.length - 1; row > 1; row--) {
-            res_table.deleteRow(row);
-        }
+    <!--원래 있던 차트 부분-->
+    <div class="card-deck ml-3 mr-3 mt-4" id="test">
 
-        for (var standard in json_res) {
-            var sel = document.getElementById("select_file");
-            var selected = $("#select_base").children("option:selected").text();
-            if (standard == selected) {
-                // document.write(sel.selectedIndex + " is " + "<br>");
-                var index = 0;
-                /* 대상이 변할때마다 */
-                for (var target in json_res[standard]) {
-                    for (var t in targets) {
-                        // 선택된 대상에 대해서만 보여줌
-                        if (target == targets[t]) {
+    </div>
 
-                            /* 하단에 행 추가 */
-                            var new_row = res_table.insertRow(res_table.rows.length);
-                            /* 행에 열 추가 */
-                            var filename = new_row.insertCell(0);
-                            var bbh = new_row.insertCell(1);
-                            var constvalue = new_row.insertCell(2);
-                            var section = new_row.insertCell(3);
-                            var cert = new_row.insertCell(4);
-                            var pdb = new_row.insertCell(5);
-                            var imph = new_row.insertCell(6);
-                            var xor = new_row.insertCell(7);
-                            /* 열에 데이터 입력 */
-                            filename.innerHTML = json_res[standard][target][0];
-                            bbh.innerHTML = json_res[standard][target][2];
-                            constvalue.innerHTML = json_res[standard][target][3];
-                            section.innerHTML = json_res[standard][target][4];
-                            cert.innerHTML = json_res[standard][target][5];
-                            pdb.innerHTML = json_res[standard][target][6];
-                            imph.innerHTML = json_res[standard][target][7];
-                            xor.innerHTML = json_res[standard][target][8];
+    <br>
+    <br>
 
-                            //그래프 맹드는 부분
-                            var card = document.createElement("div");
-                            card.className = 'card';
-                            card.id = "card" + index;
-                            document.getElementById("test").appendChild(card);
-                            var chart = document.createElement("div");
-                            chart.id = "mychart" + index;
-                            document.getElementById("card" + index).appendChild(chart);
-                            var a = json_res[standard][target][2];
-                            var b = json_res[standard][target][3];
-                            var c = json_res[standard][target][0];
-                            // var card
-                            Highcharts.chart("mychart" + index, {
-                                chart: {
-                                    type: 'column'
-                                },
-                                title: {
-                                    text: 'similarity'
-                                },
-                                xAxis: {
-                                    type: 'category'
-                                },
-                                yAxis: {
-                                    title: {
-                                        text: 'similarity'
-                                    }
-
-                                },
-                                legend: {
-                                    enabled: false
-                                },
-                                plotOptions: {
-                                    series: {
-                                        borderWidth: 0,
-                                        dataLabels: {
-                                            enabled: true,
-                                            format: '{point.y:.4f}%'
-                                        }
-                                    }
-                                },
-
-                                tooltip: {
-                                    headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-                                    pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
-                                },
-
-                                series: [
-                                    {
-                                        name: "similarity",
-                                        colorByPoint: true,
-                                        data: [
-                                            {
-                                                name: "BBH",
-                                                y: a,
-                                                drilldown: "Chrome"
-                                            },
-                                            {
-                                                name: "CG",
-                                                y: b,
-                                                drilldown: "Firefox"
-                                            },
-                                            {
-                                                name: "상수",
-                                                y: 7.23,
-                                                drilldown: "Internet Explorer"
-                                            },
-                                            {
-                                                name: "PE",
-                                                y: 10.58,
-                                                drilldown: "Safari"
-                                            },
-                                        ]
-                                    }
-                                ]
-                            });
-                            index++;
+    <hr class="my-hr3"><h5 id="scoretable" class="mt-2 mb-3" style="font-weight: bold;">Detail</h5>
+    <hr class="my-hr3">
+    <div class="container-fluid">
+        <div class="table-responsive container-fluid">
+            {% csrf_token %}
+            {% if result %}
+                <div id="result_json">
+                    <table id="result_table" class="table table-corderless" style="text-align: center;">
+                        <thead>
+                        <tr>
+                            <th rowspan="2" align=center>File Name</th>
+                            <!--                <th rowspan="2">Timestamp</th>-->
+                            <th colspan="2">Algorithm</th>
+                            <th colspan="6">PE META data</th>
+                        </tr>
+                        <tr>
+                            <th>BBH</th>
+                            <th>Constant</th>
+                            <th>Section data</th>
+                            <th>certification</th>
+                            <th>PDB</th>
+                            <th>imp-hash</th>
+                            <th>Rich-xorkey</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+                </div>
+                </div>
+                <script>
+                    var dictionary = "{{ json_data }}";
+                    /* 엔진에서 받아온 값 */
+                    var result = "{{result}}";
+                    /* JSON.parse()에서 따옴표 있으면 오류남 */
+                    var text_res = result.replace(/&#39;/gi, '"');
+                    /* 결과값 파싱해서 테이블 추가하는 부분 */
+                    /* 테이블 불러오기 */
+                    var res_table = document.getElementById("result_table");
+                    /* 결과 데이터 파싱 */
+                    text_res = text_res.replace(/\\n/g, "\\n")
+                        .replace(/\\'/g, "\\'")
+                        .replace(/\\"/g, '\\"')
+                        .replace(/\\&/g, "\\&")
+                        .replace(/\\r/g, "\\r")
+                        .replace(/\\t/g, "\\t")
+                        .replace(/\\b/g, "\\b")
+                        .replace(/\\f/g, "\\f");
+                    // remove non-printable and other non-valid JSON chars
+                    text_res = text_res.replace(/[\u0000-\u0019]+/g, "");
+                    var i = 0;
+                    var json_res = JSON.parse(text_res);
+                    /* 파일에 맞게 동적으로 dropdown에 option 추가해주는 부분 */
+                    var pickerclass = document.getElementsByClassName("selectpicker");
+                    for (var picker = 0; picker < pickerclass.length; picker++) {
+                        for (var standard in json_res) {
+                            var option = document.createElement("option");
+                            option.value = standard;
+                            option.text = standard;
+                            pickerclass.item(picker).appendChild(option);
+                        }
+                    }
+                    /* 버튼 클릭하면 데이터 변하게 하는 함수 */
+                    $("#select-oper").click(function () {
+                        $all_select();
+                    });
+                    /* 기준이 변하면 테이블이 변경될 수 있도록 */
+                    $all_select = function () {
+                        var targets = $('#select_target').val();
+                        $("test").empty();
+                        /* 기준이 변할때마다 테이블을 지우고 새로 시작 */
+                        for (var row = res_table.rows.length - 1; row > 1; row--) {
+                            res_table.deleteRow(row);
                         }
 
-                    }
-                }
-            }
-        }
-    }
-    // 페이지가 처음 뜰 때 기준은 처음으로 대상은 전부 선택해서 보여주도록
-    $('#select_base').find('option:first').attr('selected', 'selected');
-    $('#select_target option').prop('selected', true);
-    $all_select();
-</script>
+                        for (var standard in json_res) {
+                            var sel = document.getElementById("select_file");
+                            var selected = $("#select_base").children("option:selected").text();
+                            if (standard == selected) {
+                                // document.write(sel.selectedIndex + " is " + "<br>");
+                                var index = 0;
+                                /* 대상이 변할때마다 */
+                                for (var target in json_res[standard]) {
+                                    for (var t in targets) {
+                                        // 선택된 대상에 대해서만 보여줌
+                                        if (target == targets[t]) {
 
-</div>
-{% else %}
-<h1>There is not result!</h1>
-{% endif %}
-</div>
+                                            /* 하단에 행 추가 */
+                                            var new_row = res_table.insertRow(res_table.rows.length);
+                                            /* 행에 열 추가 */
+                                            var filename = new_row.insertCell(0);
+                                            var bbh = new_row.insertCell(1);
+                                            var constvalue = new_row.insertCell(2);
+                                            var section = new_row.insertCell(3);
+                                            var cert = new_row.insertCell(4);
+                                            var pdb = new_row.insertCell(5);
+                                            var imph = new_row.insertCell(6);
+                                            var xor = new_row.insertCell(7);
+                                            /* 열에 데이터 입력 */
+                                            filename.innerHTML = json_res[standard][target][0];
+                                            bbh.innerHTML = json_res[standard][target][2];
+                                            constvalue.innerHTML = json_res[standard][target][3];
+                                            section.innerHTML = json_res[standard][target][4];
+                                            cert.innerHTML = json_res[standard][target][5];
+                                            pdb.innerHTML = json_res[standard][target][6];
+                                            imph.innerHTML = json_res[standard][target][7];
+                                            xor.innerHTML = json_res[standard][target][8];
+
+                                            //그래프 맹드는 부분
+                                            var card = document.createElement("div");
+                                            card.className = "card";
+                                            card.id = "card" + i;
+                                            document.getElementById("test").appendChild(card);
+
+                                            var mychart = document.createElement("div");
+                                            mychart.id = "mychart" + i;
+                                            document.getElementById("card" + i).appendChild(mychart);
+
+                                            var card_body = document.createElement("div");
+                                            card_body.className = "card_body";
+                                            card_body.id = "card_body" + i;
+                                            document.getElementById("card" + i).appendChild(card_body);
+
+                                            var card_title = document.createElement("h5");
+                                            card_title.className = "card_title";
+                                            card_title.id = "card_title";
+                                            card_title.textContent = "Target File"
+                                            document.getElementById("card_body" + i).appendChild(card_title);
+
+                                            var card_text = document.createElement("p");
+                                            card_text.className = "card_text";
+                                            card_text.id = "card_text";
+                                            card_text.textContent = "Target File : "
+                                            document.getElementById("card_body" + i).appendChild(card_text);
+                                            var a = json_res[standard][target][2];
+                                            var b = json_res[standard][target][3];
+                                            var c = json_res[standard][target][0];
+                                            // var card
+                                            Highcharts.chart(mychart.id, {
+                                                chart: {
+                                                    type: 'column'
+                                                },
+                                                title: {
+                                                    text: 'similarity'
+                                                },
+                                                xAxis: {
+                                                    type: 'category'
+                                                },
+                                                yAxis: {
+                                                    title: {
+                                                        text: 'similarity'
+                                                    }
+
+                                                },
+                                                legend: {
+                                                    enabled: false
+                                                },
+                                                plotOptions: {
+                                                    series: {
+                                                        borderWidth: 0,
+                                                        dataLabels: {
+                                                            enabled: true,
+                                                            format: '{point.y:.4f}%'
+                                                        }
+                                                    }
+                                                },
+
+                                                tooltip: {
+                                                    headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                                                    pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
+                                                },
+
+                                                series: [
+                                                    {
+                                                        name: "similarity",
+                                                        colorByPoint: true,
+                                                        data: [
+                                                            {
+                                                                name: "BBH",
+                                                                y: a,
+                                                                drilldown: "Chrome"
+                                                            },
+                                                            {
+                                                                name: "CG",
+                                                                y: b,
+                                                                drilldown: "Firefox"
+                                                            },
+                                                            {
+                                                                name: "상수",
+                                                                y: 7.23,
+                                                                drilldown: "Internet Explorer"
+                                                            },
+                                                            {
+                                                                name: "PE",
+                                                                y: 10.58,
+                                                                drilldown: "Safari"
+                                                            },
+                                                        ]
+                                                    }
+                                                ]
+                                            });
+
+                                        }
+
+                                    }
+                                    i++;
+                                }
+                            }
+                            i=0;
+                        }
+                    };
+                    // 페이지가 처음 뜰 때 기준은 처음으로 대상은 전부 선택해서 보여주도록
+                    $('#select_base').find('option:first').attr('selected', 'selected');
+                    $('#select_target option').prop('selected', true);
+                    $all_select();
+                </script>
+
+                </div>
+            {% else %}
+                <h1>There is not result!</h1>
+            {% endif %}
+    </div>
 
 {% endblock section %}
