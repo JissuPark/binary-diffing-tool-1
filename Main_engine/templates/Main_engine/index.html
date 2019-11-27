@@ -53,7 +53,6 @@
     </style>
 </head>
 <body>
-
 <style>
     #container {
         display: flex;
@@ -168,5 +167,8 @@
         Beta. All Rights Reserved</p>
 </footer>
 <!-- Footer end -->
+{% if message %}
+<script>alert('{{message}}');</script>
+{% endif %}
 </body>
 </html>
