@@ -226,7 +226,7 @@ class AnalyzeFlowchart:
         c_score = self.compare_prime(self.parser_bbh_T_F(cmp_s, ), self.parser_bbh_T_F(cmp_t, ), s_flow_data,
                                      t_flow_data)
 
-        return algo.get_func_similarity(cmp_s, c_score)
+        return algo.get_bbh_similarity(cmp_s, c_score)
 
 
     def analyze_constant(self, standard, target):
