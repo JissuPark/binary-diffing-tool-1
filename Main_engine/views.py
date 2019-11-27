@@ -101,7 +101,7 @@ def cg(request):
 def loading(request):
     flag = file_check()
     if not flag:
-        return render(request, 'Main_engine/index.html', {'message':'directory is empty or file type is wrong!'})
+        return render(request, 'Main_engine/index.html', {'message':'directory is empty or filetype is not pe !!'})
     else:
         return render(request, 'Main_engine/loading.html')
 
@@ -161,7 +161,7 @@ def file_check():
         if file_extension not in extension:
             os.remove(os.path.join(r'C:\malware\mal_exe', file))
             return False
-    # 전부 돌았는데 false가 반환되지 않았다면 true 반환
+    # # 전부 돌았는데 false가 반환되지 않았다면 true 반환
     return True
 
 
