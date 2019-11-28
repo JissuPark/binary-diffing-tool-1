@@ -100,7 +100,7 @@
     <select id="select_base" class="selectpicker" data-live-search="true" data-width="20%" data-size="5"
             title="Choose base"></select>
     <p class="file_text">select target file : </p>
-    <select id="select_target" class="selectpicker" data-width="20%" data-size="5" multiple
+    <select id="select_target" class="selectpicker" data-width="20%" data-size="5" multiple data-actions-box="true"
             title="Choose targets"></select>
     <button id="select-oper">select</button>
 </div>
@@ -170,6 +170,16 @@
     $("#select-oper").click(function () {
         $all_select();
     });
+
+    /* 기준이 바뀌면 대상에 disable 거는 함수 */
+    $("#select_base").on("changed.bs.select", function () {
+        var selected = $("#select_base").children("option:selected").text();        // 기준 파일명을 가져옴
+        $("#select_target option").prop('disabled', false);                         // 전체 초기화
+        $('#select_target').find('[value=' + selected +']').prop('selected', false);// 체크도 해제
+        $("#select_target").find('[value=' + selected + ']').prop('disabled', true);// 기준과 같은 옵션 disable
+        $("#select_target").selectpicker('refresh');                                // 새로고침
+    });
+
     /* 기준이 변하면 테이블이 변경될 수 있도록 */
     $all_select = function () {
         var targets = $('#select_target').val();
@@ -295,8 +305,12 @@
         }
     }
     // 페이지가 처음 뜰 때 기준은 처음으로 대상은 전부 선택해서 보여주도록
-    $('#select_base').find('option:first').attr('selected', 'selected');
+    var first_base = $("#select_base").find('option:first');
+    first_base.attr('selected', 'selected');
     $('#select_target option').prop('selected', true);
+    $('#select_target').find('[value='+first_base.text()+']').prop('selected', false);
+    $('#select_target').find('[value='+first_base.text()+']').prop('disabled', true);
+
     $all_select();
 </script>
 
