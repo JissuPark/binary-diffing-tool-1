@@ -215,6 +215,20 @@ class AnalyzeFlowchart:
                 print(f" ")
         return round((matched / total_len), 2)
 
+    def get_const_similarity(self, _dict):
+        #st = timeit.default_timer()  # start time
+
+        total_sim = 0
+        total_count = 0
+
+        for w, x in _dict.items():
+            for y, z in x.items():
+                total_sim += (list(z.values())[0])
+                total_count += 1
+        print(f'[analysis] Basic Block Constants similarity :::::::::::: ({total_sim}/{total_count}) : {float(str(total_sim / total_count)[:4])}')
+        # print(f'ㄴ[debug] get const similarity time -> {timeit.default_timer() - st}')
+        return float(str(total_sim / total_count)[:4])
+
     def get_match_func_level(self, _dict):
 
         bb_count = 0
