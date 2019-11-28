@@ -215,20 +215,48 @@ class AnalyzeFlowchart:
                 print(f" ")
         return round((matched / total_len), 2)
 
+    def get_match_func_level(self, _dict):
 
-if __name__ == "__main__":
-    st = timeit.default_timer()  # start time
+        bb_count = 0
+        func_match_dic = dict()
 
-    s = read_json(r"D:\out_idb\wqq1.txt")
-    t = read_json(r"D:\out_idb\wqq2.txt")
+        for func, val_01 in _dict.items():
+            bb_count = len(list(val_01.keys()))
+            temp_list = list()
+            for s_sAddr, val_02 in val_01.items():
+                for match_info, const_sim in val_02.items():
+                    temp_list.append((match_info.split('-'))[0])
+            temp_result = list(set(temp_list))
 
-    # 리턴1  ,  리턴2       =  원본 dict
-    s_cmp_dic, s_white_dic = parser_bbh(s)
-    t_cmp_dic, t_white_dic = parser_bbh(t)
+            if len(temp_result) > 1:
+                temp = 0
+                vote_func = None
+                for i in temp_result:
+                    if temp < temp_list.count(i):
+                        temp = temp_list.count(i)
+                        vote_func = i
+                #print(f'{func} -> matched -> {vote_func}')
+                #print(f' ㄴ[debug] {temp} vote -> -> {vote_func}')
+                func_match_dic.update({func:vote_func})
+            else:
+                #print(f'{func} -> matched -> {temp_result[0]}')
+                func_match_dic.update({func:temp_result[0]})
 
-    # 리턴1, 리턴2,       리턴3        =         파서가 리턴한1,  리턴2
-    cmp_s, cmp_t, true_bb_const_sim = compare_bbh(s_cmp_dic, t_cmp_dic)
+        return func_match_dic
 
-    get_func_similarity(cmp_s, )
-
-    print(f'[info] END Compare Block hash set : {timeit.default_timer() - st}')
+# if __name__ == "__main__":
+#     st = timeit.default_timer()  # start time
+#
+#     s = read_json(r"D:\out_idb\wqq1.txt")
+#     t = read_json(r"D:\out_idb\wqq2.txt")
+#
+#     # 리턴1  ,  리턴2       =  원본 dict
+#     s_cmp_dic, s_white_dic = parser_bbh(s)
+#     t_cmp_dic, t_white_dic = parser_bbh(t)
+#
+#     # 리턴1, 리턴2,       리턴3        =         파서가 리턴한1,  리턴2
+#     cmp_s, cmp_t, true_bb_const_sim = compare_bbh(s_cmp_dic, t_cmp_dic)
+#
+#     get_func_similarity(cmp_s, )
+#
+#     print(f'[info] END Compare Block hash set : {timeit.default_timer() - st}')
