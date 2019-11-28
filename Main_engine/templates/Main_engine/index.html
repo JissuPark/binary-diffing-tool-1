@@ -53,7 +53,6 @@
     </style>
 </head>
 <body>
-
 <style>
     #container {
         display: flex;
@@ -158,6 +157,7 @@
     <div style="float: left; padding: 10px;">
         <input type="submit" value="start" onclick="location.href='{% url 'loading' %}'">
     </div>
+
 </main>
 
 <!-- section end -->
@@ -168,5 +168,8 @@
         Beta. All Rights Reserved</p>
 </footer>
 <!-- Footer end -->
+{% if message %}
+<script>alert('{{message}}');</script>
+{% endif %}
 </body>
 </html>

@@ -99,7 +99,11 @@ def cg(request):
     return render(request, 'Main_engine/cg.html', {'cg': cg_dict})
 
 def loading(request):
-    return render(request, 'Main_engine/loading.html')
+    flag = file_check()
+    if not flag:
+        return render(request, 'Main_engine/index.html', {'message':'directory is empty or filetype is not pe !!'})
+    else:
+        return render(request, 'Main_engine/loading.html')
 
 def call_main(request):
     start = timeit.default_timer()
@@ -139,28 +143,30 @@ def upload_file_dropzone(request):
     return render(request, 'Main_engine/index.html')
 
 
-def file_check(request,file):
+def file_check():
     '''
     파일의 타입, 크기, 갯수를 체크해서 입장여부를 판단해주는 함수
-    :param file: 업로드된 파일
     :return: T/F
     '''
 
-    # 이름에서 확장자를 추출해 비교하는 로직
-    extension = ['exe','dll','sys','idb','i64']
-    file_extension = file.name.split('.')[-1]
-    print(file_extension)
-
-    file_type = file.content_type
-    if file_extension in extension:
-        return True
-    else:
-
+    if len(os.listdir(r'C:\malware\mal_exe')) == 0:
+        print('[DEBUG]directory is empty!')
         return False
-        # return render(request, 'Main_engine/index.html')
 
-    # 파일 자체에 타입을 검사하는 로직
-
+    for file in os.listdir(r'C:\malware\mal_exe'):
+        # 이름에서 확장자를 추출해 비교하는 로직
+        extension = ['exe','dll','sys','idb','i64']
+        file_extension = file.split('.')[-1]
+        print(f'[DEBUG] {file} is {file_extension}')
+        # 확장자가 없는 경우, 넘어감
+        if file == file_extension:
+            continue
+        # 확장자가 리스트에 없는 경우 해당 파일을 삭제하고 false 반환
+        if file_extension not in extension:
+            os.remove(os.path.join(r'C:\malware\mal_exe', file))
+            return False
+    # # 전부 돌았는데 false가 반환되지 않았다면 true 반환
+    return True
 
 
 def handle_uploaded_file(file):
