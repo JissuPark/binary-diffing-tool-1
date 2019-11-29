@@ -8,27 +8,28 @@ from pyasn1.codec.ber.decoder import decode
 from pyasn1_modules import rfc2315, rfc2459
 
 TYPE_MAP = {
-    1: "_RT_CURSOR",
-    2: "_RT_BITMAP",
-    3: "_RT_ICON",
-    4: "_RT_MENU",
-    5: "_RT_DIALOG",
-    6: "_RT_STRING",
-    7: "_RT_FONTDIR",
-    8: "_RT_FONT",
-    9: "_RT_ACCELERATOR",
-    10: "_RT_RCDATA",
-    11: "_RT_MESSAGETABLE",
-    12: "_RT_GROUP_CURSOR",
-    14: "_RT_GROUP_ICON",
-    16: "_RT_VERSION",
-    17: "_RT_DLGINCLUDE",
-    19: "_RT_PLUGPLAY",
-    20: "_RT_VXD",
-    21: "_RT_ANICURSOR",
-    22: "_RT_ANIICON",
-    23: "_RT_HTML",
-    24: "_RT_MANIFEST"
+    1: "RT_CURSOR",
+    2: "RT_BITMAP",
+    3: "RT_ICON",
+    4: "RT_MENU",
+    5: "RT_DIALOG",
+    6: "RT_STRING",
+    7: "RT_FONTDIR",
+    8: "RT_FONT",
+    9: "RT_ACCELERATOR",
+    10: "RT_RCDATA",
+    11: "RT_MESSAGETABLE",
+    12: "RT_GROUP_CURSOR",
+    14: "RT_GROUP_ICON",
+    16: "RT_VERSION",
+    17: "RT_DLGINCLUDE",
+    19: "RT_PLUGPLAY",
+    20: "RT_VXD",
+    21: "RT_ANICURSOR",
+    22: "RT_ANIICON",
+    23: "RT_HTML",
+    24: "RT_MANIFEST",
+    2147483808: "BIN"
 }
 
 COUNTRY_MAP = {
@@ -252,17 +253,17 @@ def make_country_dic():
 '''
 
 def match_type(type):
-    return TYPE_MAP[type] if type in TYPE_MAP else "<unknown>"
+    return TYPE_MAP[type] if type in TYPE_MAP else "UNKNOWN"
 
 
 def match_language(id):
-    return COUNTRY_MAP[id] if id in COUNTRY_MAP else "<unknown>"
+    return COUNTRY_MAP[id] if id in COUNTRY_MAP else "UNKNOWN"
 
 def find_wRevision(r):
-    return wRevision_kind[r] if r in wRevision_kind else "<NONE>"
+    return wRevision_kind[r] if r in wRevision_kind else "UNKNOWN"
 
 def find_wCertificateType(c):
-    return wCertificateType_kind[c] if c in wCertificateType_kind else "<NONE>"
+    return wCertificateType_kind[c] if c in wCertificateType_kind else "UNKNOWN"
 
 class RsrcParser:
     def __init__(self, filename, pe):
@@ -328,9 +329,9 @@ class RsrcParser:
                     type = match_type(resource_type.id)
                     #print(f'Resource Language is {resource_lang.id} : {country}')#{resource_lang.struct}')
 
-                    rsrc_entry['&Resource Type'] = type
-                    rsrc_entry['Resource NameID'] = resource_id.id
-                    rsrc_entry['&Resource Language'] = country
+                    rsrc_entry['Resource Type'] = type
+                    rsrc_entry['esource NameID'] = resource_id.id
+                    rsrc_entry['Resource Language'] = country
 
                     #여기서부터 데이터 추출
                     data = self.pe.get_data(resource_lang.data.struct.OffsetToData,
@@ -340,7 +341,7 @@ class RsrcParser:
                     #resouce 데이터(해시화) 출력 성공
                     data = data.decode('Latin-1').replace(u"\u0000", u"").replace(u"\u000B", u"")
                     sha_256 = hashlib.sha256(data.encode()).hexdigest()
-                    rsrc_entry['&sha-256'] = hashlib.sha256(data.encode()).hexdigest()
+                    rsrc_entry['sha-256'] = hashlib.sha256(data.encode()).hexdigest()
                     rsrc_entry['ssdeep'] = ssdeep.hash(data)
                     #print(f'data : {data}')
                     size = resource_lang.data.struct.Size
@@ -351,12 +352,12 @@ class RsrcParser:
                     entropy = self.get_entropy(data)
                     #print(f'entropy : {entropy}')
                     rsrc_entry['entropy'] = entropy
-                    sha = '$' + sha_256
-                    self.resource[sha] = {
-                        '&Resource Type': type,
+                    #sha = '$' + sha_256
+                    self.resource[sha_256] = {
+                        'Resource Type': type,
                         'Resource NameID': resource_id.id,
-                        '&Resource Language': country,
-                        '&sha-256': sha_256,
+                        'Resource Language': country,
+                        'sha-256': sha_256,
                         'ssdeep': ssdeep.hash(data),
                         'size': size,
                         'entropy': entropy
@@ -364,10 +365,10 @@ class RsrcParser:
 
                 for c in rsrc_entry:
                     # print(f"c :: {c}")
-                    if c == "&Resource Type":
+                    if c == "Resource Type":
                         #print(rsrc_entry[c])
                         rsrc_count.append(rsrc_entry[c])
-                    elif c == "&Resource Language":
+                    elif c == "Resource Language":
                         rsrc_lang.append(rsrc_entry[c])
         rs = dict()
         for ce in rsrc_count:

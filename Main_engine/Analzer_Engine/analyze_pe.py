@@ -18,22 +18,16 @@ import numpy as np
 def Calc_All(pe_t):
     #모든 요소가 있는 경우
     score = 0
-    if pe_t['imphash'] == 100:
-        score += pe_t['imphash']
-        score += pe_t['rich']
-        score += pe_t['section_score']
-        score += pe_t['cert_score']
-        score += pe_t['pdb_score']
-        score += pe_t['rsrc']
-    else:
-        score += pe_t['implist']
-        score += pe_t['rich']
-        score += pe_t['section_score']
-        score += pe_t['cert_score']
-        score += pe_t['pdb_score']
-        score += pe_t['rsrc']
+    score += pe_t['imphash']
+    score += pe_t['rich']
+    score += pe_t['section_score']
+    score += pe_t['cert_score']
+    score += pe_t['pdb_score']
+    score += pe_t['rsrc']
 
-    score = score // 6
+
+    score = score / 6
+    score = round(score, 2)
     print(f"score for all :: {score}")
     return score
 
@@ -44,20 +38,14 @@ def Calc_Without_Pdb(pe_t):
         Calc_Without_Pdb_and_Rsrc(pe_t)
     else:
         #pdb만 없는 경우 가중치 부여
-        if pe_t['imphash'] == 100:
-            score += pe_t['imphash']
-            score += pe_t['rich']
-            score += pe_t['section_score']
-            score += pe_t['cert_score']
-            score += pe_t['rsrc']
-        else:
-            score += pe_t['implist']
-            score += pe_t['rich']
-            score += pe_t['section_score']
-            score += pe_t['cert_score']
-            score += pe_t['rsrc']
+        score += pe_t['imphash']
+        score += pe_t['rich']
+        score += pe_t['section_score']
+        score += pe_t['cert_score']
+        score += pe_t['rsrc']
 
         score = score / 5
+        score = round(score, 2)
         print(f"score without pdb :: {score}")
         return score
 
@@ -68,35 +56,25 @@ def Calc_Without_Pdb_and_Rsrc(pe_t):
         Calc_Without_All(pe_t)
     else:
         #pdb, rsrc 없는 경우의 가중치 부여
-        if pe_t['imphash'] == 100:
-            score += pe_t['imphash']
-            score += pe_t['rich']
-            score += pe_t['section_score']
-            score += pe_t['cert_score']
-
-        else:
-            score += pe_t['implist']
-            score += pe_t['rich']
-            score += pe_t['section_score']
-            score += pe_t['cert_score']
+        score += pe_t['imphash']
+        score += pe_t['rich']
+        score += pe_t['section_score']
+        score += pe_t['cert_score']
 
         score = score / 4
+        score = round(score, 2)
         print(f"score without pdb and rsrc :: {score}")
         return score
 
 def Calc_Without_All(pe_t):
     score = 0
-    if pe_t['imphash'] == 100:
-        score += pe_t['imphash']
-        score += pe_t['rich']
-        score += pe_t['section_score']
 
-    else:
-        score += pe_t['implist']
-        score += pe_t['rich']
-        score += pe_t['section_score']
+    score += pe_t['imphash']
+    score += pe_t['rich']
+    score += pe_t['section_score']
 
     score = score / 3
+    score = round(score, 2)
     print(f"score without pdb, rsrc and cert :: {score}")
 
     return score
@@ -108,39 +86,28 @@ def Calc_Without_Rsrc(pe_t):
         Calc_Without_Rsrc_and_Cert(pe_t)
     else:
         #rsrc만 없는 경우 가중치 부여
-        if pe_t['imphash'] == 100:
-            score += pe_t['imphash']
-            score += pe_t['rich']
-            score += pe_t['section_score']
-            score += pe_t['cert_score']
-            score += pe_t['pdb_score']
-        else:
-            score += pe_t['implist']
-            score += pe_t['rich']
-            score += pe_t['section_score']
-            score += pe_t['cert_score']
-            score += pe_t['pdb_score']
+
+        score += pe_t['imphash']
+        score += pe_t['rich']
+        score += pe_t['section_score']
+        score += pe_t['cert_score']
+        score += pe_t['pdb_score']
 
         score = score / 5
+        score = round(score, 2)
         print(f"score without rsrc :: {score}")
         return score
 
 def Calc_Without_Rsrc_and_Cert(pe_t):
     score = 0
 
-    if pe_t['imphash'] == 100:
-        score += pe_t['imphash']
-        score += pe_t['rich']
-        score += pe_t['section_score']
-        score += pe_t['pdb_score']
-
-    else:
-        score += pe_t['implist']
-        score += pe_t['rich']
-        score += pe_t['section_score']
-        score += pe_t['pdb_score']
+    score += pe_t['imphash']
+    score += pe_t['rich']
+    score += pe_t['section_score']
+    score += pe_t['pdb_score']
 
     score = score / 4
+    score = round(score, 2)
     print(f"score without rsrc and cert :: {score}")
 
     return score
@@ -149,28 +116,19 @@ def Calc_Without_Cert(pe_t):
     #cert만 없는 경우
     score = 0
 
-    if pe_t['imphash'] == 100:
-        score += pe_t['imphash']
-        print(score)
-        score += pe_t['rich']
-        print(score)
-        score += pe_t['section_score']
-        print(score)
-        score += pe_t['pdb_score']
-        print(score)
-        score += pe_t['rsrc']
-    else:
-        score += pe_t['implist']
-        print(score)
-        score += pe_t['rich']
-        print(score)
-        score += pe_t['section_score']
-        print(score)
-        score += pe_t['pdb_score']
-        print(score)
-        score += pe_t['rsrc']
+    score += pe_t['imphash']
+    print(pe_t['imphash'])
+    score += pe_t['rich']
+    print(pe_t['rich'])
+    score += pe_t['section_score']
+    print(pe_t['section_score'])
+    score += pe_t['pdb_score']
+    print(pe_t['pdb_score'])
+    score += pe_t['rsrc']
+    print(pe_t['rsrc'])
 
     score = score / 5
+    score = round(score, 2)
     print(f"score without cert :: {score}")
 
     return score
@@ -239,11 +197,11 @@ class AnalyzePE:
                         continue
             #print(f"implist score :: {score}")
             #print(f"implist Fsize :: {Fsize}")
-            return score / Fsize * 100
+            return round(score / Fsize * 100, 2)
         else:
             return 0
 
-        print(same_dict)
+        #print(same_dict)
         # 두 바이너리에서 공통으로 사용하는 dll과 내부의 함수들을 딕셔너리 형태로 리턴
         return same_dict
 
@@ -261,10 +219,7 @@ class AnalyzePE:
             else:
                 score = 0
                 return score
-            '''
-            이 부분에 추가로 score에 가중치 주는 부분 이후에 추가
-            '''
-        return score
+        return round(score, 2)
 
     def analyze_pdb(self, dict_s, dict_t):
         '''
@@ -292,7 +247,7 @@ class AnalyzePE:
         score = (guid_score + path_score)
         #score = str(guid_score)+','+str(path_score)     #하나로 묶어야 함
 
-        return score
+        return round(score, 2)
 
     def analyze_rsrc(self, standard, target):
         '''
@@ -300,15 +255,16 @@ class AnalyzePE:
         :return: score list with weight
         '''
         if standard != {} and target != {}:
-            size = len(standard)
+            size = len(standard.keys())
+            print(f"size of rsrc :: {size}")
             flag = 0
             for key in standard.keys() and target.keys():
                 if key in standard and key in target:
-                    if standard[key]['&Resource Type'] == target[key]['&Resource Type']:
-                        if standard[key]['&Resource Type'] == '<unknown>' and target[key]['&Resource Type'] == '<unknown>':
+                    if standard[key]['Resource Type'] == target[key]['Resource Type']:
+                        if standard[key]['Resource Type'] == 'UNKNOWN' and target[key]['Resource Type'] == 'UNKNOWN':
                             return ssdeep.compare(standard[key]['ssdeep'], target[key]['ssdeep'])
                         else:
-                            if standard[key]['&sha-256'] == target[key]['&sha-256']:
+                            if standard[key]['sha-256'] == target[key]['sha-256']:
                                 flag += 1
                             else:
                                 continue
@@ -328,9 +284,9 @@ class AnalyzePE:
         '''
         score = 0
         if flag > 0:
-            return flag / size * 100
+            return round(flag / size * 100, 2)
         else:
-            return score
+            return round(score, 2)
 
     def analyze_rich(self, standard, target):
         '''
@@ -349,15 +305,19 @@ class AnalyzePE:
             else:
                 xor_score += 0
 
-            for prod in range(len(standard['rich_prodid'])):
+            for prod in standard['rich_prodid']:
                 if prod in target['rich_prodid']:
+                    #print(f"prod :: {prod}")
                     prodid_score += 1
                 else:
                     continue
+
+        #print(f"prodid_score :: {prodid_score}")
+        #print(f"len(standard['rich_prodid'] :: {len(standard['rich_prodid'])}")
         prodid_score = prodid_score / len(standard['rich_prodid']) * 50
         score = xor_score + prodid_score
 
-        return score
+        return round(score, 2)
 
     def analyze_section(self, dict_s, dict_t):
         '''
@@ -365,15 +325,16 @@ class AnalyzePE:
         *값이 다 작은 거라서 비교 알고리즘을 쓰기도 모호하고.. 훈이랑 얘기해봐야 할듯
         :return: score with weight
         '''
-        comp = 0
+        score = 0
+        print("dict_s.keys() :: ", dict_s.keys())
         for key in dict_s.keys() and dict_t.keys():                                 #키의 이름이 다를 때의 예외처리가 필요
             if key in dict_s and key in dict_t:
                 if dict_s[key]['section_name'] == dict_t[key]['section_name']:
-                    score = ssdeep.compare(dict_s[key]['hash_ssdeep'], dict_t[key]['hash_ssdeep']) / len(dict_s.keys())
-                    comp += score
+                    ss = ssdeep.compare(dict_s[key]['hash_ssdeep'], dict_t[key]['hash_ssdeep']) / len(dict_s.keys())
+                    score += ss
             else:
                 continue
-        return comp
+        return round(score, 2)
 
     def analyze_all(self, pe_list):
 
@@ -407,17 +368,17 @@ class AnalyzePE:
                 res_pdb = self.analyze_pdb(pe_info_s['pdb_info'], pe_info_t['pdb_info'])
                 res_rsrc = self.analyze_rsrc(pe_info_s['rsrc_info'], pe_info_t['rsrc_info'])
 
+
+                #imp hash가 1이 아닐 경우 세세하게 비교
                 pe_t['imphash'] = res_imphash
-                if pe_t['imphash'] == 100:
-                    pe_t['implist'] = 0
-                else:
-                    pe_t['implist'] = res_implist
+                if pe_t['imphash'] != 100:
+                    pe_t['imphash'] = res_implist
+
                 pe_t['rich'] = res_rich
                 pe_t['section_score'] = res_sec
                 pe_t['cert_score'] = res_cert
                 pe_t['pdb_score'] = res_pdb
                 pe_t['rsrc'] = res_rsrc
-                pe_s[pe_info_t['file_name']] = pe_t
 
                 if np.isnan(pe_t['pdb_score']):
                     all_score = Calc_Without_Pdb(pe_t)
@@ -427,6 +388,8 @@ class AnalyzePE:
                     all_score = Calc_Without_Cert(pe_t)
                 else:
                     all_score = Calc_All(pe_t)
+
+                pe_s[pe_info_t['file_name']] = pe_t
 
             pe_all[pe_info_s['file_name']] = pe_s
 
