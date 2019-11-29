@@ -63,14 +63,14 @@
 
     /* 함수이름 버튼 만드는 함수 */
     function makebt(fname) {
-        var btn = document.createElement("a");
+        var btn = document.createElement("a"); // 함수 버튼 만드는 함수
         btn.id = fname;
         btn.textContent = fname;
         btn.className = 'nav-link';
         btn.setAttribute('style', "font-style: inherit; color: #ffffff; display: block;");
         btn.onclick = function () {
             draw(boxes[fname]);
-        };
+        }; //button click 하면 함수 그려주기
 
         // btn.addEventListener('onclick', draw(boxes[fname]));
         /* 동적 이벤트 추가 */
@@ -155,6 +155,7 @@
     var cfgdata = "{{cfg}}";
     var text_res = cfgdata.replace(/\n/gi, '\\n').replace(/&#39;/gi, '"').replace(/\t/gi, '\\t');
     var json_res = JSON.parse(text_res);
+    //document.write(text_res);
 
     var index = 0;
     for (var file in json_res) {
@@ -164,27 +165,29 @@
             }
             var array = {};
             var branches = [];
-            // document.write(funcname + "<br>");
+            //document.write(funcname + "<br>");
             for (var startaddr in json_res[file]['func_name'][funcname]) {
+                //document.write(startaddr + "<br>");
                 if (startaddr != "flow_opString" && startaddr != "flow_constants" && startaddr != "flow_branches") {
                     // document.write(startaddr+"<br>");
                     var block = startaddr + "\n";
+                    //document.write(block);
                     for (var curaddr in json_res[file]['func_name'][funcname][startaddr]['disasms']) {
-                        // document.write(json_res[startaddr]['disasms'][curaddr]+'<br>')
                         block = block + json_res[file]['func_name'][funcname][startaddr]['disasms'][curaddr] + '\n';
+                        //document.write(block);
                     }
                     var addrsplit = startaddr.split('x');
-                    array[addrsplit[1]] = block;
+                    array[addrsplit[1]] = block; //함수 값안에있는 정보
                 }
                 if (startaddr == "flow_branches" && json_res[file]['func_name'][funcname][startaddr].length != 0) {
                     branches.push(json_res[file]['func_name'][funcname][startaddr]);
-                    // document.write(branches+"<br>");
+                     //document.write(branches+"<br>");
                 }
             }
             var box = "";
             box = boxing(array, branches);
             boxes[funcname] = box;
-
+            //document.write(boxes[funcname]);
             // draw(boxes[funcname]);
         }
         index++;

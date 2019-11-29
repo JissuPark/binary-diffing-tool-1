@@ -64,16 +64,22 @@
     {#휴리스틱 스코어부분 #}
     <!--원래 있던 차트 부분-->
     <br>
-
+<!------------------------ select file, target file 부분-------------------------------->
     <div style="display:inline-flex; width:100%;">
         <p class="file_text">select base file : </p>
         <select id="select_base" class="selectpicker" data-live-search="true" data-width="20%" data-size="5"
                 title="Choose base"></select>
+
+
         <p class="file_text">select target file : </p>
         <select id="select_target" class="selectpicker" data-width="20%" data-size="5" multiple
                 title="Choose targets"></select>
-        <button id="select-oper">select</button>
+
+
+        <button id="select-oper">slect</button>
     </div>
+    <!------------------------ select file, target file 부분-------------------------------->
+
     <hr class="my-hr3"><h5 id="heuristic" class="mt-2 mb-3" style="font-weight: bold;">Heuristic Score</h5>
     <hr class="my-hr3">
 
@@ -189,16 +195,16 @@
                                             var card_title = document.createElement("h5");
                                             card_title.className = "card_title";
                                             card_title.id = "card_title";
-                                            card_title.textContent = "Target File"
+                                            card_title.textContent = "Target File";
                                             document.getElementById("card_body" + i).appendChild(card_title);
 
                                             var card_text = document.createElement("p");
                                             card_text.className = "card_text";
                                             card_text.id = "card_text";
-                                            card_text.textContent = "Target File : "
+                                            card_text.textContent = "Target File : ";
                                             document.getElementById("card_body" + i).appendChild(card_text);
-                                            var a = json_res[standard][target][2];
-                                            var b = json_res[standard][target][3];
+                                            var a = json_res[standard][target][2]; //bbh
+                                            var b = json_res[standard][target][3]; //constant
                                             var c = json_res[standard][target][0];
                                             // var card
                                             Highcharts.chart(mychart.id, {
@@ -227,6 +233,7 @@
                                                             enabled: true,
                                                             format: '{point.y:.4f}%'
                                                         }
+
                                                     }
                                                 },
 
