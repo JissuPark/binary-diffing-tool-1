@@ -208,6 +208,50 @@ class AnalyzeFlowchart:
                 #print(f" ")
         return float(str(matched / total_len)[:4])
 
+    def get_match_func_level(self, _dict):
+
+        bb_count = 0
+        func_match_dic = dict()
+
+        for func, val_01 in _dict.items():
+            bb_count = len(list(val_01.keys()))
+            temp_list = list()
+            for s_sAddr, val_02 in val_01.items():
+                for match_info, const_sim in val_02.items():
+                    temp_list.append((match_info.split('-'))[0])
+            temp_result = list(set(temp_list))
+
+            if len(temp_result) > 1:
+                temp = 0
+                vote_func = None
+                for i in temp_result:
+                    if temp < temp_list.count(i):
+                        temp = temp_list.count(i)
+                        vote_func = i
+                #print(f'{func} -> matched -> {vote_func}')
+                #print(f' ㄴ[debug] {temp} vote -> -> {vote_func}')
+                func_match_dic.update({func:vote_func})
+            else:
+                #print(f'{func} -> matched -> {temp_result[0]}')
+                func_match_dic.update({func:temp_result[0]})
+
+        return func_match_dic
+
+    def get_const_similarity(self, _dict):
+        # st = timeit.default_timer()  # start time
+
+        total_sim = 0
+        total_count = 0
+
+        for w, x in _dict.items():
+            for y, z in x.items():
+                total_sim += (list(z.values())[0])
+                total_count += 1
+        print(
+            f'[analysis] Basic Block Constants similarity :::::::::::: ({total_sim}/{total_count}) : {float(str(total_sim / total_count)[:4])}')
+        # print(f'ㄴ[debug] get const similarity time -> {timeit.default_timer() - st}')
+        return float(str(total_sim / total_count)[:4])
+
     def analyze_bbh(self, s_flow_data, t_flow_data):
         '''
         basic block hash(함수 대표값)을 비교해서 점수에 가중치를 매겨 반환하는 함수
