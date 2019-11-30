@@ -322,7 +322,8 @@
     display: inline
 }
 
-.bootstrap-select.fit-width .dropdown-toggle .bs-caret:before {
+
+.bootstrap-select.fit-width .dropdown-toggle .bs-careta:before {
     content: '\00a0'
 }
 

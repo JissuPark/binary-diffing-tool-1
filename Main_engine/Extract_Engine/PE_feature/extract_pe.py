@@ -153,7 +153,7 @@ class Pe_Feature:
         f_name_hash = open(self.file_name, 'rb')
 
         pe_features = {
-            'file_path':self.file_name,
+            'file_path': self.file_name,
             'file_name': f_name,
             'file_hash': hashlib.sha256(f_name_hash.read()).hexdigest(),
             'imp_hash': imphash,
