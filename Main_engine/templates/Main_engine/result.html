@@ -4,14 +4,6 @@
 
 {% block head %}
 {% load static %} <!-- static files are loaded -->
-<link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet" media="screen">
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="{% static 'Main_engine/js/jquery.timelinr-0.9.7.js' %}"></script>
-<script src="{% static 'Main_engine/css/hightchart.css' %}"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">
-<script src="{% static 'Main_engine/js/bootstrap-select.min.js' %}"></script>
-<script src="{% static 'Main_engine/js/defaults-ko_KR.min.js' %}"></script>
-<script src="{% static 'Main_engine/js/bootstrap-select.min.js' %}"></script>
 <script>
     $(function () {
         $().timelinr({
@@ -20,7 +12,28 @@
     });
 </script>
 <style>
-    button#select-oper{
+    .container_a {
+        margin-top: 10px;
+    }
+
+    .progress-bar-vertical {
+        width: 20px;
+        min-height: 100px;
+        display: flex;
+        align-items: flex-end;
+        margin-right: 20px;
+        float: left;
+    }
+
+    .progress-bar-vertical .progress-bar {
+        width: 100%;
+        height: 0;
+        -webkit-transition: height 0.6s ease;
+        -o-transition: height 0.6s ease;
+        transition: height 0.6s ease;
+    }
+
+    button#select-oper {
         background-color: lightgray;
         border-radius: 5px;
         font-weight: bold;
@@ -30,19 +43,22 @@
         margin-right: 20px;
         text-align: center;
     }
-    button#select-oper:hover{
+
+    button#select-oper:hover {
         background-color: #d8d8d8;
         color: red;
         border: white;
     }
-    p.file_text{
-        width:20%;
-        margin:6px;
+
+    p.file_text {
+        width: 20%;
+        margin: 6px;
         font-size: large;
         font-weight: bold;
         text-align: center;
     }
 </style>
+
 {% endblock head %}
 
 {% block section %}
@@ -55,39 +71,6 @@
             <button type="button" class="btn btn-sm btn-outline-secondary">high</button>
             <button type="button" class="btn btn-sm btn-outline-secondary">all</button>
         </div>
-        <!--<button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-          This week
-        </button>-->
-    </div>
-</div>
-
-<h5 id="timeline2">Time Line</h5>
-<div id="tileline_frame">
-    <div id="timeline">
-        <ul id="dates">
-            {% for pe in pe_%}
-            <li><a href=#{{pe.year}} style="color: #ffcc00;">{{pe.year}}</a></li>
-            {%endfor%}
-        </ul>
-        <ul id="issues">
-            {% for pe in pe_%}
-            <li id={{pe.timestamp}}>
-                <img src="{% static 'Main_engine/images/test1.png' %}" width="256" height="256"/>
-                <h1>{{pe.timestamp}}</h1>
-                <!--      <p> File Name : {{pe.filename}}</p>-->
-                <p> File Size : {{pe.filesize}}</p>
-                <p> File Type : {{pe.filetype}}</p>
-                <!--      <p> File Sha-256 :{{pe.sha_256}}</p>-->
-                <p> TimeStamp : {{pe.timestamp}}</p>
-            </li>
-            {%endfor%}
-        </ul>
-
-        <div id="grad_left"></div>
-        <div id="grad_right"></div>
-        <a href="#" id="next">+</a>
-        <a href="#" id="prev">-</a>
     </div>
 </div>
 
@@ -100,8 +83,7 @@
     <select id="select_base" class="selectpicker" data-live-search="true" data-width="20%" data-size="5"
             title="Choose base"></select>
     <p class="file_text">select target file : </p>
-    <select id="select_target" class="selectpicker" data-width="20%" data-size="5" multiple data-actions-box="true"
-            title="Choose targets"></select>
+    <select id="select_target" class="selectpicker" data-actions-box="true" data-width="20%" data-size="5" multiple title="Choose targets"></select>
     <button id="select-oper">select</button>
 </div>
 <hr class="my-hr3"><h5 id="heuristic" class="mt-2 mb-3" style="font-weight: bold;">Heuristic Score</h5>
@@ -175,8 +157,8 @@
     $("#select_base").on("changed.bs.select", function () {
         var selected = $("#select_base").children("option:selected").text();        // 기준 파일명을 가져옴
         $("#select_target option").prop('disabled', false);                         // 전체 초기화
-        $('#select_target').find('[value=' + selected +']').prop('selected', false);// 체크도 해제
-        $("#select_target").find('[value=' + selected + ']').prop('disabled', true);// 기준과 같은 옵션 disable
+        $('#select_target').find('[value="' + selected + '"]').prop('selected', false);// 체크도 해제
+        $("#select_target").find('[value="' + selected + '"]').prop('disabled', true);// 기준과 같은 옵션 disable
         $("#select_target").selectpicker('refresh');                                // 새로고침
     });
 
@@ -186,6 +168,7 @@
         /* 기준이 변할때마다 테이블을 지우고 새로 시작 */
         for (var row = res_table.rows.length - 1; row > 1; row--) {
             res_table.deleteRow(row);
+            $("#test").empty();
         }
 
         for (var standard in json_res) {
@@ -221,81 +204,101 @@
                             imph.innerHTML = json_res[standard][target][7];
                             xor.innerHTML = json_res[standard][target][8];
 
+                            var container = document.createElement('div');
+                            container.className = "container-a";
+                            container.id = "outer" + index;
+                            document.getElementById('test').appendChild(container);
+                            var vertical_bar = document.createElement('div');
+                            vertical_bar.className = "progress progress-bar-vertical";
+                            vertical_bar.id = "inner" + index;
+                            document.getElementById('outer' + index).appendChild(vertical_bar);
+                            var progress_bar_1 = document.createElement('div');
+                            progress_bar_1.className = "progress-bar";
+                            progress_bar_1.setAttribute("style", "height: 30%");
+                            document.getElementById('inner' + index).appendChild(progress_bar_1);
+                            var progress_bar_2 = document.createElement('div');
+                            progress_bar_2.className = "progress-bar";
+                            progress_bar_2.setAttribute("style", "height: 30%");
+                            document.getElementById('inner' + index).appendChild(progress_bar_2);
+                            var progress_bar_3 = document.createElement('div');
+                            progress_bar_3.className = "progress-bar";
+                            progress_bar_3.setAttribute("style", "height: 30%");
+                            document.getElementById('inner' + index).appendChild(progress_bar_3);
                             //그래프 맹드는 부분
-                            var card = document.createElement("div");
-                            card.className = 'card';
-                            card.id = "card" + index;
-                            document.getElementById("test").appendChild(card);
-                            var chart = document.createElement("div");
-                            chart.id = "mychart" + index;
-                            document.getElementById("card" + index).appendChild(chart);
-                            var a = json_res[standard][target][2];
-                            var b = json_res[standard][target][3];
-                            var c = json_res[standard][target][0];
-                            // var card
-                            Highcharts.chart("mychart" + index, {
-                                chart: {
-                                    type: 'column'
-                                },
-                                title: {
-                                    text: 'similarity'
-                                },
-                                xAxis: {
-                                    type: 'category'
-                                },
-                                yAxis: {
-                                    title: {
-                                        text: 'similarity'
-                                    }
-
-                                },
-                                legend: {
-                                    enabled: false
-                                },
-                                plotOptions: {
-                                    series: {
-                                        borderWidth: 0,
-                                        dataLabels: {
-                                            enabled: true,
-                                            format: '{point.y:.4f}%'
-                                        }
-                                    }
-                                },
-
-                                tooltip: {
-                                    headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-                                    pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
-                                },
-
-                                series: [
-                                    {
-                                        name: "similarity",
-                                        colorByPoint: true,
-                                        data: [
-                                            {
-                                                name: "BBH",
-                                                y: a,
-                                                drilldown: "Chrome"
-                                            },
-                                            {
-                                                name: "CG",
-                                                y: b,
-                                                drilldown: "Firefox"
-                                            },
-                                            {
-                                                name: "상수",
-                                                y: 7.23,
-                                                drilldown: "Internet Explorer"
-                                            },
-                                            {
-                                                name: "PE",
-                                                y: 10.58,
-                                                drilldown: "Safari"
-                                            },
-                                        ]
-                                    }
-                                ]
-                            });
+                            // var card = document.createElement("div");
+                            // card.className = 'card';
+                            // card.id = "card" + index;
+                            // document.getElementById("test").appendChild(card);
+                            // var chart = document.createElement("div");
+                            // chart.id = "mychart" + index;
+                            // document.getElementById("card" + index).appendChild(chart);
+                            // var a = json_res[standard][target][2];
+                            // var b = json_res[standard][target][3];
+                            // var c = json_res[standard][target][0];
+                            // // var card
+                            // Highcharts.chart("mychart" + index, {
+                            //     chart: {
+                            //         type: 'column'
+                            //     },
+                            //     title: {
+                            //         text: 'similarity'
+                            //     },
+                            //     xAxis: {
+                            //         type: 'category'
+                            //     },
+                            //     yAxis: {
+                            //         title: {
+                            //             text: 'similarity'
+                            //         }
+                            //
+                            //     },
+                            //     legend: {
+                            //         enabled: false
+                            //     },
+                            //     plotOptions: {
+                            //         series: {
+                            //             borderWidth: 0,
+                            //             dataLabels: {
+                            //                 enabled: true,
+                            //                 format: '{point.y:.4f}%'
+                            //             }
+                            //         }
+                            //     },
+                            //
+                            //     tooltip: {
+                            //         headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                            //         pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
+                            //     },
+                            //
+                            //     series: [
+                            //         {
+                            //             name: "similarity",
+                            //             colorByPoint: true,
+                            //             data: [
+                            //                 {
+                            //                     name: "BBH",
+                            //                     y: a,
+                            //                     drilldown: "Chrome"
+                            //                 },
+                            //                 {
+                            //                     name: "CG",
+                            //                     y: b,
+                            //                     drilldown: "Firefox"
+                            //                 },
+                            //                 {
+                            //                     name: "상수",
+                            //                     y: 7.23,
+                            //                     drilldown: "Internet Explorer"
+                            //                 },
+                            //                 {
+                            //                     name: "PE",
+                            //                     y: 10.58,
+                            //                     drilldown: "Safari"
+                            //                 },
+                            //             ]
+                            //         }
+                            //     ]
+                            // });
                             index++;
                         }
 
@@ -303,13 +306,13 @@
                 }
             }
         }
-    }
+    };
     // 페이지가 처음 뜰 때 기준은 처음으로 대상은 전부 선택해서 보여주도록
     var first_base = $("#select_base").find('option:first');
     first_base.attr('selected', 'selected');
     $('#select_target option').prop('selected', true);
-    $('#select_target').find('[value='+first_base.text()+']').prop('selected', false);
-    $('#select_target').find('[value='+first_base.text()+']').prop('disabled', true);
+    $('#select_target').find('[value=' + first_base.text() + ']').prop('selected', false);
+    $('#select_target').find('[value=' + first_base.text() + ']').prop('disabled', true);
 
     $all_select();
 </script>

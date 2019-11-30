@@ -3,7 +3,11 @@
 {% block head %}
 {% load static %}
 <link href="{% static 'Main_engine/css/pe.css' %}" rel="stylesheet">
-{% endblock head%}
+<link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet">
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="{% static 'Main_engine/js/jquery.timelinr-0.9.7.js' %}"></script>
+<script src="{% static 'Main_engine/css/hightchart.css' %}"></script>
+{% endblock head %}
 
 {% block section %}
 <br><br><br>
