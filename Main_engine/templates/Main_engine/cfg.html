@@ -53,29 +53,29 @@
 {% if cfg %}
 
 <script>
-    var boxes = {};
-    var idiv = document.createElement('div');
-    idiv.id = 'view';
-    document.getElementById('nav-cfg').appendChild(idiv);
-    var jdiv = document.createElement('div');
-    jdiv.id = 'scrollblind';
-    document.getElementById('view').appendChild(jdiv);
+     var boxes = {};
 
-    /* 함수이름 버튼 만드는 함수 */
-    function makebt(fname) {
-        var btn = document.createElement("a"); // 함수 버튼 만드는 함수
-        btn.id = fname;
-        btn.textContent = fname;
-        btn.className = 'nav-link';
-        btn.setAttribute('style', "font-style: inherit; color: #ffffff; display: block;");
-        btn.onclick = function () {
-            draw(boxes[fname]);
-        }; //button click 하면 함수 그려주기
+            /* 함수이름 버튼 만드는 함수 */
+            function makebt(fname) {
+                var li = document.createElement("li");
+                li.id = "li";
+                // btn.addEventListener('onclick', draw(boxes[fname]));
+                /* 동적 이벤트 추가 */
+                document.getElementById('func_menu').appendChild(li);
+                li.onclick = function () {
+                    draw(boxes[fname]);
+                }; //button click 하면 함수 그려주기
 
-        // btn.addEventListener('onclick', draw(boxes[fname]));
-        /* 동적 이벤트 추가 */
-        document.getElementById('scrollblind').appendChild(btn);
-    }
+                // btn.addEventListener('onclick', draw(boxes[fname]));
+                /* 동적 이벤트 추가 */
+
+                var a = document.createElement("a");
+                a.id = "a";
+                a.className = "sidenav-item-link";
+                a.textContent = fname;
+                document.getElementById("li").appendChild(a);
+
+            }
 
     /* 그래프 그리기 위한 변수 생성 */
     function boxing(array, branches) {
