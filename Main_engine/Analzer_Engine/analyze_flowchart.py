@@ -208,6 +208,50 @@ class AnalyzeFlowchart:
                 #print(f" ")
         return float(str(matched / total_len)[:4])
 
+    def get_match_func_level(self, _dict):
+
+        bb_count = 0
+        func_match_dic = dict()
+
+        for func, val_01 in _dict.items():
+            bb_count = len(list(val_01.keys()))
+            temp_list = list()
+            for s_sAddr, val_02 in val_01.items():
+                for match_info, const_sim in val_02.items():
+                    temp_list.append((match_info.split('-'))[0])
+            temp_result = list(set(temp_list))
+
+            if len(temp_result) > 1:
+                temp = 0
+                vote_func = None
+                for i in temp_result:
+                    if temp < temp_list.count(i):
+                        temp = temp_list.count(i)
+                        vote_func = i
+                #print(f'{func} -> matched -> {vote_func}')
+                #print(f' ㄴ[debug] {temp} vote -> -> {vote_func}')
+                func_match_dic.update({func:vote_func})
+            else:
+                #print(f'{func} -> matched -> {temp_result[0]}')
+                func_match_dic.update({func:temp_result[0]})
+
+        return func_match_dic
+
+    def get_const_similarity(self, _dict):
+        # st = timeit.default_timer()  # start time
+
+        total_sim = 0
+        total_count = 0
+
+        for w, x in _dict.items():
+            for y, z in x.items():
+                total_sim += (list(z.values())[0])
+                total_count += 1
+        print(
+            f'[analysis] Basic Block Constants similarity :::::::::::: ({total_sim}/{total_count}) : {float(str(total_sim / total_count)[:4])}')
+        # print(f'ㄴ[debug] get const similarity time -> {timeit.default_timer() - st}')
+        return float(str(total_sim / total_count)[:4])
+
     def analyze_bbh(self, s_flow_data, t_flow_data):
         '''
         basic block hash(함수 대표값)을 비교해서 점수에 가중치를 매겨 반환하는 함수
@@ -220,7 +264,9 @@ class AnalyzeFlowchart:
 
         c_score = self.compare_prime(self.parser_bbh_T_F(cmp_s, ), self.parser_bbh_T_F(cmp_t, ), s_flow_data, t_flow_data)
 
-        return algo.get_bbh_similarity(cmp_s, c_score)
+        func_match_dict = self.get_match_func_level(true_bb_const_sim)
+
+        return algo.get_bbh_similarity(cmp_s, c_score), func_match_dict
 
 
     def analyze_constant(self, standard, target):
@@ -298,26 +344,30 @@ class AnalyzeFlowchart:
                 break
         return opdict, full_count
 
-    def analyze_all(self, yun_sorted_pe):
+    def analyze_all(self):
 
         idb_all = OrderedDict()
+        idb_func_all = dict()
 
         for index_1, idb_info_s in enumerate(self.idb_list):
             idb_s = dict()
+            idb_func_s = dict()
             yun_s = dict()
             for index_2, idb_info_t in enumerate(self.idb_list):
                 idb_t = dict()
-
                 if index_1 == index_2:
                     continue
 
-                idb_t['bbh'] = self.analyze_bbh(idb_info_s, idb_info_t)
+                idb_t['bbh'], idb_func_s[idb_info_t['file_name']] = self.analyze_bbh(idb_info_s, idb_info_t)
                 idb_t['const_value'] = self.analyze_constant(idb_info_s, idb_info_t)
 
                 idb_s[idb_info_t['file_name']] = idb_t
 
             idb_all[idb_info_s['file_name']] = idb_s
+            idb_func_all[idb_info_s['file_name']] = idb_func_s
 
-        return idb_all, yun_sorted_pe
+            with open(r"C:\malware\all_result\cfg" + "\\" + "result_cfg.txt", 'w') as makefile:
+                json.dump(idb_func_all, makefile, ensure_ascii=False, indent='\t')
 
+        return idb_all
 

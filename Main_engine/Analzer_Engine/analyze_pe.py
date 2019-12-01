@@ -414,7 +414,7 @@ class AnalyzePE:
 
             pe_all[pe_info_s['file_name']] = pe_s
 
-        return pe_all, yun_me
+        return pe_all
 
 
 

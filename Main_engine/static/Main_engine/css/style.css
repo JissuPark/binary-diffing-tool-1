@@ -162,3 +162,93 @@ section,h1 {
     height: 2px;
     background: #dee2e6;
     }
+.panel {
+    border: none;
+    box-shadow: none;
+}
+.panel-body {
+    padding: 15px;
+}
+.top-stats-panel {
+    min-height: 164px;
+}
+.widget-h {
+    color: #afaebc;
+    font-size: 16px;
+    text-transform: uppercase;
+    margin: 0px 0px 10px 0px;
+    text-align: center;
+}
+.bar-stats {
+    height: 80px;
+    margin-top: 20px;
+    border-bottom: #aec785 2px solid;
+    position: relative;
+}
+.progress-stat-bar {
+    padding-left: 10px;
+}
+.progress-stat-bar li {
+    height: 78px;
+    width: 20px;
+    background: #f1f1f1;
+    position: relative;
+    margin-right: 5px;
+    float: left;
+    list-style: none;
+}
+
+.progress-stat-percent {
+    background: #aec785;
+    display: block;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+}
+
+.bar-legend {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    padding-left: 0;
+}
+
+.bar-legend li {
+    font-size: 11px;
+    margin-bottom: 5px;
+    list-style: none;
+}
+.bar-legend-pointer {
+    height: 10px;
+    width: 10px;
+    display: inline-block;
+    position: relative;
+    top: 1px;
+    margin-right: 5px;
+}
+
+.pink {
+    background: #a48ad4 !important;
+}
+
+.bar-legend-pointer.green {
+    background: #AEC785;
+}
+.bar-legend-pointer {
+    height: 10px;
+    width: 10px;
+    display: inline-block;
+    position: relative;
+    top: 1px;
+    margin-right: 5px;
+}
+.yellow-b {
+    background: #fdd752 !important;
+}
+.daily-sales-info {
+    padding-top: 6px;
+}
+.daily-sales-info {
+    color: #ccc;
+}

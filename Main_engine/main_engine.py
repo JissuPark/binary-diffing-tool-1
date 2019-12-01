@@ -278,24 +278,24 @@ class Analyze_files:
 
         return real_final
 
-    def analyze_idb(self, yun_sorted_pe):
+    def analyze_idb(self):
         idb = analyze_flowchart.AnalyzeFlowchart(self.all_idb_info)
-        idb_result, yun_all = idb.analyze_all(yun_sorted_pe)
+        idb_result = idb.analyze_all()
 
-        return idb_result, yun_all
+        return idb_result
 
     def analyze_pe(self):
         pe = analyze_pe.AnalyzePE(self.all_pe_info)
         pe_split = pe.pe_parser()
-        pe_result, yun_pe = pe.analyze_all(pe_split)
+        pe_result = pe.analyze_all(pe_split)
 
-        return pe_result, yun_pe
+        return pe_result
 
 def create_folder():
     # mal_exe는 drag&drop할 때 먼저 생성됨
     # mal_idb, all_result(idb, pe) 가 없으면 생성
 
-    default_path = ["C:\\malware\\mal_idb\\","C:\\malware\\all_result\\", "C:\\malware\\all_result\\idb", "C:\\malware\\all_result\\pe\\", "C:\\malware\\all_result\\cg\\"]
+    default_path = ["C:\\malware\\mal_idb\\","C:\\malware\\all_result\\", "C:\\malware\\all_result\\idb", "C:\\malware\\all_result\\pe\\", "C:\\malware\\all_result\\cg\\", "C:\\malware\\all_result\\cfg\\"]
     for path in default_path:
         if os.path.exists(path):
             continue
@@ -351,15 +351,13 @@ def start_engine():
     print("6) Analyze file")
     analyze = Analyze_files(all_idb_info, all_pe_info)
 
-    result_pe, yun_pe = analyze.analyze_pe()
-    result_idb, yun_all = analyze.analyze_idb(yun_pe)
+    result_pe = analyze.analyze_pe()
+    result_idb = analyze.analyze_idb()
 
 
     print("7) Result Csv SAVE")
     # 6. 결과 저장
     all_result = analyze.calculate_heuristic(result_idb, result_pe)
-
-    delete_file()
 
     return all_result
 
