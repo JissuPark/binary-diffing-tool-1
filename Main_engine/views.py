@@ -94,9 +94,13 @@ def cfg(request):
     PATH = r'C:\malware\all_result\idb'
     for file in os.listdir(PATH):
         file_path = os.path.join(PATH, file)
-        with open(file_path, 'rb') as cfg:
-            cfg_dict[file] = json.loads(cfg.read())
-    return render(request, 'Main_engine/cfg.html', {'cfg': cfg_dict})
+        cfg = open(file_path, 'rb')
+        cfg_dict[file] = json.loads(cfg.read())
+        cfg.close()
+    cfg_file = open(r'C:\malware\all_result\cfg\result_cfg.txt', 'rb')
+    match_cfg = json.loads(cfg_file.read())
+    cfg_file.close()
+    return render(request, 'Main_engine/cfg.html', {'cfg': cfg_dict, 'matching': match_cfg})
 
 
 def cg(request):
