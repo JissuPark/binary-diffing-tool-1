@@ -7,7 +7,7 @@ import os
 import math
 
 import pefile
-from Main_engine.Extract_Engine.PE_feature import pe_pdb, pe_rsrc, pe_rich
+from Main_engine.Extract_Engine.PE_feature import pe_pdb, pe_rsrc, pe_rich, pe_stringfileinfo
 from Main_engine.models import PE_info
 
 HEX_M_32 = 0x14c
@@ -127,6 +127,10 @@ class Pe_Feature:
                 return np.nan
         return file_type
 
+    def extract_stringfileinfo(self):
+        strfileinfo = pe_stringfileinfo.getFileProperties(self.file_name)
+        return strfileinfo
+
     def convert_size(self, size_bytes):
         if size_bytes == 0:
             return "0B"
@@ -146,6 +150,7 @@ class Pe_Feature:
         cert = self.Certificateinfo()
         rich_xor_key, rich_prodid, rich_dict = self.extract_rich()
         pdb_info = self.extract_pdb()
+        stringfileinfo = self.extract_stringfileinfo()
         rsrc_info, rs, rl = self.extract_rsrc()
         time_info, TimeInNum = self.extract_time()
 
@@ -166,6 +171,7 @@ class Pe_Feature:
             'pdb_info': pdb_info,
             'time_date_stamp': time_info,
             'time in num': TimeInNum,
+            'string file info': stringfileinfo,
             'rsrc_info': rsrc_info,
             'rsrc_count': rs,
             'rsrc_lang': rl
