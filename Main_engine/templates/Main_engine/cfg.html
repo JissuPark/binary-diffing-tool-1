@@ -4,36 +4,22 @@
 {% block head %}
 {% load static %}
 <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+<link href="{% static 'Main_engine/css/styles.css' %}" rel="stylesheet">
+
 <style>
-    #view {
-        width: 200px;
-        height: 300px;
-        background-color: #6c757d;
-        overflow: hidden;
-    }
-
-    #scrollblind {
-        width: 230px;
-        height: 100%;
-        overflow-y: scroll;
-    }
-
     .paint {
-        overflow: auto;
         display: block;
         width: 100%;
-        /*height: 700px;*/
+        height: 100%;
     }
-
     .paint-vertical {
         display: flex;
         width: 100%;
+        height: 100%;
     }
-
     .graph {
         margin: 5px;
         width: 25%;
-        height: 800px;
         border: 3px solid grey;
     }
 </style>
@@ -41,7 +27,7 @@
 
 {% block section %}
 <div class="paint">
-    <div class="mt-5 paint-vertical" id="tab"></div>
+    <div id="tab"></div>
     <div class="paint-vertical">
         <div class="graph" id="base-graph"></div>
         <div class="graph" id="target1-graph"></div>
@@ -53,144 +39,144 @@
 {% if cfg %}
 
 <script>
-     var boxes = {};
+    window.onload = function() {
+        var boxes = {};
+        /* 함수이름 버튼 만드는 함수 */
+        function makebt(fname) {
+            var li = document.createElement("li");
+            li.id = "li_"+ fname;
+            // btn.addEventListener('onclick', draw(boxes[fname]));
+            /* 동적 이벤트 추가 */
+            document.getElementById('func_menu').appendChild(li);
+            li.onclick = function () {
+                draw(boxes[fname]);
+            }; //button click 하면 함수 그려주기
 
-            /* 함수이름 버튼 만드는 함수 */
-            function makebt(fname) {
-                var li = document.createElement("li");
-                li.id = "li";
-                // btn.addEventListener('onclick', draw(boxes[fname]));
-                /* 동적 이벤트 추가 */
-                document.getElementById('func_menu').appendChild(li);
-                li.onclick = function () {
-                    draw(boxes[fname]);
-                }; //button click 하면 함수 그려주기
+            // btn.addEventListener('onclick', draw(boxes[fname]));
+            /* 동적 이벤트 추가 */
 
-                // btn.addEventListener('onclick', draw(boxes[fname]));
-                /* 동적 이벤트 추가 */
-
-                var a = document.createElement("a");
-                a.id = "a";
-                a.className = "sidenav-item-link";
-                a.textContent = fname;
-                document.getElementById("li").appendChild(a);
-
-            }
-
-    /* 그래프 그리기 위한 변수 생성 */
-    function boxing(array, branches) {
-        var nodes = [];
-        for (var item in array) {
-            var node_dict = {};
-            node_dict['id'] = item;
-            node_dict['size'] = 300;
-            node_dict['label'] = array[item];
-            node_dict['shape'] = 'box';
-            node_dict['font'] = {'face': 'monospace', 'align': 'left'};
-            nodes.push(node_dict);
-        }
-        var Nodes = new vis.DataSet(nodes);
-
-        var edges = [];
-        for (var branch in branches) {
-            var start = [];
-            var end = [];
-            var leaf = branches[branch].toString().split(',');
-            // document.write(leaf+"<br>");
-            for (var l in leaf) {
-                if (l % 2 == 0) {
-                    start.push(leaf[l].toString().split('x')[1]);
-                    // document.write(start+"<br>");
-                } else {
-                    end.push(leaf[l].toString().split('x')[1]);
-                    // document.write(end[1]+"<br>");
-                }
-            }
-            for (var index = 0; index < start.length; index++) {
-                var edge_dict = {};
-                edge_dict['from'] = start[index];
-                edge_dict['to'] = end[index];
-                edge_dict['arrows'] = 'to';
-                edge_dict['physics'] = false;
-                edge_dict['smooth'] = {'type': 'cubicBezier'};
-                edges.push(edge_dict);
-            }
+            var a = document.createElement("a");
+            a.id = "a_"+ fname;
+            a.className = "sidenav-item-link";
+            a.textContent = fname;
+            document.getElementById("li_"+fname).appendChild(a);
         }
 
-        var Edges = new vis.DataSet(edges);
-        return [Nodes, Edges];
-    }
-
-    /* 그래프 그리는 함수 */
-    function draw(graph) {
-        var container1 = document.getElementById('base-graph');
-        var container2 = document.getElementById('target1-graph');
-        var container3 = document.getElementById('target2-graph');
-        var container4 = document.getElementById('target3-graph');
-
-        var data = {
-            nodes: graph[0],
-            edges: graph[1]
-        };
-        var options = {
-            manipulation: false,
-            layout: {
-                hierarchical: {
-                    enabled: true,
-                    levelSeparation: 300,
-                }
-            },
-            physics: {
-                hierarchicalRepulsion: {
-                    nodeDistance: 300
-                }
+        /* 그래프 그리기 위한 변수 생성 */
+        function boxing(array, branches) {
+            var nodes = [];
+            for (var item in array) {
+                var node_dict = {};
+                node_dict['id'] = item;
+                node_dict['size'] = 300;
+                node_dict['label'] = array[item];
+                node_dict['shape'] = 'box';
+                node_dict['font'] = {'face': 'monospace', 'align': 'left'};
+                nodes.push(node_dict);
             }
-        };
-        var network1 = new vis.Network(container1, data, options);
-        var network2 = new vis.Network(container2, data, options);
-        var network3 = new vis.Network(container3, data, options);
-        var network4 = new vis.Network(container4, data, options);
-    }
+            var Nodes = new vis.DataSet(nodes);
 
-    var cfgdata = "{{cfg}}";
-    var text_res = cfgdata.replace(/\n/gi, '\\n').replace(/&#39;/gi, '"').replace(/\t/gi, '\\t');
-    var json_res = JSON.parse(text_res);
-    //document.write(text_res);
-
-    var index = 0;
-    for (var file in json_res) {
-        for (var funcname in json_res[file]['func_name']) {
-            if (index == 0) {
-                makebt(funcname);
-            }
-            var array = {};
-            var branches = [];
-            //document.write(funcname + "<br>");
-            for (var startaddr in json_res[file]['func_name'][funcname]) {
-                //document.write(startaddr + "<br>");
-                if (startaddr != "flow_opString" && startaddr != "flow_constants" && startaddr != "flow_branches") {
-                    // document.write(startaddr+"<br>");
-                    var block = startaddr + "\n";
-                    //document.write(block);
-                    for (var curaddr in json_res[file]['func_name'][funcname][startaddr]['disasms']) {
-                        block = block + json_res[file]['func_name'][funcname][startaddr]['disasms'][curaddr] + '\n';
-                        //document.write(block);
+            var edges = [];
+            for (var branch in branches) {
+                var start = [];
+                var end = [];
+                var leaf = branches[branch].toString().split(',');
+                // document.write(leaf+"<br>");
+                for (var l in leaf) {
+                    if (l % 2 == 0) {
+                        start.push(leaf[l].toString().split('x')[1]);
+                        // document.write(start+"<br>");
+                    } else {
+                        end.push(leaf[l].toString().split('x')[1]);
+                        // document.write(end[1]+"<br>");
                     }
-                    var addrsplit = startaddr.split('x');
-                    array[addrsplit[1]] = block; //함수 값안에있는 정보
                 }
-                if (startaddr == "flow_branches" && json_res[file]['func_name'][funcname][startaddr].length != 0) {
-                    branches.push(json_res[file]['func_name'][funcname][startaddr]);
-                     //document.write(branches+"<br>");
+                for (var index = 0; index < start.length; index++) {
+                    var edge_dict = {};
+                    edge_dict['from'] = start[index];
+                    edge_dict['to'] = end[index];
+                    edge_dict['arrows'] = 'to';
+                    edge_dict['physics'] = false;
+                    edge_dict['smooth'] = {'type': 'cubicBezier'};
+                    edges.push(edge_dict);
                 }
             }
-            var box = "";
-            box = boxing(array, branches);
-            boxes[funcname] = box;
-            //document.write(boxes[funcname]);
-            // draw(boxes[funcname]);
+
+            var Edges = new vis.DataSet(edges);
+            return [Nodes, Edges];
         }
-        index++;
+
+        /* 그래프 그리는 함수 */
+        function draw(graph) {
+            var container1 = document.getElementById('base-graph');
+            var container2 = document.getElementById('target1-graph');
+            var container3 = document.getElementById('target2-graph');
+            var container4 = document.getElementById('target3-graph');
+
+            var data = {
+                nodes: graph[0],
+                edges: graph[1]
+            };
+            var options = {
+                manipulation: false,
+                layout: {
+                    hierarchical: {
+                        enabled: true,
+                        levelSeparation: 300,
+                    }
+                },
+                physics: {
+                    hierarchicalRepulsion: {
+                        nodeDistance: 300
+                    }
+                }
+            };
+            var network1 = new vis.Network(container1, data, options);
+            var network2 = new vis.Network(container2, data, options);
+            var network3 = new vis.Network(container3, data, options);
+            var network4 = new vis.Network(container4, data, options);
+        }
+
+        var cfgdata = "{{cfg}}";
+        var text_res = cfgdata.replace(/\n/gi, '\\n').replace(/&#39;/gi, '"').replace(/\t/gi, '\\t');
+        var json_res = JSON.parse(text_res);
+        //document.write(text_res);
+
+        var index = 0;
+        for (var file in json_res) {
+            for (var funcname in json_res[file]['func_name']) {
+                if (index == 0) {
+                    makebt(funcname);
+                }
+                var array = {};
+                var branches = [];
+                //document.write(funcname + "<br>");
+                for (var startaddr in json_res[file]['func_name'][funcname]) {
+                    //document.write(startaddr + "<br>");
+                    if (startaddr != "flow_opString" && startaddr != "flow_constants" && startaddr != "flow_branches") {
+                        // document.write(startaddr+"<br>");
+                        var block = startaddr + "\n";
+                        //document.write(block);
+                        for (var curaddr in json_res[file]['func_name'][funcname][startaddr]['disasms']) {
+                            block = block + json_res[file]['func_name'][funcname][startaddr]['disasms'][curaddr] + '\n';
+                            //document.write(block);
+                        }
+                        var addrsplit = startaddr.split('x');
+                        array[addrsplit[1]] = block; //함수 값안에있는 정보
+                    }
+                    if (startaddr == "flow_branches" && json_res[file]['func_name'][funcname][startaddr].length != 0) {
+                        branches.push(json_res[file]['func_name'][funcname][startaddr]);
+                        //document.write(branches+"<br>");
+                    }
+                }
+                var box = "";
+                box = boxing(array, branches);
+                boxes[funcname] = box;
+                //document.write(boxes[funcname]);
+                // draw(boxes[funcname]);
+            }
+            index++;
+        }
     }
 </script>
 {% else %}
