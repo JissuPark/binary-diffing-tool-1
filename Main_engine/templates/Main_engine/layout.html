@@ -8,45 +8,58 @@
 
     <title>{% block title %}Sleek - Admin Dashboard Template{% endblock %}</title>
 
-
     <!-- GOOGLE FONTS -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500|Poppins:400,500,600,700|Roboto:400,500"
           rel="stylesheet"/>
     <link href="https://cdn.materialdesignicons.com/3.0.39/css/materialdesignicons.min.css" rel="stylesheet"/>
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+
+    <!-- 먼지는 모르겠는데 순서가 중요함! 반드시 jquery 앞에 bootstrap 먼저 쓸 것!!! -->
+     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
             integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
-            crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
             crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
             integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
             crossorigin="anonymous"></script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+            crossorigin="anonymous"></script>
+
     <!-- PLUGINS CSS STYLE -->
-    <link href="{% static 'Main_engine/css/style.css' %}">
-    <link href="{% static 'Main_engine/css/styles.css' %}">
-    <link href="{% static 'Main_engine/plugins/toaster/toastr.min.css' %}">
+    <link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'Main_engine/css/styles.css' %}" rel="stylesheet">
+    <link href="{% static 'Main_engine/plugins/toaster/toastr.min.css' %}" rel="stylesheet">
     <link href="{% static 'Main_engine/plugins/nprogress/nprogress.css' %}" rel="stylesheet"/>
     <link href="{% static 'Main_engine/plugins/jvectormap/jquery-jvectormap-2.0.3.css' %}" rel="stylesheet"/>
     <link href="{% static 'Main_engine/plugins/ladda/ladda.min.css' %}" rel="stylesheet"/>
     <link href="{% static 'Main_engine/plugins/select2/css/select2.min.css' %}" rel="stylesheet"/>
     <link href="{% static 'Main_engine/plugins/daterangepicker/daterangepicker.css' %}" rel="stylesheet"/>
-    <script src="//code.jquery.com/jquery-3.2.1.min.js"></script>
+    <!--    <script src="//code.jquery.com/jquery-3.2.1.min.js"></script>-->
     <!-- SLEEK CSS -->
     <link id="sleek-css" rel="stylesheet" href="{% static 'Main_engine/css/sleek.css' %}"/>
-
-
     <!-- FAVICON -->
     <link href="{% static 'Main_engine/img/favicon.png' %}" rel="shortcut icon"/>
     <script src="{% static 'Main_engine/plugins/nprogress/nprogress.js' %}"></script>
-    <link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet"/>
-
+    <!--플러그인의 jquery가 있으면 파일 선택이 안되고 없으면 스크롤이 안됨; -->
+<!--    <script src="{% static 'Main_engine/plugins/jquery/jquery.min.js' %}"></script>-->
+    <script src="{% static 'Main_engine/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'Main_engine/plugins/toaster/toastr.min.js' %}"></script>
+    <script src="{% static 'Main_engine/plugins/slimscrollbar/jquery.slimscroll.min.js' %}"></script>
+    <script src="{% static 'Main_engine/plugins/ladda/spin.min.js' %}"></script>
+    <script src="{% static 'Main_engine/plugins/ladda/ladda.min.js' %}"></script>
+    <script src="{% static 'Main_engine/plugins/select2/js/select2.min.js' %}"></script>
+    <script src="{% static 'Main_engine/plugins/jvectormap/jquery-jvectormap-2.0.3.min.js' %}"></script>
+    <script src="{% static 'Main_engine/plugins/jvectormap/jquery-jvectormap-world-mill.js' %}"></script>
+    <script src="{% static 'Main_engine/plugins/daterangepicker/moment.min.js' %}"></script>
+    <script src="{% static 'Main_engine/plugins/daterangepicker/daterangepicker.js' %}"></script>
+    <script src="{% static 'Main_engine/plugins/jekyll-search.min.js' %}"></script>
+    <script src="{% static 'Main_engine/js/sleek.js' %}"></script>
+    <script src="{% static 'Main_engine/js/date-range.js' %}"></script>
 
     {% block head %}
     {% endblock head %}
 </head>
-
-
 <body class="sidebar-fixed sidebar-dark header-light header-fixed" id="body">
 <script>
     NProgress.configure({showSpinner: false});
@@ -54,9 +67,7 @@
 </script>
 
 <div class="mobile-sticky-body-overlay"></div>
-
 <div class="wrapper">
-
     <!--side bar star-->
     <aside class="left-sidebar bg-sidebar">
         <div id="sidebar" class="sidebar sidebar-with-footer">
@@ -81,11 +92,8 @@
             </div>
             <!-- begin sidebar scrollbar -->
             <div class="sidebar-scrollbar">
-
                 <!-- sidebar menu -->
                 <ul class="nav sidebar-inner" id="sidebar-menu">
-
-
                     <li class="has-sub expand">
                         <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
                            data-target="#dashboard"
@@ -97,28 +105,19 @@
                         <ul class="collapse" id="dashboard"
                             data-parent="#sidebar-menu">
                             <div class="sub-menu">
-
-
                                 <li>
-                                    <a class="sidenav-item-link" href="#huristic">
+                                    <a class="sidenav-item-link" href="result#huristic">
                                         <span class="nav-text">heuristic score</span>
-
                                     </a>
                                 </li>
-
-
                                 <li>
-                                    <a class="sidenav-item-link" href="#detail">
+                                    <a class="sidenav-item-link" href="result#detail">
                                         <span class="nav-text">Detail</span>
-
                                     </a>
                                 </li>
-
-
                             </div>
                         </ul>
                     </li>
-
 
                     <!---pe start--->
                     <li class="has-sub">
@@ -128,7 +127,6 @@
                             <span onclick="window.location='pe'" class="sidenav-item-link">PE</span>
                         </a>
                     </li>
-
 
                     <!-----carts start------>
                     <li class="has-sub">
@@ -141,7 +139,6 @@
                         <ul class="collapse" id="charts"
                             data-parent="#sidebar-menu">
                             <div class="sub-menu">
-
                                 <li class="has-sub">
                                     <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
                                        data-target="#authentication"
@@ -149,26 +146,16 @@
                                         <span class="nav-text">Function_name</span> <b class="caret"></b>
                                     </a>
                                     <ul class="collapse" id="authentication">
-                                        <div id="func_menu" class="sub-menu">
-
-
-                                        </div>
+                                        <div id="func_menu" class="sub-menu"></div>
                                     </ul>
                                 </li>
-
-
                             </div>
                         </ul>
                     </li>
-
-
                 </ul>
-
             </div>
-
         </div>
     </aside>
-
 
     <div class="page-wrapper">
         <!-- Header -->
@@ -178,21 +165,19 @@
                 <button id="sidebar-toggler" class="sidebar-toggle">
                     <span class="sr-only">Toggle navigation</span>
                 </button>
-
-{#                <div style="display:inline-flex; width:70%;">#}
-{#                    <p class="file_text">select base file : </p>#}
-{#                    <select id="select_base" class="selectpicker" data-live-search="true" data-width="20%" data-size="5"#}
-{#                            title="Choose base"></select>#}
-{#                    <p class="file_text">select target file : </p>#}
-{#                    <select id="select_target" class="selectpicker" data-actions-box="true" data-width="20%"#}
-{#                            data-size="5" multiple title="Choose targets"></select>#}
-{#                    <button id="select-oper">select</button>#}
-{#                </div>#}
-
-                {#                <a class="nav-link nav-item" href="result">home</a>#}
+                {% if result %}
+                <div style="display:inline-flex; width:70%;">
+                    <p class="file_text">select base file : </p>
+                    <select id="select_base" class="selectpicker" data-live-search="true" data-width="20%" data-size="5"
+                            title="Choose base"></select>
+                    <p class="file_text">select target file : </p>
+                    <select id="select_target" class="selectpicker" data-actions-box="true" data-width="20%"
+                            data-size="5" multiple title="Choose targets"></select>
+                    <button id="select-oper">select</button>
+                </div>
+                {% endif%}
             </nav>
         </header>
-
 
         <div class="content-wrapper">
             <div class="content">
@@ -204,25 +189,6 @@
         </div>
     </div>
 </div>
-
-
-<script src="{% static 'Main_engine/plugins/jquery/jquery.min.js' %}"></script>
-<script src="{% static 'Main_engine/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-<script src="{% static 'Main_engine/plugins/toaster/toastr.min.js' %}"></script>
-<script src="{% static 'Main_engine/plugins/slimscrollbar/jquery.slimscroll.min.js' %}"></script>
-<script src="{% static 'Main_engine/plugins/ladda/spin.min.js' %}"></script>
-<script src="{% static 'Main_engine/plugins/ladda/ladda.min.js' %}"></script>
-<script src="{% static 'Main_engine/plugins/select2/js/select2.min.js' %}"></script>
-<script src="{% static 'Main_engine/plugins/jvectormap/jquery-jvectormap-2.0.3.min.js' %}"></script>
-<script src="{% static 'Main_engine/plugins/jvectormap/jquery-jvectormap-world-mill.js' %}"></script>
-<script src="{% static 'Main_engine/plugins/daterangepicker/moment.min.js' %}"></script>
-<script src="{% static 'Main_engine/plugins/daterangepicker/daterangepicker.js' %}"></script>
-<script src="{% static 'Main_engine/plugins/jekyll-search.min.js' %}"></script>
-<script src="{% static 'Main_engine/js/sleek.js' %}"></script>
-<script src="{% static 'Main_engine/js/date-range.js' %}"></script>
-<link href="{% static 'Main_engine/css/bootstrap-select.min.css' %}" rel="stylesheet"/>
-<script src="{% static 'Main_engine/js/bootstrap-select.min.js' %}"></script>
-<script src="{% static 'Main_engine/js/defaults-ko_KR.min.js' %}"></script>
 
 </body>
 </html>
