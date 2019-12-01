@@ -29,7 +29,7 @@ TYPE_MAP = {
     22: "RT_ANIICON",
     23: "RT_HTML",
     24: "RT_MANIFEST",
-    2147483808: "BIN"
+    2147.483808e6: "BIN"
 }
 
 COUNTRY_MAP = {
@@ -326,7 +326,14 @@ class RsrcParser:
                 for resource_lang in resource_id.directory.entries:
                     rsrc_entry = dict()
                     country = match_language(resource_lang.id)
-                    type = match_type(resource_type.id)
+
+
+                    #id로만 찾을 수 없는 리소스의 이름들이 존재해서 문자열로 존재하는 리소스 이름들을 찾는다(제작자가 정한 리소스의 이름)
+                    #즉 임의로 만들에서 넣은 리소스라는 이야기인데...
+                    if resource_type.id == None:
+                        type = str(resource_type.name)
+                    else:
+                        type = match_type(resource_type.id)
                     #print(f'Resource Language is {resource_lang.id} : {country}')#{resource_lang.struct}')
 
                     rsrc_entry['Resource Type'] = type

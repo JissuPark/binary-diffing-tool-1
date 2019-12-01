@@ -4,6 +4,7 @@ import ssdeep
 from ngram import NGram
 import operator
 import numpy as np
+import json
 
 '''
                 pe_t['imphash'] = res_imphash
@@ -25,7 +26,6 @@ def Calc_All(pe_t):
     score += pe_t['pdb_score']
     score += pe_t['rsrc']
 
-
     score = score / 6
     score = round(score, 2)
     print(f"score for all :: {score}")
@@ -35,7 +35,9 @@ def Calc_Without_Pdb(pe_t):
     score = 0
     if np.isnan(pe_t['rsrc']):
         #pdb와 rsrc가 없는 경우
-        Calc_Without_Pdb_and_Rsrc(pe_t)
+        score += Calc_Without_Pdb_and_Rsrc(pe_t)
+    elif np.isnan(pe_t['cert_score']):
+        score += Calc_Without_Pdb_and_Cert(pe_t)
     else:
         #pdb만 없는 경우 가중치 부여
         score += pe_t['imphash']
@@ -47,13 +49,13 @@ def Calc_Without_Pdb(pe_t):
         score = score / 5
         score = round(score, 2)
         print(f"score without pdb :: {score}")
-        return score
+    return score
 
 def Calc_Without_Pdb_and_Rsrc(pe_t):
     score = 0
     if np.isnan(pe_t['cert_score']):
         #pdb, rsrc, cert 모두 없는 경우
-        Calc_Without_All(pe_t)
+        score += Calc_Without_All(pe_t)
     else:
         #pdb, rsrc 없는 경우의 가중치 부여
         score += pe_t['imphash']
@@ -64,7 +66,20 @@ def Calc_Without_Pdb_and_Rsrc(pe_t):
         score = score / 4
         score = round(score, 2)
         print(f"score without pdb and rsrc :: {score}")
-        return score
+    return score
+
+def Calc_Without_Pdb_and_Cert(pe_t):
+    score = 0
+    #pdb, cert가 없는 경우
+    score += pe_t['imphash']
+    score += pe_t['rich']
+    score += pe_t['section_score']
+    score += pe_t['rsrc']
+
+    score = score / 4
+    score = round(score, 2)
+    print(f"score without pdb and cert :: {score}")
+    return score
 
 def Calc_Without_All(pe_t):
     score = 0
@@ -83,7 +98,7 @@ def Calc_Without_Rsrc(pe_t):
     score = 0
     if np.isnan(pe_t['cert_score']):
         #rsrc와 cert가 없는 경우
-        Calc_Without_Rsrc_and_Cert(pe_t)
+        score += Calc_Without_Rsrc_and_Cert(pe_t)
     else:
         #rsrc만 없는 경우 가중치 부여
 
@@ -96,7 +111,7 @@ def Calc_Without_Rsrc(pe_t):
         score = score / 5
         score = round(score, 2)
         print(f"score without rsrc :: {score}")
-        return score
+    return score
 
 def Calc_Without_Rsrc_and_Cert(pe_t):
     score = 0
@@ -117,15 +132,10 @@ def Calc_Without_Cert(pe_t):
     score = 0
 
     score += pe_t['imphash']
-    print(pe_t['imphash'])
     score += pe_t['rich']
-    print(pe_t['rich'])
     score += pe_t['section_score']
-    print(pe_t['section_score'])
     score += pe_t['pdb_score']
-    print(pe_t['pdb_score'])
     score += pe_t['rsrc']
-    print(pe_t['rsrc'])
 
     score = score / 5
     score = round(score, 2)
@@ -388,6 +398,17 @@ class AnalyzePE:
                     all_score = Calc_Without_Cert(pe_t)
                 else:
                     all_score = Calc_All(pe_t)
+                pe_t['pe_all_score'] = all_score
+                print(f"pe all score :: {all_score}")
+                print(f"pe_t :: {json.dumps(pe_t, indent=4)}")
+
+                if np.isnan(pe_t['pdb_score']):
+                    pe_t['pdb_score'] = "No Data"
+                if np.isnan(pe_t['rsrc']):
+                    pe_t['rsrc'] = "No Data"
+                if np.isnan(pe_t['cert_score']):
+                    pe_t['cert_score'] = "No Data"
+
 
                 pe_s[pe_info_t['file_name']] = pe_t
 
