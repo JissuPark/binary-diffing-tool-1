@@ -106,12 +106,12 @@
                             data-parent="#sidebar-menu">
                             <div class="sub-menu">
                                 <li>
-                                    <a class="sidenav-item-link" href="#huristic">
+                                    <a class="sidenav-item-link" href="result#huristic">
                                         <span class="nav-text">heuristic score</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="sidenav-item-link" href="#detail">
+                                    <a class="sidenav-item-link" href="result#detail">
                                         <span class="nav-text">Detail</span>
                                     </a>
                                 </li>
@@ -165,6 +165,7 @@
                 <button id="sidebar-toggler" class="sidebar-toggle">
                     <span class="sr-only">Toggle navigation</span>
                 </button>
+                {% if result %}
                 <div style="display:inline-flex; width:70%;">
                     <p class="file_text">select base file : </p>
                     <select id="select_base" class="selectpicker" data-live-search="true" data-width="20%" data-size="5"
@@ -174,6 +175,7 @@
                             data-size="5" multiple title="Choose targets"></select>
                     <button id="select-oper">select</button>
                 </div>
+                {% endif%}
             </nav>
         </header>
 
