@@ -264,7 +264,9 @@ class AnalyzeFlowchart:
 
         c_score = self.compare_prime(self.parser_bbh_T_F(cmp_s, ), self.parser_bbh_T_F(cmp_t, ), s_flow_data, t_flow_data)
 
-        return algo.get_bbh_similarity(cmp_s, c_score)
+        func_match_dict = self.get_match_func_level(true_bb_const_sim)
+
+        return algo.get_bbh_similarity(cmp_s, c_score), func_match_dict
 
 
     def analyze_constant(self, standard, target):
@@ -343,25 +345,30 @@ class AnalyzeFlowchart:
                 break
         return opdict, full_count
 
-    def analyze_all(self, yun_sorted_pe):
+    def analyze_all(self):
 
         idb_all = OrderedDict()
+        idb_func_all = dict()
 
         for index_1, idb_info_s in enumerate(self.idb_list):
             idb_s = dict()
+            idb_func_s = dict()
             yun_s = dict()
             for index_2, idb_info_t in enumerate(self.idb_list):
                 idb_t = dict()
-
                 if index_1 == index_2:
                     continue
 
-                idb_t['bbh'] = self.analyze_bbh(idb_info_s, idb_info_t)
+                idb_t['bbh'], idb_func_s[idb_info_t['file_name']] = self.analyze_bbh(idb_info_s, idb_info_t)
                 idb_t['const_value'] = self.analyze_constant(idb_info_s, idb_info_t)
 
                 idb_s[idb_info_t['file_name']] = idb_t
 
             idb_all[idb_info_s['file_name']] = idb_s
+            idb_func_all[idb_info_s['file_name']] = idb_func_s
 
-        return idb_all, yun_sorted_pe
+            with open(r"C:\malware\all_result\cfg" + "\\" + "result_cfg.txt", 'w') as makefile:
+                json.dump(idb_func_all, makefile, ensure_ascii=False, indent='\t')
+
+        return idb_all
 
