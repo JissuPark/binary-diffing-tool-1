@@ -269,7 +269,8 @@ class AnalyzeFlowchart:
 
     def analyze_constant(self, standard, target):
         const_score = algo.get_string_similarity(standard['constant'], target['constant'])
-        return const_score['2-Gram']
+        return float(str(const_score['2-Gram'])[:4])
+        # retrun const_score['2-Gram"]
 
     def compare_prime(self, base, target, base_idb, target_idb):
         s_cm_dic, whitelist_dic1 = self.parser_bbh(base_idb)
