@@ -114,6 +114,16 @@ def cg(request):
     return render(request, 'Main_engine/cg.html', {'cg': cg_dict})
 
 def loading(request):
+
+    result_file = "C:\\malware\\all_result\\result.txt"
+    default_path = ["C:\\malware\\all_result\\result.txt", "C:\\malware\\all_result\\pe_all.txt"]
+
+    for path in default_path:
+        if os.path.isfile(path):
+            os.remove(path)
+            print(f"delete {path}")
+
+
     flag = file_check()
     if not flag:
         return render(request, 'Main_engine/index.html', {'message':'directory is empty or filetype is not pe !!'})
@@ -149,13 +159,10 @@ def upload_file_dropzone(request):
     print('in upload file dropzone')
 
     if request.method == 'POST':
-        print('here is post')
-        # if file_check(request, request.FILES['file']) is False:
-        #     messages.warning(request, 'Wrong extension!')
-        #     return HttpResponse('bye')
+        #print('here is post')
         handle_uploaded_file(request.FILES['file'])
+        #print(request.FILES['file'])
 
-        print(request.FILES['file'])
 
     return render(request, 'Main_engine/index.html')
 
