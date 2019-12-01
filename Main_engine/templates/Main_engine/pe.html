@@ -4,13 +4,10 @@
 {% load static %}
 <link href="{% static 'Main_engine/css/pe.css' %}" rel="stylesheet">
 <link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet">
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="{% static 'Main_engine/js/jquery.timelinr-0.9.7.js' %}"></script>
-<script src="{% static 'Main_engine/css/hightchart.css' %}"></script>
+
 {% endblock head %}
 
 {% block section %}
-<br><br><br>
 {% if lists.has_other_pages %}
 <nav aria-label="..." style="padding: 10px">
     <div id="page" style="position: relative; left: 600px; top: 20px;">
@@ -51,7 +48,7 @@
     <div class="header">
         <h3 align="left">Basic Properties</h3>
     </div>
-    <div class="detail">
+    <div class="detail" style="margin-left: 20px;">
         {% for pe in lists %}
         <table height=300px width=1000px>
             <tr>
@@ -90,15 +87,15 @@
 
     </div>
 </div>
-
+<br>
 <div id="Header" style="padding: 10px">
     <div class="header">
         <h3 align="left">Portable Executable Info</h3>
     </div>
     <div class="detail">
 
-        <table height=140px width=770px>
-            <div>
+        <table height=140px width=770px style="margin-left: 20px; margin-top: 10px;">
+            <div style="margin-left: 10px; margin-top: 15px;">
                 <h4>Header</h4>
             </div>
             <tr>
@@ -123,9 +120,9 @@
 
 <div id="wrapper2" style="padding: 10px">
     <div class="detail">
-        <table height=160px id="section_table" width=1000px>
+        <table height=160px id="section_table" width=1000px style="margin-left: 20px;margin-top: 15px;">
             <thead>
-            <div style="margin-top: 20px">
+            <div style="margin-top: 25px; margin-left: 10px;">
                 <h4>Sections</h4>
             </div>
             <tr>
@@ -190,17 +187,17 @@
 
 <div id="wrapper3" style="padding: 10px">
     <div class="detail">
-        <div style="margin-top: 20px">
+        <div style="margin-top: 20px; margin-left: 10px;">
             <h4 top=50px>Rich Header</h4>
         </div>
-        <table height=160px id="xor_key" width=300px>
+        <table height=160px id="xor_key" width=300px style="margin-left: 20px;margin-top: 15px;">
             <thead>
             <tr>
                 <th>Xor Key</th>
             </tr>
             </thead>
         </table>
-        <table height=160px id="rich_header" width=200px>
+        <table height=160px id="rich_header" width=200px style="margin-left: 20px;">
             <thead>
             <tr>
                 <th>Compiler Name</th>
@@ -260,8 +257,8 @@
 
 <div id="pdb" style="padding: 10px">
     <div class="detail">
-        <table height=140px width=770px>
-            <div style="margin-top: 20px">
+        <table height=140px width=770px style="margin-left:20px;margin-top: 10px;">
+            <div style="margin-top: 20px; margin-left: 10px;">
                 <h4 top=50px>PDB_information</h4>
             </div>
             <tr>
@@ -286,9 +283,9 @@
 
 <div style="padding: 10px">
     <div class="detail">
-        <table height=160px id="contained_resource_table" width=200px>
+        <table height=160px id="contained_resource_table" width=200px style="margin-left: 20px;margin-top: 10px;">
             <thead>
-            <div style="margin-top: 20px">
+            <div style="margin-top: 20px; margin-left: 10px;">
                 <h4 top=50px>Contained Resources By Type</h4>
             </div>
             <tr>
@@ -341,9 +338,9 @@
 
 <div style="padding: 10px">
     <div class="detail">
-        <table height=160px id="contained_resource_language_table" width=230px>
+        <table height=160px id="contained_resource_language_table" width=230px style="margin-left: 20px;margin-top: 10px;">
             <thead>
-            <div style="margin-top: 20px">
+            <div style="margin-top: 20px;margin-left: 10px;">
                 <h4 top=50px>Contained Resources By Language</h4>
             </div>
             <tr>
@@ -395,9 +392,9 @@
 
 <div style="padding: 10px">
     <div class="detail">
-        <table height=160px id="contained_resource_list_table" width=1000px>
+        <table height=160px id="contained_resource_list_table" width=1000px style="margin-left: 20px;margin-top: 10px;">
             <thead>
-            <div style="margin-top: 20px">
+            <div style="margin-top: 20px; margin-left: 10px;">
                 <h4>Contained Resources</h4>
             </div>
             <tr>
@@ -460,7 +457,7 @@
 
 <div style="padding: 10px">
     <div class="detail">
-        <div height=200px id="Import_dll_list_table" width=1000px>
+        <div height=200px id="Import_dll_list_table" width=1000px style="margin-left:10px;">
             <div style="margin-top: 20px">
                 <h4 top=50px>Imports</h4>
             </div>
