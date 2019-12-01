@@ -46,12 +46,12 @@ def pe(request):
 
                 elif p == 'rsrc_info':
                     p_rsrc_dict[pe_data['file_name']] = p_
-                    print(json.dumps(p_rsrc_dict, indent=4))
+                    #print(json.dumps(p_rsrc_dict, indent=4))
 
                 elif p == "rsrc_count":
                     #print(json.dumps(p_, indent=4))
                     p_rsrc_cnt[pe_data['file_name']] = p_
-                    print(json.dumps(p_rsrc_cnt, indent=4))
+                    #print(json.dumps(p_rsrc_cnt, indent=4))
 
                 elif p == 'rsrc_lang':
                     #print(json.dumps(p_, indent=4))
