@@ -29,6 +29,9 @@ def pe(request):
 
     page = request.GET.get('page', 1)
     p_dict = dict()
+    p_rsrc_dict = dict()
+    p_rsrc_cnt = dict()
+    p_rsrc_lang = dict()
     p_dll_list = dict()
     p_rich_list = dict()
     pe_result_list = os.listdir(r"C:\malware\all_result\pe")
@@ -40,17 +43,23 @@ def pe(request):
                 if p == "cmp_section":
                     #print(p_)
                     p_dict[pe_data['file_name']] = p_
+
                 elif p == 'rsrc_info':
-                    #print(p_)
-                    p_dict[pe_data['file_name']].update(p_)
+                    p_rsrc_dict[pe_data['file_name']] = p_
+                    #print(json.dumps(p_rsrc_dict, indent=4))
+
                 elif p == "rsrc_count":
-                    #print(p_)
-                    p_dict[pe_data['file_name']].update(p_)
+                    #print(json.dumps(p_, indent=4))
+                    p_rsrc_cnt[pe_data['file_name']] = p_
+                    #print(json.dumps(p_rsrc_cnt, indent=4))
+
                 elif p == 'rsrc_lang':
-                    #print(p_)
-                    p_dict[pe_data['file_name']].update(p_)
+                    #print(json.dumps(p_, indent=4))
+                    p_rsrc_lang[pe_data['file_name']] = p_
+
                 elif p == 'rich header':
                     p_rich_list[pe_data['file_name']] = p_
+
                 elif p == 'Imports':
                     p_dll_list[pe_data['file_name']] = p_
 
@@ -66,7 +75,9 @@ def pe(request):
     result_pe.close()
     f.close()
 
-    return render(request, 'Main_engine/pe.html', {'lists': lists, 'p_dict': p_dict, 'p_dll_list': p_dll_list, 'p_rich_list': p_rich_list})
+    return render(request, 'Main_engine/pe.html', {'lists': lists, 'p_dict': p_dict, 'p_rsrc': p_rsrc_dict,
+                                                   'p_rsrc_cnt': p_rsrc_cnt, 'p_rsrc_lang': p_rsrc_lang,
+                                                   'p_dll_list': p_dll_list, 'p_rich_list': p_rich_list})
 
 # def heuristic(request):
 #      with open(r"C:\malware\all_result\result.txt", "r") as json_file:
