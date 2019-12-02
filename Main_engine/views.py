@@ -155,19 +155,19 @@ def file_check():
         print('[DEBUG]directory is empty!')
         return False
 
-    for file in os.listdir(r'C:\malware\mal_exe'):
-        # 이름에서 확장자를 추출해 비교하는 로직
-        extension = ['exe','dll','sys','idb','i64']
-        file_extension = file.split('.')[-1]
-        print(f'[DEBUG] {file} is {file_extension}')
-        # 확장자가 없는 경우, 넘어감
-        if file == file_extension:
-            continue
-        # 확장자가 리스트에 없는 경우 해당 파일을 삭제하고 false 반환
-        if file_extension not in extension:
-            os.remove(os.path.join(r'C:\malware\mal_exe', file))
-            return False
-    # # 전부 돌았는데 false가 반환되지 않았다면 true 반환
+    # for file in os.listdir(r'C:\malware\mal_exe'):
+    #     # 이름에서 확장자를 추출해 비교하는 로직
+    #     extension = ['exe','dll','sys','idb','i64']
+    #     file_extension = file.split('.')[-1]
+    #     print(f'[DEBUG] {file} is {file_extension}')
+    #     # 확장자가 없는 경우, 넘어감
+    #     if file == file_extension:
+    #         continue
+    #     # 확장자가 리스트에 없는 경우 해당 파일을 삭제하고 false 반환
+    #     if file_extension not in extension:
+    #         os.remove(os.path.join(r'C:\malware\mal_exe', file))
+    #         return False
+    # # # 전부 돌았는데 false가 반환되지 않았다면 true 반환
     return True
 
 
