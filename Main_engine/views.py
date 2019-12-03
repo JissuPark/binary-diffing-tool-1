@@ -29,6 +29,9 @@ def pe(request):
 
     page = request.GET.get('page', 1)
     p_dict = dict()
+    p_rsrc_dict = dict()
+    p_rsrc_cnt = dict()
+    p_rsrc_lang = dict()
     p_dll_list = dict()
     p_rich_list = dict()
     pe_result_list = os.listdir(r"C:\malware\all_result\pe")
@@ -40,17 +43,23 @@ def pe(request):
                 if p == "cmp_section":
                     #print(p_)
                     p_dict[pe_data['file_name']] = p_
+
                 elif p == 'rsrc_info':
-                    #print(p_)
-                    p_dict[pe_data['file_name']].update(p_)
+                    p_rsrc_dict[pe_data['file_name']] = p_
+                    #print(json.dumps(p_rsrc_dict, indent=4))
+
                 elif p == "rsrc_count":
-                    #print(p_)
-                    p_dict[pe_data['file_name']].update(p_)
+                    #print(json.dumps(p_, indent=4))
+                    p_rsrc_cnt[pe_data['file_name']] = p_
+                    #print(json.dumps(p_rsrc_cnt, indent=4))
+
                 elif p == 'rsrc_lang':
-                    #print(p_)
-                    p_dict[pe_data['file_name']].update(p_)
+                    #print(json.dumps(p_, indent=4))
+                    p_rsrc_lang[pe_data['file_name']] = p_
+
                 elif p == 'rich header':
                     p_rich_list[pe_data['file_name']] = p_
+
                 elif p == 'Imports':
                     p_dll_list[pe_data['file_name']] = p_
 
@@ -66,7 +75,9 @@ def pe(request):
     result_pe.close()
     f.close()
 
-    return render(request, 'Main_engine/pe.html', {'lists': lists, 'p_dict': p_dict, 'p_dll_list': p_dll_list, 'p_rich_list': p_rich_list})
+    return render(request, 'Main_engine/pe.html', {'lists': lists, 'p_dict': p_dict, 'p_rsrc': p_rsrc_dict,
+                                                   'p_rsrc_cnt': p_rsrc_cnt, 'p_rsrc_lang': p_rsrc_lang,
+                                                   'p_dll_list': p_dll_list, 'p_rich_list': p_rich_list})
 
 # def heuristic(request):
 #      with open(r"C:\malware\all_result\result.txt", "r") as json_file:
@@ -83,9 +94,13 @@ def cfg(request):
     PATH = r'C:\malware\all_result\idb'
     for file in os.listdir(PATH):
         file_path = os.path.join(PATH, file)
-        with open(file_path, 'rb') as cfg:
-            cfg_dict[file] = json.loads(cfg.read())
-    return render(request, 'Main_engine/cfg.html', {'cfg': cfg_dict})
+        cfg = open(file_path, 'rb')
+        cfg_dict[file] = json.loads(cfg.read())
+        cfg.close()
+    cfg_file = open(r'C:\malware\all_result\cfg\result_cfg.txt', 'rb')
+    match_cfg = json.loads(cfg_file.read())
+    cfg_file.close()
+    return render(request, 'Main_engine/cfg.html', {'cfg': cfg_dict, 'matching': match_cfg})
 
 
 def cg(request):
@@ -99,6 +114,16 @@ def cg(request):
     return render(request, 'Main_engine/cg.html', {'cg': cg_dict})
 
 def loading(request):
+
+    result_file = "C:\\malware\\all_result\\result.txt"
+    default_path = ["C:\\malware\\all_result\\result.txt", "C:\\malware\\all_result\\pe_all.txt"]
+
+    for path in default_path:
+        if os.path.isfile(path):
+            os.remove(path)
+            print(f"delete {path}")
+
+
     flag = file_check()
     if not flag:
         return render(request, 'Main_engine/index.html', {'message':'directory is empty or filetype is not pe !!'})
@@ -134,13 +159,10 @@ def upload_file_dropzone(request):
     print('in upload file dropzone')
 
     if request.method == 'POST':
-        print('here is post')
-        # if file_check(request, request.FILES['file']) is False:
-        #     messages.warning(request, 'Wrong extension!')
-        #     return HttpResponse('bye')
+        #print('here is post')
         handle_uploaded_file(request.FILES['file'])
+        #print(request.FILES['file'])
 
-        print(request.FILES['file'])
 
     return render(request, 'Main_engine/index.html')
 
@@ -155,18 +177,18 @@ def file_check():
         print('[DEBUG]directory is empty!')
         return False
 
-    # for file in os.listdir(r'C:\malware\mal_exe'):
-    #     # 이름에서 확장자를 추출해 비교하는 로직
-    #     extension = ['exe','dll','sys','idb','i64']
-    #     file_extension = file.split('.')[-1]
-    #     print(f'[DEBUG] {file} is {file_extension}')
-    #     # 확장자가 없는 경우, 넘어감
-    #     if file == file_extension:
-    #         continue
-    #     # 확장자가 리스트에 없는 경우 해당 파일을 삭제하고 false 반환
-    #     if file_extension not in extension:
-    #         os.remove(os.path.join(r'C:\malware\mal_exe', file))
-    #         return False
+    for file in os.listdir(r'C:\malware\mal_exe'):
+        # 이름에서 확장자를 추출해 비교하는 로직
+        extension = ['exe','dll','sys','idb','i64']
+        file_extension = file.split('.')[-1]
+        print(f'[DEBUG] {file} is {file_extension}')
+        # 확장자가 없는 경우, 넘어감
+        if file == file_extension:
+            continue
+        # 확장자가 리스트에 없는 경우 해당 파일을 삭제하고 false 반환
+        if file_extension not in extension:
+            os.remove(os.path.join(r'C:\malware\mal_exe', file))
+            return False
     # # # 전부 돌았는데 false가 반환되지 않았다면 true 반환
     return True
 

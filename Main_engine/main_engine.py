@@ -14,20 +14,16 @@ from Main_engine.Extract_Engine import pe2idb
 from Main_engine.Extract_Engine.Flowchart_feature import extract_asm_and_const
 from Main_engine.Extract_Engine.PE_feature import extract_pe
 from Main_engine.Analzer_Engine import analyze_pe, analyze_flowchart
-from openpyxl import load_workbook, Workbook
 from Main_engine.Check_Packing import Packer_Detect2
 from Main_engine.Unpacking import unpack_module
 from Main_engine.models import *
-from Main_engine.ML import new_check_pe
 from Main_engine.ML import new_getinfo_pe
 
 
 
 import os
 from sklearn.externals import joblib
-
 import json
-
 from multiprocessing import Process, current_process, Queue, Pool
 
 
@@ -89,8 +85,8 @@ class Pe_Files_Check:
         # 일단 더 먼저 나오는 파일을 살리고 아닌 파일은 삭제하도록 하였다. 어차피 동일 파일이니깐.
 
         # all_result 안에 결과를 저장하는 부분
-        with open(r"C:\malware\all_result\test_pelist.txt", 'w') as pelist:
-            json.dump(self.pe_hash_dict, pelist, ensure_ascii=False, indent='\t')
+        # with open(r"C:\malware\all_result\test_pelist.txt", 'w') as pelist:
+        #     json.dump(self.pe_hash_dict, pelist, ensure_ascii=False, indent='\t')
 
         return self.pe_hash_dict
 
@@ -342,8 +338,8 @@ def start_engine():
         all_idb_info = Features.export_idb_info('idb')
         all_pe_info = Features.export_pe_info('pe')
         print("5) Machine Learning")
-        ML_result_data=idb_pe_feature(all_idb_info, all_pe_info)
-        print(ML_result_data)
+        #ML_result_data=idb_pe_feature(all_idb_info, all_pe_info)
+        #print(ML_result_data)
     else:
         print('convert_idb is error')
 

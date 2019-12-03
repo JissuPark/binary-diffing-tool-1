@@ -13,12 +13,18 @@
     <script src="{% static 'Main_engine/js/defaults-ko_KR.min.js' %}"></script>
 
     <style>
-        .outer {
-            overflow-x: scroll;
-            display: flex;
+        .card-outer {
+            height: 300px;
             width: 100%;
+            overflow: hidden;
         }
 
+        .card-inner {
+            width: 100%;
+            height: 320px;
+            overflow-x: scroll;
+            display: flex;
+        }
 
         .col-1, .col-2, .col-3, .col-4, .col-5, .col-6, .col-7, .col-8, .col-9, .col-10, .col-11, .col-12, .col, .col-auto, .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm, .col-sm-auto, .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12, .col-md, .col-md-auto, .col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg, .col-lg-auto, .col-xl-1, .col-xl-2, .col-xl-3, .col-xl-4, .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8, .col-xl-9, .col-xl-10, .col-xl-11, .col-xl-12, .col-xl, .col-xl-auto, .col-xxl-1, .col-xxl-2, .col-xxl-3, .col-xxl-4, .col-xxl-5, .col-xxl-6, .col-xxl-7, .col-xxl-8, .col-xxl-9, .col-xxl-10, .col-xxl-11, .col-xxl-12, .col-xxl, .col-xxl-auto {
             position: relative;
@@ -106,8 +112,9 @@
     <!--원래 있던 차트 부분-->
 
     <div class="card-deck ml-2 mr-2 mt-2">
-            <div  id="test" class="outer">
-
+        <div class="card-outer">
+            <div id="test" class="card-inner">
+            </div>
         </div>
     </div>
 
@@ -149,7 +156,6 @@
                 </div>
                 <script>
                     (function ($) {
-                        var width = $(".inner").width();
                         var length = 11;
                         /* 엔진에서 받아온 값 */
                         var result = "{{result}}";
@@ -340,27 +346,15 @@
                             }
                         };
                         // 페이지가 처음 뜰 때 기준은 처음으로 대상은 전부 선택해서 보여주도록
-                        $("#asdf").on('mousewheel', function (e) {
-                            var wheeldelta = e.originalEvent.wheelDelta;
-                            var width = $(".inner").width();
-                            if (wheeldelta > 0) {
-                                console.log(wheeldelta);
-                                $(this).scrollLeft(width + $(this).scrollLeft());
-                            } else {
-                                console.log(wheeldelta);
-                                $(this).scrollLeft(-width + $(this).scrollLeft());
-                            }
-                        });
-
-                        $("#leftbtn").click(function (e) {
+                        var width = $(".card-inner").width();
+                        $("#leftbtn").click(function () {
                             console.log("left");
-                            $("#asdf").animate({scrollLeft: $("#asdf").scrollLeft() - width}, 800);
+                            $("#test").animate({scrollLeft: $("#test").scrollLeft() - width}, 800);
                         });
-                        $("#rightbtn").click(function (e) {
+                        $("#rightbtn").click(function () {
                             console.log("right");
-                            $("#asdf").animate({scrollLeft: $("#asdf").scrollLeft() + width}, 800);
+                            $("#test").animate({scrollLeft: $("#test").scrollLeft() + width}, 800);
                         });
-
                         var first_base = $("#select_base").find('option:first');
                         first_base.attr('selected', 'selected');
                         $('#select_target option').prop('selected', true);

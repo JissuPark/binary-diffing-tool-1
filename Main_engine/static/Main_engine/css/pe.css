@@ -23,3 +23,16 @@ p{
   margin-bottom: 0rem !important;
   margin-left: 25px;
 }
+
+details{
+  width: 500px;
+}
+
+details > summary {
+  background: #f1f1f1;
+  padding: 3px 10px;
+}
+
+details > summary::-webkit-details-marker {
+  display: none
+}
