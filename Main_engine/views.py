@@ -98,9 +98,13 @@ def cfg(request):
     PATH = r'C:\malware\all_result\idb'
     for file in os.listdir(PATH):
         file_path = os.path.join(PATH, file)
-        with open(file_path, 'rb') as cfg:
-            cfg_dict[file] = json.loads(cfg.read())
-    return render(request, 'Main_engine/cfg.html', {'cfg': cfg_dict})
+        cfg = open(file_path, 'rb')
+        cfg_dict[file] = json.loads(cfg.read())
+        cfg.close()
+    cfg_file = open(r'C:\malware\all_result\cfg\result_cfg.txt', 'rb')
+    match_cfg = json.loads(cfg_file.read())
+    cfg_file.close()
+    return render(request, 'Main_engine/cfg.html', {'cfg': cfg_dict, 'matching': match_cfg})
 
 
 def cg(request):
@@ -114,6 +118,14 @@ def cg(request):
     return render(request, 'Main_engine/cg.html', {'cg': cg_dict})
 
 def loading(request):
+
+    default_path = ["C:\\malware\\all_result\\result.txt", "C:\\malware\\all_result\\pe_all.txt"]
+
+    for path in default_path:
+        if os.path.isfile(path):
+            os.remove(path)
+            #print(f"delete {path}")
+
     flag = file_check()
     if not flag:
         return render(request, 'Main_engine/index.html', {'message':'directory is empty or filetype is not pe !!'})
@@ -141,7 +153,6 @@ def call_main(request):
     print('time is ????')
     print(stop - start)
 
-    main_engine.delete_file()
     return render(request, 'Main_engine/result.html', {'result': result, 'pe_':pe_})
 
 
@@ -149,13 +160,10 @@ def upload_file_dropzone(request):
     print('in upload file dropzone')
 
     if request.method == 'POST':
-        print('here is post')
-        # if file_check(request, request.FILES['file']) is False:
-        #     messages.warning(request, 'Wrong extension!')
-        #     return HttpResponse('bye')
+        #print('here is post')
         handle_uploaded_file(request.FILES['file'])
+        #print(request.FILES['file'])
 
-        print(request.FILES['file'])
 
     return render(request, 'Main_engine/index.html')
 
@@ -192,6 +200,9 @@ def handle_uploaded_file(file):
     :param file: 업로드 된 파일
     :return: None
     '''
+
+    main_engine.delete_file()
+
     with open('C:\\malware\\mal_exe\\'+file.name, 'wb+') as uploaded_file:
         for chunk in file.chunks():
             uploaded_file.write(chunk)
