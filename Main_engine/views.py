@@ -22,7 +22,7 @@ def recent(request):
     return render(request, 'Main_engine/index.html')
 
 def pe(request):
-    f = open(r"C:\malware\all_result\pe_all.txt", 'w')
+    #f = open(r"C:\malware\all_result\pe_all.txt", 'w')
     pe_list = PE_info.objects.order_by('timenum').all()
     #print(pe_list)
     paginator = Paginator(pe_list, 1) #페이지당 1개씩의 pe_info
@@ -40,7 +40,7 @@ def pe(request):
         if os.path.isfile(r"C:\malware\all_result\pe" + "\\" + file):
             result_pe = open(r"C:\malware\all_result\pe" + "\\" + file, 'rb')
             pe_data = json.loads(result_pe.read())
-            for p,p_ in pe_data.items():
+            for p, p_ in pe_data.items():
                 if p == "cmp_section":
                     #print(p_)
                     p_dict[pe_data['file_name']] = p_
@@ -63,10 +63,11 @@ def pe(request):
 
                 elif p == 'Imports':
                     p_dll_list[pe_data['file_name']] = p_
+
                 elif p == 'string file info':
                     p_stringfile[pe_data['file_name']] = p_
 
-            json.dump(pe_data, f, ensure_ascii=False, indent='\t')
+            #json.dump(pe_data, f, ensure_ascii=False, indent='\t')
 
 
     try:
@@ -76,7 +77,7 @@ def pe(request):
     except EmptyPage:
         lists = paginator.page(paginator.num_pages)
     result_pe.close()
-    f.close()
+    #f.close()
 
     return render(request, 'Main_engine/pe.html', {'lists': lists, 'p_dict': p_dict, 'p_rsrc': p_rsrc_dict,
                                                    'p_rsrc_cnt': p_rsrc_cnt, 'p_rsrc_lang': p_rsrc_lang,

@@ -43,7 +43,7 @@
 {% endif %}
 <br><br><br>
 
-<div id="wrapper" style="padding: 10px">
+<div id="Basic Properties" style="padding: 10px">
     <div class="header">
         <h3 align="left">Basic Properties</h3>
     </div>
@@ -88,12 +88,12 @@
 </div>
 <br>
 {% if p_stringfileinfo %}
-<div id="string" style="padding: 10px">
+<div id="Signature Info" style="padding: 10px">
     <div class="header">
         <h3 align="left">Signature Info</h3>
     </div>
     <div class="detail">
-        <table id="fileinfo_table" height=250px style="margin-left: 20px; margin-top: 10px;" width=180px>
+        <table id="fileinfo_table" height=250px style="margin-left: 20px; margin-top: 10px;" width=320px>
             <tbody>
             <div style="margin-left: 10px; margin-top: 15px;">
                 <h4>File Version Information</h4>
@@ -200,7 +200,7 @@
 {% endif %}
 <br>
 
-<div id="Header" style="padding: 10px">
+<div id="Portable Executable Info" style="padding: 10px">
     <div class="header">
         <h3 align="left">Portable Executable Info</h3>
     </div>
@@ -293,102 +293,6 @@
         {% else %}
         <h1>no result</h1>
         {% endif %}
-    </div>
-</div>
-
-<div id="wrapper3" style="padding: 10px">
-    <div class="detail">
-        <div style="margin-top: 20px; margin-left: 10px;">
-            <h4 top=50px>Rich Header</h4>
-        </div>
-        <table height=160px id="xor_key" style="margin-left: 20px;margin-top: 15px;" width=300px>
-            <thead>
-            <tr>
-                <th>Xor Key</th>
-            </tr>
-            </thead>
-        </table>
-        <table height=160px id="rich_header" style="margin-left: 20px;" width=200px>
-            <thead>
-            <tr>
-                <th>Compiler Name</th>
-                <th>Count</th>
-            </tr>
-            </thead>
-        </table>
-        {% if p_rich_list %}
-        <script>
-            var pe_result = "{{p_rich_list}}";
-            /*
-            document.write(pe_result);
-            */
-            var text_pe_res = pe_result.replace(/&#39;/gi, '"');
-            var pe_t = document.getElementById("rich_header");
-            var x_t = document.getElementById('xor_key');
-
-            var json_pe = JSON.parse(text_pe_res);
-
-            /* 파일 이름이 다르면 테이블이 변경됨 */
-
-            function change_page() {
-                pe_filename = "{{pe.filename}}";
-                for (var fname in json_pe) {
-                    if (fname == pe_filename) {
-                        for (var rich in json_pe[fname]) {
-                            //section 부분만 출력하기 위한 if문
-                            //document.write(rich);
-                            if (rich == "xor key") {
-                                var x = x_t.insertRow(x_t.rows.length);
-                                var xor = x.insertCell(0);
-
-                                xor.innerHTML = json_pe[fname][rich];
-                            } else {
-                                var new_row = pe_t.insertRow(pe_t.rows.length);
-
-                                var comp_name = new_row.insertCell(0);
-                                var count = new_row.insertCell(1);
-
-                                comp_name.innerHTML = rich;
-                                count.innerHTML = json_pe[fname][rich];
-                            }
-
-                        }
-                    }
-                }
-            }
-
-            change_page();
-
-        </script>
-        {% else %}
-        <h1>no result</h1>
-        {% endif %}
-    </div>
-</div>
-
-<div id="pdb" style="padding: 10px">
-    <div class="detail">
-        <table height=140px style="margin-left:20px;margin-top: 10px;" width=770px>
-            <div style="margin-top: 20px; margin-left: 10px;">
-                <h4 top=50px>PDB Information</h4>
-            </div>
-            <tr>
-                <th>PDB Name</th>
-                <td>{{pe.pdbname}}</td>
-            </tr>
-            <tr>
-                <th>PDB GUID</th>
-                <td>{{pe.pdbguid}}</td>
-            </tr>
-            <tr>
-                <th>PDB Age</th>
-                <td>{{pe.pdbage}}</td>
-            </tr>
-            <tr>
-                <th>PDB Path</th>
-                <td>{{pe.pdbpath}}</td>
-            </tr>
-        </table>
     </div>
 </div>
 
@@ -628,6 +532,106 @@
         {% endif %}
     </div>
 </div>
+
+<div id="Extra Information" style="padding: 10px">
+    <div class="header">
+        <h3 align="left">Extra Information</h3>
+    </div>
+    <div class="detail">
+        <div style="margin-top: 20px; margin-left: 10px;">
+            <h4 top=50px>Rich Header</h4>
+        </div>
+        <table height=160px id="xor_key" style="margin-left: 20px;margin-top: 15px;" width=300px>
+            <thead>
+            <tr>
+                <th>Xor Key</th>
+            </tr>
+            </thead>
+        </table>
+        <table height=160px id="rich_header" style="margin-left: 20px;" width=200px>
+            <thead>
+            <tr>
+                <th>Compiler Name</th>
+                <th>Count</th>
+            </tr>
+            </thead>
+        </table>
+        {% if p_rich_list %}
+        <script>
+            var pe_result = "{{p_rich_list}}";
+            /*
+            document.write(pe_result);
+            */
+            var text_pe_res = pe_result.replace(/&#39;/gi, '"');
+            var pe_t = document.getElementById("rich_header");
+            var x_t = document.getElementById('xor_key');
+
+            var json_pe = JSON.parse(text_pe_res);
+
+            /* 파일 이름이 다르면 테이블이 변경됨 */
+
+            function change_page() {
+                pe_filename = "{{pe.filename}}";
+                for (var fname in json_pe) {
+                    if (fname == pe_filename) {
+                        for (var rich in json_pe[fname]) {
+                            //section 부분만 출력하기 위한 if문
+                            //document.write(rich);
+                            if (rich == "xor key") {
+                                var x = x_t.insertRow(x_t.rows.length);
+                                var xor = x.insertCell(0);
+
+                                xor.innerHTML = json_pe[fname][rich];
+                            } else {
+                                var new_row = pe_t.insertRow(pe_t.rows.length);
+
+                                var comp_name = new_row.insertCell(0);
+                                var count = new_row.insertCell(1);
+
+                                comp_name.innerHTML = rich;
+                                count.innerHTML = json_pe[fname][rich];
+                            }
+
+                        }
+                    }
+                }
+            }
+
+            change_page();
+
+        </script>
+        {% else %}
+        <h1>no result</h1>
+        {% endif %}
+    </div>
+</div>
+
+<div id="pdb" style="padding: 10px">
+    <div class="detail">
+        <table height=140px style="margin-left:20px;margin-top: 10px;" width=770px>
+            <div style="margin-top: 20px; margin-left: 10px;">
+                <h4 top=50px>PDB Information</h4>
+            </div>
+            <tr>
+                <th>PDB Name</th>
+                <td>{{pe.pdbname}}</td>
+            </tr>
+            <tr>
+                <th>PDB GUID</th>
+                <td>{{pe.pdbguid}}</td>
+            </tr>
+            <tr>
+                <th>PDB Age</th>
+                <td>{{pe.pdbage}}</td>
+            </tr>
+            <tr>
+                <th>PDB Path</th>
+                <td>{{pe.pdbpath}}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
 
 {% endfor %}
 </div>

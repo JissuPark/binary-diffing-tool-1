@@ -53,13 +53,13 @@ class Pe_Feature:
 
     def cmp_section_data(self):
 
-        rsrc = pe_rsrc.RsrcParser(self.file_name,self.pe)
+        rsrc = pe_rsrc.RsrcParser(self.file_name, self.pe)
         return rsrc.extract_sections_privileges()
 
 
     def Certificateinfo(self):
 
-        rsrc = pe_rsrc.RsrcParser(self.file_name,self.pe)
+        rsrc = pe_rsrc.RsrcParser(self.file_name, self.pe)
         #authentication = rsrc.extractPKCS7()
         return rsrc.extractPKCS7()
 
@@ -87,29 +87,32 @@ class Pe_Feature:
         rich = pe_rich.ParseRichHeader(self.file_name)
         rich_dict = dict()
         try:
-            flag = rich.parse()
+            xor, flag = rich.parse(self.file_name)
 
-            if flag != False:
-                xor_key = rich.xorkey
-                #rich_dict = dict()
+            if flag != {}:
+                xor_key = xor
+
+                # rich_dict = dict()
                 prod_list = list()
-                #print(f'XorKey : {xor_key}')
-                #print("ProID    name              count")
-                rich_dict['xor key'] = xor_key
-                for key in rich.info_list.keys():
-                    count = rich.info_list[key]
+                # print(f'XorKey : {xor_key}')
+                # print("ProID    name              count")
+                rich_dict['xor key'] = xor
+                for key in flag.keys():
+                    count = flag[key]
                     mcv = (key << 16)
                     prodid = (key >> 16)
                     prod_list.append(prodid)
                     prodid_name = pe_rich.PRODID_MAP[prodid] if prodid in pe_rich.PRODID_MAP else "<unknown>"
-                    #print('%6d   %-15s %5d     %6d' % (prodid, prodid_name, count, mcv))
+                    print('%6d   %-15s %5d     %6d' % (prodid, prodid_name, count, mcv))
                     rich_dict[prodid_name] = count
-
-                return xor_key, prod_list ,rich_dict
+                # print(f"xor key :: {xor_key}")
+                # print(f"prod_list :: {prod_list}")
+                # print(f"rich_dict :: {rich_dict}")
+                return xor_key, prod_list, rich_dict
             else:
-                return "", ""
+                return "", [], {}
         except:
-            return "", ""
+            return "", [], {}
 
     def filetypes(self):
         '''
