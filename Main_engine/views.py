@@ -115,14 +115,12 @@ def cg(request):
 
 def loading(request):
 
-    result_file = "C:\\malware\\all_result\\result.txt"
     default_path = ["C:\\malware\\all_result\\result.txt", "C:\\malware\\all_result\\pe_all.txt"]
 
     for path in default_path:
         if os.path.isfile(path):
             os.remove(path)
-            print(f"delete {path}")
-
+            #print(f"delete {path}")
 
     flag = file_check()
     if not flag:
@@ -151,7 +149,6 @@ def call_main(request):
     print('time is ????')
     print(stop - start)
 
-    main_engine.delete_file()
     return render(request, 'Main_engine/result.html', {'result': result, 'pe_':pe_})
 
 
@@ -199,6 +196,9 @@ def handle_uploaded_file(file):
     :param file: 업로드 된 파일
     :return: None
     '''
+
+    main_engine.delete_file()
+
     with open('C:\\malware\\mal_exe\\'+file.name, 'wb+') as uploaded_file:
         for chunk in file.chunks():
             uploaded_file.write(chunk)
