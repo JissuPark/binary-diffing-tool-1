@@ -3,63 +3,155 @@
 {% block title %} CFG page {% endblock %}
 {% block head %}
 {% load static %}
-<script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+<script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.js"></script>
 <link href="{% static 'Main_engine/css/styles.css' %}" rel="stylesheet">
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.js"></script>
+<script src="{% static 'Main_engine/js/defaults-ko_KR.min.js' %}"></script>
 
 <style>
+    button#select-oper {
+        background-color: lightgray;
+        border-radius: 5px;
+        font-weight: bold;
+        font-size: large;
+        width: 20%;
+        margin-left: 20px;
+        margin-right: 20px;
+        text-align: center;
+    }
+
+    button#select-oper:hover {
+        background-color: #d8d8d8;
+        color: red;
+        border: white;
+    }
+
+    p.file_text {
+        width: 20%;
+        margin: 6px;
+        font-size: large;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .graph-outer {
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .graph-inner {
+        width: 100%;
+        height: 100%;
+        overflow-x: scroll;
+        display: flex;
+    }
+
     .paint {
         display: block;
         width: 100%;
         height: 100%;
     }
-    .paint-vertical {
-        display: flex;
-        width: 100%;
-        height: 100%;
-    }
-    .graph {
+
+
+    div.groot-4 {
         margin: 5px;
-        width: 25%;
+        /*width: 300px;*/
         border: 3px solid grey;
     }
+
+    div.groot-3 {
+        margin: 5px;
+        /*width: 33%;*/
+        border: 3px solid grey;
+    }
+
+    div.groot-2 {
+        margin: 5px;
+        /*width: 50%;*/
+        border: 3px solid grey;
+    }
+
+    div.blur {
+        height: 100%;
+        background-color: black;
+        opacity: 0.4;
+    }
+
+    p.blur {
+        margin-top: 60%;
+        text-align: center;
+        font-size: xx-large;
+        font-weight: bold;
+        color: ghostwhite;
+    }
+
+    div.seonea {
+        height: 100%;
+    }
+
+    p.seonea {
+        margin-top: 60%;
+        text-align: center;
+        font-size: xx-large;
+        font-weight: bold;
+    }
+
 </style>
 {% endblock head %}
 
 {% block section %}
 <div class="paint">
-    <div id="tab"></div>
-    <div class="paint-vertical">
-        <div class="graph" id="base-graph"></div>
-        <div class="graph" id="target1-graph"></div>
-        <div class="graph" id="target2-graph"></div>
-        <div class="graph" id="target3-graph"></div>
+    <div class="graph-outer">
+        <div id="test" class="graph-inner">
+
+        </div>
     </div>
 </div>
 
 {% if cfg %}
-
+{% if matching %}
 <script>
-    window.onload = function() {
-        var boxes = {};
-        /* 함수이름 버튼 만드는 함수 */
-        function makebt(fname) {
-            var li = document.createElement("li");
-            li.id = "li_"+ fname;
-            // btn.addEventListener('onclick', draw(boxes[fname]));
-            /* 동적 이벤트 추가 */
-            document.getElementById('func_menu').appendChild(li);
-            li.onclick = function () {
-                draw(boxes[fname]);
-            }; //button click 하면 함수 그려주기
+    (function ($) {
 
-            // btn.addEventListener('onclick', draw(boxes[fname]));
-            /* 동적 이벤트 추가 */
+        var cfgdata = "{{cfg}}";
+        var text_res = cfgdata.replace(/\n/gi, '\\n').replace(/&#39;/gi, '"').replace(/\t/gi, '\\t');
+        var json_res = JSON.parse(text_res);
+
+        var matchdata = "{{matching}}";
+        var match_text = matchdata.replace(/\n/gi, "\\n").replace(/\t/gi, "\\t").replace(/&#39;/gi, '"');
+        var match_json = JSON.parse(match_text);
+
+        var postoffice = {};
+        var boxes = {};
+
+        var pickerclass = document.getElementsByClassName("selectpicker");
+        for (var picker = 0; picker < pickerclass.length; picker++) {
+            for (var standard in match_json) {
+                var option = document.createElement("option");
+                option.value = standard;
+                option.text = standard;
+                pickerclass.item(picker).appendChild(option);
+
+            }
+        }
+
+        /* 함수이름 버튼 만드는 함수 */
+        function makebt(file, fname) {
+            var li = document.createElement("li");
+            li.id = "li_" + fname;
+            li.onclick = function () {
+                $draw(file, fname);
+            }; //button click 하면 함수 그려주기
+            document.getElementById('func_menu').appendChild(li);
 
             var a = document.createElement("a");
-            a.id = "a_"+ fname;
+            a.id = "a_" + fname;
             a.className = "sidenav-item-link";
             a.textContent = fname;
-            document.getElementById("li_"+fname).appendChild(a);
+            document.getElementById("li_" + fname).appendChild(a);
         }
 
         /* 그래프 그리기 위한 변수 생성 */
@@ -106,80 +198,175 @@
             return [Nodes, Edges];
         }
 
+        /* 버튼 클릭하면 데이터 변하게 하는 함수 */
+        $("#select-oper").click(function () {
+            $draw();
+        });
         /* 그래프 그리는 함수 */
-        function draw(graph) {
-            var container1 = document.getElementById('base-graph');
-            var container2 = document.getElementById('target1-graph');
-            var container3 = document.getElementById('target2-graph');
-            var container4 = document.getElementById('target3-graph');
-
-            var data = {
-                nodes: graph[0],
-                edges: graph[1]
-            };
-            var options = {
-                manipulation: false,
-                layout: {
-                    hierarchical: {
-                        enabled: true,
-                        levelSeparation: 300,
-                    }
-                },
-                physics: {
-                    hierarchicalRepulsion: {
-                        nodeDistance: 300
+        $draw = function (file, fname) {
+            //그림을 그릴 부분을 먼저 지워준다. (안 지우면 계속 추가됨)
+            $('.graph-inner').empty();
+            //매칭되는 애들을 모아보자
+            var targetlist = [];
+            targetlist.push([file, fname]);
+            for (filename in match_json) {
+                //기준 파일명 찾고
+                if (file == filename) {
+                    for (target in match_json[filename]) {
+                        //대상 중에서 기준 함수명을 찾는다.
+                        if (match_json[filename][target].hasOwnProperty(fname)) {
+                            targetlist.push([target, match_json[filename][target][fname]]);
+                        } else {
+                            targetlist.push([target, "none"]);
+                        }
                     }
                 }
-            };
-            var network1 = new vis.Network(container1, data, options);
-            var network2 = new vis.Network(container2, data, options);
-            var network3 = new vis.Network(container3, data, options);
-            var network4 = new vis.Network(container4, data, options);
-        }
+            }
+            //그릴거야
+            var graph_cnt = Object.keys(postoffice).length;
+            for (var index = 0; index < graph_cnt; index++) {
+                //그릴 그래프가 4개 이상인지 이하인지 확인
+                var div = document.createElement('div');
+                div.id = "graph_" + index;
+                if (graph_cnt > 3) {
+                    div.className = "col-xl-3 col-sm-6";
+                } else if (graph_cnt == 3) {
+                    div.className = " col-xl-4 col-lg-6 col-12";
+                } else {
+                    div.className = " col-xl-6";
+                }
+                //기준은 위치 고정
+                if (index == 0) {
+                    div.setAttribute("style", "position: sticky; left:0px; border: 3px solid red;  background-color:white; z-index: " + (graph_cnt - 1) + ";");
+                } else {
+                    div.setAttribute("style", " border: 3px solid grey;");
+                }
+                document.getElementById('test').appendChild(div);
 
-        var cfgdata = "{{cfg}}";
-        var text_res = cfgdata.replace(/\n/gi, '\\n').replace(/&#39;/gi, '"').replace(/\t/gi, '\\t');
-        var json_res = JSON.parse(text_res);
-        //document.write(text_res);
+
+                if (targetlist[index][1] == 'none') {
+                    document.getElementById('graph_' + index).setAttribute('class', 'groot-3 saonea');
+                    var p = document.createElement('p');
+                    p.className = 'seonea';
+                    p.innerText = "There is not matched function.";
+                    // p.innerText = "없다";
+                    document.getElementById("graph_" + index).appendChild(p);
+                    continue;
+                }
+                var data = {
+                    nodes: postoffice[targetlist[index][0]][targetlist[index][1]][0],
+                    edges: postoffice[targetlist[index][0]][targetlist[index][1]][1]
+                };
+
+                var options = {
+                    manipulation: false,
+                    layout: {
+                        hierarchical: {
+                            enabled: true,
+                            levelSeparation: 300
+                        }
+                    },
+                    physics: {
+                        hierarchicalRepulsion: {
+                            nodeDistance: 300
+                        }
+                    }
+                };
+                var canvas = document.getElementById('graph_' + index);
+                var network = new vis.Network(canvas, data, options);
+
+                //파일명, 함수명, 유사도 추가
+                var name_label = document.createElement('p');
+                name_label.innerText = targetlist[index][0]+ '\n'+ targetlist[index][1];
+                name_label.setAttribute('style', 'position: absolute; word-wrap: break-word; text-overflow: ellipsis; width: 90%; z-index: 2; top: 3px;');
+                document.getElementById('graph_' + index).appendChild(name_label);
+                //////////////////////////
+            }
+        };
+
+
+        // function draw(graph) {
+        //     //그리기 전에 그릴 공간을 먼저 지운다. (지우지 않으면 자꾸 늘어나게 됨)
+        //     $('#base-graph').empty();
+        //     $('#target1-graph').empty();
+        //     $('#target2-graph').empty();
+        //     $('#target3-graph').empty();
+        //
+        //     var container1 = document.getElementById('base-graph');
+        //     var container2 = document.getElementById('target1-graph');
+        //     var container3 = document.getElementById('target2-graph');
+        //     var container4 = document.getElementById('target3-graph');
+        //
+        //     var data = {
+        //         nodes: graph[0],
+        //         edges: graph[1]
+        //     };
+        //
+        //     var options = {
+        //         manipulation: false,
+        //         layout: {
+        //             hierarchical: {
+        //                 enabled: true,
+        //                 levelSeparation: 300
+        //             }
+        //         },
+        //         physics: {
+        //             hierarchicalRepulsion: {
+        //                 nodeDistance: 300
+        //             }
+        //         }
+        //     };
+        //
+        //     var network1 = new vis.Network(container1, data, options);
+        //     var network2 = new vis.Network(container2, data, options);
+        //     var network3 = new vis.Network(container3, data, options);
+        //     var network4 = new vis.Network(container4, data, options);
+        // }
+
 
         var index = 0;
         for (var file in json_res) {
             for (var funcname in json_res[file]['func_name']) {
                 if (index == 0) {
-                    makebt(funcname);
+                    makebt(json_res[file]['file_name'], funcname);
                 }
                 var array = {};
                 var branches = [];
-                //document.write(funcname + "<br>");
                 for (var startaddr in json_res[file]['func_name'][funcname]) {
-                    //document.write(startaddr + "<br>");
                     if (startaddr != "flow_opString" && startaddr != "flow_constants" && startaddr != "flow_branches") {
-                        // document.write(startaddr+"<br>");
                         var block = startaddr + "\n";
-                        //document.write(block);
+
                         for (var curaddr in json_res[file]['func_name'][funcname][startaddr]['disasms']) {
                             block = block + json_res[file]['func_name'][funcname][startaddr]['disasms'][curaddr] + '\n';
-                            //document.write(block);
                         }
                         var addrsplit = startaddr.split('x');
                         array[addrsplit[1]] = block; //함수 값안에있는 정보
                     }
                     if (startaddr == "flow_branches" && json_res[file]['func_name'][funcname][startaddr].length != 0) {
                         branches.push(json_res[file]['func_name'][funcname][startaddr]);
-                        //document.write(branches+"<br>");
                     }
                 }
                 var box = "";
                 box = boxing(array, branches);
                 boxes[funcname] = box;
-                //document.write(boxes[funcname]);
-                // draw(boxes[funcname]);
             }
             index++;
+            postoffice[json_res[file]['file_name']] = boxes;
         }
-    }
+
+        // 페이지가 처음 뜰 때 기준은 처음으로 대상은 전부 선택해서 보여주도록
+        var first_base = $("#select_base").find('option:first');
+        first_base.attr('selected', 'selected');
+        $('#select_target option').prop('selected', true);
+        $('#select_target').find('[value="' + first_base.text() + '"]').prop('selected', false);
+        $('#select_target').find('[value="' + first_base.text() + '"]').prop('disabled', true);
+
+    })(jQuery);
+
+
 </script>
 {% else %}
 <h2>Nope!</h2>
+{% endif %}
 {% endif %}
 {% endblock section %}

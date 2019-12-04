@@ -124,7 +124,6 @@ def loading(request):
     for path in default_path:
         if os.path.isfile(path):
             os.remove(path)
-            #print(f"delete {path}")
 
     flag = file_check()
     if not flag:
@@ -145,13 +144,15 @@ def call_main(request):
             json.dump(result, res, ensure_ascii=False, indent='\t')
 
     h_paginator = Paginator(result, 4)
-    print(test)
-    print(type(test))
+
     pe_ = PE_info.objects.order_by('timenum').all()
-    #print(pe_)
+
     stop = timeit.default_timer()
     print('time is ????')
     print(stop - start)
+
+
+    main_engine.delete_file()
 
     return render(request, 'Main_engine/result.html', {'result': result, 'pe_':pe_})
 
@@ -190,7 +191,7 @@ def file_check():
         if file_extension not in extension:
             os.remove(os.path.join(r'C:\malware\mal_exe', file))
             return False
-    # # 전부 돌았는데 false가 반환되지 않았다면 true 반환
+    # # # 전부 돌았는데 false가 반환되지 않았다면 true 반환
     return True
 
 
@@ -201,11 +202,7 @@ def handle_uploaded_file(file):
     :return: None
     '''
 
-    main_engine.delete_file()
 
     with open('C:\\malware\\mal_exe\\'+file.name, 'wb+') as uploaded_file:
         for chunk in file.chunks():
             uploaded_file.write(chunk)
-
-def test(request):
-    return render(request, 'Main_engine/result.html')
