@@ -7,7 +7,7 @@ import os
 import math
 
 import pefile
-from Main_engine.Extract_Engine.PE_feature import pe_pdb, pe_rsrc, pe_rich
+from Main_engine.Extract_Engine.PE_feature import pe_pdb, pe_rsrc, pe_rich, pe_stringfileinfo
 from Main_engine.models import PE_info
 
 HEX_M_32 = 0x14c
@@ -53,13 +53,13 @@ class Pe_Feature:
 
     def cmp_section_data(self):
 
-        rsrc = pe_rsrc.RsrcParser(self.file_name,self.pe)
+        rsrc = pe_rsrc.RsrcParser(self.file_name, self.pe)
         return rsrc.extract_sections_privileges()
 
 
     def Certificateinfo(self):
 
-        rsrc = pe_rsrc.RsrcParser(self.file_name,self.pe)
+        rsrc = pe_rsrc.RsrcParser(self.file_name, self.pe)
         #authentication = rsrc.extractPKCS7()
         return rsrc.extractPKCS7()
 
@@ -87,29 +87,32 @@ class Pe_Feature:
         rich = pe_rich.ParseRichHeader(self.file_name)
         rich_dict = dict()
         try:
-            flag = rich.parse()
+            xor, flag = rich.parse(self.file_name)
 
-            if flag != False:
-                xor_key = rich.xorkey
-                #rich_dict = dict()
+            if flag != {}:
+                xor_key = xor
+
+                # rich_dict = dict()
                 prod_list = list()
-                #print(f'XorKey : {xor_key}')
-                #print("ProID    name              count")
-                rich_dict['xor key'] = xor_key
-                for key in rich.info_list.keys():
-                    count = rich.info_list[key]
+                # print(f'XorKey : {xor_key}')
+                # print("ProID    name              count")
+                rich_dict['xor key'] = xor
+                for key in flag.keys():
+                    count = flag[key]
                     mcv = (key << 16)
                     prodid = (key >> 16)
                     prod_list.append(prodid)
                     prodid_name = pe_rich.PRODID_MAP[prodid] if prodid in pe_rich.PRODID_MAP else "<unknown>"
-                    #print('%6d   %-15s %5d     %6d' % (prodid, prodid_name, count, mcv))
+                    print('%6d   %-15s %5d     %6d' % (prodid, prodid_name, count, mcv))
                     rich_dict[prodid_name] = count
-
-                return xor_key, prod_list ,rich_dict
+                # print(f"xor key :: {xor_key}")
+                # print(f"prod_list :: {prod_list}")
+                # print(f"rich_dict :: {rich_dict}")
+                return xor_key, prod_list, rich_dict
             else:
-                return "", ""
+                return "", [], {}
         except:
-            return "", ""
+            return "", [], {}
 
     def filetypes(self):
         '''
@@ -126,6 +129,10 @@ class Pe_Feature:
             else:
                 return np.nan
         return file_type
+
+    def extract_stringfileinfo(self):
+        strfileinfo = pe_stringfileinfo.getFileProperties(self.file_name)
+        return strfileinfo
 
     def convert_size(self, size_bytes):
         if size_bytes == 0:
@@ -146,6 +153,7 @@ class Pe_Feature:
         cert = self.Certificateinfo()
         rich_xor_key, rich_prodid, rich_dict = self.extract_rich()
         pdb_info = self.extract_pdb()
+        stringfileinfo = self.extract_stringfileinfo()
         rsrc_info, rs, rl = self.extract_rsrc()
         time_info, TimeInNum = self.extract_time()
 
@@ -166,6 +174,7 @@ class Pe_Feature:
             'pdb_info': pdb_info,
             'time_date_stamp': time_info,
             'time in num': TimeInNum,
+            'string file info': stringfileinfo,
             'rsrc_info': rsrc_info,
             'rsrc_count': rs,
             'rsrc_lang': rl

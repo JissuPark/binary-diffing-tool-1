@@ -83,7 +83,7 @@
                             data-parent="#sidebar-menu">
                             <div class="sub-menu">
                                 <li>
-                                    <a class="sidenav-item-link" href="result#huristic">
+                                    <a class="sidenav-item-link" href="result#heuristic">
                                         <span class="nav-text">heuristic score</span>
                                     </a>
                                 </li>
@@ -97,12 +97,39 @@
                     </li>
 
                     <!---pe start--->
-                    <li class="has-sub">
-                        <a class="sidenav-item-link" href="pe" data-toggle="collapse" data-target="#ui-elements"
-                           aria-expanded="false" aria-controls="ui-elements">
+                    <li class="has-sub expand">
+                        <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
+                           data-target="#pe_menu"
+                           aria-expanded="false" aria-controls="pe_menu">
                             <i class="mdi mdi-folder-multiple-outline"></i>
                             <span onclick="window.location='pe'" class="sidenav-item-link">PE</span>
+                            <b class="caret"></b>
                         </a>
+                        <ul class="collapse" id="pe_menu"
+                            data-parent="#sidebar-menu">
+                            <div class="sub-menu">
+                                <li>
+                                    <a class="sidenav-item-link" href="pe#Basic Properties">
+                                        <span class="nav-text">Basic Properties</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="sidenav-item-link" href="pe#Signature Info">
+                                        <span class="nav-text">Signature Info</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="sidenav-item-link" href="pe#Portable Executable Info">
+                                        <span class="nav-text">Portable Executable Info</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="sidenav-item-link" href="pe#Extra Information">
+                                        <span class="nav-text">Extra Information</span>
+                                    </a>
+                                </li>
+                            </div>
+                        </ul>
                     </li>
 
                     <!-----carts start------>

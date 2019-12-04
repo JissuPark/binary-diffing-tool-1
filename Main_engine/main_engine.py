@@ -169,10 +169,14 @@ def multiprocess_file(q, return_dict, flag):
             elif pe_f is None:
                 try:
                     pe = pefile.PE(f_path)
+                    #print("여기까진 괜찮음")
                     info, pe_info_DB = extract_pe.Pe_Feature(f_path, pe).all()  # pe 속성 출력
+                    #print("여기도 괜찮음")
                     with open(r"C:\malware\all_result\pe" + "\\" + file_filter2 + ".txt", 'w') as makefile:
                         json.dump(info, makefile, ensure_ascii=False, indent='\t')
+                    #print("여기는?")
                     pe_file.pe_filepath = pe_file_path + file_filter2
+                    #print("여기는?")
                     pe_file.save()
                     pe.close()
                     print('pe없음')

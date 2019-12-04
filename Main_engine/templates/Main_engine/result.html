@@ -102,17 +102,75 @@
 
 {% block section %}
 
-    {% load static %}
 
-    <hr class="my-hr3">
-    <h5 id="heuristic" class="mb-3" style="font-weight: bold;">Heuristic Score</h5>
-    <hr class="my-hr3">
+{% load static %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-5">
+    <h3>Result</h3>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group mr-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary">high</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary">all</button>
+        </div>
+    </div>
+</div>
 
-    <!--원래 있던 차트 부분-->
-    <div class="card-deck ml-2 mr-2 mt-2">
-        <div class="card-outer">
-            <div id="test" class="card-inner">
+<!--원래 있던 차트 부분-->
+<br>
+<!------------------------ select file, target file 부분-------------------------------->
+<!--<div style="display:inline-flex; width:100%;">-->
+<!--    <p class="file_text">select base file : </p>-->
+<!--    <select id="select_base" class="selectpicker" data-live-search="true" data-width="20%" data-size="5"-->
+<!--            title="Choose base"></select>-->
+
+
+<!--    <p class="file_text">select target file : </p>-->
+<!--    <select id="select_target" class="selectpicker" data-width="20%" data-size="5" multiple-->
+<!--            title="Choose targets"></select>-->
+
+
+<!--    <button id="select-oper">select</button>-->
+<!--</div>-->
+<!------------------------ select file, target file 부분-------------------------------->
+
+<hr class="my-hr3"><h5 id="heuristic" class="mt-2 mb-3" style="font-weight: bold;">Heuristic Score</h5>
+<hr class="my-hr3">
+
+<!--원래 있던 차트 부분-->
+<div id="test" class="card-deck ml-2 mr-2 mt-2">
+
+</div>
+
+<hr class="my-hr3"><h5 id="detail" class="mt-2 mb-3" style="font-weight: bold;">Detail</h5>
+<hr class="my-hr3">
+
+<div class="container-fluid col-12">
+    <div class="card pl-4 pr-4">
+        <div class="table-responsive ">
+            {% csrf_token %}
+            {% if result %}
+            <div id="result_json">
+                <table id="result_table" class="table table-borderless" style="text-align: center;">
+                    <thead>
+                    <tr>
+                        <th rowspan="2" align=center>File Name</th>
+                        <!--                <th rowspan="2">Timestamp</th>-->
+                        <th colspan="2">Algorithm</th>
+                        <th colspan="6">PE META data</th>
+                    </tr>
+                    <tr>
+                        <th>BBH</th>
+                        <th>Constant</th>
+                        <th>Section data</th>
+                        <th>certification</th>
+                        <th>PDB</th>
+                        <th>imp-hash</th>
+                        <th>Rich-xorkey</th>
+                    </tr>
+                    </thead>
+                </table>
+
             </div>
+            {% endif %}
         </div>
         <a id="prev" class="previous round"
            style="z-index: 1; text-decoration: none; display: inline-block; padding: 8px 16px;"

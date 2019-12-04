@@ -22,7 +22,7 @@ def recent(request):
     return render(request, 'Main_engine/index.html')
 
 def pe(request):
-    f = open(r"C:\malware\all_result\pe_all.txt", 'w')
+    #f = open(r"C:\malware\all_result\pe_all.txt", 'w')
     pe_list = PE_info.objects.order_by('timenum').all()
     #print(pe_list)
     paginator = Paginator(pe_list, 1) #페이지당 1개씩의 pe_info
@@ -34,12 +34,13 @@ def pe(request):
     p_rsrc_lang = dict()
     p_dll_list = dict()
     p_rich_list = dict()
+    p_stringfile = dict()
     pe_result_list = os.listdir(r"C:\malware\all_result\pe")
     for file in pe_result_list:
         if os.path.isfile(r"C:\malware\all_result\pe" + "\\" + file):
             result_pe = open(r"C:\malware\all_result\pe" + "\\" + file, 'rb')
             pe_data = json.loads(result_pe.read())
-            for p,p_ in pe_data.items():
+            for p, p_ in pe_data.items():
                 if p == "cmp_section":
                     #print(p_)
                     p_dict[pe_data['file_name']] = p_
@@ -63,7 +64,10 @@ def pe(request):
                 elif p == 'Imports':
                     p_dll_list[pe_data['file_name']] = p_
 
-            json.dump(pe_data, f, ensure_ascii=False, indent='\t')
+                elif p == 'string file info':
+                    p_stringfile[pe_data['file_name']] = p_
+
+            #json.dump(pe_data, f, ensure_ascii=False, indent='\t')
 
 
     try:
@@ -73,11 +77,11 @@ def pe(request):
     except EmptyPage:
         lists = paginator.page(paginator.num_pages)
     result_pe.close()
-    f.close()
+    #f.close()
 
     return render(request, 'Main_engine/pe.html', {'lists': lists, 'p_dict': p_dict, 'p_rsrc': p_rsrc_dict,
                                                    'p_rsrc_cnt': p_rsrc_cnt, 'p_rsrc_lang': p_rsrc_lang,
-                                                   'p_dll_list': p_dll_list, 'p_rich_list': p_rich_list})
+                                                   'p_dll_list': p_dll_list, 'p_rich_list': p_rich_list, 'p_stringfileinfo': p_stringfile})
 
 # def heuristic(request):
 #      with open(r"C:\malware\all_result\result.txt", "r") as json_file:
@@ -120,7 +124,6 @@ def loading(request):
     for path in default_path:
         if os.path.isfile(path):
             os.remove(path)
-            #print(f"delete {path}")
 
     flag = file_check()
     if not flag:
@@ -141,13 +144,14 @@ def call_main(request):
             json.dump(result, res, ensure_ascii=False, indent='\t')
 
     h_paginator = Paginator(result, 4)
-    print(test)
-    print(type(test))
+
     pe_ = PE_info.objects.order_by('timenum').all()
-    #print(pe_)
+
     stop = timeit.default_timer()
     print('time is ????')
     print(stop - start)
+
+    main_engine.delete_file()
 
     return render(request, 'Main_engine/result.html', {'result': result, 'pe_':pe_})
 
@@ -197,11 +201,7 @@ def handle_uploaded_file(file):
     :return: None
     '''
 
-    main_engine.delete_file()
 
     with open('C:\\malware\\mal_exe\\'+file.name, 'wb+') as uploaded_file:
         for chunk in file.chunks():
             uploaded_file.write(chunk)
-
-def test(request):
-    return render(request, 'Main_engine/result.html')
