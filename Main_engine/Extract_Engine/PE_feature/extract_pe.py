@@ -103,7 +103,7 @@ class Pe_Feature:
                     prodid = (key >> 16)
                     prod_list.append(prodid)
                     prodid_name = pe_rich.PRODID_MAP[prodid] if prodid in pe_rich.PRODID_MAP else "<unknown>"
-                    print('%6d   %-15s %5d     %6d' % (prodid, prodid_name, count, mcv))
+                    #print('%6d   %-15s %5d     %6d' % (prodid, prodid_name, count, mcv))
                     rich_dict[prodid_name] = count
                 # print(f"xor key :: {xor_key}")
                 # print(f"prod_list :: {prod_list}")
@@ -145,7 +145,6 @@ class Pe_Feature:
         return Size
 
     def all(self, ):
-        func_list = self.ImportDll()
         file_type = magic.from_file(self.file_name)
         imphash = self.imphash_data()
         implist = self.ImportDll()
