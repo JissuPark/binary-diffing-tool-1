@@ -130,6 +130,7 @@ def call_main(request):
     print('time is ????')
     print(stop - start)
 
+
     main_engine.delete_file()
     return render(request, 'Main_engine/result.html', {'result': result, 'pe_':pe_})
 

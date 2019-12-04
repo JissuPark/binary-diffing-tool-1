@@ -14,8 +14,9 @@
     <link href="https://cdn.materialdesignicons.com/3.0.39/css/materialdesignicons.min.css" rel="stylesheet"/>
 
     <!-- 먼지는 모르겠는데 순서가 중요함! 반드시 jquery 앞에 bootstrap 먼저 쓸 것!!! -->
-     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-            integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+    <script
+            src="https://code.jquery.com/jquery-3.4.1.js"
+            integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
             crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
             integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
@@ -27,33 +28,15 @@
     <!-- PLUGINS CSS STYLE -->
     <link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet">
     <link href="{% static 'Main_engine/css/styles.css' %}" rel="stylesheet">
-    <link href="{% static 'Main_engine/plugins/toaster/toastr.min.css' %}" rel="stylesheet">
-    <link href="{% static 'Main_engine/plugins/nprogress/nprogress.css' %}" rel="stylesheet"/>
-    <link href="{% static 'Main_engine/plugins/jvectormap/jquery-jvectormap-2.0.3.css' %}" rel="stylesheet"/>
-    <link href="{% static 'Main_engine/plugins/ladda/ladda.min.css' %}" rel="stylesheet"/>
-    <link href="{% static 'Main_engine/plugins/select2/css/select2.min.css' %}" rel="stylesheet"/>
-    <link href="{% static 'Main_engine/plugins/daterangepicker/daterangepicker.css' %}" rel="stylesheet"/>
-    <!--    <script src="//code.jquery.com/jquery-3.2.1.min.js"></script>-->
     <!-- SLEEK CSS -->
     <link id="sleek-css" rel="stylesheet" href="{% static 'Main_engine/css/sleek.css' %}"/>
     <!-- FAVICON -->
     <link href="{% static 'Main_engine/img/favicon.png' %}" rel="shortcut icon"/>
-    <script src="{% static 'Main_engine/plugins/nprogress/nprogress.js' %}"></script>
     <!--플러그인의 jquery가 있으면 파일 선택이 안되고 없으면 스크롤이 안됨; -->
-<!--    <script src="{% static 'Main_engine/plugins/jquery/jquery.min.js' %}"></script>-->
+    <!--    <script src="{% static 'Main_engine/plugins/jquery/jquery.min.js' %}"></script>-->
     <script src="{% static 'Main_engine/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-    <script src="{% static 'Main_engine/plugins/toaster/toastr.min.js' %}"></script>
     <script src="{% static 'Main_engine/plugins/slimscrollbar/jquery.slimscroll.min.js' %}"></script>
-    <script src="{% static 'Main_engine/plugins/ladda/spin.min.js' %}"></script>
-    <script src="{% static 'Main_engine/plugins/ladda/ladda.min.js' %}"></script>
-    <script src="{% static 'Main_engine/plugins/select2/js/select2.min.js' %}"></script>
-    <script src="{% static 'Main_engine/plugins/jvectormap/jquery-jvectormap-2.0.3.min.js' %}"></script>
-    <script src="{% static 'Main_engine/plugins/jvectormap/jquery-jvectormap-world-mill.js' %}"></script>
-    <script src="{% static 'Main_engine/plugins/daterangepicker/moment.min.js' %}"></script>
-    <script src="{% static 'Main_engine/plugins/daterangepicker/daterangepicker.js' %}"></script>
-    <script src="{% static 'Main_engine/plugins/jekyll-search.min.js' %}"></script>
     <script src="{% static 'Main_engine/js/sleek.js' %}"></script>
-    <script src="{% static 'Main_engine/js/date-range.js' %}"></script>
 
     {% block head %}
     {% endblock head %}
@@ -163,7 +146,7 @@
                 <button id="sidebar-toggler" class="sidebar-toggle">
                     <span class="sr-only">Toggle navigation</span>
                 </button>
-                {% if result %}
+                {% if result or cfg %}
                 <div style="display:inline-flex; width:70%;">
                     <p class="file_text">select base file : </p>
                     <select id="select_base" class="selectpicker" data-live-search="true" data-width="20%" data-size="5"
