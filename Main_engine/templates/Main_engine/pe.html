@@ -8,8 +8,8 @@
 
 {% block section %}
 {% if lists.has_other_pages %}
-<nav aria-label="..." style="padding: 10px">
-    <div id="page" style="position: relative; left: 600px; top: 20px;">
+<!--<nav aria-label="..." style="padding: 10px">-->
+    <div id="page" style="position: relative; left: 500px; top: 20px;">
         <ul class="pagination">
             {% if lists.has_previous %}
             <li class="page-item">
@@ -39,7 +39,7 @@
             {% endif %}
         </ul>
     </div>
-</nav>
+<!--</nav>-->
 {% endif %}
 <br><br><br>
 
@@ -153,23 +153,22 @@
                     if (fname == pe_filename) {
                         for (var section in json_pe[fname]) {
                             //section 부분만 출력하기 위한 if문
-                            if (section[0] == '.') {
-                                var new_row = pe_t.insertRow(pe_t.rows.length);
 
-                                var Name = new_row.insertCell(0);
-                                var Virtual_add = new_row.insertCell(1);
-                                var Virtual_size = new_row.insertCell(2);
-                                var Raw_size = new_row.insertCell(3);
-                                var Entropy = new_row.insertCell(4);
-                                var md5 = new_row.insertCell(5);
+                            var new_row = pe_t.insertRow(pe_t.rows.length);
 
-                                Name.innerHTML = json_pe[fname][section]['section_name'];
-                                Virtual_add.innerHTML = json_pe[fname][section]['virtual_address'];
-                                Virtual_size.innerHTML = json_pe[fname][section]['virtual_size'];
-                                Raw_size.innerHTML = json_pe[fname][section]['raw_size'];
-                                Entropy.innerHTML = json_pe[fname][section]['entropy'];
-                                md5.innerHTML = json_pe[fname][section]['hash_md5'];
-                            }
+                            var Name = new_row.insertCell(0);
+                            var Virtual_add = new_row.insertCell(1);
+                            var Virtual_size = new_row.insertCell(2);
+                            var Raw_size = new_row.insertCell(3);
+                            var Entropy = new_row.insertCell(4);
+                            var md5 = new_row.insertCell(5);
+
+                            Name.innerHTML = json_pe[fname][section]['section_name'];
+                            Virtual_add.innerHTML = json_pe[fname][section]['virtual_address'];
+                            Virtual_size.innerHTML = json_pe[fname][section]['virtual_size'];
+                            Raw_size.innerHTML = json_pe[fname][section]['raw_size'];
+                            Entropy.innerHTML = json_pe[fname][section]['entropy'];
+                            md5.innerHTML = json_pe[fname][section]['hash_md5'];
                         }
                     }
                 }
@@ -293,35 +292,35 @@
             </tr>
             </thead>
         </table>
-        {% if p_dict %}
+        {% if p_rsrc_cnt %}
         <script>
-            var pe_result = "{{p_dict}}";
-            /*
-            document.write(pe_result);
-            */
+            var pe_result = "{{p_rsrc_cnt}}";
+
+            //document.write(pe_result);
+
             var text_pe_res = pe_result.replace(/&#39;/gi, '"');
             var pe_t = document.getElementById("contained_resource_table");
 
             var json_pe = JSON.parse(text_pe_res);
-
             /* 파일 이름이 다르면 테이블이 변경됨 */
 
             function change_page() {
                 pe_filename = "{{pe.filename}}";
                 for (var fname in json_pe) {
+                    //document.write(fname)
                     if (fname == pe_filename) {
                         for (var rsrc in json_pe[fname]) {
                             //document.write(rsrc[0])
                             //resource 부분만 출력하기 위한 if문
-                            if (rsrc[0] == '_') {
-                                var new_row = pe_t.insertRow(pe_t.rows.length);
 
-                                var Resource_name = new_row.insertCell(0);
-                                var Count = new_row.insertCell(1);
+                            var new_row = pe_t.insertRow(pe_t.rows.length);
 
-                                Resource_name.innerHTML = rsrc.substr(1, rsrc.length - 1);
-                                Count.innerHTML = json_pe[fname][rsrc];
-                            }
+                            var Resource_name = new_row.insertCell(0);
+                            var Count = new_row.insertCell(1);
+
+                            Resource_name.innerHTML = rsrc;
+                            Count.innerHTML = json_pe[fname][rsrc];
+
                         }
                     }
                 }
@@ -348,9 +347,9 @@
             </tr>
             </thead>
         </table>
-        {% if p_dict %}
+        {% if p_rsrc_lang %}
         <script>
-            var pe_result = "{{p_dict}}";
+            var pe_result = "{{p_rsrc_lang}}";
             /*
             document.write(pe_result);
             */
@@ -403,44 +402,38 @@
             </tr>
             </thead>
         </table>
-        {% if p_dict %}
+        {% if p_rsrc %}
         <script>
-            var pe_result = "{{p_dict}}";
-            //document.write(pe_result)
-            /*
-            document.write(pe_result);
-            */
-            var text_pe_res = pe_result.replace(/&#39;/gi, '"');
+            var pe_result = "{{p_rsrc}}";
+
+            var text_pe_res = pe_result.replace(/&#39;/gi, '"').replace(/\t/gi, "\\t").replace(/\r/gi, "\\r").replace(/\n/gi, "\\n").replace(/nan/gi, '"nan"').replace(/None/gi, '"none"');
+            //document.write(text_pe_res);
             var pe_t = document.getElementById("contained_resource_list_table");
 
             var json_pe = JSON.parse(text_pe_res);
 
+            //document.write(json_pe);
+
             /* 파일 이름이 다르면 테이블이 변경됨 */
 
             function change_page() {
-                pe_filename = "{{pe.filename}}";
+                var pe_filename = "{{pe.filename}}";
                 for (var fname in json_pe) {
+                    //document.write(fname);
                     if (fname == pe_filename) {
                         for (var rsrc in json_pe[fname]) {
                             //document.write(fname)
                             //resource 부분만 출력하기 위한 if문
-                            if (rsrc[0] == '$') {
-                                //document.write(rsrc[0])
-                                //document.write(json_pe[fname][rsrc]['&amp;Resource Type'])
-                                var new_row = pe_t.insertRow(pe_t.rows.length);
+                            //document.write(rsrc[0])
+                            //document.write(json_pe[fname][rsrc]['&amp;Resource Type'])
+                            var new_row = pe_t.insertRow(pe_t.rows.length);
+                            var Resource_sha256 = new_row.insertCell(0);
+                            var Resource_type = new_row.insertCell(1);
+                            var Resource_Lang = new_row.insertCell(2);
 
-                                var Resource_sha256 = new_row.insertCell(0);
-                                var Resource_type = new_row.insertCell(1);
-                                var Resource_Lang = new_row.insertCell(2);
-
-                                sha = '&amp;sha-256';
-                                type = '&amp;Resource Type';
-                                lang = '&amp;Resource Language';
-
-                                Resource_sha256.innerHTML = json_pe[fname][rsrc][sha];
-                                Resource_type.innerHTML = json_pe[fname][rsrc][type].substr(1, json_pe[fname][rsrc][type].length - 1);
-                                Resource_Lang.innerHTML = json_pe[fname][rsrc][lang];
-                            }
+                            Resource_sha256.innerHTML = json_pe[fname][rsrc]['sha-256'];
+                            Resource_type.innerHTML = json_pe[fname][rsrc]['Resource Type'];
+                            Resource_Lang.innerHTML = json_pe[fname][rsrc]['Resource Language'];
                         }
                     }
                 }
@@ -470,8 +463,6 @@
             document.write(pe_result);
             */
             var text_pe_res = pe_result.replace(/&#39;/gi, '"');
-            var pe_t = document.getElementById("Import_dll_list_table");
-            var re = '\n';
             var json_pe = JSON.parse(text_pe_res);
 
             /* 파일 이름이 다르면 테이블이 변경됨 */
