@@ -16,6 +16,7 @@
     <link href="https://cdn.materialdesignicons.com/3.0.39/css/materialdesignicons.min.css" rel="stylesheet"/>
 
     <!-- 먼지는 모르겠는데 순서가 중요함! 반드시 jquery 앞에 bootstrap 먼저 쓸 것!!! -->
+
     <script src="https://code.jquery.com/jquery-3.4.1.js"
             integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
             crossorigin="anonymous"></script>
@@ -28,13 +29,15 @@
 
     <!-- PLUGINS CSS STYLE -->
 
-    <!--    <script src="//code.jquery.com/jquery-3.2.1.min.js"></script>-->
+    <link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'Main_engine/css/styles.css' %}" rel="stylesheet">
     <!-- SLEEK CSS -->
     <link id="sleek-css" rel="stylesheet" href="{% static 'Main_engine/css/sleek.css' %}"/>
     <!-- FAVICON -->
+    <link href="{% static 'Main_engine/img/favicon.png' %}" rel="shortcut icon"/>
 
     <!--플러그인의 jquery가 있으면 파일 선택이 안되고 없으면 스크롤이 안됨; -->
-<!--    <script src="{% static 'Main_engine/plugins/jquery/jquery.min.js' %}"></script>-->
+    <!--    <script src="{% static 'Main_engine/plugins/jquery/jquery.min.js' %}"></script>-->
     <script src="{% static 'Main_engine/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'Main_engine/plugins/slimscrollbar/jquery.slimscroll.min.js' %}"></script>
     <script src="{% static 'Main_engine/js/sleek.js' %}"></script>
@@ -169,7 +172,7 @@
                 <button id="sidebar-toggler" class="sidebar-toggle">
                     <span class="sr-only">Toggle navigation</span>
                 </button>
-                {% if result %}
+                {% if result or cfg %}
                 <div style="display:inline-flex; width:70%;">
                     <p class="file_text">select base file : </p>
                     <select id="select_base" class="selectpicker" data-live-search="true" data-width="20%" data-size="5"

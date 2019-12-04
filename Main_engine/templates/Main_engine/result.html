@@ -5,60 +5,12 @@
 {% block head %}
 
     {% load static %} <!-- static files are loaded -->
+
     <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
-    <script src="{% static 'Main_engine/js/defaults-ko_KR.min.js' %}"></script>
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.js"></script>
 
     <style>
-
-        .table-borderless tbody tr:first-child td {
-            padding-top: 1rem;
-        }
-
-        .table-borderless tbody tr:last-child td {
-            padding-bottom: 1rem;
-        }
-
-        .table-borderless tbody td:first-child {
-            width: 40%;
-            padding-left: 0;
-        }
-
-        /************************양쪽 next.prev 부분 쓰이는 css ************/
-        /**이거 하드코딩 **/
-        .previous {
-            background-color: #f1f1f1;
-            color: black;
-            position: relative;
-            right: 40px;
-            top: -130px;
-        }
-
-        .next {
-            background-color: #f1f1f1;
-            color: black;
-            position: relative;
-            left: 97%;
-            top: -130px;
-        }
-
-        /**하드코딩 previous, next 수정해야해 **/
-        .round {
-            border-radius: 50%;
-        }
-
-        /************************양쪽 next.prev 부분 쓰이는 css ************/
-
-        .col-1, .col-2, .col-3, .col-4, .col-5, .col-6, .col-7, .col-8, .col-9, .col-10, .col-11, .col-12, .col, .col-auto, .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm, .col-sm-auto, .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12, .col-md, .col-md-auto, .col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg, .col-lg-auto, .col-xl-1, .col-xl-2, .col-xl-3, .col-xl-4, .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8, .col-xl-9, .col-xl-10, .col-xl-11, .col-xl-12, .col-xl, .col-xl-auto, .col-xxl-1, .col-xxl-2, .col-xxl-3, .col-xxl-4, .col-xxl-5, .col-xxl-6, .col-xxl-7, .col-xxl-8, .col-xxl-9, .col-xxl-10, .col-xxl-11, .col-xxl-12, .col-xxl, .col-xxl-auto {
-            position: relative;
-            width: 100%;
-            min-height: 1px;
-            padding-right: 0.2px;
-            padding-left: 0.2px;
-        }
-
-
         button#select-oper {
             background-color: lightgray;
             border-radius: 5px;
@@ -85,14 +37,14 @@
         }
 
         .card-outer {
-            height: 200px;
+            height: 300px;
             width: 100%;
             overflow: hidden;
         }
 
         .card-inner {
             width: 100%;
-            height: 300px;
+            height: 320px;
             overflow-x: scroll;
             display: flex;
         }
@@ -114,30 +66,17 @@
     </div>
 </div>
 
-<!--원래 있던 차트 부분-->
-<br>
-<!------------------------ select file, target file 부분-------------------------------->
-<!--<div style="display:inline-flex; width:100%;">-->
-<!--    <p class="file_text">select base file : </p>-->
-<!--    <select id="select_base" class="selectpicker" data-live-search="true" data-width="20%" data-size="5"-->
-<!--            title="Choose base"></select>-->
-
-
-<!--    <p class="file_text">select target file : </p>-->
-<!--    <select id="select_target" class="selectpicker" data-width="20%" data-size="5" multiple-->
-<!--            title="Choose targets"></select>-->
-
-
-<!--    <button id="select-oper">select</button>-->
-<!--</div>-->
-<!------------------------ select file, target file 부분-------------------------------->
-
 <hr class="my-hr3"><h5 id="heuristic" class="mt-2 mb-3" style="font-weight: bold;">Heuristic Score</h5>
 <hr class="my-hr3">
+<button id="leftbtn">left</button>
+<button id="rightbtn">rigth</button>
 
 <!--원래 있던 차트 부분-->
-<div id="test" class="card-deck ml-2 mr-2 mt-2">
-
+<div class="card-deck ml-2 mr-2 mt-2">
+    <div class="card-outer">
+        <div id="test" class="card-inner">
+        </div>
+    </div>
 </div>
 
 <hr class="my-hr3"><h5 id="detail" class="mt-2 mb-3" style="font-weight: bold;">Detail</h5>
@@ -148,29 +87,28 @@
         <div class="table-responsive ">
             {% csrf_token %}
             {% if result %}
-            <div id="result_json">
-                <table id="result_table" class="table table-borderless" style="text-align: center;">
-                    <thead>
-                    <tr>
-                        <th rowspan="2" align=center>File Name</th>
-                        <!--                <th rowspan="2">Timestamp</th>-->
-                        <th colspan="2">Algorithm</th>
-                        <th colspan="6">PE META data</th>
-                    </tr>
-                    <tr>
-                        <th>BBH</th>
-                        <th>Constant</th>
-                        <th>Section data</th>
-                        <th>certification</th>
-                        <th>PDB</th>
-                        <th>imp-hash</th>
-                        <th>Rich-xorkey</th>
-                    </tr>
-                    </thead>
-                </table>
+                <div id="result_json">
+                    <table id="detail_table" class="table table-borderless" style="text-align: center;">
+                        <thead>
+                        <tr>
+                            <th rowspan="2" align=center>File Name</th>
+                            <th colspan="2">Algorithm</th>
+                            <th colspan="6">PE META data</th>
+                        </tr>
+                        <tr>
+                            <th>BBH</th>
+                            <th>Constant</th>
+                            <th>Section data</th>
+                            <th>certification</th>
+                            <th>PDB</th>
+                            <th>imp-hash</th>
+                            <th>Rich-xorkey</th>
+                        </tr>
+                        </thead>
+                        <tbody id="result_table"></tbody>
+                    </table>
 
-            </div>
-            {% endif %}
+                </div>
         </div>
         <a id="prev" class="previous round"
            style="z-index: 1; text-decoration: none; display: inline-block; padding: 8px 16px;"
@@ -180,268 +118,231 @@
            onmouseover="this.style.background='#ddd'" onmouseout="this.style.background='#f1f1f1'">&#8250;</a>
     </div>
 
-    <hr class="my-hr3"><h5 id="scoretable" class="mt-2 mb-3" style="font-weight: bold;">Detail</h5>
-    <hr class="my-hr3">
+</div>
 
-    <div class="container-fluid col-12">
-        <div class="card pl-4 pr-4">
-            <div class="table-responsive ">
-                {% csrf_token %}
-                {% if result %}
-                    <div id="result_json">
-                        <table id="detail_table" class="table table-borderless table-hover" style="text-align: center;">
-                            <thead>
-                            <tr>
-                                <th rowspan="2" align=center>File Name</th>
-                                <th colspan="2">Algorithm</th>
-                                <th colspan="5">PE META data</th>
-                            </tr>
-                            <tr>
-                                <th>BBH</th>
-                                <th>Constant</th>
-                                <th>Section data</th>
-                                <th>certification</th>
-                                <th>PDB</th>
-                                <th>imp-hash</th>
-                                <th>Rich-xorkey</th>
-                               <!-- <th>file_info</th> -->
-                            </tr>
-                            </thead>
-                            <tbody id="result_table">
+<script>
+    (function ($) {
+        /* 엔진에서 받아온 값 */
+        var result = "{{result}}";
+        /* JSON.parse()에서 따옴표, nan 기타 등등 있으면 오류남 */
+        var text_res = result.replace(/&#39;/gi, '"').replace(/\t/gi, "\\t").replace(/\r/gi, "\\r").replace(/\n/gi, "\\n").replace(/nan/gi, '"nan"');
+        /* 결과값 파싱해서 테이블 추가하는 부분 */
+        /* 테이블 불러오기 */
+        var res_table = document.getElementById("result_table");
+        var dat_table = document.getElementById("detail_table");
+        /* 결과 데이터 파싱 */
 
-                            <!----dropdown --->
+        var json_res = JSON.parse(text_res);
+        /* 파일에 맞게 동적으로 dropdown에 option 추가해주는 부분 */
+        var pickerclass = document.getElementsByClassName("selectpicker");
+        for (var picker = 0; picker < pickerclass.length; picker++) {
+            for (var standard in json_res) {
+                var option = document.createElement("option");
+                option.value = standard;
+                option.text = standard;
+                pickerclass.item(picker).appendChild(option);
 
-                            <!----dropdown --->
-                            </tbody>
+            }
+        }
+        /* 버튼 클릭하면 데이터 변하게 하는 함수 */
+        $("#select-oper").click(function () {
+            $all_select();
+        });
 
-                        </table>
-                    </div>
-                    </div>
-                    </div>
-                    </div>
-                    <script>
-                        (function ($) {
-                            /* 엔진에서 받아온 값 */
-                            var result = "{{result}}";
-                            /* JSON.parse()에서 따옴표, nan 기타 등등 있으면 오류남 */
-                            var text_res = result.replace(/&#39;/gi, '"').replace(/\t/gi, "\\t").replace(/\r/gi, "\\r").replace(/\n/gi, "\\n").replace(/nan/gi, '"nan"');
-                            /* 결과값 파싱해서 테이블 추가하는 부분 */
-                            /* 테이블 불러오기 */
-                            var res_table = document.getElementById("result_table");
-                            var dat_table = document.getElementById("detail_table");
-                            /* 결과 데이터 파싱 */
+        /*그래프 카드 넘어가는 부분*/
+        var width = $(".card-inner").width();
+        $("#prev").click(function () {
+            console.log("left");
+            $("#test").animate({scrollLeft: $("#test").scrollLeft() - width}, 800);
+        });
+        $("#next").click(function () {
+            console.log("right");
+            $("#test").animate({scrollLeft: $("#test").scrollLeft() + width}, 800);
+        });
 
-                            var json_res = JSON.parse(text_res);
-                            /* 파일에 맞게 동적으로 dropdown에 option 추가해주는 부분 */
-                            var pickerclass = document.getElementsByClassName("selectpicker");
-                            for (var picker = 0; picker < pickerclass.length; picker++) {
-                                for (var standard in json_res) {
-                                    var option = document.createElement("option");
-                                    option.value = standard;
-                                    option.text = standard;
-                                    pickerclass.item(picker).appendChild(option);
+        /* 기준이 바뀌면 대상에 disable 거는 함수 */
+        $("#select_base").on("changed.bs.select", function () {
+            var selected = $("#select_base").children("option:selected").text();        // 기준 파일명을 가져옴
+            $("#select_target option").prop('disabled', false);                         // 전체 초기화
+            $('#select_target').find('[value="' + selected + '"]').prop('selected', false);// 체크도 해제
+            $("#select_target").find('[value="' + selected + '"]').prop('disabled', true);// 기준과 같은 옵션 disable
+            $("#select_target").selectpicker('refresh');                                // 새로고침
+        });
 
+        var length = 13;
+        var i = 0;
+        var array = [" pink", "", " yellow-b"];
+        var b_array = [" pink", " green", " yellow-b"];
+        var bar_title = ["BASICBLOCK", "CONSTANT", "PE"];
+
+
+        /* 기준이 변하면 테이블이 변경될 수 있도록 */
+        $all_select = function () {
+            var targets = $('#select_target').val();
+            $("#test").empty();
+            /* 기준이 변할때마다 테이블을 지우고 새로 시작 */
+            for (var row = dat_table.rows.length - 1; row > 1; row--) {
+                dat_table.deleteRow(row);
+            }
+
+            for (var standard in json_res) {
+                var height = [];
+                var selected = $("#select_base").children("option:selected").text();
+                if (standard == selected) {
+                    // document.write(sel.selectedIndex + " is " + "<br>");
+                    /* 대상이 변할때마다 */
+                    for (var target in json_res[standard]) {
+                        for (var t in targets) {
+                            // 선택된 대상에 대해서만 보여줌
+                            if (target == targets[t]) {
+
+                                /* 하단에 행 추가 */
+                                var new_row = res_table.insertRow(res_table.rows.length);
+                                /* 행에 열 추가 */
+                                var filename = new_row.insertCell(0);
+                                var bbh = new_row.insertCell(1);
+                                var constvalue = new_row.insertCell(2);
+                                var section = new_row.insertCell(3);
+                                var cert = new_row.insertCell(4);
+                                var pdb = new_row.insertCell(5);
+                                var imph = new_row.insertCell(6);
+                                var xor = new_row.insertCell(7);
+                                var file_info = new_row.insertCell(8);
+                                file_info.id = "file_info" + i;
+
+                                /* 열에 데이터 입력 */
+                                filename.innerHTML = json_res[standard][target][0];
+                                bbh.innerHTML = json_res[standard][target][2];
+                                constvalue.innerHTML = json_res[standard][target][3];
+                                section.innerHTML = json_res[standard][target][4];
+                                cert.innerHTML = json_res[standard][target][5];
+                                pdb.innerHTML = json_res[standard][target][6];
+                                imph.innerHTML = json_res[standard][target][7];
+                                xor.innerHTML = json_res[standard][target][8];
+
+                                /*test*/
+
+                                /*test */
+                                /*출력해서 맞는지 확인
+                                for(var data in json_res[standard][target]){
+                                    document.write("data is "+ data +" "+ json_res[standard][target][data] + "<br>");
+                                    console.log(typeof json_res[standard][target][data])
+                                }
+                                */
+                                var basic_block = json_res[standard][target][2] * 100;
+                                var constant = json_res[standard][target][3] * 100;
+                                var f_name = json_res[standard][target][0];
+                                var pe_all_score = json_res[standard][target][9];
+                                height = [basic_block + "%", constant + "%", pe_all_score + "%"];
+
+                                var col = document.createElement("div");
+                                col.id = "col" + i;
+                                col.className = " col-xl-2 col-lo-3 col-12 ";
+                                document.getElementById("test").appendChild(col);
+
+                                var card = document.createElement("div");
+                                card.id = "card" + i;
+                                card.className = "card";
+                                document.getElementById("col" + i).appendChild(card);
+
+                                var panel = document.createElement("section");
+                                panel.id = "panel" + i;
+                                panel.className = "panel";
+                                document.getElementById("card" + i).appendChild(panel);
+
+                                var panel_body = document.createElement("div");
+                                panel_body.id = "panel_body" + i;
+                                panel_body.className = "panel-body";
+                                document.getElementById("panel" + i).appendChild(panel_body);
+
+                                var top_stats_panel = document.createElement("div");
+                                top_stats_panel.id = "top_stats_panel" + i;
+                                top_stats_panel.className = "top-stats-panel";
+                                document.getElementById("panel_body" + i).appendChild(top_stats_panel);
+
+                                var h4 = document.createElement("h4");
+                                h4.id = "widget-h";
+                                h4.className = "widget-h";
+                                h4.textContent = f_name.substring(0, length) + '...';
+                                document.getElementById("top_stats_panel" + i).appendChild(h4);
+
+                                var bar_stats = document.createElement("div");
+                                bar_stats.id = "bar_stats" + i;
+                                bar_stats.className = "bar-stats";
+                                document.getElementById("top_stats_panel" + i).appendChild(bar_stats);
+
+                                var progress_stat_bar = document.createElement("ul");
+                                progress_stat_bar.id = "progress_stat_bar" + i;
+                                progress_stat_bar.className = "progress-stat-bar clearfix";
+                                document.getElementById("bar_stats" + i).appendChild(progress_stat_bar);
+
+                                //막대 바 부분
+                                for (var a = i * 3; a <= (i * 3) + 2; a++) {
+                                    var percent = document.createElement("li");
+                                    percent.id = "percent" + a;
+                                    percent.setAttribute("data-percent", "50%");
+                                    document.getElementById("progress_stat_bar" + i).appendChild(percent);
+
+                                    var percent_span = document.createElement("span");
+                                    percent_span.id = "percent_span" + a;
+                                    percent_span.className = "progress-stat-percent" + array[(a % 3)];
+                                    percent_span.style = "height: " + height[(a % 3)];
+                                    percent_span.setAttribute("data-toggle", "tooltip");
+                                    percent_span.setAttribute("data-placement", "left");
+                                    percent_span.setAttribute("title", height[(a % 3)]);
+                                    document.getElementById("percent" + a).appendChild(percent_span);
+                                }
+
+
+                                var bar_legend = document.createElement("ul");
+                                bar_legend.id = "bar_legend" + i;
+                                bar_legend.className = "bar-legend";
+                                document.getElementById("bar_stats" + i).appendChild(bar_legend);
+
+                                // //표시부분
+                                for (var b = i * 3; b <= (i * 3) + 2; b++) {
+                                    //li생성
+                                    var legend_pointer = document.createElement("li");
+                                    legend_pointer.id = "legend_pointer" + b;
+                                    document.getElementById("bar_legend" + i).appendChild(legend_pointer);
+
+                                    //span 생성
+                                    var legend_span = document.createElement("span");
+                                    legend_span.id = "legend_span";
+                                    legend_span.className = "bar-legend-pointer" + b_array[(b % 3)];
+                                    document.getElementById("legend_pointer" + b).appendChild(legend_span);
+
+                                    var test = document.createTextNode(bar_title[(b % 3)] + " " + height[(b % 3)]); //베이직블록 유사도 : pe 유사도, 상수 유사도 -> string fix, values 동적 할당
+                                    document.getElementById("legend_pointer" + b).appendChild(test);
                                 }
                             }
-                            /* 버튼 클릭하면 데이터 변하게 하는 함수 */
-                            $("#select-oper").click(function () {
-                                $all_select();
-                            });
+                            i++;
+                        }
+                        i = 0;
 
-                            /*그래프 카드 넘어가는 부분*/
-                            var width = $(".card-inner").width();
-                            $("#prev").click(function () {
-                                console.log("left");
-                                $("#test").animate({scrollLeft: $("#test").scrollLeft() - width}, 800);
-                            });
-                            $("#next").click(function () {
-                                console.log("right");
-                                $("#test").animate({scrollLeft: $("#test").scrollLeft() + width}, 800);
-                            });
-
-                            /* 기준이 바뀌면 대상에 disable 거는 함수 */
-                            $("#select_base").on("changed.bs.select", function () {
-                                var selected = $("#select_base").children("option:selected").text();        // 기준 파일명을 가져옴
-                                $("#select_target option").prop('disabled', false);                         // 전체 초기화
-                                $('#select_target').find('[value="' + selected + '"]').prop('selected', false);// 체크도 해제
-                                $("#select_target").find('[value="' + selected + '"]').prop('disabled', true);// 기준과 같은 옵션 disable
-                                $("#select_target").selectpicker('refresh');                                // 새로고침
-                            });
-
-                            var length = 13;
-                            var i = 0;
-                            var array = [" pink", "", " yellow-b"];
-                            var b_array = [" pink", " green", " yellow-b"];
-                            var bar_title = ["BASICBLOCK", "CONSTANT", "PE"];
+                        $(function () {
+                            $('[data-toggle="tooltip"]').tooltip()
+                        });
+                    }
+                }
+            }
+        };
+        // 페이지가 처음 뜰 때 기준은 처음으로 대상은 전부 선택해서 보여주도록
+        var first_base = $("#select_base").find('option:first');
+        first_base.attr('selected', 'selected');
+        $('#select_target option').prop('selected', true);
+        $('#select_target').find('[value="' + first_base.text() + '"]').prop('selected', false);
+        $('#select_target').find('[value="' + first_base.text() + '"]').prop('disabled', true);
+        $all_select();
+    })(jQuery);
 
 
-                            /* 기준이 변하면 테이블이 변경될 수 있도록 */
-                            $all_select = function () {
-                                var targets = $('#select_target').val();
-                                $("#test").empty();
-                                /* 기준이 변할때마다 테이블을 지우고 새로 시작 */
-                                for (var row = dat_table.rows.length - 1; row > 1; row--) {
-                                    dat_table.deleteRow(row);
-                                }
+</script>
 
-                                for (var standard in json_res) {
-                                    var height = [];
-                                    var selected = $("#select_base").children("option:selected").text();
-                                    if (standard == selected) {
-                                        // document.write(sel.selectedIndex + " is " + "<br>");
-                                        /* 대상이 변할때마다 */
-                                        for (var target in json_res[standard]) {
-                                            for (var t in targets) {
-                                                // 선택된 대상에 대해서만 보여줌
-                                                if (target == targets[t]) {
-
-                                                    /* 하단에 행 추가 */
-                                                    var new_row = res_table.insertRow(res_table.rows.length);
-                                                    /* 행에 열 추가 */
-                                                    var filename = new_row.insertCell(0);
-                                                    var bbh = new_row.insertCell(1);
-                                                    var constvalue = new_row.insertCell(2);
-                                                    var section = new_row.insertCell(3);
-                                                    var cert = new_row.insertCell(4);
-                                                    var pdb = new_row.insertCell(5);
-                                                    var imph = new_row.insertCell(6);
-                                                    var xor = new_row.insertCell(7);
-                                                    var file_info = new_row.insertCell(8);
-                                                    file_info.id = "file_info" + i;
-
-                                                    /* 열에 데이터 입력 */
-                                                    filename.innerHTML = json_res[standard][target][0];
-                                                    bbh.innerHTML = json_res[standard][target][2];
-                                                    constvalue.innerHTML = json_res[standard][target][3];
-                                                    section.innerHTML = json_res[standard][target][4];
-                                                    cert.innerHTML = json_res[standard][target][5];
-                                                    pdb.innerHTML = json_res[standard][target][6];
-                                                    imph.innerHTML = json_res[standard][target][7];
-                                                    xor.innerHTML = json_res[standard][target][8];
-
-                                                    /*test*/
-
-                                                    /*test */
-                                                    /*출력해서 맞는지 확인
-                                                    for(var data in json_res[standard][target]){
-                                                        document.write("data is "+ data +" "+ json_res[standard][target][data] + "<br>");
-                                                        console.log(typeof json_res[standard][target][data])
-                                                    }
-                                                    */
-                                                    var basic_block = json_res[standard][target][2] * 100;
-                                                    var constant = json_res[standard][target][3] * 100;
-                                                    var f_name = json_res[standard][target][0];
-                                                    var pe_all_score = json_res[standard][target][9];
-                                                    height = [basic_block + "%", constant + "%", pe_all_score + "%"];
-
-                                                    var col = document.createElement("div");
-                                                    col.id = "col" + i;
-                                                    col.className = " col-xl-2 col-lo-3 col-12 ";
-                                                    document.getElementById("test").appendChild(col);
-
-                                                    var card = document.createElement("div");
-                                                    card.id = "card" + i;
-                                                    card.className = "card";
-                                                    document.getElementById("col" + i).appendChild(card);
-
-                                                    var panel = document.createElement("section");
-                                                    panel.id = "panel" + i;
-                                                    panel.className = "panel";
-                                                    document.getElementById("card" + i).appendChild(panel);
-
-                                                    var panel_body = document.createElement("div");
-                                                    panel_body.id = "panel_body" + i;
-                                                    panel_body.className = "panel-body";
-                                                    document.getElementById("panel" + i).appendChild(panel_body);
-
-                                                    var top_stats_panel = document.createElement("div");
-                                                    top_stats_panel.id = "top_stats_panel" + i;
-                                                    top_stats_panel.className = "top-stats-panel";
-                                                    document.getElementById("panel_body" + i).appendChild(top_stats_panel);
-
-                                                    var h4 = document.createElement("h4");
-                                                    h4.id = "widget-h";
-                                                    h4.className = "widget-h";
-                                                    h4.textContent = f_name.substring(0, length) + '...';
-                                                    document.getElementById("top_stats_panel" + i).appendChild(h4);
-
-                                                    var bar_stats = document.createElement("div");
-                                                    bar_stats.id = "bar_stats" + i;
-                                                    bar_stats.className = "bar-stats";
-                                                    document.getElementById("top_stats_panel" + i).appendChild(bar_stats);
-
-                                                    var progress_stat_bar = document.createElement("ul");
-                                                    progress_stat_bar.id = "progress_stat_bar" + i;
-                                                    progress_stat_bar.className = "progress-stat-bar clearfix";
-                                                    document.getElementById("bar_stats" + i).appendChild(progress_stat_bar);
-
-                                                    //막대 바 부분
-                                                    for (var a = i * 3; a <= (i * 3) + 2; a++) {
-                                                        var percent = document.createElement("li");
-                                                        percent.id = "percent" + a;
-                                                        percent.setAttribute("data-percent", "50%");
-                                                        document.getElementById("progress_stat_bar" + i).appendChild(percent);
-
-                                                        var percent_span = document.createElement("span");
-                                                        percent_span.id = "percent_span" + a;
-                                                        percent_span.className = "progress-stat-percent" + array[(a % 3)];
-                                                        percent_span.style = "height: " + height[(a % 3)];
-                                                        percent_span.setAttribute("data-toggle", "tooltip");
-                                                        percent_span.setAttribute("data-placement", "left");
-                                                        percent_span.setAttribute("title", height[(a % 3)]);
-                                                        document.getElementById("percent" + a).appendChild(percent_span);
-                                                    }
-
-
-                                                    var bar_legend = document.createElement("ul");
-                                                    bar_legend.id = "bar_legend" + i;
-                                                    bar_legend.className = "bar-legend";
-                                                    document.getElementById("bar_stats" + i).appendChild(bar_legend);
-
-                                                    // //표시부분
-                                                    for (var b = i * 3; b <= (i * 3) + 2; b++) {
-                                                        //li생성
-                                                        var legend_pointer = document.createElement("li");
-                                                        legend_pointer.id = "legend_pointer" + b;
-                                                        document.getElementById("bar_legend" + i).appendChild(legend_pointer);
-
-                                                        //span 생성
-                                                        var legend_span = document.createElement("span");
-                                                        legend_span.id = "legend_span";
-                                                        legend_span.className = "bar-legend-pointer" + b_array[(b % 3)];
-                                                        document.getElementById("legend_pointer" + b).appendChild(legend_span);
-
-                                                        var test = document.createTextNode(bar_title[(b % 3)] + " " + height[(b % 3)]); //베이직블록 유사도 : pe 유사도, 상수 유사도 -> string fix, values 동적 할당
-                                                        document.getElementById("legend_pointer" + b).appendChild(test);
-                                                    }
-                                                }
-                                                i++;
-                                            }
-                                            i = 0;
-
-                                            $(function () {
-                                                $('[data-toggle="tooltip"]').tooltip()
-                                            });
-                                        }
-                                    }
-                                }
-                            };
-                            // 페이지가 처음 뜰 때 기준은 처음으로 대상은 전부 선택해서 보여주도록
-                            var first_base = $("#select_base").find('option:first');
-                            first_base.attr('selected', 'selected');
-                            $('#select_target option').prop('selected', true);
-                            $('#select_target').find('[value="' + first_base.text() + '"]').prop('selected', false);
-                            $('#select_target').find('[value="' + first_base.text() + '"]').prop('disabled', true);
-                            $all_select();
-                        })(jQuery);
-
-
-                    </script>
-
-                    </div>
-                {% else %}
-                    <h1>There is not result!</h1>
-                {% endif %}
-    </div>
+</div>
+{% else %}
+<h1>There is not result!</h1>
+{% endif %}
+</div>
 
 {% endblock section %}
