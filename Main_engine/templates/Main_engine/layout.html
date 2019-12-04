@@ -8,6 +8,8 @@
 
     <title>{% block title %}Sleek - Admin Dashboard Template{% endblock %}</title>
 
+    <link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'Main_engine/css/styles.css' %}" rel="stylesheet">
     <!-- GOOGLE FONTS -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500|Poppins:400,500,600,700|Roboto:400,500"
           rel="stylesheet"/>
@@ -26,12 +28,14 @@
             crossorigin="anonymous"></script>
 
     <!-- PLUGINS CSS STYLE -->
+
     <link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet">
     <link href="{% static 'Main_engine/css/styles.css' %}" rel="stylesheet">
     <!-- SLEEK CSS -->
     <link id="sleek-css" rel="stylesheet" href="{% static 'Main_engine/css/sleek.css' %}"/>
     <!-- FAVICON -->
     <link href="{% static 'Main_engine/img/favicon.png' %}" rel="shortcut icon"/>
+
     <!--플러그인의 jquery가 있으면 파일 선택이 안되고 없으면 스크롤이 안됨; -->
     <!--    <script src="{% static 'Main_engine/plugins/jquery/jquery.min.js' %}"></script>-->
     <script src="{% static 'Main_engine/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
@@ -42,10 +46,6 @@
     {% endblock head %}
 </head>
 <body class="sidebar-fixed sidebar-dark header-light header-fixed" id="body">
-<script>
-    NProgress.configure({showSpinner: false});
-    NProgress.start();
-</script>
 
 <div class="mobile-sticky-body-overlay"></div>
 <div class="wrapper">
@@ -68,7 +68,7 @@
                             <path class="logo-fill-white" fill="#FFF" d="M11 4v25l8 4V0z"></path>
                         </g>
                     </svg>
-                    <span onclick="window.location='result'" class="brand-name">binary-diffing-tools</span>
+                    <span onclick="window.location=''" class="brand-name">binary-diffing-tools</span>
                 </a>
             </div>
             <!-- begin sidebar scrollbar -->
@@ -80,8 +80,7 @@
                            data-target="#dashboard"
                            aria-expanded="false" aria-controls="dashboard">
                             <i class="mdi mdi-view-dashboard-outline"></i>
-                            <span onclick="window.location='result'" class="nav-text">Result</span>
-                            <b class="caret"></b>
+                            <span onclick="window.location='result'" class="nav-text">Result</span> <b class="caret"></b>
                         </a>
                         <ul class="collapse" id="dashboard"
                             data-parent="#sidebar-menu">

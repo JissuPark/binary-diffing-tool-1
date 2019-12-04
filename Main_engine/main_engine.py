@@ -259,7 +259,7 @@ class Analyze_files:
             idb_final_score = dict()
             pe_final_score = dict()
             for value_i, value_pe in zip(key_i[1].items(), key_pe[1].items()):
-                semifinal = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+                semifinal = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
                 semifinal[0] = (value_pe[1]['file_hash'])
                 semifinal[1] = (value_pe[1]['time_date_stamp'])
                 semifinal[2] = (value_i[1]['bbh'])
@@ -269,6 +269,7 @@ class Analyze_files:
                 semifinal[6] = (value_pe[1]['pdb_score'])
                 semifinal[7] = (value_pe[1]['imphash'])
                 semifinal[8] = (value_pe[1]['rich'])
+                semifinal[9] = (value_pe[1]['pe_all_score'])
 
                 idb_final_score[value_i[0]] = semifinal
                 pe_final_score[value_pe[0]] = semifinal
