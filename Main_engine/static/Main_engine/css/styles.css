@@ -574,13 +574,10 @@ pre code {
     position: relative;
     width: 100%;
     min-height: 1px;
-<<<<<<< HEAD
-    padding-right: 0; !important;
-    padding-left: 0; !important;
-=======
-    padding-right: 15px;
-    padding-left: 15px
->>>>>>> upstream/master
+
+    padding-right: 0.2px;
+    padding-left: 0.2px
+
 }
 
 .col {
@@ -11079,13 +11076,9 @@ code {
     padding-top: 1.9rem;
     padding-bottom: 1.9rem;
     padding-left: 0.94rem;
-    padding-right: 0.94rem;
-<<<<<<< HEAD
-    width: 100%
-=======
+    padding-right: 0.94rem;=
     width: 100%;
     height: 100%;
->>>>>>> upstream/master
 }
 
 @media (min-width: 992px) {
