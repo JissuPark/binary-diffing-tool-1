@@ -200,11 +200,23 @@
 
         /* 버튼 클릭하면 데이터 변하게 하는 함수 */
         $("#select-oper").click(function () {
-            $draw();
+            $("#func_menu").empty();
+            for (file in json_res) {
+                var selected = $("#select_base").val();
+                if (json_res[file]['file_name'] == selected) {
+                    for (var funcname in json_res[file]['func_name']) {
+                        makebt(json_res[file]['file_name'], funcname);
+                        if (funcname.indexOf("main") != -1) {
+                            $draw(json_res[file]['file_name'], funcname);
+                        }
+                    }
+                }
+            }
         });
         /* 그래프 그리는 함수 */
         $draw = function (file, fname) {
             //그림을 그릴 부분을 먼저 지워준다. (안 지우면 계속 추가됨)
+            var targets = $('#select_target').val();
             $('.graph-inner').empty();
             //매칭되는 애들을 모아보자
             var targetlist = [];
@@ -212,28 +224,33 @@
             for (filename in match_json) {
                 //기준 파일명 찾고
                 if (file == filename) {
-                    for (target in match_json[filename]) {
+                    //체크된 대상 파일들 중에서
+                    for (target in targets) {
+                        var t = targets[target];
                         //대상 중에서 기준 함수명을 찾는다.
-                        if (match_json[filename][target].hasOwnProperty(fname)) {
-                            targetlist.push([target, match_json[filename][target][fname]]);
+                        console.log(t);
+
+                        if (match_json[filename][t].hasOwnProperty(fname)) {
+                            console.log(match_json[filename][t][fname]);
+                            targetlist.push([t, match_json[filename][t][fname]]);
                         } else {
-                            targetlist.push([target, "none"]);
+                            targetlist.push([t, "none"]);
                         }
                     }
                 }
             }
             //그릴거야
-            var graph_cnt = Object.keys(postoffice).length;
+            var graph_cnt = targetlist.length;
             for (var index = 0; index < graph_cnt; index++) {
                 //그릴 그래프가 4개 이상인지 이하인지 확인
                 var div = document.createElement('div');
                 div.id = "graph_" + index;
                 if (graph_cnt > 3) {
                     div.className = "col-xl-3 col-sm-6";
-                } else if (graph_cnt == 3) {
-                    div.className = " col-xl-4 col-lg-6 col-12";
-                } else {
-                    div.className = " col-xl-6";
+                // } else if (graph_cnt == 3) {
+                //     div.className = " col-xl-4 col-lg-6 col-12";
+                // } else {
+                //     div.className = " col-xl-6";
                 }
                 //기준은 위치 고정
                 if (index == 0) {
@@ -244,6 +261,7 @@
                 document.getElementById('test').appendChild(div);
 
 
+                console.log(targetlist[index]);
                 if (targetlist[index][1] == 'none') {
                     document.getElementById('graph_' + index).setAttribute('class', 'groot-3 saonea');
                     var p = document.createElement('p');
@@ -277,58 +295,24 @@
 
                 //파일명, 함수명, 유사도 추가
                 var name_label = document.createElement('p');
-                name_label.innerText = targetlist[index][0]+ '\n'+ targetlist[index][1];
+                name_label.innerText = targetlist[index][0] + '\n' + targetlist[index][1];
                 name_label.setAttribute('style', 'position: absolute; word-wrap: break-word; text-overflow: ellipsis; width: 90%; z-index: 2; top: 3px;');
                 document.getElementById('graph_' + index).appendChild(name_label);
                 //////////////////////////
             }
         };
 
-
-        // function draw(graph) {
-        //     //그리기 전에 그릴 공간을 먼저 지운다. (지우지 않으면 자꾸 늘어나게 됨)
-        //     $('#base-graph').empty();
-        //     $('#target1-graph').empty();
-        //     $('#target2-graph').empty();
-        //     $('#target3-graph').empty();
-        //
-        //     var container1 = document.getElementById('base-graph');
-        //     var container2 = document.getElementById('target1-graph');
-        //     var container3 = document.getElementById('target2-graph');
-        //     var container4 = document.getElementById('target3-graph');
-        //
-        //     var data = {
-        //         nodes: graph[0],
-        //         edges: graph[1]
-        //     };
-        //
-        //     var options = {
-        //         manipulation: false,
-        //         layout: {
-        //             hierarchical: {
-        //                 enabled: true,
-        //                 levelSeparation: 300
-        //             }
-        //         },
-        //         physics: {
-        //             hierarchicalRepulsion: {
-        //                 nodeDistance: 300
-        //             }
-        //         }
-        //     };
-        //
-        //     var network1 = new vis.Network(container1, data, options);
-        //     var network2 = new vis.Network(container2, data, options);
-        //     var network3 = new vis.Network(container3, data, options);
-        //     var network4 = new vis.Network(container4, data, options);
-        // }
-
-
         var index = 0;
+        var first_file = "";
+        var first_func = "";
         for (var file in json_res) {
             for (var funcname in json_res[file]['func_name']) {
                 if (index == 0) {
                     makebt(json_res[file]['file_name'], funcname);
+                    if(funcname.indexOf('main') != -1) {
+                        first_file = json_res[file]['file_name'];
+                        first_func = funcname;
+                    }
                 }
                 var array = {};
                 var branches = [];
@@ -361,6 +345,7 @@
         $('#select_target').find('[value="' + first_base.text() + '"]').prop('selected', false);
         $('#select_target').find('[value="' + first_base.text() + '"]').prop('disabled', true);
 
+        $draw(first_file, first_func);
     })(jQuery);
 
 
