@@ -15,22 +15,22 @@ table{
 }
 
 summary{
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+  margin-top: 1rem !important;
+  margin-bottom: 1rem !important;
 }
 
 p{
   margin-bottom: 0rem !important;
-  margin-left: 25px;
+  margin-left: 25px !important;
 }
 
 details{
-  width: 500px;
+  width: 500px !important;
 }
 
 details > summary {
-  background: #f1f1f1;
-  padding: 3px 10px;
+  background: #f1f1f1 !important;
+  padding: 3px 10px !important;
 }
 
 details > summary::-webkit-details-marker {

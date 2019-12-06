@@ -63,6 +63,9 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'libraries':{
+                'get_at_index': 'Main_engine.get_at_index'
+            }
         },
     },
 ]
