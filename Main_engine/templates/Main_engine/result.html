@@ -12,6 +12,7 @@
 
     <style>
 
+
         .table-borderless tbody tr:first-child td {
             padding-top: 1rem;
         }
@@ -59,31 +60,6 @@
         }
 
 
-        button#select-oper {
-            background-color: lightgray;
-            border-radius: 5px;
-            font-weight: bold;
-            font-size: large;
-            width: 20%;
-            margin-left: 20px;
-            margin-right: 20px;
-            text-align: center;
-        }
-
-        button#select-oper:hover {
-            background-color: #d8d8d8;
-            color: red;
-            border: white;
-        }
-
-        p.file_text {
-            width: 20%;
-            margin: 6px;
-            font-size: large;
-            font-weight: bold;
-            text-align: center;
-        }
-
         .card-outer {
             height: 200px;
             width: 100%;
@@ -91,11 +67,22 @@
         }
 
         .card-inner {
-            width: 100%;
+            width: 100%; /*662.344*/
             height: 300px;
             overflow-x: scroll;
             display: flex;
+            padding-top: 10px;
         }
+
+        .card-deck .card {
+            display: flex;
+            flex: 1 0 0%;
+            flex-direction: column;
+            margin-right: 0px;
+            margin-bottom: 0;
+            margin-left: 10px;
+        }
+
     </style>
 
 {% endblock head %}
@@ -114,13 +101,13 @@
             <div id="test" class="card-inner">
             </div>
         </div>
-        <a id="prev" class="previous round"
-           style="z-index: 1; text-decoration: none; display: inline-block; padding: 8px 16px;"
-           onmouseover="this.style.background='#ddd'" onmouseout="this.style.background='#f1f1f1'">&#8249;</a>
-        <a id="next" class="next round"
-           style="z-index: 1; text-decoration: none; display: inline-block; padding: 8px 16px;"
-           onmouseover="this.style.background='#ddd'" onmouseout="this.style.background='#f1f1f1'">&#8250;</a>
     </div>
+    <a id="prev" class="previous round"
+       style="z-index: 1; text-decoration: none; display: inline-block; padding: 8px 16px;"
+       onmouseover="this.style.background='#ddd'" onmouseout="this.style.background='#f1f1f1'">&#8249;</a>
+    <a id="next" class="next round"
+       style="z-index: 1; text-decoration: none; display: inline-block; padding: 8px 16px; margin-left: 14px"
+       onmouseover="this.style.background='#ddd'" onmouseout="this.style.background='#f1f1f1'">&#8250;</a>
 
     <hr class="my-hr3"><h5 id="scoretable" class="mt-2 mb-3" style="font-weight: bold;">Detail</h5>
     <hr class="my-hr3">
@@ -131,22 +118,23 @@
                 {% csrf_token %}
                 {% if result %}
                     <div id="result_json">
-                        <table id="detail_table" class="table table-borderless table-hover" style="text-align: center;">
+                        <table id="detail_table" class="table table-borderless table-hover"
+                               style="text-align: center; font-family: 'Roboto Condensed', sans-serif;">
                             <thead>
                             <tr>
-                                <th rowspan="2" align=center>File Name</th>
-                                <th colspan="2">Algorithm</th>
-                                <th colspan="5">PE META data</th>
+                                <th rowspan="2" align=center style="color: black; font-weight: bold">FILENAME</th>
+                                <th colspan="2" style="color: black; font-weight: bold">ALGORITHM</th>
+                                <th colspan="5" style="color: black; font-weight: bold">PE META DATA</th>
                             </tr>
                             <tr>
-                                <th>BBH</th>
-                                <th>Constant</th>
-                                <th>Section data</th>
-                                <th>certification</th>
-                                <th>PDB</th>
-                                <th>imp-hash</th>
-                                <th>Rich-xorkey</th>
-                               <!-- <th>file_info</th> -->
+                                <th style="color: black; font-weight: bold">BBH</th>
+                                <th style="color: black; font-weight: bold">CONSTANT</th>
+                                <th style="color: black; font-weight: bold">SECTION DATA</th>
+                                <th style="color: black; font-weight: bold">CERTIFICATE</th>
+                                <th style="color: black; font-weight: bold">PDB</th>
+                                <th style="color: black; font-weight: bold">IMPHASH</th>
+                                <th style="color: black; font-weight: bold">RICH HEADER</th>
+                                <!-- <th>file_info</th> -->
                             </tr>
                             </thead>
                             <tbody id="result_table">
@@ -190,16 +178,6 @@
                                 $all_select();
                             });
 
-                            /*그래프 카드 넘어가는 부분*/
-                            var width = $(".card-inner").width();
-                            $("#prev").click(function () {
-                                console.log("left");
-                                $("#test").animate({scrollLeft: $("#test").scrollLeft() - width}, 800);
-                            });
-                            $("#next").click(function () {
-                                console.log("right");
-                                $("#test").animate({scrollLeft: $("#test").scrollLeft() + width}, 800);
-                            });
 
                             /* 기준이 바뀌면 대상에 disable 거는 함수 */
                             $("#select_base").on("changed.bs.select", function () {
@@ -225,11 +203,37 @@
                                 for (var row = dat_table.rows.length - 1; row > 1; row--) {
                                     dat_table.deleteRow(row);
                                 }
-
                                 for (var standard in json_res) {
                                     var height = [];
                                     var selected = $("#select_base").children("option:selected").text();
                                     if (standard == selected) {
+                                        var base_col = document.createElement("div");
+                                        base_col.id = "col";
+                                        base_col.className = "col-xl-2 col-lo-3 col-12";
+                                        base_col.style.position = "sticky";
+                                        base_col.style.zIndex = "1";
+                                        base_col.style.top = "0px";
+                                        base_col.style.left = "0px";
+                                        document.getElementById("test").appendChild(base_col);
+
+                                        var base_card = document.createElement("div");
+                                        base_card.id = "card";
+                                        base_card.className = "card";
+                                        document.getElementById("col").appendChild(base_card);
+
+                                        var base_panel = document.createElement("section");
+                                        base_panel.id = "panel";
+                                        base_panel.className = "panel";
+                                        document.getElementById("card").appendChild(base_panel);
+
+                                        var base_panel_body = document.createElement("div");
+                                        base_panel_body.id = "panel_body";
+                                        base_panel_body.className = "panel-body";
+                                        base_panel_body.innerHTML = "<p> BASE : " + standard.substring(0,length) + "...</p>" + "<br>" + "<p> FILESIZE: 사이즈를 넣자</p>" + "<p> FILETYPE: 타입을 넣자</p>";
+{#"BASEFILE :" + standard.substring(0, length) + '...' +  "FILETYPE : " + "ssss" +  "FILESIZE : " + "zzzzzzzzzzz"#}
+                                        document.getElementById("panel").appendChild(base_panel_body);
+
+
                                         // document.write(sel.selectedIndex + " is " + "<br>");
                                         /* 대상이 변할때마다 */
                                         for (var target in json_res[standard]) {
@@ -248,11 +252,9 @@
                                                     var pdb = new_row.insertCell(5);
                                                     var imph = new_row.insertCell(6);
                                                     var xor = new_row.insertCell(7);
-                                                    var file_info = new_row.insertCell(8);
-                                                    file_info.id = "file_info" + i;
 
                                                     /* 열에 데이터 입력 */
-                                                    filename.innerHTML = json_res[standard][target][0];
+                                                    filename.innerHTML = json_res[standard][target][0].toUpperCase();
                                                     bbh.innerHTML = json_res[standard][target][2];
                                                     constvalue.innerHTML = json_res[standard][target][3];
                                                     section.innerHTML = json_res[standard][target][4];
@@ -369,6 +371,19 @@
                                 }
                             };
                             // 페이지가 처음 뜰 때 기준은 처음으로 대상은 전부 선택해서 보여주도록
+
+                            /*그래프 카드 넘어가는 부분*/
+                            var width = $(".card").innerWidth();
+                            console.log(width);
+                            $("#prev").click(function () {
+                              console.log("left");
+                              $("#test").animate({scrollLeft: $("#test").scrollLeft() - width}, 800);
+                            });
+                            $("#next").click(function () {
+                                console.log("right");
+                                $("#test").animate({scrollLeft: $("#test").scrollLeft() + width}, 800);
+                            });
+
                             var first_base = $("#select_base").find('option:first');
                             first_base.attr('selected', 'selected');
                             $('#select_target option').prop('selected', true);

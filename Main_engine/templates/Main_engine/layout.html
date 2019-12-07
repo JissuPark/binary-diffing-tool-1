@@ -8,6 +8,9 @@
 
     <title>{% block title %}Sleek - Admin Dashboard Template{% endblock %}</title>
 
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+          integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed&display=swap" rel="stylesheet">
     <link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet">
     <link href="{% static 'Main_engine/css/styles.css' %}" rel="stylesheet">
     <!-- GOOGLE FONTS -->
@@ -44,6 +47,35 @@
 
     {% block head %}
     {% endblock head %}
+    <style>
+
+        button#select-oper {
+            background-color: #525252;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: large;
+            width: 13%;
+            height: 40px;
+            margin-left: 45px;
+            margin-right: 20px;
+            text-align: center;
+        }
+
+        p.file_text {
+            width: 17%;
+            margin: 6px;
+            font-size: large;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .btn:not(:disabled):not(.disabled) {
+            cursor: pointer;
+            margin-left: -30px;
+        }
+
+
+    </style>
 </head>
 <body class="sidebar-fixed sidebar-dark header-light header-fixed" id="body">
 
@@ -75,12 +107,22 @@
             <div class="sidebar-scrollbar">
                 <!-- sidebar menu -->
                 <ul class="nav sidebar-inner" id="sidebar-menu">
-                    <li class="has-sub expand">
+                    <li class="has-sub">
+                        <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
+                           data-target="#home"
+                           aria-expanded="false" aria-controls="home">
+                            <i class="mdi mdi-home-outline"></i>
+                            <span onclick="window.location='/'" class="nav-text">HOME</span>
+                        </a>
+                    </li>
+                    <!------------------------------------------------->
+                    <li class="has-sub">
                         <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
                            data-target="#dashboard"
                            aria-expanded="false" aria-controls="dashboard">
                             <i class="mdi mdi-view-dashboard-outline"></i>
-                            <span onclick="window.location='result'" class="nav-text">Result</span> <b class="caret"></b>
+                            <span onclick="window.location='result'" class="nav-text">Result</span> <b
+                                class="caret"></b>
                         </a>
                         <ul class="collapse" id="dashboard"
                             data-parent="#sidebar-menu">
@@ -100,7 +142,7 @@
                     </li>
 
                     <!---pe start--->
-                    <li class="has-sub expand">
+                    <li class="has-sub">
                         <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
                            data-target="#pe_menu"
                            aria-expanded="false" aria-controls="pe_menu">
@@ -173,16 +215,24 @@
                     <span class="sr-only">Toggle navigation</span>
                 </button>
                 {% if result or cfg %}
-                <div style="display:inline-flex; width:70%;">
-                    <p class="file_text">select base file : </p>
-                    <select id="select_base" class="selectpicker" data-live-search="true" data-width="20%" data-size="5"
-                            title="Choose base"></select>
-                    <p class="file_text">select target file : </p>
-                    <select id="select_target" class="selectpicker" data-actions-box="true" data-width="20%"
-                            data-size="5" multiple title="Choose targets"></select>
-                    <button id="select-oper">select</button>
-                </div>
-                {% endif%}
+                    <div class="mt-1" style="display:inline-flex; width:70%;">
+                        <p class="file_text" style="font-family: 'Roboto Condensed', sans-serif; margin-top: 12px;">BASE
+                            FILE</p>
+                        <select id="select_base" class="selectpicker" data-live-search="true" data-width="20%"
+                                data-size="5"
+                                title="Choose base"></select>
+                        <p class="file_text" style="font-family: 'Roboto Condensed', sans-serif; margin-top: 12px; ">
+                            TARGET FILE</p>
+
+                        <select id="select_target" class="selectpicker" data-actions-box="true" data-width="20%"
+                                data-size="5" multiple title="Choose targets"></select>
+
+                        <button id="select-oper"
+                                style="font-family: 'Roboto Condensed', sans-serif; font-weight: bolder; color: white">
+                            SELECT
+                        </button>
+                    </div>
+                {% endif %}
             </nav>
         </header>
 
