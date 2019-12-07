@@ -103,7 +103,7 @@ class Pe_Feature:
                     prodid = (key >> 16)
                     prod_list.append(prodid)
                     prodid_name = pe_rich.PRODID_MAP[prodid] if prodid in pe_rich.PRODID_MAP else "<unknown>"
-                    print('%6d   %-15s %5d     %6d' % (prodid, prodid_name, count, mcv))
+                    #print('%6d   %-15s %5d     %6d' % (prodid, prodid_name, count, mcv))
                     rich_dict[prodid_name] = count
                 # print(f"xor key :: {xor_key}")
                 # print(f"prod_list :: {prod_list}")
@@ -145,7 +145,6 @@ class Pe_Feature:
         return Size
 
     def all(self, ):
-        func_list = self.ImportDll()
         file_type = magic.from_file(self.file_name)
         imphash = self.imphash_data()
         implist = self.ImportDll()
@@ -163,7 +162,7 @@ class Pe_Feature:
         pe_features = {
             'file_path': self.file_name,
             'file_name': f_name,
-            'file_hash': hashlib.sha256(f_name_hash.read()).hexdigest(),
+            'file_hash': hashlib.sha256(open(self.file_name, 'rb').read()).hexdigest(),
             'imp_hash': imphash,
             'Imports': implist,
             'cmp_section': cmp_section_data,
@@ -181,9 +180,9 @@ class Pe_Feature:
         }
         file_size = os.path.getsize(self.file_name)
         file_size = self.convert_size(file_size)
-        MD5 = hashlib.md5(f_name_hash.read()).hexdigest().upper()
-        sha1 = hashlib.sha1(f_name_hash.read()).hexdigest()
-        sha256 = hashlib.sha256(f_name_hash.read()).hexdigest()
+        MD5 = hashlib.md5(open(self.file_name, 'rb').read()).hexdigest().upper()
+        sha1 = hashlib.sha1(open(self.file_name, 'rb').read()).hexdigest()
+        sha256 = hashlib.sha256(open(self.file_name, 'rb').read()).hexdigest()
         ImpHash = imphash.upper()
         ssdeep_hash = ssdeep.hash_from_file(self.file_name)
         TimeStamp = time_info
