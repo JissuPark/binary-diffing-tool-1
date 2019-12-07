@@ -20,7 +20,7 @@ def getFileProperties(fname):
             strInfoPath = u'\\StringFileInfo\\%04X%04X\\%s' % (lang, codepage, propName)
             ## print str_info
             strInfo[propName] = win32api.GetFileVersionInfo(fname, strInfoPath)
-            print(strInfo[propName])
+            #print(strInfo[propName])
             # if propName == 'FileDescription':
             #     strInfo[propName] = propNames[propName]
             # else:
