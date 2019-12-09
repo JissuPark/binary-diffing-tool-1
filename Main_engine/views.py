@@ -139,6 +139,7 @@ def loading(request):
             os.remove(path)
 
     flag = file_check()
+
     if not flag:
         return render(request, 'Main_engine/index.html', {'message':'directory is empty or filetype is not pe !!'})
     else:
@@ -163,7 +164,6 @@ def call_main(request):
     stop = timeit.default_timer()
     print('time is ????')
     print(stop - start)
-
 
     main_engine.delete_file()
 
@@ -207,14 +207,12 @@ def file_check():
     # # # 전부 돌았는데 false가 반환되지 않았다면 true 반환
     return True
 
-
 def handle_uploaded_file(file):
     '''
     파일을 받아서 파일의 이름으로 폴더에 저장해주는 함수
     :param file: 업로드 된 파일
     :return: None
     '''
-
 
     with open('C:\\malware\\mal_exe\\'+file.name, 'wb+') as uploaded_file:
         for chunk in file.chunks():
