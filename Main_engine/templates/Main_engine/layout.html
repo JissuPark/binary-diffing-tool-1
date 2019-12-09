@@ -71,7 +71,6 @@
 
         .btn:not(:disabled):not(.disabled) {
             cursor: pointer;
-            margin-left: -30px;
         }
 
 
@@ -85,30 +84,28 @@
     <aside class="left-sidebar bg-sidebar">
         <div id="sidebar" class="sidebar sidebar-with-footer">
             <!-- Aplication Brand -->
-            <div class="app-brand">
+            <div class="app-brand" style="background-color: rgba(241,34,96,0.8);">
                 <a href="#">
-                    <svg
-                            class="brand-icon"
-                            xmlns="http://www.w3.org/2000/svg"
-                            preserveAspectRatio="xMidYMid"
-                            width="30"
-                            height="33"
-                            viewBox="0 0 30 33"
-                    >
-                        <g fill="none" fill-rule="evenodd">
-                            <path class="logo-fill-blue" fill="7DBCFF" d="M0 4v25l8 4V0zM22 4v25l8 4V0z"></path>
-                            <path class="logo-fill-white" fill="#FFF" d="M11 4v25l8 4V0z"></path>
-                        </g>
-                    </svg>
-                    <span onclick="window.location=''" class="brand-name">binary-diffing-tools</span>
+                    <img src="{% static 'Main_engine/images/logo_black.png' %}" alt="...." style="width: 40px;">
+
+                    <span onclick="window.location=''" class="brand-name">BINARY DIFFING</span>
                 </a>
             </div>
             <!-- begin sidebar scrollbar -->
-            <div class="sidebar-scrollbar">
+            <div class="sidebar-scrollbar" style="background-color: black">
                 <!-- sidebar menu -->
                 <ul class="nav sidebar-inner" id="sidebar-menu">
-                    <li class="has-sub">
 
+                    <li class="has-sub">
+                        <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
+                           data-target="#home"
+                           aria-expanded="false" aria-controls="home">
+                            <i class="mdi mdi-home"></i>
+                            <span onclick="window.location='/'" class="nav-text">HOME</span>
+                        </a>
+                    </li>
+
+                    <li class="has-sub">
                         <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
                            data-target="#dashboard"
                            aria-expanded="false" aria-controls="dashboard">
@@ -228,8 +225,8 @@
             </nav>
         </header>
 
-        <div class="content-wrapper">
-            <div class="content">
+        <div class="content-wrapper" style="background-color: rgba(255,255,255,0.8); color: rgba(0,0,0,0.8)">
+            <div class="content" style="padding-top: 20px">
                 {% block section %}
                 {% endblock %}
             </div>

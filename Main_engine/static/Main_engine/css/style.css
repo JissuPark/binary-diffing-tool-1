@@ -16,6 +16,7 @@
 }
 
 .my-hr3 {
+    margin-top: 9px;
     border: 0;
     height: 2px;
     background: #dee2e6;
@@ -37,7 +38,6 @@
 .widget-h {
     color: #afaebc;
     font-size: 16px;
-    text-transform: uppercase;
     margin: 0px 0px 10px 0px;
     text-align: center;
     display: block;
@@ -82,7 +82,7 @@
 }
 
 .bar-legend li {
-    font-size: 11px;
+    font-size: 10.4px;
     margin-bottom: 5px;
     list-style: none;
 }
@@ -123,4 +123,9 @@
 
 .daily-sales-info {
     color: #ccc;
+}
+
+@font-face {
+    font-family: "BankGothic Md BT";
+    src: url('./BankGothic Md BT.ttf');
 }

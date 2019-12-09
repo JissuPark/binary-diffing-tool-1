@@ -91,9 +91,8 @@
 
     {% load static %}
 
-    <hr class="my-hr3">
-    <h5 id="heuristic" class="mb-3" style="font-weight: bold;">Heuristic Score</h5>
-    <hr class="my-hr3">
+    <h4 id="heuristic" style="font-weight: bold;">Heuristic Score</h4>
+    <hr class="my-hr3" style="margin-top: 9px">
 
     <!--원래 있던 차트 부분-->
     <div class="card-deck ml-2 mr-2 mt-2">
@@ -105,11 +104,12 @@
     <a id="prev" class="previous round"
        style="z-index: 1; text-decoration: none; display: inline-block; padding: 8px 16px;"
        onmouseover="this.style.background='#ddd'" onmouseout="this.style.background='#f1f1f1'">&#8249;</a>
+
     <a id="next" class="next round"
        style="z-index: 1; text-decoration: none; display: inline-block; padding: 8px 16px; margin-left: 14px"
        onmouseover="this.style.background='#ddd'" onmouseout="this.style.background='#f1f1f1'">&#8250;</a>
 
-    <hr class="my-hr3"><h5 id="scoretable" class="mt-2 mb-3" style="font-weight: bold;">Detail</h5>
+    <h4 id="scoretable" class="mt-2 mb-3" style="font-weight: bold;">Detail</h4>
     <hr class="my-hr3">
 
     <div class="container-fluid col-12">
@@ -127,7 +127,7 @@
                                 <th colspan="5" style="color: black; font-weight: bold">PE META DATA</th>
                             </tr>
                             <tr>
-                                <th style="color: black; font-weight: bold">BBH</th>
+                                <th style="color: black; font-weight: bold">BASIC BLOCK</th>
                                 <th style="color: black; font-weight: bold">CONSTANT</th>
                                 <th style="color: black; font-weight: bold">SECTION DATA</th>
                                 <th style="color: black; font-weight: bold">CERTIFICATE</th>
@@ -229,9 +229,15 @@
                                         var base_panel_body = document.createElement("div");
                                         base_panel_body.id = "panel_body";
                                         base_panel_body.className = "panel-body";
-                                        base_panel_body.innerHTML = "<p> BASE : " + standard.substring(0,length) + "...</p>" + "<br>" + "<p> FILESIZE: 사이즈를 넣자</p>" + "<p> FILETYPE: 타입을 넣자</p>";
-{#"BASEFILE :" + standard.substring(0, length) + '...' +  "FILETYPE : " + "ssss" +  "FILESIZE : " + "zzzzzzzzzzz"#}
+                                        if (standard.length > length) {
+                                            base_panel_body.innerHTML = "<p> BASE FILE : " + standard.substring(0, length).toUpperCase() + "...</p>" + "<br>" + "<p> FILE SIZE: 사이즈를 넣자</p>" + "<p> FILE TYPE: 타입을 넣자</p>";
+                                        } else {
+                                            base_panel_body.innerHTML = "<p> BASE FILE : " + standard.toUpperCase() + "</p>" + "<br>" + "<p> FILE SIZE: 사이즈를 넣자</p>" + "<p> FILE TYPE: 타입을 넣자</p>";
+                                        }
+                                        //"BASEFILE :" + standard.substring(0, length) + '...' +  "FILETYPE : " + "ssss" +  "FILESIZE : " + "zzzzzzzzzzz"
                                         document.getElementById("panel").appendChild(base_panel_body);
+
+                                        //var base_top_stats_panel = document.createElement("div");
 
 
                                         // document.write(sel.selectedIndex + " is " + "<br>");
@@ -254,7 +260,8 @@
                                                     var xor = new_row.insertCell(7);
 
                                                     /* 열에 데이터 입력 */
-                                                    filename.innerHTML = json_res[standard][target][0].toUpperCase();
+                                                    /*filename.innerHTML = json_res[standard][target][0].toUpperCase();*/
+                                                    filename.innerHTML = target.toUpperCase();
                                                     bbh.innerHTML = json_res[standard][target][2];
                                                     constvalue.innerHTML = json_res[standard][target][3];
                                                     section.innerHTML = json_res[standard][target][4];
@@ -306,7 +313,15 @@
                                                     var h4 = document.createElement("h4");
                                                     h4.id = "widget-h";
                                                     h4.className = "widget-h";
-                                                    h4.textContent = f_name.substring(0, length) + '...';
+                                                    h4.style.color = "rgba(0,0,0,0.7)";
+                                                    h4.setAttribute("data-toggle", "tooltip");
+                                                    h4.setAttribute("data-placement", "bottom");
+                                                    h4.setAttribute("title", target);
+                                                    if (target.length > length) {
+                                                        h4.textContent = target.substring(0, length).toUpperCase() + "...";
+                                                    } else {
+                                                        h4.textContent = target.toUpperCase();
+                                                    }
                                                     document.getElementById("top_stats_panel" + i).appendChild(h4);
 
                                                     var bar_stats = document.createElement("div");
@@ -376,8 +391,8 @@
                             var width = $(".card").innerWidth();
                             console.log(width);
                             $("#prev").click(function () {
-                              console.log("left");
-                              $("#test").animate({scrollLeft: $("#test").scrollLeft() - width}, 800);
+                                console.log("left");
+                                $("#test").animate({scrollLeft: $("#test").scrollLeft() - width}, 800);
                             });
                             $("#next").click(function () {
                                 console.log("right");
