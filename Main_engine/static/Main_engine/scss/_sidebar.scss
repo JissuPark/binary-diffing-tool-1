@@ -638,24 +638,24 @@
   .left-sidebar {
     background-color: $navy;
   }
-  .sidebar {
-    .sub-menu {
-      background: #1d2531;
-      > li > a {
-        color: #b7c0cd;
-      }
-    }
-    .sub-menu>li.active>a,
-    .sub-menu>li.active>a:focus,
-    .sub-menu>li.active>a:hover,
-    .sub-menu>li>a:focus,
-    .sub-menu>li>a:hover {
-      color: $white;
-    }
-    .nav > li.active > a {
-      color: $white;
-    }
-  }
+  //.sidebar {
+  //  .sub-menu {
+  //    background: rgba(10,10,10,0.7);
+  //    > li > a {
+  //      color: #b7c0cd;
+  //    }
+  //  }
+  //  .sub-menu>li.active>a,
+  //  .sub-menu>li.active>a:focus,
+  //  .sub-menu>li.active>a:hover,
+  //  .sub-menu>li>a:focus,
+  //  .sub-menu>li>a:hover {
+  //    color: $white;
+  //  }
+  //  .nav > li.active > a {
+  //    color: $white;
+  //  }
+  //}
   .separator {
     border-color: rgba($border-color, .2);
   }

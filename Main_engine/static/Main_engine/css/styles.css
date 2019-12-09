@@ -12642,7 +12642,7 @@ div.copied {
 }
 
 .sidebar-dark .sidebar .sub-menu {
-    background: #1d2531
+    background: rgba(10,10,10,0.7)
 }
 
 .sidebar-dark .sidebar .sub-menu > li > a {
