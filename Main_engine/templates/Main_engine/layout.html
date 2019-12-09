@@ -8,10 +8,7 @@
 
     <title>{% block title %}Sleek - Admin Dashboard Template{% endblock %}</title>
 
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
-          integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed&display=swap" rel="stylesheet">
-    <link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet">
+  <link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet">
     <link href="{% static 'Main_engine/css/styles.css' %}" rel="stylesheet">
     <!-- GOOGLE FONTS -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500|Poppins:400,500,600,700|Roboto:400,500"
@@ -19,16 +16,17 @@
     <link href="https://cdn.materialdesignicons.com/3.0.39/css/materialdesignicons.min.css" rel="stylesheet"/>
 
     <!-- 먼지는 모르겠는데 순서가 중요함! 반드시 jquery 앞에 bootstrap 먼저 쓸 것!!! -->
-
     <script src="https://code.jquery.com/jquery-3.4.1.js"
             integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
             crossorigin="anonymous"></script>
+    <script src="{% static 'Main_engine/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
             integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
             crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-            crossorigin="anonymous"></script>
+    <script src="{% static 'Main_engine/plugins/slimscrollbar/jquery.slimscroll.min.js' %}"></script>
 
     <!-- PLUGINS CSS STYLE -->
 
@@ -41,8 +39,6 @@
 
     <!--플러그인의 jquery가 있으면 파일 선택이 안되고 없으면 스크롤이 안됨; -->
     <!--    <script src="{% static 'Main_engine/plugins/jquery/jquery.min.js' %}"></script>-->
-    <script src="{% static 'Main_engine/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-    <script src="{% static 'Main_engine/plugins/slimscrollbar/jquery.slimscroll.min.js' %}"></script>
     <script src="{% static 'Main_engine/js/sleek.js' %}"></script>
 
     {% block head %}
@@ -136,7 +132,7 @@
                            data-target="#pe_menu"
                            aria-expanded="false" aria-controls="pe_menu">
                             <i class="mdi mdi-folder-multiple-outline"></i>
-                            <span onclick="window.location='pe'" class="sidenav-item-link">PE</span>
+                            <span onclick="window.location='pe'" class="nav-text">PE</span>
                             <b class="caret"></b>
                         </a>
                         <ul class="collapse" id="pe_menu"

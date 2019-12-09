@@ -229,13 +229,6 @@ class Exract_Feature:
         export_pe = self.export_by_multi(flag)
 
         if export_pe != False:
-            #
-            # for dict_list in export_pe.values():
-            #
-            #     # 파일 저장은 우리를 위한 임시적인 행위
-            #     with open(r"C:\malware\all_result\pe"+"\\" + dict_list['file_name'] + ".txt", 'w') as makefile:
-            #         json.dump(dict_list, makefile, ensure_ascii=False, indent='\t')
-
             return export_pe
         else:
             return False
