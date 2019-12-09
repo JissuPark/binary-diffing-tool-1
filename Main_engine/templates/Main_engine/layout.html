@@ -8,6 +8,9 @@
 
     <title>{% block title %}Sleek - Admin Dashboard Template{% endblock %}</title>
 
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+          integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed&display=swap" rel="stylesheet">
     <link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet">
     <link href="{% static 'Main_engine/css/styles.css' %}" rel="stylesheet">
     <!-- GOOGLE FONTS -->
@@ -44,6 +47,34 @@
 
     {% block head %}
     {% endblock head %}
+    <style>
+
+        button#select-oper {
+            background-color: #525252;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: large;
+            width: 13%;
+            height: 40px;
+            margin-left: 45px;
+            margin-right: 20px;
+            text-align: center;
+        }
+
+        p.file_text {
+            width: 17%;
+            margin: 6px;
+            font-size: large;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .btn:not(:disabled):not(.disabled) {
+            cursor: pointer;
+        }
+
+
+    </style>
 </head>
 <body class="sidebar-fixed sidebar-dark header-light header-fixed" id="body">
 
@@ -53,34 +84,34 @@
     <aside class="left-sidebar bg-sidebar">
         <div id="sidebar" class="sidebar sidebar-with-footer">
             <!-- Aplication Brand -->
-            <div class="app-brand">
+            <div class="app-brand" style="background-color: rgba(241,34,96,0.8);">
                 <a href="#">
-                    <svg
-                            class="brand-icon"
-                            xmlns="http://www.w3.org/2000/svg"
-                            preserveAspectRatio="xMidYMid"
-                            width="30"
-                            height="33"
-                            viewBox="0 0 30 33"
-                    >
-                        <g fill="none" fill-rule="evenodd">
-                            <path class="logo-fill-blue" fill="7DBCFF" d="M0 4v25l8 4V0zM22 4v25l8 4V0z"></path>
-                            <path class="logo-fill-white" fill="#FFF" d="M11 4v25l8 4V0z"></path>
-                        </g>
-                    </svg>
-                    <span onclick="window.location=''" class="brand-name">binary-diffing-tools</span>
+                    <img src="{% static 'Main_engine/images/logo_black.png' %}" alt="...." style="width: 40px;">
+
+                    <span onclick="window.location=''" class="brand-name">BINARY DIFFING</span>
                 </a>
             </div>
             <!-- begin sidebar scrollbar -->
-            <div class="sidebar-scrollbar">
+            <div class="sidebar-scrollbar" style="background-color: black">
                 <!-- sidebar menu -->
                 <ul class="nav sidebar-inner" id="sidebar-menu">
+
+                    <li class="has-sub">
+                        <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
+                           data-target="#home"
+                           aria-expanded="false" aria-controls="home">
+                            <i class="mdi mdi-home"></i>
+                            <span onclick="window.location='/'" class="nav-text">HOME</span>
+                        </a>
+                    </li>
+
                     <li class="has-sub">
                         <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
                            data-target="#dashboard"
                            aria-expanded="false" aria-controls="dashboard">
                             <i class="mdi mdi-view-dashboard-outline"></i>
-                            <span onclick="window.location='result'" class="nav-text">Result</span> <b class="caret"></b>
+                            <span onclick="window.location='result'" class="nav-text">Result</span> <b
+                                class="caret"></b>
                         </a>
                         <ul class="collapse" id="dashboard"
                             data-parent="#sidebar-menu">
@@ -173,21 +204,29 @@
                     <span class="sr-only">Toggle navigation</span>
                 </button>
                 {% if result or cfg %}
-                <div style="display:inline-flex; width:70%;">
-                    <p class="file_text">select base file : </p>
-                    <select id="select_base" class="selectpicker" data-live-search="true" data-width="20%" data-size="5"
-                            title="Choose base"></select>
-                    <p class="file_text">select target file : </p>
-                    <select id="select_target" class="selectpicker" data-actions-box="true" data-width="20%"
-                            data-size="5" multiple title="Choose targets"></select>
-                    <button id="select-oper">select</button>
-                </div>
-                {% endif%}
+                    <div class="mt-1" style="display:inline-flex; width:70%;">
+                        <p class="file_text" style="font-family: 'Roboto Condensed', sans-serif; margin-top: 12px;">BASE
+                            FILE</p>
+                        <select id="select_base" class="selectpicker" data-live-search="true" data-width="20%"
+                                data-size="5"
+                                title="Choose base"></select>
+                        <p class="file_text" style="font-family: 'Roboto Condensed', sans-serif; margin-top: 12px; ">
+                            TARGET FILE</p>
+
+                        <select id="select_target" class="selectpicker" data-actions-box="true" data-width="20%"
+                                data-size="5" multiple title="Choose targets"></select>
+
+                        <button id="select-oper"
+                                style="font-family: 'Roboto Condensed', sans-serif; font-weight: bolder; color: white">
+                            SELECT
+                        </button>
+                    </div>
+                {% endif %}
             </nav>
         </header>
 
-        <div class="content-wrapper">
-            <div class="content">
+        <div class="content-wrapper" style="background-color: rgba(255,255,255,0.8); color: rgba(0,0,0,0.8)">
+            <div class="content" style="padding-top: 20px">
                 {% block section %}
                 {% endblock %}
             </div>

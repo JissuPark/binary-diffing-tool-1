@@ -10,11 +10,13 @@
     <link rel="stylesheet" href="{% static 'Main_engine/css/dropzone.css' %}">
     <style>
         @import url("https://fonts.googleapis.com/css?family=Noto+Sans+KR&display=swap");
+
         html, body {
             height: 100%;
             overflow: auto;
             font-family: Consolas;
         }
+
         body {
             font-family: Consolas;
             /*background-image: url('../Main_engine/static/Main_engine/images/bg.png');*/
@@ -23,53 +25,51 @@
             background-color: #a4a09f;
 
         }
+
         h1, h2, h3, table th, table th .header {
             font-family: consolas;
             font-size: 2rem;
 
         }
+
         html, body {
             margin: 0;
             height: 100%;
         }
+
         body {
             display: flex;
             flex-direction: column;
         }
+
         header, footer {
             flex: none;
         }
+
         main {
             flex: auto;
         }
+
         .strings_try {
             text-align: center;
             /*word-break:nowrap;*/
-            display: inline-block;
-            text-overflow: clip;
-            white-space: nowrap;
-            color: white;
+        {#display: inline-block;#}{#text-overflow: clip;#}{#white-space: nowrap;#} color: white;
         }
     </style>
 </head>
-<body>
+<body style="background-color: rgb(13,13,13)">
 <style>
     #container {
         display: flex;
     }
-    /*.diagonal {*/
-    /*    -webkit-transform: rotate(15deg);*/
-    /*    -moz-transform: rotate(15deg);*/
-    /*    -o-transform: rotate(15deg);*/
-    /*    -ms-transform: rotate(15deg);*/
-    /*    transform: rotate(15deg);*/
-    /*}*/
+
+
     input {
         font-weight: bolder;
-        background: #a4a09f;
+        background: rgba(241,34,96,0.8);
         color: white;
         border-radius: 10px;
-        width: 100px;
+        width: 150px;
         border: none;
         position: relative;
         height: 50px;
@@ -78,10 +78,12 @@
         transition: 800ms ease all;
         outline: none;
     }
+
     input:hover {
         background: white;
         color: black;
     }
+
     input:before, input:after {
         content: '';
         position: absolute;
@@ -92,12 +94,14 @@
         background: darkgray;
         transition: 400ms ease all;
     }
+
     input:after {
         right: inherit;
         top: inherit;
         left: 0;
         bottom: 0;
     }
+
     input:hover:before, input:hover:after {
         width: 100%;
         transition: 800ms ease all;
@@ -106,31 +110,28 @@
 <!-- header -->
 <header>
     <div id='header container' style="text-align: center">
-        <div id="header1" style="float: left; width:40%;">
-            <img src="{% static 'Main_engine/images/service_logo_grey.png' %}" style="float:left; margin-left:45px; width: 70%; height: auto; margin-top: 30px;"></div>
-
-        <div id="header2" style="float: right; width:25%;">
-            <img src="{% static 'Main_engine/images/team_logo_grey.png' %}" style="width: 40%; height: auto; float: right; margin-top: 40px; margin-right: 40px;"
-                 class="diagonal"></div>
+        <div id="header1" style="width:100%;">
+            <img src="{% static 'Main_engine/images/logo.png' %}"
+                 style="margin-left:45px; width: 100px; height: auto; padding-top:90px; margin-top: 30px;" alt="...">
+        </div>
     </div>
-<!--    <h1 style="text-align:center">&nbsp;</h1>-->
+    <!--    <h1 style="text-align:center">&nbsp;</h1>-->
 </header>
 <!-- header end -->
 <!-- section -->
-<main class="row align-items-center row justify-content-md-center" style="width: 100%; padding-top: 3%;padding-left: 5%;padding-right: 3%;">
-    <div id='container' style="text-align: center; width: 100%;">
-        <div style="float:left; width:50%; padding:15px; vertical-align: middle">
-
-            <h2 id="Try-it-out-1" class="strings_try">BASE</h2>
+<main class="row align-items-center row justify-content-md-center"
+      style="width: 100%; padding-left: 5%;padding-right: 3%;">
+    <h2 style="font-family:'BankGothic Md BT',sans-serif; font-weight:bold; font-size:30px; margin-top: -30px" id="Try-it-out-1" class="strings_try">WINDOWS BINARY DIFFING</h2>
+    <div id='container' style="text-align: center; width: 100%; justify-content: center; margin-top: -100px;">
+        <div style="width:40%; vertical-align: middle; margin-top: -20px">
 
             <div id="dropzone 1">
-                <form action="{% url 'upload' %}" class="dropzone needsclick dz-clickable" id="upload-1">
+                <form action="{% url 'upload' %}" class="dropzone needsclick dz-clickable" id="upload-1"
+                      style="border-color: rgba(255,255,255,0.5); border-width: 1px;">
                     {% csrf_token %}
-                    <div class="dz-message needsclick">
-                        Comparison <strong>base file</strong> drop zone<br>
-                        (Drop only Windows PE File)<br>
+                    <div class="dz-message needsclick"> <!--밑에 생김--->
                         <div class="dz-message info">
-                           (This is demo service. File size limit:<strong> 2MB / 1EA</strong>)
+                            <strong style="font-family: 'Roboto Condensed', sans-serif; color: white"> FILE DROP ZONE</strong>
                         </div>
                     </div>
                 </form>
@@ -138,38 +139,25 @@
         </div>
 
         <!-- <div style=" float: right; width: 5%; padding:10px; font-size: 4rem; text-align: center;"> </div> -->
-        <div style="float:left; width: 50%; padding:15px; vertical-align: middle">
-            <h2 id="Try-it-out-2" class="strings_try">TARGET</h2>
-            <div id="dropzone 2">
-                <form action="{% url 'upload' %}" class="dropzone needsclick dz-clickable" id="upload-2">
-                    {% csrf_token %}
-                    <div class="dz-message needsclick">
-                        Comparison <strong>target file</strong> drop zone<br>
-                        (Drop only Windows PE File)<br>
-                        <div class="dz-message info">
-                            (This is demo service. File size limit:<strong> 2MB / 3EA</strong>)
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
+
     </div>
-    <div style="float: left; padding: 10px;">
-        <input type="submit" value="start" onclick="location.href='{% url 'loading' %}'">
+    <div style="float: left; padding: 10px; margin-top: -150px; font-family: 'BankGothic Md BT'; font-size: 13px">
+        <input type="submit" value="DIFFING" onclick="location.href='{% url 'loading' %}'">
     </div>
 
 </main>
 
 <!-- section end -->
 <!-- Footer -->
-<footer>
-    <p style="text-align: center; font-size: 1.2rem; color: #cacaca"><strong>Recent Scans | About</strong></p>
-    <p style="text-align: center; font-size: 0.9rem; color: #cacaca">© 2019 Best of the Best Team. Breakers – WinBinary Diffing Tools v0.1
+<footer style="margin-bottom: 85px">
+    <p style="text-align: center; font-size: 1.2rem; color: #cacaca"><strong>About</strong></p>
+    <p style="text-align: center; font-size: 0.9rem; color: #cacaca">© 2019 Best of the Best Team. Breakers – WinBinary
+        Diffing Tools v0.1
         Beta. All Rights Reserved</p>
 </footer>
 <!-- Footer end -->
 {% if message %}
-<script>alert('{{message}}');</script>
+    <script>alert('{{message}}');</script>
 {% endif %}
 </body>
 </html>
