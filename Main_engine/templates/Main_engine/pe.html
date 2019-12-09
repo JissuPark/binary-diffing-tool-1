@@ -13,39 +13,7 @@
 
 {% block section %}
 {% if lists.has_other_pages %}
-<!--<nav aria-label="..." style="padding: 10px">
-<div id="page" style="position: relative; left: 500px; top: 20px;">
-    <ul class="pagination">
-        {% if lists.has_previous %}
-        <li class="page-item">
-            <a class="page-link" href="?page={{ lists.previous_page_number }}">Previous</a>
-        </li>
-        {% else %}
-        <li class="page-item disabled">
-            <span class="page-link">Previous</span>
-        </li>
-        {% endif %}
-        {% for i in lists.paginator.page_range %}
-        {% if lists.number == i %}
-        <li aria-current="page" class="page-item active">
-            <span class="page-link">{{ i }}<span class="sr-only">(current)</span></span></li>
-        {% else %}
-        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
-        {% endif %}
-        {% endfor %}
-        {% if lists.has_next %}
-        <li class="page-item">
-            <a class="page-link" href="?page={{ lists.next_page_number }}">Next</a>
-        </li>
-        {% else %}
-        <li class="page-item disabled">
-            <a class="page-link">Next</a>
-        </li>
-        {% endif %}
-    </ul>
-</div>
-</nav>
--->
+
 {% endif %}
 
 {% load get_at_index %}
