@@ -10,6 +10,7 @@ from collections import OrderedDict
 from .models import PE_info
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from pprint import pprint
+from django import template
 
 import json
 import os
@@ -29,6 +30,7 @@ def pe(request):
 
     page = request.GET.get('page', 1)
     p_dict = dict()
+    p_filename = dict()
     p_rsrc_dict = dict()
     p_rsrc_cnt = dict()
     p_rsrc_lang = dict()
@@ -67,8 +69,19 @@ def pe(request):
                 elif p == 'string file info':
                     p_stringfile[pe_data['file_name']] = p_
 
-            #json.dump(pe_data, f, ensure_ascii=False, indent='\t')
+                elif p == 'time in num':
+                    p_filename[pe_data['file_name']] = p_
+    #print(p_filename)#json.dump(pe_data, f, ensure_ascii=False, indent='\t')
+    p_filename = sorted(p_filename.items(), key=lambda x: x[1])
+    #print(p_filename)
 
+    # for i in range(len(p_filename)):
+    #     pe_filename[p_filename[i][0]] = p_filename[i][1]
+
+    pe_f = [0 for i in range(len(p_filename) + 1)]
+    for i in range(len(p_filename)):
+        pe_f[i+1] = p_filename[i]
+    print(pe_f)
 
     try:
         lists = paginator.get_page(page)
@@ -79,7 +92,7 @@ def pe(request):
     result_pe.close()
     #f.close()
 
-    return render(request, 'Main_engine/pe.html', {'lists': lists, 'p_dict': p_dict, 'p_rsrc': p_rsrc_dict,
+    return render(request, 'Main_engine/pe.html', {'p_filename': p_filename,'pe_f': pe_f, 'lists': lists, 'p_dict': p_dict, 'p_rsrc': p_rsrc_dict,
                                                    'p_rsrc_cnt': p_rsrc_cnt, 'p_rsrc_lang': p_rsrc_lang,
                                                    'p_dll_list': p_dll_list, 'p_rich_list': p_rich_list, 'p_stringfileinfo': p_stringfile})
 
@@ -126,6 +139,7 @@ def loading(request):
             os.remove(path)
 
     flag = file_check()
+
     if not flag:
         return render(request, 'Main_engine/index.html', {'message':'directory is empty or filetype is not pe !!'})
     else:
@@ -150,7 +164,6 @@ def call_main(request):
     stop = timeit.default_timer()
     print('time is ????')
     print(stop - start)
-
 
     main_engine.delete_file()
 
@@ -194,14 +207,12 @@ def file_check():
     # # # 전부 돌았는데 false가 반환되지 않았다면 true 반환
     return True
 
-
 def handle_uploaded_file(file):
     '''
     파일을 받아서 파일의 이름으로 폴더에 저장해주는 함수
     :param file: 업로드 된 파일
     :return: None
     '''
-
 
     with open('C:\\malware\\mal_exe\\'+file.name, 'wb+') as uploaded_file:
         for chunk in file.chunks():
