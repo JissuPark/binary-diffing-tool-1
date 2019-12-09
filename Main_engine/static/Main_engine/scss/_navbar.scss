@@ -22,7 +22,7 @@
   border-radius: 0;
   padding: 0;
   border-bottom: 1px solid $border-color;
-  @include transition(margin-left .3s ease-in-out);
+  //@include transition(margin-left .3s ease-in-out);
   background-color: $white;
   @include media-breakpoint-up(lg) {
     padding-right: 1rem;

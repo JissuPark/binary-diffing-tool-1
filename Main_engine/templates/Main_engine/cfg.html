@@ -11,30 +11,8 @@
 <script src="{% static 'Main_engine/js/defaults-ko_KR.min.js' %}"></script>
 
 <style>
-    button#select-oper {
-        background-color: lightgray;
-        border-radius: 5px;
-        font-weight: bold;
-        font-size: large;
-        width: 20%;
-        margin-left: 20px;
-        margin-right: 20px;
-        text-align: center;
-    }
 
-    button#select-oper:hover {
-        background-color: #d8d8d8;
-        color: red;
-        border: white;
-    }
 
-    p.file_text {
-        width: 20%;
-        margin: 6px;
-        font-size: large;
-        font-weight: bold;
-        text-align: center;
-    }
 
     .graph-outer {
         height: 100%;
@@ -142,6 +120,7 @@
         function makebt(file, fname) {
             var li = document.createElement("li");
             li.id = "li_" + fname;
+
             li.onclick = function () {
                 $draw(file, fname);
             }; //button click 하면 함수 그려주기

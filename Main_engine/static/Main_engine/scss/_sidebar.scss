@@ -103,7 +103,7 @@
 .app-brand {
   position: relative;
   display: block;
-  background-color: $primary;
+  background-color: rgba(241,34,96,0.8);
 
   a {
     display: flex;
@@ -119,7 +119,7 @@
       overflow: hidden;
     }
     img {
-      max-width: 80px;
+      max-width: 40px;
       vertical-align: middle;
     }
   }
