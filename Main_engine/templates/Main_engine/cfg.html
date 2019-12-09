@@ -162,6 +162,7 @@
                 node_dict['id'] = item;
                 node_dict['size'] = 300;
                 node_dict['label'] = array[item];
+                node_dict['color'] = "red";
                 node_dict['shape'] = 'box';
                 node_dict['font'] = {'face': 'monospace', 'align': 'left'};
                 nodes.push(node_dict);
@@ -176,10 +177,10 @@
                 // document.write(leaf+"<br>");
                 for (var l in leaf) {
                     if (l % 2 == 0) {
-                        start.push(leaf[l].toString().split('x')[1]);
+                        start.push(leaf[l].toString());
                         // document.write(start+"<br>");
                     } else {
-                        end.push(leaf[l].toString().split('x')[1]);
+                        end.push(leaf[l].toString());
                         // document.write(end[1]+"<br>");
                     }
                 }
@@ -206,17 +207,25 @@
                 if (json_res[file]['file_name'] == selected) {
                     for (var funcname in json_res[file]['func_name']) {
                         makebt(json_res[file]['file_name'], funcname);
-                        if (funcname.indexOf("main") != -1) {
+                        if (funcname.indexOf("start") != -1) {
                             $draw(json_res[file]['file_name'], funcname);
                         }
                     }
                 }
             }
         });
+        /* 기준이 바뀌면 대상에 disable 거는 함수 */
+        $("#select_base").on("changed.bs.select", function () {
+            var selected = $("#select_base").children("option:selected").text();        // 기준 파일명을 가져옴
+            $("#select_target option").prop('disabled', false);                         // 전체 초기화
+            $('#select_target').find('[value="' + selected + '"]').prop('selected', false);// 체크도 해제
+            $("#select_target").find('[value="' + selected + '"]').prop('disabled', true);// 기준과 같은 옵션 disable
+            $("#select_target").selectpicker('refresh');                                // 새로고침
+        });
         /* 그래프 그리는 함수 */
-        $draw = function (file, fname) {
+        $draw = function (file, fname) {console.log(file, fname);
             //그림을 그릴 부분을 먼저 지워준다. (안 지우면 계속 추가됨)
-            var targets = $('#select_target').val();
+            var targets = $('#select_target').val();console.log(targets);
             $('.graph-inner').empty();
             //매칭되는 애들을 모아보자
             var targetlist = [];
@@ -228,11 +237,18 @@
                     for (target in targets) {
                         var t = targets[target];
                         //대상 중에서 기준 함수명을 찾는다.
-                        console.log(t);
-
                         if (match_json[filename][t].hasOwnProperty(fname)) {
-                            console.log(match_json[filename][t][fname]);
-                            targetlist.push([t, match_json[filename][t][fname]]);
+                            targetlist.push([t, match_json[filename][t][fname][0]]);
+                            // console.log([t, match_json[filename][t][fname][0]]);
+                            // var match_node = postoffice[t][[match_json[filename][t][fname][0]]][0];
+                            //
+                            // console.log(match_json[filename][t][fname][0]);
+                            // console.log(match_node.get());
+                            // for (addr in match_json[filename][t][fname][1]){
+                            //     // console.log(match_json[filename][t][fname][1][addr]);
+                            //     match_node.update({id: match_json[filename][t][fname][1][addr], color: "#E3F97B"});
+                            // }
+                            // console.log(match_node.get());
                         } else {
                             targetlist.push([t, "none"]);
                         }
@@ -247,10 +263,6 @@
                 div.id = "graph_" + index;
                 if (graph_cnt > 3) {
                     div.className = "col-xl-3 col-sm-6";
-                // } else if (graph_cnt == 3) {
-                //     div.className = " col-xl-4 col-lg-6 col-12";
-                // } else {
-                //     div.className = " col-xl-6";
                 }
                 //기준은 위치 고정
                 if (index == 0) {
@@ -261,7 +273,6 @@
                 document.getElementById('test').appendChild(div);
 
 
-                console.log(targetlist[index]);
                 if (targetlist[index][1] == 'none') {
                     document.getElementById('graph_' + index).setAttribute('class', 'groot-3 saonea');
                     var p = document.createElement('p');
@@ -277,22 +288,30 @@
                 };
 
                 var options = {
+                    // configure: {
+                    //   enabled: true
+                    // },
                     manipulation: false,
                     layout: {
                         hierarchical: {
                             enabled: true,
-                            levelSeparation: 300
+                            levelSeparation: 200
                         }
                     },
                     physics: {
                         hierarchicalRepulsion: {
-                            nodeDistance: 300
+                            nodeDistance: 200
                         }
+                    },
+                    interaction: {
+                        hoverConnectedEdges: true
                     }
                 };
                 var canvas = document.getElementById('graph_' + index);
                 var network = new vis.Network(canvas, data, options);
-
+                // network.on('click', function(){
+                //    alert('asdf');
+                // });
                 //파일명, 함수명, 유사도 추가
                 var name_label = document.createElement('p');
                 name_label.innerText = targetlist[index][0] + '\n' + targetlist[index][1];
@@ -309,7 +328,7 @@
             for (var funcname in json_res[file]['func_name']) {
                 if (index == 0) {
                     makebt(json_res[file]['file_name'], funcname);
-                    if(funcname.indexOf('main') != -1) {
+                    if (funcname.indexOf('start') != -1) {
                         first_file = json_res[file]['file_name'];
                         first_func = funcname;
                     }
@@ -323,8 +342,8 @@
                         for (var curaddr in json_res[file]['func_name'][funcname][startaddr]['disasms']) {
                             block = block + json_res[file]['func_name'][funcname][startaddr]['disasms'][curaddr] + '\n';
                         }
-                        var addrsplit = startaddr.split('x');
-                        array[addrsplit[1]] = block; //함수 값안에있는 정보
+                        var addrsplit = startaddr;
+                        array[addrsplit] = block; //함수 값안에있는 정보
                     }
                     if (startaddr == "flow_branches" && json_res[file]['func_name'][funcname][startaddr].length != 0) {
                         branches.push(json_res[file]['func_name'][funcname][startaddr]);
@@ -337,6 +356,7 @@
             index++;
             postoffice[json_res[file]['file_name']] = boxes;
         }
+
 
         // 페이지가 처음 뜰 때 기준은 처음으로 대상은 전부 선택해서 보여주도록
         var first_base = $("#select_base").find('option:first');

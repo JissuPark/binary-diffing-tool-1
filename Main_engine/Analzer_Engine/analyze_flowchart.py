@@ -216,7 +216,9 @@ class AnalyzeFlowchart:
         for func, val_01 in _dict.items():
             bb_count = len(list(val_01.keys()))
             temp_list = list()
+            block_match_list = list()
             for s_sAddr, val_02 in val_01.items():
+                block_match_list.append(s_sAddr)
                 for match_info, const_sim in val_02.items():
                     temp_list.append((match_info.split('-'))[0])
             temp_result = list(set(temp_list))
@@ -230,10 +232,10 @@ class AnalyzeFlowchart:
                         vote_func = i
                 #print(f'{func} -> matched -> {vote_func}')
                 #print(f' ㄴ[debug] {temp} vote -> -> {vote_func}')
-                func_match_dic.update({func:vote_func})
+                func_match_dic.update({func:[vote_func, block_match_list]})
             else:
                 #print(f'{func} -> matched -> {temp_result[0]}')
-                func_match_dic.update({func:temp_result[0]})
+                func_match_dic.update({func:[temp_result[0], block_match_list]})
 
         return func_match_dic
 
@@ -259,9 +261,9 @@ class AnalyzeFlowchart:
 
         s_cmp_dic, whitelist_matched_dic1 = self.parser_bbh(s_flow_data)
         t_cmp_dic, whitelist_matched_dic2 = self.parser_bbh(t_flow_data)
-
+        print(whitelist_matched_dic1)
         cmp_s, cmp_t, true_bb_const_sim = self.compare_bbh(s_cmp_dic, t_cmp_dic)
-
+        # print(true_bb_const_sim)
         c_score = self.compare_prime(self.parser_bbh_T_F(cmp_s, ), self.parser_bbh_T_F(cmp_t, ), s_flow_data, t_flow_data)
 
         func_match_dict = self.get_match_func_level(true_bb_const_sim)

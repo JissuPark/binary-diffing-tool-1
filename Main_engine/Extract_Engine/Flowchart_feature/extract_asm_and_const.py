@@ -166,13 +166,16 @@ def main(api, file_name):
         if 'dllentry' in fname or fname[:3] == 'sub' or fname[:5] == 'start' or fname.find('main') != -1:
             func_name.append(fname)
             for addr in api.idautils.XrefsTo(fva, 0):
-                try:
-                    if not api.idc.GetDisasm(addr.src).find('call'):
-                        # print(f"T : From {api.ida_funcs.get_func_name(api.ida_funcs.get_func(addr.src).startEA)}({hex(addr.src)}): To {fname}({hex(addr.dst)}) :{api.idc.GetDisasm(addr.src)}")
-                        func_branch.append(
-                            (api.ida_funcs.get_func_name(api.ida_funcs.get_func(addr.src).startEA), fname))
-                except:
-                    pass
+                # print(hex(addr.src), hex(addr.dst), addr.type)
+                # try:
+                    if addr.type is 17:
+                        # print(api.ida_funcs.get_func_name(api.ida_funcs.get_func(addr.src).startEA))
+                        print(f"\x1b[1;32mT : From {(api.idc.GetFunctionName(addr.src))}({hex(addr.src)}) To {fname}\x1b[1;m")
+                        # func_branch.append(
+                        #     (api.ida_funcs.get_func_name(api.ida_funcs.get_func(addr.src).startEA), fname))
+                # except:
+                #     print(f"F : From {dir(addr)}")
+                #     pass
 
             # main or start or sub_***** function. not library function
             basicblock = basic_block(api, fva, fname)
@@ -211,11 +214,11 @@ def basicblock_idb_info_extraction(FROM_FILE):
 if __name__ == "__main__":
 
     s = timeit.default_timer()  # start time
-    PATH = r"C:\malware\mal_idb\49B769536224F160B6087DC866EDF6445531C6136AB76B9D5079CE622B043200.idb"
+    PATH = r"D:\Project\PL자료\malware\Andariel\0e122fc1dc0bd63c4474508c654e42e9813a9f6e0857aca8ed18619707f8dd0c.idb"
     idb_sub_function_info = basicblock_idb_info_extraction(PATH)
-
-    with open(r"C:\malware\all_result\test.txt", 'w') as makefile:
-        json.dump(idb_sub_function_info, makefile, ensure_ascii=False, indent='\t')
-
-    print(f"[+]running : {timeit.default_timer() - s}")  # end time
-    print("-----END-----")
+    #
+    # with open(r"C:\Users\qkrwl\Documents\카카오톡 받은 파일\Anda\test.txt", 'w') as makefile:
+    #     json.dump(idb_sub_function_info, makefile, ensure_ascii=False, indent='\t')
+    #
+    # print(f"[+]running : {timeit.default_timer() - s}")  # end time
+    # print("-----END-----")
