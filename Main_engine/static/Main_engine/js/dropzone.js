@@ -248,12 +248,12 @@ var Dropzone = function (_Emitter) {
         /**
          * If `null`, the ratio of the image will be used to calculate it.
          */
-        thumbnailWidth: 100,
+        thumbnailWidth: 80,
 
         /**
          * The same as `thumbnailWidth`. If both are null, images will not be resized.
          */
-        thumbnailHeight: 100,
+        thumbnailHeight: 80,
 
         /**
          * How the images should be scaled down in case both, `thumbnailWidth` and `thumbnailHeight` are provided.
@@ -370,7 +370,7 @@ var Dropzone = function (_Emitter) {
          * already uploading) the file. The `dictCancelUpload`, `dictCancelUploadConfirmation`
          * and `dictRemoveFile` options are used for the wording.
          */
-        addRemoveLinks: false,
+        addRemoveLinks: true,
 
         /**
          * Defines where to display the file previews – if `null` the

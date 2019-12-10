@@ -17,6 +17,7 @@ import os
 
 
 def showindex(request):
+    main_engine.delete_file()
     return render(request, 'Main_engine/index.html')
 
 def recent(request):
@@ -169,9 +170,8 @@ def call_main(request):
     print('time is ????')
     print(stop - start)
 
-    main_engine.delete_file()
-
     return render(request, 'Main_engine/result.html', {'result': result, 'pe_': pe_})
+
 
 
 def upload_file_dropzone(request):

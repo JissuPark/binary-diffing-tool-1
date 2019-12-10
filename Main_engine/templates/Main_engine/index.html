@@ -11,160 +11,108 @@
     <style>
         @import url("https://fonts.googleapis.com/css?family=Noto+Sans+KR&display=swap");
 
-        html, body {
-            height: 100%;
-            overflow: auto;
-            font-family: Consolas;
-        }
-
         body {
-            font-family: Consolas;
-            /*background-image: url('../Main_engine/static/Main_engine/images/bg.png');*/
-            background-repeat: no-repeat;
-            background-size: cover;
-            background-color: #a4a09f;
-
+            background-color: black;
         }
 
-        h1, h2, h3, table th, table th .header {
-            font-family: consolas;
-            font-size: 2rem;
-
+        input {
+            font-weight: bolder;
+            background: rgba(241, 34, 96, 0.8);
+            color: white;
+            border-radius: 10px;
+            width: 150px;
+            border: none;
+            position: relative;
+            height: 50px;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: 800ms ease all;
+            outline: none;
         }
 
-        html, body {
-            margin: 0;
-            height: 100%;
+        input:hover {
+            background: white;
+            color: black;
         }
 
-        body {
-            display: flex;
-            flex-direction: column;
+        input:before, input:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 2px;
+            width: 0;
+            background: darkgray;
+            transition: 400ms ease all;
         }
 
-        header, footer {
-            flex: none;
+        input:after {
+            right: inherit;
+            top: inherit;
+            left: 0;
+            bottom: 0;
         }
 
-        main {
-            flex: auto;
+        input:hover:before, input:hover:after {
+            width: 100%;
+            transition: 800ms ease all;
         }
 
-        .strings_try {
-            text-align: center;}
-            /*word-break:nowrap;*/
-        /*{#display: inline-block;#}{#text-overflow: clip;#}{#white-space: nowrap;#} color: white;*/
-        /*}*/
     </style>
 </head>
-<body style="background-color: rgb(13,13,13)">
-<style>
-    #container {
-        display: flex;
-    }
+<body>
+<h2 style="color: white; font-family: 'Poppins', sans-serif; font-weight:bold; font-size:30px; text-align: center; padding-top: 6rem;"
+    id="Try-it-out-1">DIFFING SOURCE</h2>
+<!--class name 삭제-->
+{#<div id='container' style="text-align: center; width: 100%; justify-content: center; margin-top: -5.6em;"#}
+{#     class="col-12">#}
+<div style="width: 100%; text-align: center; margin-top: 6rem">
 
-
-    input {
-        font-weight: bolder;
-        background: rgba(241,34,96,0.8);
-        color: white;
-        border-radius: 10px;
-        width: 150px;
-        border: none;
-        position: relative;
-        height: 50px;
-        font-size: 1.5em;
-        cursor: pointer;
-        transition: 800ms ease all;
-        outline: none;
-    }
-
-    input:hover {
-        background: white;
-        color: black;
-    }
-
-    input:before, input:after {
-        content: '';
-        position: absolute;
-        top: 0;
-        right: 0;
-        height: 2px;
-        width: 0;
-        background: darkgray;
-        transition: 400ms ease all;
-    }
-
-    input:after {
-        right: inherit;
-        top: inherit;
-        left: 0;
-        bottom: 0;
-    }
-
-    input:hover:before, input:hover:after {
-        width: 100%;
-        transition: 800ms ease all;
-    }
-</style>
- header
-<header>
-    <div id='header container' style="text-align: center">
-        <div id="header1" style="width:100%;">
-            <img src="{% static 'Main_engine/images/logo.png' %}"
-                 style="margin-left:45px; width: 100px; height: auto; padding-top:90px; margin-top: 30px;" alt="...">
-        </div>
-    </div>
-    <!--    <h1 style="text-align:center">&nbsp;</h1>-->
-</header>
- header end
- section
-<main class="row align-items-center row justify-content-md-center"
-      style="width: 100%; padding-left: 5%;padding-right: 3%;">
-    <h2 style="font-family:'BankGothic Md BT',sans-serif; font-weight:bold; font-size:30px; margin-top: -30px" id="Try-it-out-1" class="strings_try">WINDOWS BINARY DIFFING</h2>
-    <div id='container' style="text-align: center; width: 100%; justify-content: center; margin-top: -100px;">
-        <div style="width:40%; vertical-align: middle; margin-top: -20px">
-            <div id="dropzone 1">
-                <form action="{% url 'upload' %}" class="dropzone needsclick dz-clickable" id="myAwesomeDropzone"
-                      style="border-color: rgba(255,255,255,0.5); border-width: 1px;">
-                    {% csrf_token %}
-                    <div class="dz-message needsclick"> <!--밑에 생김--->
-                        <div class="dz-message info">
-                            <strong style="font-family: 'Roboto Condensed', sans-serif; color: white"> FILE DROP ZONE</strong>
-                        </div>
-                    </div>
-                </form>
-                {% load static %}
-                <script>
-                    Dropzone.options.myAwesomeDropzone = {
-                      accept: function(file, done) {
-                        var ssrc= "{% static 'Main_engine/images/icon.png' %}"
-                        switch (file.type) {
-                          case 'application/pdf':
-                            this.emit("thumbnail", file, "/static/img/pdf.png");
-                            break;
-                          case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-                            this.emit("thumbnail", file, "/static/img/pdf.png");
-                            break;
-                          default:
-                            this.emit("thumbnail", file, ssrc);
-                        }
-                        file.previewTemplate.querySelector(".dz-image img").style.width="100px";
-                        done();
-                      }
-                    };
-                </script>
+    <div id="dropzone 1" style="display: inline-block; width: 35%;">
+        <form action="{% url 'upload' %}" class="dropzone needsclick dz-clickable" id="myAwesomeDropzone"
+              style="border-color: rgba(255,255,255,0.5); border-width: 1px;">
+            {% csrf_token %}
+            <div class="dz-message needsclick"> <!--밑에 생김--->
+                <div class="dz-message info">
+                    <img src="{% static 'Main_engine/images/filedropicon.png' %}" alt="..."
+                         style="width: 100px; margin-left: -0.4em">
+                    <br>
+                    <strong style="font-family: 'Poppins', sans-serif; color: white; font-size: 15px">(2MB/1EA) </strong>
+                </div>
             </div>
-        </div>
+        </form>
     </div>
-    <div style="float: left; padding: 10px; margin-top: -150px; font-family: 'BankGothic Md BT'; font-size: 13px">
-        <input type="submit" value="DIFFING" onclick="location.href='{% url 'loading' %}'">
-    </div>
-</main>
+    {% load static %}
+    <script>
+        Dropzone.options.myAwesomeDropzone = {
+          accept: function(file, done) {
+            var ext = (file.name).split('.')[1];
+            switch (ext) {
+              case 'exe':
+                this.emit("thumbnail", file, "{% static 'Main_engine/images/filedropicon.png' %}");
+                break;
+              case 'sys':
+                this.emit("thumbnail", file, "{% static 'Main_engine/images/filedropicon.png' %}");
+                break;
+              default:
+                this.emit("thumbnail", file, "{% static 'Main_engine/images/filedropicon.png' %}");
+            }
+            file.previewTemplate.querySelector(".dz-image img").style.width="100%";
+            done();
+          }
+        };
+    </script>
+</div>
+
+</div>
+<div style="float: left; padding: 5rem; font-family: 'Poppins', sans-serif; font-size: 13px; text-align: center;"
+     class="col-12">
+    <input type="submit" value="DIFFING" onclick="location.href='{% url 'loading' %}'">
+</div>
 
 <!-- section end -->
 <!-- Footer -->
-<footer style="margin-bottom: 85px">
+<footer>
     <p style="text-align: center; font-size: 1.2rem; color: #cacaca"><strong>About</strong></p>
     <p style="text-align: center; font-size: 0.9rem; color: #cacaca">© 2019 Best of the Best Team. Breakers – WinBinary
         Diffing Tools v0.1
@@ -174,5 +122,6 @@
 {% if message %}
     <script>alert('{{message}}');</script>
 {% endif %}
+
 </body>
 </html>
