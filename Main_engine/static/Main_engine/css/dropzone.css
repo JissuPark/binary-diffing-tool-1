@@ -298,6 +298,8 @@
     display: block;
     cursor: pointer;
     border: none;
+    margin-top:20px;
+    margin-left:12px;
 }
 
 .dropzone .dz-preview .dz-remove:hover {
@@ -312,7 +314,7 @@
     z-index: 20;
     position: absolute;
     top: 0;
-    left: 7px;
+    left: 5px;
     /*opacity: 0;*/
     font-size: 14px;
     min-width: 100%;
