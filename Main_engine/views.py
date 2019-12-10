@@ -30,71 +30,39 @@ def pe(request):
 
     page = request.GET.get('page', 1)
     p_dict = dict()
-    p_filename = dict()
-    p_rsrc_dict = dict()
-    p_rsrc_cnt = dict()
-    p_rsrc_lang = dict()
-    p_dll_list = dict()
-    p_rich_list = dict()
-    p_stringfile = dict()
     pe_result_list = os.listdir(r"C:\malware\all_result\pe")
     for file in pe_result_list:
         if os.path.isfile(r"C:\malware\all_result\pe" + "\\" + file):
-            result_pe = open(r"C:\malware\all_result\pe" + "\\" + file, 'rb')
-            pe_data = json.loads(result_pe.read())
-            for p, p_ in pe_data.items():
-                if p == "cmp_section":
-                    #print(p_)
-                    p_dict[pe_data['file_name']] = p_
+            with open(r"C:\malware\all_result\pe" + "\\" + file, 'rb') as f:
+                result_pe = f.read()
+                pe_data = json.loads(result_pe)
+                #print(json.dumps(pe_data, indent=4))
+                p_dict[pe_data['file_name']] = pe_data
+                #print("p_dict :: ", json.dumps(p_dict, indent=4))
 
-                elif p == 'rsrc_info':
-                    p_rsrc_dict[pe_data['file_name']] = p_
-                    #print(json.dumps(p_rsrc_dict, indent=4))
-
-                elif p == "rsrc_count":
-                    #print(json.dumps(p_, indent=4))
-                    p_rsrc_cnt[pe_data['file_name']] = p_
-                    #print(json.dumps(p_rsrc_cnt, indent=4))
-
-                elif p == 'rsrc_lang':
-                    #print(json.dumps(p_, indent=4))
-                    p_rsrc_lang[pe_data['file_name']] = p_
-
-                elif p == 'rich header':
-                    p_rich_list[pe_data['file_name']] = p_
-
-                elif p == 'Imports':
-                    p_dll_list[pe_data['file_name']] = p_
-
-                elif p == 'string file info':
-                    p_stringfile[pe_data['file_name']] = p_
-
-                elif p == 'time in num':
-                    p_filename[pe_data['file_name']] = p_
+            f.close()
     #print(p_filename)#json.dump(pe_data, f, ensure_ascii=False, indent='\t')
-    p_filename = sorted(p_filename.items(), key=lambda x: x[1])
+    #p_filename = sorted(p_filename.items(), key=lambda x: x[1])
     #print(p_filename)
 
     # for i in range(len(p_filename)):
     #     pe_filename[p_filename[i][0]] = p_filename[i][1]
 
-    pe_f = [0 for i in range(len(p_filename) + 1)]
-    for i in range(len(p_filename)):
-        pe_f[i+1] = p_filename[i]
-    print(pe_f)
+    # pe_f = [0 for i in range(len(p_filename) + 1)]
+    # for i in range(len(p_filename)):
+    #     pe_f[i+1] = p_filename[i]
+    # print(pe_f)
 
-    try:
-        lists = paginator.get_page(page)
-    except PageNotAnInteger:
-        lists = paginator.page(1)
-    except EmptyPage:
-        lists = paginator.page(paginator.num_pages)
-    result_pe.close()
+    # try:
+    #     lists = paginator.get_page(page)
+    # except PageNotAnInteger:
+    #     lists = paginator.page(1)
+    # except EmptyPage:
+    #     lists = paginator.page(paginator.num_pages)
+    #result_pe.close()
     #f.close()
 
-    return render(request, 'Main_engine/pe.html', {'p_filename': p_filename,'pe_f': pe_f, 'lists': lists, 'p_dict': p_dict, 'p_rsrc': p_rsrc_dict,
-                                                   'p_rsrc_cnt': p_rsrc_cnt, 'p_rsrc_lang': p_rsrc_lang,
-                                                   'p_dll_list': p_dll_list, 'p_rich_list': p_rich_list, 'p_stringfileinfo': p_stringfile})
+    return render(request, 'Main_engine/pe.html', {'p_dict': p_dict})
 
 # def heuristic(request):
 #      with open(r"C:\malware\all_result\result.txt", "r") as json_file:

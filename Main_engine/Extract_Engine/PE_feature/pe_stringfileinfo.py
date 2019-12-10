@@ -1,33 +1,33 @@
-import win32api
+import pefile
+import json
 
 def getFileProperties(fname):
-
-    propNames = ('LegalCopyright', 'ProductName',  'OriginalFilename', 'InternalName',
-                 'ProductVersion', 'FileDescription', 'FileVersion', 'Comments')
-
-    props = {'StringFileInfo': None, 'FileVersion': None}
+    pe = pefile.PE(fname)
+    pe_string = dict()
+    # print(pe.VS_FIXEDFILEINFO)
 
     try:
-        fixedInfo = win32api.GetFileVersionInfo(fname, '\\')
-        props['FileVersion'] = "%d.%d.%d.%d" % (fixedInfo['FileVersionMS'] / 65536,
-                fixedInfo['FileVersionMS'] % 65536, fixedInfo['FileVersionLS'] / 65536,
-                fixedInfo['FileVersionLS'] % 65536)
-
-        lang, codepage = win32api.GetFileVersionInfo(fname, '\\VarFileInfo\\Translation')[0]
-
-        strInfo = {}
-        for propName in propNames:
-            strInfoPath = u'\\StringFileInfo\\%04X%04X\\%s' % (lang, codepage, propName)
-            ## print str_info
-            strInfo[propName] = win32api.GetFileVersionInfo(fname, strInfoPath)
-            #print(strInfo[propName])
-            # if propName == 'FileDescription':
-            #     strInfo[propName] = propNames[propName]
-            # else:
-            #     continue
-
-        props['StringFileInfo'] = strInfo
-        props['StringFileInfo']['FileVersion'] = props['FileVersion']
+        for fileinfo in pe.FileInfo:
+            # print(fileinfo)
+            for i in fileinfo:
+                if i.Key.decode() == 'StringFileInfo':
+                    # print(i)
+                    for st in i.StringTable:
+                        # print(st)
+                        for entry in st.entries.items():
+                            pe_string[entry[0].decode()] = entry[1].decode()
+                            if "TODO" in entry[1].decode():
+                                pe_string[entry[0].decode()] = "No Data"
+                            # print(f"{entry[0].decode()}: {entry[1].decode()}")
     except:
         pass
-    return props
+
+    se = r'\u24d2'
+    # print(se.encode().decode('unicode-escape'))
+    for k in pe_string.keys():
+        # re = pe_string[k].find(se.encode().decode('unicode-escape'))
+        # print(re)
+        pe_string[k] = pe_string[k].replace(se.encode().decode('unicode-escape'), "")
+
+    print(json.dumps(pe_string, indent=4))
+    return pe_string
