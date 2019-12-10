@@ -90,13 +90,16 @@
             var ext = (file.name).split('.')[1];
             switch (ext) {
               case 'exe':
-                this.emit("thumbnail", file, "{% static 'Main_engine/images/filedropicon.png' %}");
+                this.emit("thumbnail", file, "{% static 'Main_engine/images/exe.png' %}");
                 break;
               case 'sys':
-                this.emit("thumbnail", file, "{% static 'Main_engine/images/filedropicon.png' %}");
+                this.emit("thumbnail", file, "{% static 'Main_engine/images/sys.png' %}");
+                break;
+              case 'dll':
+                this.emit("thumbnail", file, "{% static 'Main_engine/images/dll.png' %}");
                 break;
               default:
-                this.emit("thumbnail", file, "{% static 'Main_engine/images/filedropicon.png' %}");
+                this.emit("thumbnail", file, "{% static 'Main_engine/images/unk.png' %}");
             }
             file.previewTemplate.querySelector(".dz-image img").style.width="100%";
             done();
