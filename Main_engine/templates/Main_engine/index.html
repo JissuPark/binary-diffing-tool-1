@@ -51,10 +51,10 @@
         }
 
         .strings_try {
-            text-align: center;
+            text-align: center;}
             /*word-break:nowrap;*/
-        {#display: inline-block;#}{#text-overflow: clip;#}{#white-space: nowrap;#} color: white;
-        }
+        /*{#display: inline-block;#}{#text-overflow: clip;#}{#white-space: nowrap;#} color: white;*/
+        /*}*/
     </style>
 </head>
 <body style="background-color: rgb(13,13,13)">
@@ -107,7 +107,7 @@
         transition: 800ms ease all;
     }
 </style>
-<!-- header -->
+ header
 <header>
     <div id='header container' style="text-align: center">
         <div id="header1" style="width:100%;">
@@ -117,16 +117,15 @@
     </div>
     <!--    <h1 style="text-align:center">&nbsp;</h1>-->
 </header>
-<!-- header end -->
-<!-- section -->
+ header end
+ section
 <main class="row align-items-center row justify-content-md-center"
       style="width: 100%; padding-left: 5%;padding-right: 3%;">
     <h2 style="font-family:'BankGothic Md BT',sans-serif; font-weight:bold; font-size:30px; margin-top: -30px" id="Try-it-out-1" class="strings_try">WINDOWS BINARY DIFFING</h2>
     <div id='container' style="text-align: center; width: 100%; justify-content: center; margin-top: -100px;">
         <div style="width:40%; vertical-align: middle; margin-top: -20px">
-
             <div id="dropzone 1">
-                <form action="{% url 'upload' %}" class="dropzone needsclick dz-clickable" id="upload-1"
+                <form action="{% url 'upload' %}" class="dropzone needsclick dz-clickable" id="myAwesomeDropzone"
                       style="border-color: rgba(255,255,255,0.5); border-width: 1px;">
                     {% csrf_token %}
                     <div class="dz-message needsclick"> <!--밑에 생김--->
@@ -135,16 +134,32 @@
                         </div>
                     </div>
                 </form>
+                {% load static %}
+                <script>
+                    Dropzone.options.myAwesomeDropzone = {
+                      accept: function(file, done) {
+                        var ssrc= "{% static 'Main_engine/images/icon.png' %}"
+                        switch (file.type) {
+                          case 'application/pdf':
+                            this.emit("thumbnail", file, "/static/img/pdf.png");
+                            break;
+                          case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+                            this.emit("thumbnail", file, "/static/img/pdf.png");
+                            break;
+                          default:
+                            this.emit("thumbnail", file, ssrc);
+                        }
+                        file.previewTemplate.querySelector(".dz-image img").style.width="100px";
+                        done();
+                      }
+                    };
+                </script>
             </div>
         </div>
-
-        <!-- <div style=" float: right; width: 5%; padding:10px; font-size: 4rem; text-align: center;"> </div> -->
-
     </div>
     <div style="float: left; padding: 10px; margin-top: -150px; font-family: 'BankGothic Md BT'; font-size: 13px">
         <input type="submit" value="DIFFING" onclick="location.href='{% url 'loading' %}'">
     </div>
-
 </main>
 
 <!-- section end -->
