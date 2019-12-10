@@ -248,12 +248,12 @@ var Dropzone = function (_Emitter) {
         /**
          * If `null`, the ratio of the image will be used to calculate it.
          */
-        thumbnailWidth: 120,
+        thumbnailWidth: 100,
 
         /**
          * The same as `thumbnailWidth`. If both are null, images will not be resized.
          */
-        thumbnailHeight: 120,
+        thumbnailHeight: 100,
 
         /**
          * How the images should be scaled down in case both, `thumbnailWidth` and `thumbnailHeight` are provided.
@@ -972,6 +972,7 @@ var Dropzone = function (_Emitter) {
         maxfilesexceeded: function maxfilesexceeded() {},
         maxfilesreached: function maxfilesreached() {},
         queuecomplete: function queuecomplete() {},
+
         addedfiles: function addedfiles() {}
       };
 
@@ -3529,3 +3530,4 @@ function __guardMethod__(obj, methodName, transform) {
     return undefined;
   }
 }
+
