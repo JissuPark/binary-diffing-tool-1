@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404, render, render_to_response
 from django.urls import reverse
 from django.contrib import messages
 from Main_engine import main_engine
+from Main_engine.Extract_Engine.PE_feature import extract_pe
 from collections import OrderedDict
 from .models import PE_info
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -23,45 +24,8 @@ def recent(request):
     return render(request, 'Main_engine/index.html')
 
 def pe(request):
-    #f = open(r"C:\malware\all_result\pe_all.txt", 'w')
-    pe_list = PE_info.objects.order_by('timenum').all()
-    #print(pe_list)
-    paginator = Paginator(pe_list, 1) #페이지당 1개씩의 pe_info
-
-    page = request.GET.get('page', 1)
-    p_dict = dict()
-    pe_result_list = os.listdir(r"C:\malware\all_result\pe")
-    for file in pe_result_list:
-        if os.path.isfile(r"C:\malware\all_result\pe" + "\\" + file):
-            with open(r"C:\malware\all_result\pe" + "\\" + file, 'rb') as f:
-                result_pe = f.read()
-                pe_data = json.loads(result_pe)
-                #print(json.dumps(pe_data, indent=4))
-                p_dict[pe_data['file_name']] = pe_data
-                #print("p_dict :: ", json.dumps(p_dict, indent=4))
-
-            f.close()
-    #print(p_filename)#json.dump(pe_data, f, ensure_ascii=False, indent='\t')
-    #p_filename = sorted(p_filename.items(), key=lambda x: x[1])
-    #print(p_filename)
-
-    # for i in range(len(p_filename)):
-    #     pe_filename[p_filename[i][0]] = p_filename[i][1]
-
-    # pe_f = [0 for i in range(len(p_filename) + 1)]
-    # for i in range(len(p_filename)):
-    #     pe_f[i+1] = p_filename[i]
-    # print(pe_f)
-
-    # try:
-    #     lists = paginator.get_page(page)
-    # except PageNotAnInteger:
-    #     lists = paginator.page(1)
-    # except EmptyPage:
-    #     lists = paginator.page(paginator.num_pages)
-    #result_pe.close()
-    #f.close()
-
+    p_dict = extract_pe.pe_into_file()
+    #print(p_dict)
     return render(request, 'Main_engine/pe.html', {'p_dict': p_dict})
 
 # def heuristic(request):

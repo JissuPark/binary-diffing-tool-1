@@ -5,6 +5,7 @@ import ssdeep
 import magic
 import os
 import math
+import json
 
 import pefile
 from Main_engine.Extract_Engine.PE_feature import pe_pdb, pe_rsrc, pe_rich, pe_stringfileinfo
@@ -251,5 +252,19 @@ class Pe_Feature:
 
         return pe_features, pe_features_for_DB
 
+def pe_into_file():
+    p_dict = dict()
+    pe_result_list = os.listdir(r"C:\malware\all_result\pe_r")
+    for file in pe_result_list:
+        if os.path.isfile(r"C:\malware\all_result\pe_r" + "\\" + file):
+            with open(r"C:\malware\all_result\pe_r" + "\\" + file, 'rb') as f:
+                result_pe = f.read()
+                pe_data = json.loads(result_pe)
+                # print(json.dumps(pe_data, indent=4))
+                p_dict[pe_data['file_name']] = pe_data
+                # print("p_dict :: ", json.dumps(p_dict, indent=4))
+            f.close()
+
+    return p_dict
 # if __name__ == "__main__":
 #     pe = Pe_Feature(r"C:\malware\mid_GandCrab_exe\test")

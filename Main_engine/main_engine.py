@@ -174,6 +174,10 @@ def multiprocess_file(q, return_dict, flag):
                     #print("여기도 괜찮음")
                     with open(r"C:\malware\all_result\pe" + "\\" + file_filter2 + ".txt", 'w') as makefile:
                         json.dump(info, makefile, ensure_ascii=False, indent='\t')
+
+                    with open(r"C:\malware\all_result\pe_r" + "\\" + file_filter2 + ".txt", 'w') as makefile:
+                        json.dump(info, makefile, ensure_ascii=False, indent='\t')
+
                     #print("여기는?")
                     pe_file.pe_filepath = pe_file_path + file_filter2
                     #print("여기는?")
@@ -289,7 +293,7 @@ def create_folder():
     # mal_exe는 drag&drop할 때 먼저 생성됨
     # mal_idb, all_result(idb, pe) 가 없으면 생성
 
-    default_path = ["C:\\malware\\mal_idb\\","C:\\malware\\all_result\\", "C:\\malware\\all_result\\idb", "C:\\malware\\all_result\\pe\\", "C:\\malware\\all_result\\cg\\", "C:\\malware\\all_result\\cfg\\"]
+    default_path = ["C:\\malware\\mal_idb\\","C:\\malware\\all_result\\", "C:\\malware\\all_result\\idb", "C:\\malware\\all_result\\pe\\", "C:\\malware\\all_result\\pe_r\\", "C:\\malware\\all_result\\cg\\", "C:\\malware\\all_result\\cfg\\"]
     for path in default_path:
         if os.path.exists(path):
             continue
@@ -308,6 +312,16 @@ def delete_file():
         else:
             print('Directory Not Found')
 
+def delete_pe_recent():
+    default_path = os.listdir(r"C:\malware\all_result\pe_r")
+
+    for r_file in default_path:
+        if os.path.isfile(r"C:\malware\all_result\pe_r" + "\\" + r_file):
+            os.remove(r"C:\malware\all_result\pe_r" + "\\" + r_file)
+        else:
+            print("no file to remove")
+    print("Recent PE removed")
+
 def start_engine():
     '''
     웹 서버에서 메인 엔진을 호출하면 엔진을 돌리기위한 함수
@@ -317,6 +331,10 @@ def start_engine():
 
     # 0. 없는 폴더 먼저 생성
     create_folder()
+
+    #0.5 최근 pe 정보들 삭제
+    delete_pe_recent()
+
     # 1. pe 해시 체크 (동일한 파일 필터), 2.패킹 체크
     print("1) hash check")
     pe_check = Pe_Files_Check(PATH)
