@@ -59,7 +59,7 @@ article, aside, figcaption, figure, footer, header, hgroup, main, nav, section {
 
 body {
     margin: 0;
-    font-family: "Roboto", sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: .875rem;
     font-weight: 400;
     line-height: 1.5;
@@ -4665,121 +4665,6 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
     border-bottom-right-radius: .2rem
 }
 
-.badge {
-    display: inline-block;
-    padding: .5em 1em;
-    font-size: 75%;
-    font-weight: 500;
-    line-height: 1;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: baseline;
-    border-radius: .125rem
-}
-
-.badge:empty {
-    display: none
-}
-
-.btn .badge {
-    position: relative;
-    top: -1px
-}
-
-.badge-pill {
-    padding-right: .6em;
-    padding-left: .6em;
-    border-radius: 10rem
-}
-
-.badge-primary {
-    color: #fff;
-    background-color: #4c84ff
-}
-
-.badge-primary[href]:hover, .badge-primary[href]:focus {
-    color: #fff;
-    text-decoration: none;
-    background-color: #1961ff
-}
-
-.badge-secondary {
-    color: #fff;
-    background-color: #8a909d
-}
-
-.badge-secondary[href]:hover, .badge-secondary[href]:focus {
-    color: #fff;
-    text-decoration: none;
-    background-color: #6f7685
-}
-
-.badge-success {
-    color: #fff;
-    background-color: #29cc97
-}
-
-.badge-success[href]:hover, .badge-success[href]:focus {
-    color: #fff;
-    text-decoration: none;
-    background-color: #20a278
-}
-
-.badge-info {
-    color: #fff;
-    background-color: #13cae1
-}
-
-.badge-info[href]:hover, .badge-info[href]:focus {
-    color: #fff;
-    text-decoration: none;
-    background-color: #0fa0b2
-}
-
-.badge-warning {
-    color: #212529;
-    background-color: #fec400
-}
-
-.badge-warning[href]:hover, .badge-warning[href]:focus {
-    color: #212529;
-    text-decoration: none;
-    background-color: #cb9d00
-}
-
-.badge-danger {
-    color: #fff;
-    background-color: #fe5461
-}
-
-.badge-danger[href]:hover, .badge-danger[href]:focus {
-    color: #fff;
-    text-decoration: none;
-    background-color: #fe2132
-}
-
-.badge-light {
-    color: #212529;
-    background-color: #f5f6fa
-}
-
-.badge-light[href]:hover, .badge-light[href]:focus {
-    color: #212529;
-    text-decoration: none;
-    background-color: #d3d7e9
-}
-
-.badge-dark {
-    color: #fff;
-    background-color: #1b223c
-}
-
-.badge-dark[href]:hover, .badge-dark[href]:focus {
-    color: #fff;
-    text-decoration: none;
-    background-color: #0b0e19
-}
-
 .jumbotron {
     padding: 2rem 1rem;
     margin-bottom: 2rem;
@@ -5388,7 +5273,7 @@ button.close {
     z-index: 1070;
     display: block;
     margin: 0;
-    font-family: "Roboto", sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-style: normal;
     font-weight: 400;
     line-height: 1.5;
@@ -5501,7 +5386,7 @@ button.close {
     z-index: 1060;
     display: block;
     max-width: 276px;
-    font-family: "Roboto", sans-serif;
+   font-family: 'Poppins', sans-serif;
     font-style: normal;
     font-weight: 400;
     line-height: 1.5;
@@ -12613,6 +12498,9 @@ div.copied {
     }
 }
 
+*{
+    font-family: Poppins;
+}
 .mobile-sticky-body-overlay {
     position: fixed;
     top: 0;
@@ -14111,7 +13999,7 @@ input[type=checkbox], input[type=radio] {
     line-height: 1;
     font-size: 12px;
     font-weight: 400;
-    font-family: "Roboto", sans-serif;
+    font-family: 'Poppins', sans-serif;
     text-align: center;
     transition: inherit
 }
