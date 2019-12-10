@@ -1,6 +1,6 @@
 {% extends "Main_engine/layout.html" %}
 
-{% block title %} 결과 페이지 {% endblock %}
+{% block title %}DIFFING SOURCE{% endblock %}
 
 {% block head %}
 
@@ -85,14 +85,20 @@
 
 </style>
 
+
 {% endblock head %}
 
 {% block section %}
 
 {% load static %}
 
+<<<<<<< HEAD
+    <h4 id="heuristic" style="font-weight: bold;">SIMILARITY SCORE</h4>
+    <hr class="my-hr3" style="margin-top: 9px">
+=======
 <h4 id="heuristic" style="font-weight: bold;">Heuristic Score</h4>
 <hr class="my-hr3" style="margin-top: 9px">
+>>>>>>> upstream/master
 
 <!--원래 있던 차트 부분-->
 <div class="card-deck ml-2 mr-2 mt-2">
@@ -148,6 +154,7 @@
             </div>
         </div>
     </div>
+
 </div>
 <script>
     (function ($) {
@@ -277,6 +284,7 @@
                                 for(var data in json_res[standard][target]){
                                     document.write("data is "+ data +" "+ json_res[standard][target][data] + "<br>");
                                     console.log(typeof json_res[standard][target][data])
+
                                 }
                                 */
                                 var basic_block = json_res[standard][target][2] * 100;
@@ -322,6 +330,7 @@
                                 } else {
                                     h4.textContent = target.toUpperCase();
                                 }
+
                                 document.getElementById("top_stats_panel" + i).appendChild(h4);
 
                                 var bar_stats = document.createElement("div");

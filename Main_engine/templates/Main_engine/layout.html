@@ -6,23 +6,24 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
-    <title>{% block title %}Sleek - Admin Dashboard Template{% endblock %}</title>
+    <title>{% block title %}{% static 'Main_engine/images/main_logo.png' %}{% endblock %}</title>
 
-  <link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet">
     <link href="{% static 'Main_engine/css/styles.css' %}" rel="stylesheet">
     <!-- GOOGLE FONTS -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500|Poppins:400,500,600,700|Roboto:400,500"
-          rel="stylesheet"/>
+          rel="stylesheet"/> <!--google font cdn-->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css"> <!--font awesome cdn-->
     <link href="https://cdn.materialdesignicons.com/3.0.39/css/materialdesignicons.min.css" rel="stylesheet"/>
 
     <!-- 먼지는 모르겠는데 순서가 중요함! 반드시 jquery 앞에 bootstrap 먼저 쓸 것!!! -->
     <script src="https://code.jquery.com/jquery-3.4.1.js"
             integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
-            crossorigin="anonymous"></script>
+            crossorigin="anonymous"></script><!---->
     <script src="{% static 'Main_engine/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-        crossorigin="anonymous"></script>
+            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+            crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
             integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
             crossorigin="anonymous"></script>
@@ -35,7 +36,7 @@
     <!-- SLEEK CSS -->
     <link id="sleek-css" rel="stylesheet" href="{% static 'Main_engine/css/sleek.css' %}"/>
     <!-- FAVICON -->
-    <link href="{% static 'Main_engine/img/favicon.png' %}" rel="shortcut icon"/>
+    <link href="{% static 'Main_engine/images/main_logo.png' %}" rel="shortcut icon"/>
 
     <!--플러그인의 jquery가 있으면 파일 선택이 안되고 없으면 스크롤이 안됨; -->
     <!--    <script src="{% static 'Main_engine/plugins/jquery/jquery.min.js' %}"></script>-->
@@ -46,7 +47,7 @@
     <style>
 
         button#select-oper {
-            background-color: #525252;
+            background-color: rgba(0, 0, 0, 0.8);
             border-radius: 5px;
             font-weight: bold;
             font-size: large;
@@ -80,15 +81,15 @@
     <aside class="left-sidebar bg-sidebar">
         <div id="sidebar" class="sidebar sidebar-with-footer">
             <!-- Aplication Brand -->
-            <div class="app-brand" style="background-color: rgba(241,34,96,0.8);">
+            <div class="app-brand" style="background-color: rgba(9, 51, 110);">
                 <a href="#">
-                    <img src="{% static 'Main_engine/images/logo_black.png' %}" alt="...." style="width: 40px;">
-
-                    <span onclick="window.location=''" class="brand-name">BINARY DIFFING</span>
+                    <img src="{% static 'Main_engine/images/main_logo.png' %}" alt="...." style="width: 60px;
+    margin-left: -18px;">
+                    <span style="font-family: 'Poppins', sans-serif;" onclick="window.location=''" class="brand-name">DIFFING SOURCE</span>
                 </a>
             </div>
             <!-- begin sidebar scrollbar -->
-            <div class="sidebar-scrollbar" style="background-color: black">
+            <div class="sidebar-scrollbar" style="background-color: black" >
                 <!-- sidebar menu -->
                 <ul class="nav sidebar-inner" id="sidebar-menu">
 
@@ -111,15 +112,15 @@
                         </a>
                         <ul class="collapse" id="dashboard"
                             data-parent="#sidebar-menu">
-                            <div class="sub-menu">
+                            <div class="sub-menu" style="background: rgba(10,10,10,0.7)">
                                 <li>
                                     <a class="sidenav-item-link" href="result#heuristic">
-                                        <span class="nav-text">heuristic score</span>
+                                        <span class="nav-text">SIMILARITY CORE</span>
                                     </a>
                                 </li>
                                 <li>
                                     <a class="sidenav-item-link" href="result#detail">
-                                        <span class="nav-text">Detail</span>
+                                        <span class="nav-text">DETAIL</span>
                                     </a>
                                 </li>
                             </div>
@@ -137,7 +138,7 @@
                         </a>
                         <ul class="collapse" id="pe_menu"
                             data-parent="#sidebar-menu">
-                            <div class="sub-menu">
+                            <div class="sub-menu" style="background: rgba(10,10,10,0.7)">
                                 <li>
                                     <a class="sidenav-item-link" href="pe#Basic Properties">
                                         <span class="nav-text">Basic Properties</span>
@@ -172,7 +173,7 @@
                         </a>
                         <ul class="collapse" id="charts"
                             data-parent="#sidebar-menu">
-                            <div class="sub-menu">
+                            <div class="sub-menu" style="background: rgba(10,10,10,0.7)">
                                 <li class="has-sub">
                                     <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
                                        data-target="#authentication"
@@ -180,7 +181,8 @@
                                         <span class="nav-text">Function_name</span> <b class="caret"></b>
                                     </a>
                                     <ul class="collapse" id="authentication">
-                                        <div id="func_menu" class="sub-menu"></div>
+                                        <div id="func_menu" class="sub-menu"
+                                             style="background: rgba(10,10,10,0.7)"></div>
                                     </ul>
                                 </li>
                             </div>
@@ -201,19 +203,19 @@
                 </button>
                 {% if result or cfg %}
                     <div class="mt-1" style="display:inline-flex; width:70%;">
-                        <p class="file_text" style="font-family: 'Roboto Condensed', sans-serif; margin-top: 12px;">BASE
+                        <p class="file_text" style="font-family: 'Poppins', sans-serif; margin-top: 12px;">BASE
                             FILE</p>
                         <select id="select_base" class="selectpicker" data-live-search="true" data-width="20%"
                                 data-size="5"
                                 title="Choose base"></select>
-                        <p class="file_text" style="font-family: 'Roboto Condensed', sans-serif; margin-top: 12px; ">
+                        <p class="file_text" style="font-family: 'Poppins', sans-serif; margin-top: 12px; ">
                             TARGET FILE</p>
 
                         <select id="select_target" class="selectpicker" data-actions-box="true" data-width="20%"
                                 data-size="5" multiple title="Choose targets"></select>
 
                         <button id="select-oper"
-                                style="font-family: 'Roboto Condensed', sans-serif; font-weight: bolder; color: white">
+                                style="font-family: 'Poppins', sans-serif; font-weight: bolder; color: white">
                             SELECT
                         </button>
                     </div>
