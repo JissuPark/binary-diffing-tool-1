@@ -69,7 +69,7 @@
 <div style="width: 100%; text-align: center; margin-top: 6rem">
 
     <div id="dropzone 1" style="display: inline-block; width: 35%;">
-        <form action="{% url 'upload' %}" class="dropzone needsclick dz-clickable" id="upload-1"
+        <form action="{% url 'upload' %}" class="dropzone needsclick dz-clickable" id="myAwesomeDropzone"
               style="border-color: rgba(255,255,255,0.5); border-width: 1px;">
             {% csrf_token %}
             <div class="dz-message needsclick"> <!--밑에 생김--->
@@ -82,14 +82,36 @@
             </div>
         </form>
     </div>
-</div>
 
-<!-- <div style=" float: right; width: 5%; padding:10px; font-size: 4rem; text-align: center;"> </div> -->
+    {% load static %}
+    <script>
+        Dropzone.options.myAwesomeDropzone = {
+          accept: function(file, done) {
+            var ext = (file.name).split('.')[1];
+            switch (ext) {
+              case 'exe':
+                this.emit("thumbnail", file, "{% static 'Main_engine/images/filedropicon.png' %}");
+                break;
+              case 'sys':
+                this.emit("thumbnail", file, "{% static 'Main_engine/images/filedropicon.png' %}");
+                break;
+              default:
+                this.emit("thumbnail", file, "{% static 'Main_engine/images/filedropicon.png' %}");
+            }
+            file.previewTemplate.querySelector(".dz-image img").style.width="100%";
+            done();
+          }
+        };
+    </script>
+</div>
 
 </div>
 <div style="float: left; padding: 5rem; font-family: 'Poppins', sans-serif; font-size: 13px; text-align: center;"
      class="col-12">
     <input type="submit" value="DIFFING" onclick="location.href='{% url 'loading' %}'">
+
+    <input type="submit" value="RECENT SCAN" onclick="location.href='{% url 'result' %}'">
+
 </div>
 
 <!-- section end -->
