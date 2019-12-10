@@ -86,7 +86,7 @@ class AnalyzeFlowchart:
         bbh_result_dic[file_name].update({"bbh": block_hash_dic})
         bbh_result_dic[file_name].update({"constant": block_constants_dic})
 
-        return bbh_result_dic, whitelist_matched_dic
+        return bbh_result_dic, matched_dic
 
     def parser_bbh_T_F(self, _hash_dict, match_flag=False):
         # print(f'[debug] match_flag : {match_flag}')
@@ -122,7 +122,6 @@ class AnalyzeFlowchart:
             return true_dic
 
     def compare_bbh(self, s_flow_data, t_flow_data):
-        print(type(s_flow_data))
         s_name = list(s_flow_data.keys())[0]
         t_name = list(t_flow_data.keys())[0]
 
@@ -215,25 +214,33 @@ class AnalyzeFlowchart:
 
         for func, val_01 in _dict.items():
             bb_count = len(list(val_01.keys()))
-            temp_list = list()
+            temp_dict = dict()
+            block_match = dict()
             for s_sAddr, val_02 in val_01.items():
                 for match_info, const_sim in val_02.items():
-                    temp_list.append((match_info.split('-'))[0])
-            temp_result = list(set(temp_list))
+                    target_func, target_block = match_info.split('-')
+                    temp_dict[target_block] = target_func
+                    block_match[target_block] = s_sAddr
+            temp_result = list(set(temp_dict.values()))
 
             if len(temp_result) > 1:
                 temp = 0
                 vote_func = None
                 for i in temp_result:
-                    if temp < temp_list.count(i):
-                        temp = temp_list.count(i)
+                    cnt = sum(1 for value in temp_dict.values() if value == i)
+                    if temp < cnt:
+                        temp = cnt
                         vote_func = i
+                for target_b, target_f in temp_dict.items():
+                    if target_f != vote_func:
+                        del block_match[target_b]
+
                 #print(f'{func} -> matched -> {vote_func}')
                 #print(f' ㄴ[debug] {temp} vote -> -> {vote_func}')
-                func_match_dic.update({func:vote_func})
+                func_match_dic.update({func:[vote_func, block_match]})
             else:
                 #print(f'{func} -> matched -> {temp_result[0]}')
-                func_match_dic.update({func:temp_result[0]})
+                func_match_dic.update({func:[temp_result[0], block_match]})
 
         return func_match_dic
 
@@ -259,14 +266,14 @@ class AnalyzeFlowchart:
 
         s_cmp_dic, whitelist_matched_dic1 = self.parser_bbh(s_flow_data)
         t_cmp_dic, whitelist_matched_dic2 = self.parser_bbh(t_flow_data)
-
+        print(whitelist_matched_dic1)
         cmp_s, cmp_t, true_bb_const_sim = self.compare_bbh(s_cmp_dic, t_cmp_dic)
-
+        # print(true_bb_const_sim)
         c_score = self.compare_prime(self.parser_bbh_T_F(cmp_s, ), self.parser_bbh_T_F(cmp_t, ), s_flow_data, t_flow_data)
 
         func_match_dict = self.get_match_func_level(true_bb_const_sim)
 
-        return algo.get_bbh_similarity(cmp_s, c_score), func_match_dict
+        return algo.get_bbh_similarity(cmp_s, c_score), func_match_dict, whitelist_matched_dic1
 
 
     def analyze_constant(self, standard, target):
@@ -359,7 +366,7 @@ class AnalyzeFlowchart:
                 if index_1 == index_2:
                     continue
 
-                idb_t['bbh'], idb_func_s[idb_info_t['file_name']] = self.analyze_bbh(idb_info_s, idb_info_t)
+                idb_t['bbh'], idb_func_s[idb_info_t['file_name']], idb_func_s['whitelist'] = self.analyze_bbh(idb_info_s, idb_info_t)
                 idb_t['const_value'] = self.analyze_constant(idb_info_s, idb_info_t)
 
                 idb_s[idb_info_t['file_name']] = idb_t
