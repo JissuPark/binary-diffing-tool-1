@@ -87,7 +87,9 @@
 
 {% if cfg %}
 {% if matching %}
-<script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/vis-network@6.4.6/dist/vis-network.css">
+<!--<script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.js"></script>-->
+<script type="text/javascript" src="https://unpkg.com/vis-network@6.4.6/dist/vis-network.js"></script>
 <script>
     (function ($) {
 
@@ -100,7 +102,7 @@
         var match_json = JSON.parse(match_text);
 
         var postoffice = {};
-        var boxes = {};
+
 
         var pickerclass = document.getElementsByClassName("selectpicker");
         for (var picker = 0; picker < pickerclass.length; picker++) {
@@ -138,7 +140,11 @@
                 node_dict['id'] = item;
                 node_dict['size'] = 300;
                 node_dict['label'] = array[item];
-                node_dict['color'] = "red";
+                node_dict['color'] = {
+                    background: "#ffecea",
+                    border: "#c24035",
+                    highlight: {background: "#ffecea", border: "#c24035"}
+                };
                 node_dict['shape'] = 'box';
                 node_dict['font'] = {'face': 'monospace', 'align': 'left'};
                 nodes.push(node_dict);
@@ -191,7 +197,7 @@
             }
         });
         /* 기준이 바뀌면 대상에 disable 거는 함수 */
-        $("#select_base").on("changed.bs.select", function () {
+        $(".selectpicker").on("changed.bs.select", function () {
             var selected = $("#select_base").children("option:selected").text();        // 기준 파일명을 가져옴
             $("#select_target option").prop('disabled', false);                         // 전체 초기화
             $('#select_target').find('[value="' + selected + '"]').prop('selected', false);// 체크도 해제
@@ -199,9 +205,9 @@
             $("#select_target").selectpicker('refresh');                                // 새로고침
         });
         /* 그래프 그리는 함수 */
-        $draw = function (file, fname) {console.log(file, fname);
+        $draw = function (file, fname) {
             //그림을 그릴 부분을 먼저 지워준다. (안 지우면 계속 추가됨)
-            var targets = $('#select_target').val();console.log(targets);
+            var targets = $('#select_target').val();
             $('.graph-inner').empty();
             //매칭되는 애들을 모아보자
             var targetlist = [];
@@ -215,19 +221,43 @@
                         //대상 중에서 기준 함수명을 찾는다.
                         if (match_json[filename][t].hasOwnProperty(fname)) {
                             targetlist.push([t, match_json[filename][t][fname][0]]);
-                            // console.log([t, match_json[filename][t][fname][0]]);
-                            // var match_node = postoffice[t][[match_json[filename][t][fname][0]]][0];
-                            //
-                            // console.log(match_json[filename][t][fname][0]);
-                            // console.log(match_node.get());
-                            // for (addr in match_json[filename][t][fname][1]){
-                            //     // console.log(match_json[filename][t][fname][1][addr]);
-                            //     match_node.update({id: match_json[filename][t][fname][1][addr], color: "#E3F97B"});
-                            // }
-                            // console.log(match_node.get());
+                            var match_target_node = postoffice[t][[match_json[filename][t][fname][0]]][0];
+                            var match_base_node = postoffice[filename][fname][0];
+                            for (addr in match_json[filename][t][fname][1]) {
+                                match_base_node.update({
+                                    id: match_json[filename][t][fname][1][addr],
+                                    color: {
+                                        border: "black",
+                                        background: "white",
+                                        highlight: {border: "black", background: "white"}
+                                    }
+                                });
+                                match_target_node.update({
+                                    id: addr,
+                                    color: {
+                                        border: "black",
+                                        background: "white",
+                                        highlight: {border: "black", background: "white"}
+                                    }
+                                });
+                            }
+                            console.log(match_target_node.get());
                         } else {
                             targetlist.push([t, "none"]);
                         }
+                    }
+                }
+                for (white_func in match_json[filename]['whitelist']) {
+                    for (white_addr in match_json[filename]['whitelist'][white_func]) {
+                        var match_node = postoffice[filename][white_func][0];
+                        match_node.update({
+                            id: white_addr,
+                            color: {
+                                border: "#3f35c2",
+                                background: "#e5e9ff",
+                                highlight: {border: "#3f35c2", background: "#e5e9ff"}
+                            }
+                        });
                     }
                 }
             }
@@ -239,7 +269,7 @@
                 div.id = "graph_" + index;
                 if (graph_cnt > 3) {
                     div.className = "col-xl-3 col-sm-6";
-                }else{
+                } else {
                     div.className = "col-xl-4 col-lg-6 col-12";
                 }
                 //기준은 위치 고정
@@ -265,16 +295,23 @@
                 };
 
                 var options = {
-                    manipulation: false,
+                    // height: '90%',
                     layout: {
                         hierarchical: {
-                            enabled: true,
-                            levelSeparation: 200
+                            nodeSpacing: 300,
+                            levelSeparation: 200,
+                            sortMethod: 'directed'
                         }
                     },
                     physics: {
-                        hierarchicalRepulsion: {
-                            nodeDistance: 200
+                        barnesHuts: {
+                            avoidOverlap: 1,
+                            springConstant: 0,
+                            nodeDistance: 150
+                        },hierarchicalRepulsion: {
+                            avoidOverlap: 1,
+                            springConstant: 0,
+                            nodeDistance: 150,
                         }
                     }
                 };
@@ -296,6 +333,7 @@
         var first_file = "";
         var first_func = "";
         for (var file in json_res) {
+            var boxes = {};
             for (var funcname in json_res[file]['func_name']) {
                 if (index == 0) {
                     makebt(json_res[file]['file_name'], funcname);
@@ -313,8 +351,7 @@
                         for (var curaddr in json_res[file]['func_name'][funcname][startaddr]['disasms']) {
                             block = block + json_res[file]['func_name'][funcname][startaddr]['disasms'][curaddr] + '\n';
                         }
-                        var addrsplit = startaddr;
-                        array[addrsplit] = block; //함수 값안에있는 정보
+                        array[startaddr] = block; //함수 값안에있는 정보
                     }
                     if (startaddr == "flow_branches" && json_res[file]['func_name'][funcname][startaddr].length != 0) {
                         branches.push(json_res[file]['func_name'][funcname][startaddr]);
@@ -327,7 +364,6 @@
             index++;
             postoffice[json_res[file]['file_name']] = boxes;
         }
-
 
         // 페이지가 처음 뜰 때 기준은 처음으로 대상은 전부 선택해서 보여주도록
         var first_base = $("#select_base").find('option:first');

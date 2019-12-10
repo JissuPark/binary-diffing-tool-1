@@ -167,15 +167,15 @@ def main(api, file_name):
             func_name.append(fname)
             for addr in api.idautils.XrefsTo(fva, 0):
                 # print(hex(addr.src), hex(addr.dst), addr.type)
-                # try:
+                try:
                     if addr.type is 17:
                         # print(api.ida_funcs.get_func_name(api.ida_funcs.get_func(addr.src).startEA))
-                        print(f"\x1b[1;32mT : From {(api.idc.GetFunctionName(addr.src))}({hex(addr.src)}) To {fname}\x1b[1;m")
-                        # func_branch.append(
-                        #     (api.ida_funcs.get_func_name(api.ida_funcs.get_func(addr.src).startEA), fname))
-                # except:
+                        # print(f"\x1b[1;32mT : From {(api.idc.GetFunctionName(addr.src))}({hex(addr.src)}) To {fname}\x1b[1;m")
+                        func_branch.append(
+                            (api.ida_funcs.get_func_name(api.ida_funcs.get_func(addr.src).startEA), fname))
+                except:
                 #     print(f"F : From {dir(addr)}")
-                #     pass
+                    pass
 
             # main or start or sub_***** function. not library function
             basicblock = basic_block(api, fva, fname)
