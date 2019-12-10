@@ -35,7 +35,7 @@
         }
 
         .next {
-        {#<!-- background-color: #f1f1f1; -->#} color: black;
+        color: black;
             position: relative;
             left: 97%;
             top: -130px;
@@ -228,7 +228,6 @@
                                         var base_panel_body = document.createElement("div");
                                         base_panel_body.id = "panel_body";
                                         base_panel_body.className = "panel-body";
-                                        {#"BASEFILE :" + standard.substring(0, length) + '...' +  "FILETYPE : " + "ssss" +  "FILESIZE : " + "zzzzzzzzzzz"#}
                                         document.getElementById("panel").appendChild(base_panel_body);
 
                                         var base_top_stats_panel = document.createElement("div");
@@ -236,28 +235,13 @@
                                         base_top_stats_panel.className = "top-stats-panel";
                                         document.getElementById("panel_body").appendChild(base_top_stats_panel);
 
-                                        /*                                        var base_h4 = document.createElement("h4");
-                                                                                base_h4.id = "widget-h";
-                                                                                base_h4.className = "widget-h";
-                                                                                base_h4.style.color = "rgba(0,0,0,0.7)";
-                                                                                base_h4.setAttribute("data-toggle", "tooltip");
-                                                                                base_h4.setAttribute("data-placement", "bottom");
-                                                                                base_h4.setAttribute("title", standard);
-                                                                                if (standard.length > length) {
-                                                                                    base_h4.textContent = standard.substring(0, length).toUpperCase() + "...";
-                                                                                } else {
-                                                                                    base_h4.textContent = standard.toUpperCase();
-                                                                                }
-                                                                                document.getElementById("top_stats_panel").appendChild(base_h4); */
-
-                                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                        {#var base_bar_stats = document.createElement("div");#}
-                                        {#base_bar_stats.id = "bar_stats";#}
-                                        {#base_bar_stats.className = "bar-stats";#}
-                                        {#base_bar_stats.style.height = "120px";#}
-                                        {#base_bar_stats.style.marginTop = "5px";#}
-                                        {#base_bar_stats.style.borderBottom = "white";#}
-                                        {#document.getElementById("top_stats_panel").appendChild(base_bar_stats); // 이부분실행하면 밑에 공간이 생김#}
+/*                                        var base_bar_stats = document.createElement("div");
+                                        base_bar_stats.id = "bar_stats";
+                                        base_bar_stats.className = "bar-stats";
+                                        base_bar_stats.style.height = "120px";
+                                        base_bar_stats.style.marginTop = "5px";
+                                        base_bar_stats.style.borderBottom = "white";
+                                        document.getElementById("top_stats_panel").appendChild(base_bar_stats); // 이부분실행하면 밑에 공간이 생김*/
 
                                         var base_filename_info = document.createElement("span");
                                         base_filename_info.id = "base_info";
