@@ -22,6 +22,11 @@
             var url = "{% url 'result' %}";
             document.location.href = url;
         }
+        window.onerror = function () {
+            console.log('page error on loading');
+            var url_error = "{% url 'error' %}";
+            document.location.href = url_error;
+        }
 </script>
 </body>
 

@@ -14,4 +14,5 @@ urlpatterns = [
     path('pe', views.pe, name='pe'),
     path('cfg', views.cfg, name='cfg'),
     path('cg', views.cg, name='cg'),
+    path('error', views.call_main, name='error')
 ]

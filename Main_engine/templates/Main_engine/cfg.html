@@ -10,6 +10,11 @@
 <script src="{% static 'Main_engine/js/defaults-ko_KR.min.js' %}"></script>
 
 <style>
+    * {
+        font-family: 'Poppins', sans-serif;
+
+    }
+
     .graph-outer {
         height: 100%;
         width: 100%;
@@ -26,7 +31,7 @@
     .paint {
         display: block;
         width: 100%;
-        height: 100%;
+        height: 95%;
     }
 
 
@@ -204,6 +209,8 @@
             $("#select_target").find('[value="' + selected + '"]').prop('disabled', true);// 기준과 같은 옵션 disable
             $("#select_target").selectpicker('refresh');                                // 새로고침
         });
+
+        var network = [];
         /* 그래프 그리는 함수 */
         $draw = function (file, fname) {
             //그림을 그릴 부분을 먼저 지워준다. (안 지우면 계속 추가됨)
@@ -225,23 +232,33 @@
                             var match_base_node = postoffice[filename][fname][0];
                             for (addr in match_json[filename][t][fname][1]) {
                                 match_base_node.update({
-                                    id: match_json[filename][t][fname][1][addr],
+                                    id: match_json[filename][t][fname][1][addr][0],
                                     color: {
                                         border: "black",
                                         background: "white",
                                         highlight: {border: "black", background: "white"}
                                     }
                                 });
-                                match_target_node.update({
-                                    id: addr,
-                                    color: {
-                                        border: "black",
-                                        background: "white",
-                                        highlight: {border: "black", background: "white"}
-                                    }
-                                });
+                                if (match_json[filename][t][fname][1][addr][1] == 1) {
+                                    match_target_node.update({
+                                        id: addr,
+                                        color: {
+                                            border: "black",
+                                            background: "white",
+                                            highlight: {border: "black", background: "white"}
+                                        }
+                                    });
+                                } else {
+                                    match_target_node.update({
+                                        id: addr,
+                                        color: {
+                                            border: "green",
+                                            background: "lightgreen",
+                                            highlight: {border: "green", background: "lightgreen"}
+                                        }
+                                    });
+                                }
                             }
-                            console.log(match_target_node.get());
                         } else {
                             targetlist.push([t, "none"]);
                         }
@@ -276,7 +293,7 @@
                 if (index == 0) {
                     div.setAttribute("style", "position: sticky; left:0px; border: 3px solid red;  background-color:white; z-index: " + (graph_cnt - 1) + ";");
                 } else {
-                    div.setAttribute("style", " border: 3px solid grey;");
+                    div.setAttribute("style", "border: 3px solid grey;");
                 }
                 document.getElementById('test').appendChild(div);
 
@@ -298,29 +315,47 @@
                     // height: '90%',
                     layout: {
                         hierarchical: {
-                            nodeSpacing: 300,
+                            nodeSpacing: 200,
                             levelSeparation: 200,
+                            blockShifting: true,
+                            edgeMinimization: true,
+                            direction: "UD",
                             sortMethod: 'directed'
                         }
-                    },
-                    physics: {
-                        barnesHuts: {
-                            avoidOverlap: 1,
-                            springConstant: 0,
-                            nodeDistance: 150
-                        },hierarchicalRepulsion: {
-                            avoidOverlap: 1,
-                            springConstant: 0,
-                            nodeDistance: 150,
-                        }
                     }
+                    // physics: {
+                    //     hierarchicalRepulsion: {
+                    //         avoidOverlap: 1,
+                    //         springConstant: 0.2,
+                    //         nodeDistance: 150
+                    //     }
+                    // }
                 };
-                var canvas = document.getElementById('graph_' + index);
-                var network = new vis.Network(canvas, data, options);
-                // network.on('click', function(){
-                //    alert('asdf');
-                // });
-                //파일명, 함수명, 유사도 추가
+                var canvas_ = document.getElementById('graph_' + index);
+                network[index] = new vis.Network(canvas_, data, options);
+
+                network[index].on('zoom', function (properties) {
+                    for (var i = 0; i < network.length; i++) {
+                        //여기다 드래그 이벤트 적용
+                        network[i].
+                    }
+                });
+
+                network[index].on('dragEnd', function (properties) {
+                    var all_canvas = $('canvas');
+                    for (var i = 0; i < all_canvas.length; i++) {
+                        //여기다 드래그 이벤트 적용
+
+                        // var canvas_x = all_canvas[i].offsetLeft;console.log(canvas_x);
+                        // var canvas_y = all_canvas[i].offsetTop;console.log(canvas_y);
+                        // var pos_x = properties.pointer.canvas.x;console.log(pos_x);
+                        // var pos_y = properties.pointer.canvas.y;console.log(pos_y);
+                        // all_canvas[i].animate({offsetTop: pos_y},100);
+                        // all_canvas[i].animate({offsetLeft: pos_x},100);
+                    }
+                });
+
+                // 파일명, 함수명, 유사도 추가
                 var name_label = document.createElement('p');
                 name_label.innerText = targetlist[index][0] + '\n' + targetlist[index][1];
                 name_label.setAttribute('style', 'position: absolute; word-wrap: break-word; text-overflow: ellipsis; width: 90%; z-index: 2; top: 3px;');

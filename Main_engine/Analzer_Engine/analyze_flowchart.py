@@ -220,7 +220,7 @@ class AnalyzeFlowchart:
                 for match_info, const_sim in val_02.items():
                     target_func, target_block = match_info.split('-')
                     temp_dict[target_block] = target_func
-                    block_match[target_block] = s_sAddr
+                    block_match[target_block] = (s_sAddr, const_sim)
             temp_result = list(set(temp_dict.values()))
 
             if len(temp_result) > 1:

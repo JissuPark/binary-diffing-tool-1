@@ -180,7 +180,7 @@
 
 
         /* 기준이 바뀌면 대상에 disable 거는 함수 */
-        $("#select_base").on("changed.bs.select", function () {
+        $(".selectpicker").on("changed.bs.select", function () {
             var selected = $("#select_base").children("option:selected").text();        // 기준 파일명을 가져옴
             $("#select_target option").prop('disabled', false);                         // 전체 초기화
             $('#select_target').find('[value="' + selected + '"]').prop('selected', false);// 체크도 해제
