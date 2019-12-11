@@ -201,10 +201,10 @@ class AnalyzeFlowchart:
             print(f"ㄴ[debug] Sstand_values : {sum(list(t_hash_dict[t_fname][t_sAddr].values()))}   {t_fname}-{t_sAddr}")
             '''
 
-            #if (matched / total_len) < 1.0:
-                #print(f"[debug] unmatched constants :: {s_hash_dict[s_fname][s_sAddr]} --- {t_hash_dict[t_fname][t_sAddr]}")
-                #print(f"ㄴ[debug] constants find diff :: {s_comp_set} --- {t_comp_set}")
-                #print(f" ")
+            # if (matched / total_len) < 1.0:
+            # print(f"[debug] unmatched constants :: {s_hash_dict[s_fname][s_sAddr]} --- {t_hash_dict[t_fname][t_sAddr]}")
+            # print(f"ㄴ[debug] constants find diff :: {s_comp_set} --- {t_comp_set}")
+            # print(f" ")
         return float(str(matched / total_len)[:4])
 
     def get_match_func_level(self, _dict):
@@ -235,12 +235,12 @@ class AnalyzeFlowchart:
                     if target_f != vote_func:
                         del block_match[target_b]
 
-                #print(f'{func} -> matched -> {vote_func}')
-                #print(f' ㄴ[debug] {temp} vote -> -> {vote_func}')
-                func_match_dic.update({func:[vote_func, block_match]})
+                # print(f'{func} -> matched -> {vote_func}')
+                # print(f' ㄴ[debug] {temp} vote -> -> {vote_func}')
+                func_match_dic.update({func: [vote_func, block_match]})
             else:
-                #print(f'{func} -> matched -> {temp_result[0]}')
-                func_match_dic.update({func:[temp_result[0], block_match]})
+                # print(f'{func} -> matched -> {temp_result[0]}')
+                func_match_dic.update({func: [temp_result[0], block_match]})
 
         return func_match_dic
 
@@ -269,12 +269,12 @@ class AnalyzeFlowchart:
         print(whitelist_matched_dic1)
         cmp_s, cmp_t, true_bb_const_sim = self.compare_bbh(s_cmp_dic, t_cmp_dic)
         # print(true_bb_const_sim)
-        c_score = self.compare_prime(self.parser_bbh_T_F(cmp_s, ), self.parser_bbh_T_F(cmp_t, ), s_flow_data, t_flow_data)
+        c_score = self.compare_prime(self.parser_bbh_T_F(cmp_s, ), self.parser_bbh_T_F(cmp_t, ), s_flow_data,
+                                     t_flow_data)
 
         func_match_dict = self.get_match_func_level(true_bb_const_sim)
 
         return algo.get_bbh_similarity(cmp_s, c_score), func_match_dict, whitelist_matched_dic1
-
 
     def analyze_constant(self, standard, target):
         const_score = algo.get_string_similarity(standard['constant'], target['constant'])
@@ -321,7 +321,8 @@ class AnalyzeFlowchart:
         for a in range(len(f_score_list)):
             rmvcnt = 0
             for b in range(a + 1, len(f_score_list)):
-                if f_score_list[a][2] == f_score_list[b - rmvcnt][2] or f_score_list[a][4] == f_score_list[b - rmvcnt][4]:
+                if f_score_list[a][2] == f_score_list[b - rmvcnt][2] or f_score_list[a][4] == f_score_list[b - rmvcnt][
+                    4]:
                     f_score_list.remove(f_score_list[b - rmvcnt])
                     rmvcnt += 1
         # 정제가 끝난 리스트에서 유사도가 80%이상인 것만 세서 반환
@@ -366,7 +367,8 @@ class AnalyzeFlowchart:
                 if index_1 == index_2:
                     continue
 
-                idb_t['bbh'], idb_func_s[idb_info_t['file_name']], idb_func_s['whitelist'] = self.analyze_bbh(idb_info_s, idb_info_t)
+                idb_t['bbh'], idb_func_s[idb_info_t['file_name']], idb_func_s['whitelist'] = self.analyze_bbh(
+                    idb_info_s, idb_info_t)
                 idb_t['const_value'] = self.analyze_constant(idb_info_s, idb_info_t)
 
                 idb_s[idb_info_t['file_name']] = idb_t
@@ -378,4 +380,3 @@ class AnalyzeFlowchart:
                 json.dump(idb_func_all, makefile, ensure_ascii=False, indent='\t')
 
         return idb_all
-

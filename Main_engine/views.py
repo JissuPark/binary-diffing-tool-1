@@ -155,6 +155,7 @@ def loading(request):
 
 
 def call_main(request):
+
     start = timeit.default_timer()
     if os.path.isfile(r"C:\malware\all_result\result.txt"):  # 경로가 파일인지 아닌지 검사
         result_file = open(r"C:\malware\all_result\result.txt", 'rb')
