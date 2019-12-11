@@ -48,7 +48,7 @@ def cfg(request):
     for inputfile in match_cfg:
         PATH = r'C:\malware\all_result\idb'
         for file in os.listdir(PATH):
-            if file.split('.')[0] == inputfile:
+            if file.split('.')[0] == inputfile.split('.')[0]:
                 file_path = os.path.join(PATH, file)
                 cfg = open(file_path, 'rb')
                 cfg_dict[file] = json.loads(cfg.read())
@@ -85,26 +85,30 @@ def loading(request):
 
 def call_main(request):
     start = timeit.default_timer()
-    if os.path.isfile(r"C:\malware\all_result\result.txt"): #경로가 파일인지 아닌지 검사
-        result_file = open(r"C:\malware\all_result\result.txt", 'rb')
-        result = json.loads(result_file.read())
-        result_file.close()
-    else:
-        result = main_engine.start_engine()
+    try:
+        if os.path.isfile(r"C:\malware\all_result\result.txt"): #경로가 파일인지 아닌지 검사
+            result_file = open(r"C:\malware\all_result\result.txt", 'rb')
+            result = json.loads(result_file.read())
+            result_file.close()
+        else:
+            result = main_engine.start_engine()
 
-        with open(r"C:\malware\all_result\result.txt", 'w') as res:
-            json.dump(result, res, ensure_ascii=False, indent='\t')
+            with open(r"C:\malware\all_result\result.txt", 'w') as res:
+                json.dump(result, res, ensure_ascii=False, indent='\t')
 
-    h_paginator = Paginator(result, 4)
+        h_paginator = Paginator(result, 4)
 
-    pe_ = PE_info.objects.order_by('timenum').all()
+        pe_ = PE_info.objects.order_by('timenum').all()
 
-    stop = timeit.default_timer()
-    print('time is ????')
-    print(stop - start)
+        stop = timeit.default_timer()
+        print('time is ????')
+        print(stop - start)
 
-    return render(request, 'Main_engine/result.html', {'result': result, 'pe_': pe_})
+        return render(request, 'Main_engine/result.html', {'result': result, 'pe_': pe_})
 
+    except :
+        print('page error')
+        return render(request, 'Main_engine/error.html')
 
 
 def upload_file_dropzone(request):
