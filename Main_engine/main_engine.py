@@ -419,4 +419,3 @@ def idb_pe_feature(all_idb_info,all_pe_info):
                 #predict_labels 0 은 비악성 1은 악성
                 ML_result_data[file_base_name]=predict_labels
     return ML_result_data
-
