@@ -129,6 +129,7 @@ def extract_basic_block_info(fva, funcName, func_ext_dict):
                 del temp
             del basicblock_dic, constants, opcodes, disasms, hex_opcodes
     except Exception as e:
+        # print(f'[debug] Extract_ {e}')
         err_log.append("Extract_" + str(e))
 
     bb_ext_dict.update({'flow_constants': func_ext_const})
@@ -171,6 +172,7 @@ def main():
                         func_branch.append(
                             (api.ida_funcs.get_func_name(api.ida_funcs.get_func(addr.src).startEA), FuncName))
                 except Exception as e:
+                    # print(f'[debug] XrefsTo_ {e}')
                     err_log.append("XrefsTo_" + str(e))
             del FuncName
 
