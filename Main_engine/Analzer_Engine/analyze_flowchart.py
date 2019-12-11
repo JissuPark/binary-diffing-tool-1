@@ -375,4 +375,3 @@ class AnalyzeFlowchart:
                 json.dump(idb_func_all, makefile, ensure_ascii=False, indent='\t')
 
         return idb_all
-
