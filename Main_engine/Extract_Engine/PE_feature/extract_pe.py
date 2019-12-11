@@ -5,6 +5,7 @@ import ssdeep
 import magic
 import os
 import math
+import json
 
 import pefile
 from Main_engine.Extract_Engine.PE_feature import pe_pdb, pe_rsrc, pe_rich, pe_stringfileinfo
@@ -47,7 +48,7 @@ class Pe_Feature:
         get_imphash()함수 : 함수 이름(.dll)을 찾아서 md5해시 후 리턴
         '''
         if self.pe.get_imphash().upper() == "":
-            return np.nan
+            return ""
         return self.pe.get_imphash().upper()
 
 
@@ -122,12 +123,12 @@ class Pe_Feature:
         '''
         kind = filetype.guess(self.file_name)
         if kind is None:
-            return np.nan
+            return ""
         else:
             if kind.extension == 'exe':
                 file_type = 'Window exe'
             else:
-                return np.nan
+                return ""
         return file_type
 
     def extract_stringfileinfo(self):
@@ -159,8 +160,48 @@ class Pe_Feature:
         f_name = self.file_name[self.file_name.rfind('\\') + 1:]
         f_name_hash = open(self.file_name, 'rb')
 
+        file_size = os.path.getsize(self.file_name)
+        file_size = self.convert_size(file_size)
+        MD5 = hashlib.md5(open(self.file_name, 'rb').read()).hexdigest().upper()
+        sha1 = hashlib.sha1(open(self.file_name, 'rb').read()).hexdigest()
+        sha256 = hashlib.sha256(open(self.file_name, 'rb').read()).hexdigest()
+        ImpHash = imphash.upper()
+        ssdeep_hash = ssdeep.hash_from_file(self.file_name)
+        TimeStamp = time_info
+        PDB = pdb_info
+        Cert = cert
+
+        Year = TimeStamp[TimeStamp.rfind('UTC') - 5:TimeStamp.rfind('UTC') - 1]
+
+        basic_prop = {
+            'file name': f_name,
+            'file size': file_size,
+            'file_type': file_type,
+            'MD5 hash': MD5,
+            'SHA-1 hash': sha1,
+            'SHA-256 hash': sha256,
+            'Imp hash': ImpHash,
+            'SSDEEP hash': ssdeep_hash
+        }
+
+        machine_bit = self.pe.FILE_HEADER.Machine
+        mac = ""
+        if machine_bit == HEX_M_32:
+            mac = "Intel 386 or later processors and compatible processors"
+        elif machine_bit == HEX_M_64_AMD or machine_bit == HEX_M_64_IA:
+            mac = "x64"
+        Ent_point = self.pe.OPTIONAL_HEADER.AddressOfEntryPoint
+        Section_num = self.pe.FILE_HEADER.NumberOfSections
+
+        pe_header = {
+            'Target Machine': mac,
+            'File Creation Time': TimeStamp,
+            'Entry Point': Ent_point,
+            'Contained Sections': Section_num
+        }
+
         pe_features = {
-            'file_path': self.file_name,
+            #'file_path': self.file_name,
             'file_name': f_name,
             'file_hash': hashlib.sha256(open(self.file_name, 'rb').read()).hexdigest(),
             'imp_hash': imphash,
@@ -176,20 +217,11 @@ class Pe_Feature:
             'string file info': stringfileinfo,
             'rsrc_info': rsrc_info,
             'rsrc_count': rs,
-            'rsrc_lang': rl
+            'rsrc_lang': rl,
+            'basic prop': basic_prop,
+            'pe header': pe_header
         }
-        file_size = os.path.getsize(self.file_name)
-        file_size = self.convert_size(file_size)
-        MD5 = hashlib.md5(open(self.file_name, 'rb').read()).hexdigest().upper()
-        sha1 = hashlib.sha1(open(self.file_name, 'rb').read()).hexdigest()
-        sha256 = hashlib.sha256(open(self.file_name, 'rb').read()).hexdigest()
-        ImpHash = imphash.upper()
-        ssdeep_hash = ssdeep.hash_from_file(self.file_name)
-        TimeStamp = time_info
-        PDB = pdb_info
-        Cert = cert
 
-        Year = TimeStamp[TimeStamp.rfind('UTC') - 5:TimeStamp.rfind('UTC') - 1]
 
 
         pe_features_for_DB = {
@@ -206,22 +238,6 @@ class Pe_Feature:
             'File Certification': Cert
         }
 
-        machine_bit = self.pe.FILE_HEADER.Machine
-        mac = ""
-        if machine_bit == HEX_M_32:
-            mac = "Intel 386 or later processors and compatible processors"
-        elif machine_bit == HEX_M_64_AMD or machine_bit == HEX_M_64_IA:
-            mac = "x64"
-        Ent_point = self.pe.OPTIONAL_HEADER.AddressOfEntryPoint
-        Section_num = self.pe.FILE_HEADER.NumberOfSections
-
-        pe_header = {
-            'Target Machine': mac,
-            'File Creation Time': TimeStamp,
-            'Enrty Point': Ent_point,
-            'Contained Sections': Section_num
-        }
-
         pdb_name = PDB['pe_pdb_Name']
         pdb_guid = PDB['pe_pdb_GUID']
         pdb_age = PDB['pe_pdb_Age']
@@ -236,5 +252,19 @@ class Pe_Feature:
 
         return pe_features, pe_features_for_DB
 
+def pe_into_file():
+    p_dict = dict()
+    pe_result_list = os.listdir(r"C:\malware\all_result\pe_r")
+    for file in pe_result_list:
+        if os.path.isfile(r"C:\malware\all_result\pe_r" + "\\" + file):
+            with open(r"C:\malware\all_result\pe_r" + "\\" + file, 'rb') as f:
+                result_pe = f.read()
+                pe_data = json.loads(result_pe)
+                # print(json.dumps(pe_data, indent=4))
+                p_dict[pe_data['file_name']] = pe_data
+                # print("p_dict :: ", json.dumps(p_dict, indent=4))
+            f.close()
+
+    return p_dict
 # if __name__ == "__main__":
 #     pe = Pe_Feature(r"C:\malware\mid_GandCrab_exe\test")
