@@ -13,5 +13,5 @@ urlpatterns = [
     path('result', views.call_main, name='result'),
     path('pe', views.pe, name='pe'),
     path('cfg', views.cfg, name='cfg'),
-    path('cg', views.cg, name='cg'),
+    path('cg', views.cg, name='cg')
 ]

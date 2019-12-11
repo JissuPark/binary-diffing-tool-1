@@ -20,14 +20,16 @@ def showindex(request):
     main_engine.delete_file()
     return render(request, 'Main_engine/index.html')
 
+
 def recent(request):
     return render(request, 'Main_engine/index.html')
 
+
 def pe(request):
-    #f = open(r"C:\malware\all_result\pe_all.txt", 'w')
+    # f = open(r"C:\malware\all_result\pe_all.txt", 'w')
     pe_list = PE_info.objects.order_by('timenum').all()
-    #print(pe_list)
-    paginator = Paginator(pe_list, 1) #페이지당 1개씩의 pe_info
+    # print(pe_list)
+    paginator = Paginator(pe_list, 1)  # 페이지당 1개씩의 pe_info
 
     page = request.GET.get('page', 1)
     p_dict = dict()
@@ -45,20 +47,20 @@ def pe(request):
             pe_data = json.loads(result_pe.read())
             for p, p_ in pe_data.items():
                 if p == "cmp_section":
-                    #print(p_)
+                    # print(p_)
                     p_dict[pe_data['file_name']] = p_
 
                 elif p == 'rsrc_info':
                     p_rsrc_dict[pe_data['file_name']] = p_
-                    #print(json.dumps(p_rsrc_dict, indent=4))
+                    # print(json.dumps(p_rsrc_dict, indent=4))
 
                 elif p == "rsrc_count":
-                    #print(json.dumps(p_, indent=4))
+                    # print(json.dumps(p_, indent=4))
                     p_rsrc_cnt[pe_data['file_name']] = p_
-                    #print(json.dumps(p_rsrc_cnt, indent=4))
+                    # print(json.dumps(p_rsrc_cnt, indent=4))
 
                 elif p == 'rsrc_lang':
-                    #print(json.dumps(p_, indent=4))
+                    # print(json.dumps(p_, indent=4))
                     p_rsrc_lang[pe_data['file_name']] = p_
 
                 elif p == 'rich header':
@@ -72,16 +74,16 @@ def pe(request):
 
                 elif p == 'time in num':
                     p_filename[pe_data['file_name']] = p_
-    #print(p_filename)#json.dump(pe_data, f, ensure_ascii=False, indent='\t')
+    # print(p_filename)#json.dump(pe_data, f, ensure_ascii=False, indent='\t')
     p_filename = sorted(p_filename.items(), key=lambda x: x[1])
-    #print(p_filename)
+    # print(p_filename)
 
     # for i in range(len(p_filename)):
     #     pe_filename[p_filename[i][0]] = p_filename[i][1]
 
     pe_f = [0 for i in range(len(p_filename) + 1)]
     for i in range(len(p_filename)):
-        pe_f[i+1] = p_filename[i]
+        pe_f[i + 1] = p_filename[i]
     print(pe_f)
 
     try:
@@ -91,11 +93,13 @@ def pe(request):
     except EmptyPage:
         lists = paginator.page(paginator.num_pages)
     result_pe.close()
-    #f.close()
+    # f.close()
 
-    return render(request, 'Main_engine/pe.html', {'p_filename': p_filename,'pe_f': pe_f, 'lists': lists, 'p_dict': p_dict, 'p_rsrc': p_rsrc_dict,
-                                                   'p_rsrc_cnt': p_rsrc_cnt, 'p_rsrc_lang': p_rsrc_lang,
-                                                   'p_dll_list': p_dll_list, 'p_rich_list': p_rich_list, 'p_stringfileinfo': p_stringfile})
+    return render(request, 'Main_engine/pe.html',
+                  {'p_filename': p_filename, 'pe_f': pe_f, 'lists': lists, 'p_dict': p_dict, 'p_rsrc': p_rsrc_dict,
+                   'p_rsrc_cnt': p_rsrc_cnt, 'p_rsrc_lang': p_rsrc_lang,
+                   'p_dll_list': p_dll_list, 'p_rich_list': p_rich_list, 'p_stringfileinfo': p_stringfile})
+
 
 # def heuristic(request):
 #      with open(r"C:\malware\all_result\result.txt", "r") as json_file:
@@ -136,7 +140,6 @@ def cg(request):
 
 
 def loading(request):
-
     default_path = ["C:\\malware\\all_result\\result.txt", "C:\\malware\\all_result\\pe_all.txt"]
 
     for path in default_path:
@@ -146,13 +149,14 @@ def loading(request):
     flag = file_check()
 
     if not flag:
-        return render(request, 'Main_engine/index.html', {'message':'directory is empty or filetype is not pe !!'})
+        return render(request, 'Main_engine/index.html', {'message': 'directory is empty or filetype is not pe !!'})
     else:
         return render(request, 'Main_engine/loading.html')
 
+
 def call_main(request):
     start = timeit.default_timer()
-    if os.path.isfile(r"C:\malware\all_result\result.txt"): #경로가 파일인지 아닌지 검사
+    if os.path.isfile(r"C:\malware\all_result\result.txt"):  # 경로가 파일인지 아닌지 검사
         result_file = open(r"C:\malware\all_result\result.txt", 'rb')
         result = json.loads(result_file.read())
         result_file.close()
@@ -173,15 +177,13 @@ def call_main(request):
     return render(request, 'Main_engine/result.html', {'result': result, 'pe_': pe_})
 
 
-
 def upload_file_dropzone(request):
     print('in upload file dropzone')
 
     if request.method == 'POST':
-        #print('here is post')
+        # print('here is post')
         handle_uploaded_file(request.FILES['file'])
-        #print(request.FILES['file'])
-
+        # print(request.FILES['file'])
 
     return render(request, 'Main_engine/index.html')
 
@@ -198,7 +200,7 @@ def file_check():
 
     for file in os.listdir(r'C:\malware\mal_exe'):
         # 이름에서 확장자를 추출해 비교하는 로직
-        extension = ['exe','dll','sys','idb','i64']
+        extension = ['exe', 'dll', 'sys', 'idb', 'i64']
         file_extension = file.split('.')[-1]
         print(f'[DEBUG] {file} is {file_extension}')
         # 확장자가 없는 경우, 넘어감
@@ -211,6 +213,7 @@ def file_check():
     # # # 전부 돌았는데 false가 반환되지 않았다면 true 반환
     return True
 
+
 def handle_uploaded_file(file):
     '''
     파일을 받아서 파일의 이름으로 폴더에 저장해주는 함수
@@ -218,6 +221,6 @@ def handle_uploaded_file(file):
     :return: None
     '''
 
-    with open('C:\\malware\\mal_exe\\'+file.name, 'wb+') as uploaded_file:
+    with open('C:\\malware\\mal_exe\\' + file.name, 'wb+') as uploaded_file:
         for chunk in file.chunks():
             uploaded_file.write(chunk)
