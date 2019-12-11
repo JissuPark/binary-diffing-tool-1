@@ -254,8 +254,7 @@ class AnalyzeFlowchart:
             for y, z in x.items():
                 total_sim += (list(z.values())[0])
                 total_count += 1
-        print(
-            f'[analysis] Basic Block Constants similarity :::::::::::: ({total_sim}/{total_count}) : {float(str(total_sim / total_count)[:4])}')
+        print(f'[analysis] Basic Block Constants similarity :::::::::::: ({total_sim}/{total_count}) : {float(str(total_sim / total_count)[:4])}')
         # print(f'ㄴ[debug] get const similarity time -> {timeit.default_timer() - st}')
         return float(str(total_sim / total_count)[:4])
 
@@ -266,9 +265,7 @@ class AnalyzeFlowchart:
 
         s_cmp_dic, whitelist_matched_dic1 = self.parser_bbh(s_flow_data)
         t_cmp_dic, whitelist_matched_dic2 = self.parser_bbh(t_flow_data)
-        print(whitelist_matched_dic1)
         cmp_s, cmp_t, true_bb_const_sim = self.compare_bbh(s_cmp_dic, t_cmp_dic)
-        # print(true_bb_const_sim)
         c_score = self.compare_prime(self.parser_bbh_T_F(cmp_s, ), self.parser_bbh_T_F(cmp_t, ), s_flow_data, t_flow_data)
 
         func_match_dict = self.get_match_func_level(true_bb_const_sim)
@@ -277,7 +274,7 @@ class AnalyzeFlowchart:
 
 
     def analyze_constant(self, standard, target):
-        const_score = algo.get_string_similarity(standard['constant'], target['constant'])
+        const_score = algo.get_string_similarity(standard['constant'][0], target['constant'][0])
         return float(str(const_score['2-Gram'])[:4])
         # retrun const_score['2-Gram"]
 
