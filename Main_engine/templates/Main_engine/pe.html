@@ -3,6 +3,7 @@
 {% block head %}
 {% load static %}
 <link href="{% static 'Main_engine/css/pe.css' %}" rel="stylesheet">
+<script src="{% static 'Main_engine/js/defaults-ko_KR.min.js' %}"></script>
 <style>
     .content {
         font-family: 'Roboto Condensed', sans-serif !important;
@@ -12,37 +13,9 @@
 {% endblock head %}
 
 {% block section %}
-{% if lists.has_other_pages %}
 
-{% endif %}
-
-{% load get_at_index %}
-{% for pe in lists %}
-{% if lists.has_other_pages %}
-<div class="dropdown show">
-    <a aria-expanded="false" aria-haspopup="true" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" href="#"
-       id="dropdownMenuLink" role="button">
-        Select File
-    </a>
-
-    <div aria-labelledby="dropdownMenuLink" class="dropdown-menu">
-        {% for i in lists.paginator.page_range %}
-        {% if pe.filename == pe_f|get_at_index:i %}
-        {% if lists.number == i %}
-        <li aria-current="page" class="page-item active">
-            <span class="page-link">{{ pe_f|get_at_index:i|get_at_index:0 }}<span class="sr-only">(current)</span></span></li>
-        {% endif %}
-        {% else %}
-        <a class="dropdown-item" href="?page={{ i }}">{{ pe_f|get_at_index:i|get_at_index:0 }}</a>
-        {% endif %}
-        {% endfor %}
-
-    </div>
-</div>
-{% endif %}
-
-<br><br><br>
-
+{% if p_dict %}
+<!-- pe_basic -->
 <div id="Basic Properties" style="padding: 10px">
     <div class="header">
         <h3 align="left">Basic Properties</h3>
@@ -50,50 +23,112 @@
     <div class="detail" style="margin-left: 20px;">
 
         <table height=300px width=1000px>
-            <tr>
+            <tr id="File name">
                 <th>File name</th>
-                <td>{{pe.filename}}</td>
             </tr>
-            <tr>
+            <tr id="File size">
                 <th>File size</th>
-                <td>{{pe.filesize}}</td>
             </tr>
-            <tr>
+            <tr id="File type">
                 <th>File type</th>
-                <td>{{pe.filetype}}</td>
             </tr>
-            <tr>
+            <tr id="MD5">
                 <th>MD5</th>
-                <td>{{pe.md5}}</td>
             </tr>
-            <tr>
+            <tr id="SHA-1">
                 <th>SHA-1</th>
-                <td>{{pe.sha_1}}</td>
             </tr>
-            <tr>
+            <tr id="SHA-256">
                 <th>SHA-256</th>
-                <td>{{pe.sha_256}}</td>
             </tr>
-            <tr>
+            <tr id="Imphash">
                 <th>Imphash</th>
-                <td>{{pe.imphash}}</td>
             </tr>
-            <tr>
+            <tr id="SSDEEP">
                 <th>SSDEEP</th>
-                <td>{{pe.ssdeep}}</td>
             </tr>
         </table>
+        <script>
+            var pe_result = "{{p_dict}}";
 
+            var text_pe_res = pe_result.replace(/&#39;/gi, '"').replace(/\t/gi, "\\t").replace(/\r/gi, "\\r").replace(/\n/gi, "\\n").replace(/None/gi, '"none"').replace(/\\/gi, '/');
+
+            var json_pe = JSON.parse(text_pe_res);
+
+            /* 파일 이름이 다르면 테이블이 변경됨 */
+            function change_basic_page(fileName) {
+                pe_filename = fileName;
+                for (var fname in json_pe) {
+                    //document.write(fname);
+                    if (fname == pe_filename) {
+                        for (var basic in json_pe[fname]) {
+                            //document.write(basic);
+
+                            if (basic == 'basic prop') {
+                                var new_li = document.createElement('td');
+                                var copy = document.createTextNode(json_pe[fname][basic]['file name']);
+                                new_li.appendChild(copy);
+                                document.getElementById('File name').appendChild(new_li);
+
+                                // var new_li = document.createElement("td");
+                                // new_li.textContent = json_pe[fname][basic]['file_name'];
+                                // document.getElementById('File name').appendChild(new_li);
+
+                                var new_li = document.createElement('td');
+                                var copy = document.createTextNode(json_pe[fname][basic]['file size']);
+                                new_li.appendChild(copy);
+                                document.getElementById('File size').appendChild(new_li);
+
+                                var new_li = document.createElement('td');
+                                var copy = document.createTextNode(json_pe[fname][basic]['file_type']);
+                                new_li.appendChild(copy);
+                                document.getElementById('File type').appendChild(new_li);
+
+                                var new_li = document.createElement('td');
+                                var copy = document.createTextNode(json_pe[fname][basic]['MD5 hash']);
+                                new_li.appendChild(copy);
+                                document.getElementById('MD5').appendChild(new_li);
+
+                                var new_li = document.createElement('td');
+                                var copy = document.createTextNode(json_pe[fname][basic]['SHA-1 hash']);
+                                new_li.appendChild(copy);
+                                document.getElementById('SHA-1').appendChild(new_li);
+
+                                var new_li = document.createElement('td');
+                                var copy = document.createTextNode(json_pe[fname][basic]['SHA-256 hash']);
+                                new_li.appendChild(copy);
+                                document.getElementById('SHA-256').appendChild(new_li);
+
+                                var new_li = document.createElement('td');
+                                var copy = document.createTextNode(json_pe[fname][basic]['Imp hash']);
+                                new_li.appendChild(copy);
+                                document.getElementById('Imphash').appendChild(new_li);
+
+                                var new_li = document.createElement('td');
+                                var copy = document.createTextNode(json_pe[fname][basic]['SSDEEP hash']);
+                                new_li.appendChild(copy);
+                                document.getElementById('SSDEEP').appendChild(new_li);
+                            }
+                        }
+
+                    }
+                }
+            }
+
+            //change_basic_page(fileName);
+
+        </script>
     </div>
 </div>
 <br>
-{% if p_stringfileinfo %}
+
+<!-- pe string file info -->
 <div id="Signature Info" style="padding: 10px">
     <div class="header">
         <h3 align="left">Signature Info</h3>
     </div>
     <div class="detail">
-        <table height=250px id="fileinfo_table" style="margin-left: 20px; margin-top: 10px;" width=320px>
+        <table height=220px id="fileinfo_table" style="margin-left: 20px; margin-top: 10px;" width=600px>
             <tbody>
             <div style="margin-left: 10px; margin-top: 15px;">
                 <h4>File Version Information</h4>
@@ -125,112 +160,146 @@
             </tbody>
         </table>
         <script>
-            var pe_result = "{{p_stringfileinfo}}";
-
-            //document.write(pe_result);
-
-            var text_pe_res = pe_result.replace(/&#39;/gi, '"').replace(/\t/gi, "\\t").replace(/\r/gi, "\\r").replace(/\n/gi, "\\n").replace(/nan/gi, '"nan"').replace(/None/gi, '"none"');
-            var pe_t = document.getElementById("fileinfo_table");
+            var pe_result = "{{p_dict}}";
+            document.write("&#9426");
+            var text_pe_res = pe_result.replace(/&#39;/gi, '"').replace(/&amp;/gi, '&').replace(/\t/gi, "\\t").replace(/\r/gi, "\\r").replace(/\n/gi, "\\n").replace(/None/gi, '"none"').replace(/\\/gi, '/');
 
             var json_pe = JSON.parse(text_pe_res);
 
             /* 파일 이름이 다르면 테이블이 변경됨 */
 
-            function change_page() {
-                pe_filename = "{{pe.filename}}";
+            function change_string_page(fileName) {
+                pe_filename = fileName;
                 for (var fname in json_pe) {
-                    if (fname == pe_filename) {
-                        for (var string in json_pe[fname]) {
-                            //document.write(string)
-                            if (string == "StringFileInfo") {
+                    for (var stringf in json_pe[fname]) {
+                        //document.write(stringf)
+                        if (fname == pe_filename) {
+                            if (stringf == 'string file info') {
                                 var new_li = document.createElement('td');
-                                var copy = document.createTextNode(json_pe[fname][string]['LegalCopyright']);
+                                var copy = document.createTextNode(json_pe[fname][stringf]['LegalCopyright']);
                                 new_li.appendChild(copy);
                                 document.getElementById('Copyright').appendChild(new_li);
 
                                 var new_li = document.createElement('td');
-                                var copy = document.createTextNode(json_pe[fname][string]['ProductName']);
+                                var copy = document.createTextNode(json_pe[fname][stringf]['ProductName']);
                                 new_li.appendChild(copy);
                                 document.getElementById('Product').appendChild(new_li);
 
                                 var new_li = document.createElement('td');
-                                var copy = document.createTextNode(json_pe[fname][string]['FileDescription']);
+                                var copy = document.createTextNode(json_pe[fname][stringf]['FileDescription']);
                                 new_li.appendChild(copy);
                                 document.getElementById('Description').appendChild(new_li);
 
                                 var new_li = document.createElement('td');
-                                var copy = document.createTextNode(json_pe[fname][string]['OriginalFilename']);
+                                var copy = document.createTextNode(json_pe[fname][stringf]['OriginalFilename']);
                                 new_li.appendChild(copy);
                                 document.getElementById('Original_Name').appendChild(new_li);
 
                                 var new_li = document.createElement('td');
-                                var copy = document.createTextNode(json_pe[fname][string]['InternalName']);
+                                var copy = document.createTextNode(json_pe[fname][stringf]['InternalName']);
                                 new_li.appendChild(copy);
                                 document.getElementById('Internal_Name').appendChild(new_li);
 
                                 var new_li = document.createElement('td');
-                                var copy = document.createTextNode(json_pe[fname][string]['FileVersion']);
+                                var copy = document.createTextNode(json_pe[fname][stringf]['FileVersion']);
                                 new_li.appendChild(copy);
                                 document.getElementById('File_Version').appendChild(new_li);
 
                                 var new_li = document.createElement('td');
-                                var copy = document.createTextNode(json_pe[fname][string]['ProductVersion']);
+                                var copy = document.createTextNode(json_pe[fname][stringf]['ProductVersion']);
                                 new_li.appendChild(copy);
                                 document.getElementById('Product Version').appendChild(new_li);
 
                                 var new_li = document.createElement('td');
-                                var copy = document.createTextNode(json_pe[fname][string]['Comments']);
+                                var copy = document.createTextNode(json_pe[fname][stringf]['Comments']);
                                 new_li.appendChild(copy);
                                 document.getElementById('Comments').appendChild(new_li);
-
                             }
                         }
                     }
                 }
             }
 
-            change_page();
+            //change_string_page(fileName);
 
         </script>
 
     </div>
 </div>
-{% else %}
-<h1>no result</h1>
-{% endif %}
 <br>
 
+<!-- pe header -->
 <div id="Portable Executable Info" style="padding: 10px">
     <div class="header">
         <h3 align="left">Portable Executable Info</h3>
     </div>
     <div class="detail">
 
-        <table height=140px style="margin-left: 20px; margin-top: 10px;" width=770px>
+        <table height=100px style="margin-left: 20px; margin-top: 10px;" width=770px>
             <div style="margin-left: 10px; margin-top: 15px;">
                 <h4>Header</h4>
             </div>
-            <tr>
+            <tr id="Target Machine">
                 <th>Target Machine</th>
-                <td>{{pe.Targetmachine}}</td>
             </tr>
-            <tr>
+            <tr id="Compilation Time">
                 <th>Compilation Time</th>
-                <td>{{pe.timestamp}}</td>
             </tr>
-            <tr>
+            <tr id="Entry Point">
                 <th>Entry Point</th>
-                <td>{{pe.EntryPoint}}</td>
             </tr>
-            <tr>
+            <tr id="Contained Sections">
                 <th>Contained Sections</th>
-                <td>{{pe.ContainedSections}}</td>
             </tr>
         </table>
+        <script>
+            var pe_result = "{{p_dict}}";
+
+            var text_pe_res = pe_result.replace(/&#39;/gi, '"').replace(/\t/gi, "\\t").replace(/\r/gi, "\\r").replace(/\n/gi, "\\n").replace(/None/gi, '"none"').replace(/\\/gi, '/');
+
+            var json_pe = JSON.parse(text_pe_res);
+
+            /* 파일 이름이 다르면 테이블이 변경됨 */
+            function change_header_page(fileName) {
+                pe_filename = fileName;
+                for (var fname in json_pe) {
+                    for (var peh in json_pe[fname]) {
+                        //document.write(stringf)
+                        if (fname == pe_filename) {
+                            if (peh == 'pe header') {
+                                var new_li = document.createElement('td');
+                                var copy = document.createTextNode(json_pe[fname][peh]['Target Machine']);
+                                new_li.appendChild(copy);
+                                document.getElementById('Target Machine').appendChild(new_li);
+
+                                var new_li = document.createElement('td');
+                                var copy = document.createTextNode(json_pe[fname][peh]['File Creation Time']);
+                                new_li.appendChild(copy);
+                                document.getElementById('Compilation Time').appendChild(new_li);
+
+                                var new_li = document.createElement('td');
+                                var copy = document.createTextNode(json_pe[fname][peh]['Entry Point']);
+                                new_li.appendChild(copy);
+                                document.getElementById('Entry Point').appendChild(new_li);
+
+                                var new_li = document.createElement('td');
+                                var copy = document.createTextNode(json_pe[fname][peh]['Contained Sections']);
+                                new_li.appendChild(copy);
+                                document.getElementById('Contained Sections').appendChild(new_li);
+                            }
+                        }
+                    }
+                }
+            }
+
+            //change_header_page(fileName);
+
+        </script>
     </div>
 </div>
 
-<div id="wrapper2" style="padding: 10px">
+<!-- pe_section -->
+<div id="section" style="padding: 10px">
     <div class="detail">
         <table height=160px id="section_table" style="margin-left: 20px;margin-top: 15px;" width=1000px>
             <thead>
@@ -247,56 +316,60 @@
             </tr>
             </thead>
         </table>
-        {% if p_dict %}
+
         <script>
             var pe_result = "{{p_dict}}";
             /*
             document.write(pe_result);
             */
-            var text_pe_res = pe_result.replace(/&#39;/gi, '"');
-            var pe_t = document.getElementById("section_table");
+            var text_pe_res = pe_result.replace(/&#39;/gi, '"').replace(/\t/gi, "\\t").replace(/\r/gi, "\\r").replace(/\n/gi, "\\n").replace(/None/gi, '"none"').replace(/\\/gi, '/');
+            var pe_section = document.getElementById("section_table");
 
             var json_pe = JSON.parse(text_pe_res);
 
             /* 파일 이름이 다르면 테이블이 변경됨 */
 
-            function change_page() {
-                pe_filename = "{{pe.filename}}";
+            function change_section_page(fileName) {
+                pe_filename = fileName;
                 for (var fname in json_pe) {
                     if (fname == pe_filename) {
                         for (var section in json_pe[fname]) {
-                            //section 부분만 출력하기 위한 if문
+                            if (section == 'cmp_section') {
+                                //document.write(section)
+                                for (var seci in json_pe[fname][section]) {
+                                    //document.write(item)
+                                    //section 부분만 출력하기 위한 if문
 
-                            var new_row = pe_t.insertRow(pe_t.rows.length);
+                                    var new_row = pe_section.insertRow(pe_section.rows.length);
 
-                            var Name = new_row.insertCell(0);
-                            var Virtual_add = new_row.insertCell(1);
-                            var Virtual_size = new_row.insertCell(2);
-                            var Raw_size = new_row.insertCell(3);
-                            var Entropy = new_row.insertCell(4);
-                            var md5 = new_row.insertCell(5);
+                                    var Name = new_row.insertCell(0);
+                                    var Virtual_add = new_row.insertCell(1);
+                                    var Virtual_size = new_row.insertCell(2);
+                                    var Raw_size = new_row.insertCell(3);
+                                    var Entropy = new_row.insertCell(4);
+                                    var md5 = new_row.insertCell(5);
 
-                            Name.innerHTML = json_pe[fname][section]['section_name'];
-                            Virtual_add.innerHTML = json_pe[fname][section]['virtual_address'];
-                            Virtual_size.innerHTML = json_pe[fname][section]['virtual_size'];
-                            Raw_size.innerHTML = json_pe[fname][section]['raw_size'];
-                            Entropy.innerHTML = json_pe[fname][section]['entropy'];
-                            md5.innerHTML = json_pe[fname][section]['hash_md5'];
+                                    Name.innerHTML = json_pe[fname][section][seci]['section_name'];
+                                    Virtual_add.innerHTML = json_pe[fname][section][seci]['virtual_address'];
+                                    Virtual_size.innerHTML = json_pe[fname][section][seci]['virtual_size'];
+                                    Raw_size.innerHTML = json_pe[fname][section][seci]['raw_size'];
+                                    Entropy.innerHTML = json_pe[fname][section][seci]['entropy'];
+                                    md5.innerHTML = json_pe[fname][section][seci]['hash_md5'];
+                                }
+                            }
                         }
                     }
                 }
             }
 
-            change_page();
+            //change_section_page(fileName);
 
         </script>
-        {% else %}
-        <h1>no result</h1>
-        {% endif %}
     </div>
 </div>
 
-<div style="padding: 10px">
+<!-- pe_rsrc_count -->
+<div id="rsrc_count" style="padding: 10px">
     <div class="detail">
         <table height=160px id="contained_resource_table" style="margin-left: 20px;margin-top: 10px;" width=200px>
             <thead>
@@ -309,49 +382,49 @@
             </tr>
             </thead>
         </table>
-        {% if p_rsrc_cnt %}
+
         <script>
-            var pe_result = "{{p_rsrc_cnt}}";
+            var pe_result = "{{p_dict}}";
 
             //document.write(pe_result);
 
-            var text_pe_res = pe_result.replace(/&#39;/gi, '"');
-            var pe_t = document.getElementById("contained_resource_table");
+            var text_pe_res = pe_result.replace(/&#39;/gi, '"').replace(/\t/gi, "\\t").replace(/\r/gi, "\\r").replace(/\n/gi, "\\n").replace(/None/gi, '"none"').replace(/\\/gi, '/');
+            var pe_resource_count = document.getElementById("contained_resource_table");
 
             var json_pe = JSON.parse(text_pe_res);
 
             /* 파일 이름이 다르면 테이블이 변경됨 */
 
-            function change_page() {
-                pe_filename = "{{pe.filename}}";
+            function change_rsrc_count_page(fileName) {
+                pe_filename = fileName;
                 for (var fname in json_pe) {
                     //document.write(fname)
                     if (fname == pe_filename) {
                         for (var rsrc in json_pe[fname]) {
-                            //document.write(rsrc[0])
-                            //resource 부분만 출력하기 위한 if문
+                            if (rsrc == 'rsrc_count') {
+                                for (var item in json_pe[fname][rsrc]) {
+                                    //resource 부분만 출력하기 위한 if문
 
-                            var new_row = pe_t.insertRow(pe_t.rows.length);
+                                    var new_row = pe_resource_count.insertRow(pe_resource_count.rows.length);
 
-                            var Resource_name = new_row.insertCell(0);
-                            var Count = new_row.insertCell(1);
+                                    var Resource_name = new_row.insertCell(0);
+                                    var Count = new_row.insertCell(1);
 
-                            Resource_name.innerHTML = rsrc;
-                            Count.innerHTML = json_pe[fname][rsrc];
-
+                                    Resource_name.innerHTML = item;
+                                    Count.innerHTML = json_pe[fname][rsrc][item];
+                                }
+                            }
                         }
                     }
                 }
             }
 
-            change_page();
+            //change_rsrc_count_page(fileName);
         </script>
-        {% else %}
-        <h1>no result</h1>
-        {% endif %}
     </div>
 </div>
 
+<!-- pe_rsrc_lang -->
 <div style="padding: 10px">
     <div class="detail">
         <table height=160px id="contained_resource_language_table" style="margin-left: 20px;margin-top: 10px;"
@@ -366,47 +439,46 @@
             </tr>
             </thead>
         </table>
-        {% if p_rsrc_lang %}
         <script>
-            var pe_result = "{{p_rsrc_lang}}";
+            var pe_result = "{{p_dict}}";
             /*
             document.write(pe_result);
             */
-            var text_pe_res = pe_result.replace(/&#39;/gi, '"');
-            var pe_t = document.getElementById("contained_resource_language_table");
+            var text_pe_res = pe_result.replace(/&#39;/gi, '"').replace(/\t/gi, "\\t").replace(/\r/gi, "\\r").replace(/\n/gi, "\\n").replace(/None/gi, '"none"').replace(/\\/gi, '/');
+            var pe_resource_lang = document.getElementById("contained_resource_language_table");
 
             var json_pe = JSON.parse(text_pe_res);
 
             /* 파일 이름이 다르면 테이블이 변경됨 */
 
-            function change_page() {
-                pe_filename = "{{pe.filename}}";
+            function change_rsrc_lang_page(fileName) {
+                pe_filename = fileName;
                 for (var fname in json_pe) {
                     if (fname == pe_filename) {
                         for (var rsrc in json_pe[fname]) {
                             //resource 부분만 출력하기 위한 if문
-                            if (rsrc[0] != '_' && rsrc[0] != '.' && rsrc[0] != '$') {
-                                var new_row = pe_t.insertRow(pe_t.rows.length);
+                            if (rsrc == 'rsrc_lang') {
+                                for (var item in json_pe[fname][rsrc]) {
+                                    var new_row = pe_resource_lang.insertRow(pe_resource_lang.rows.length);
 
-                                var Resource_lang = new_row.insertCell(0);
-                                var Count = new_row.insertCell(1);
+                                    var Resource_lang = new_row.insertCell(0);
+                                    var Count = new_row.insertCell(1);
 
-                                Resource_lang.innerHTML = rsrc;
-                                Count.innerHTML = json_pe[fname][rsrc];
+                                    Resource_lang.innerHTML = item;
+                                    Count.innerHTML = json_pe[fname][rsrc][item];
+                                }
                             }
                         }
                     }
                 }
             }
 
-            change_page();
+            //change_rsrc_lang_page(fileName);
         </script>
-        {% else %}
-        <h1>no result</h1>
-        {% endif %}
     </div>
 </div>
 
+<!-- pe_rsrc_list -->
 <div style="padding: 10px">
     <div class="detail">
         <table height=160px id="contained_resource_list_table" style="margin-left: 20px;margin-top: 10px;" width=1000px>
@@ -421,13 +493,12 @@
             </tr>
             </thead>
         </table>
-        {% if p_rsrc %}
         <script>
-            var pe_result = "{{p_rsrc}}";
+            var pe_result = "{{p_dict}}";
 
-            var text_pe_res = pe_result.replace(/&#39;/gi, '"').replace(/\t/gi, "\\t").replace(/\r/gi, "\\r").replace(/\n/gi, "\\n").replace(/nan/gi, '"nan"').replace(/None/gi, '"none"');
+            var text_pe_res = pe_result.replace(/&#39;/gi, '"').replace(/\t/gi, "\\t").replace(/\r/gi, "\\r").replace(/\n/gi, "\\n").replace(/None/gi, '"none"').replace(/\\/gi, '/');
             //document.write(text_pe_res);
-            var pe_t = document.getElementById("contained_resource_list_table");
+            var pe_resource_list = document.getElementById("contained_resource_list_table");
 
             var json_pe = JSON.parse(text_pe_res);
 
@@ -435,37 +506,36 @@
 
             /* 파일 이름이 다르면 테이블이 변경됨 */
 
-            function change_page() {
-                var pe_filename = "{{pe.filename}}";
+            function change_rsrc_list_page(fileName) {
+                var pe_filename = fileName;
                 for (var fname in json_pe) {
                     //document.write(fname);
                     if (fname == pe_filename) {
                         for (var rsrc in json_pe[fname]) {
-                            //document.write(fname)
-                            //resource 부분만 출력하기 위한 if문
-                            //document.write(rsrc[0])
-                            //document.write(json_pe[fname][rsrc]['&amp;Resource Type'])
-                            var new_row = pe_t.insertRow(pe_t.rows.length);
-                            var Resource_sha256 = new_row.insertCell(0);
-                            var Resource_type = new_row.insertCell(1);
-                            var Resource_Lang = new_row.insertCell(2);
+                            if (rsrc == 'rsrc_info') {
+                                for (var item in json_pe[fname][rsrc]) {
+                                    //document.write(json_pe[fname][rsrc]);
+                                    var new_row = pe_resource_list.insertRow(pe_resource_list.rows.length);
+                                    var Resource_sha256 = new_row.insertCell(0);
+                                    var Resource_type = new_row.insertCell(1);
+                                    var Resource_Lang = new_row.insertCell(2);
 
-                            Resource_sha256.innerHTML = json_pe[fname][rsrc]['sha-256'];
-                            Resource_type.innerHTML = json_pe[fname][rsrc]['Resource Type'];
-                            Resource_Lang.innerHTML = json_pe[fname][rsrc]['Resource Language'];
+                                    Resource_sha256.innerHTML = json_pe[fname][rsrc][item]['sha-256'];
+                                    Resource_type.innerHTML = json_pe[fname][rsrc][item]['Resource Type'];
+                                    Resource_Lang.innerHTML = json_pe[fname][rsrc][item]['Resource Language'];
+                                }
+                            }
                         }
                     }
                 }
             }
 
-            change_page();
+            //change_rsrc_list_page(fileName);
         </script>
-        {% else %}
-        <h1>no result</h1>
-        {% endif %}
     </div>
 </div>
 
+<!-- pe_import dll -->
 <div style="padding: 10px">
     <div class="detail">
         <div height=200px id="Import_dll_list_table" style="margin-left:10px;" width=1000px>
@@ -473,65 +543,53 @@
                 <h4 top=50px>Imports</h4>
             </div>
         </div>
-
-        {% if p_dll_list %}
         <script>
-            var pe_result = "{{p_dll_list}}";
-            //document.write(pe_result)
-            /*
-            document.write(pe_result);
-            */
-            var text_pe_res = pe_result.replace(/&#39;/gi, '"');
+            var pe_result = "{{p_dict}}";
+            var text_pe_res = pe_result.replace(/&#39;/gi, '"').replace(/\t/gi, "\\t").replace(/\r/gi, "\\r").replace(/\n/gi, "\\n").replace(/None/gi, '"none"').replace(/\\/gi, '/');
             var json_pe = JSON.parse(text_pe_res);
 
             /* 파일 이름이 다르면 테이블이 변경됨 */
 
-            function change_page() {
-                pe_filename = "{{pe.filename}}";
+            function change_dll_page(fileName) {
+                pe_filename = fileName;
                 for (var fname in json_pe) {
                     if (fname == pe_filename) {
                         for (var list in json_pe[fname]) {
-                            //document.write(fname)
-                            //resource 부분만 출력하기 위한 if문
-                            //list = list.toLowerCase()
-                            if (list.substr(list.length - 4, list.length - 1) == ".dll" || list.substr(list.length - 4, list.length - 1) == ".DLL") {
-                                //var new_row = pe_t.insertRow(pe_t.rows.length);
-                                //var imp = new_row.insertCell(0);
+                            if (list == 'Imports') {
+                                for (var item in json_pe[fname][list]) {
+                                    //h6 태그 생성
+                                    var details = document.createElement('details');
+                                    var dll = document.createElement('summary');
+                                    //태그에 넣을 문자열 생성
+                                    var d = document.createTextNode(item);
+                                    //태그에 문자열 삽입
+                                    dll.appendChild(d);
+                                    details.appendChild(dll);
+                                    //태그를 html에 삽입
+                                    for (var i in json_pe[fname][list][item]) {
 
-                                //h6 태그 생성
-                                var details = document.createElement('details');
-                                var dll = document.createElement('summary');
-                                //태그에 넣을 문자열 생성
-                                var d = document.createTextNode(list);
-                                //태그에 문자열 삽입
-                                dll.appendChild(d);
-                                details.appendChild(dll);
-                                //태그를 html에 삽입
-                                for (var i in json_pe[fname][list]) {
-
-                                    var new_li = document.createElement('p');
-                                    var l = document.createTextNode(json_pe[fname][list][i]);
-                                    //var nl = document.createTextNode(re);
-                                    new_li.appendChild(l);
-                                    //document.getElementById('Import_dll_list_table').appendChild(new_li);
-                                    details.appendChild(new_li);
-                                    //details.appendChild(nl);
+                                        var new_li = document.createElement('p');
+                                        var l = document.createTextNode(json_pe[fname][list][item][i]);
+                                        //var nl = document.createTextNode(re);
+                                        new_li.appendChild(l);
+                                        //document.getElementById('Import_dll_list_table').appendChild(new_li);
+                                        details.appendChild(new_li);
+                                        //details.appendChild(nl);
+                                    }
+                                    document.getElementById('Import_dll_list_table').appendChild(details);
                                 }
-                                document.getElementById('Import_dll_list_table').appendChild(details);
-
                             }
                         }
                     }
                 }
             }
-            change_page();
+
+            //change_dll_page(fileName);
         </script>
-        {% else %}
-        <h1>no result</h1>
-        {% endif %}
     </div>
 </div>
 
+<!-- pe_rich -->
 <div id="Extra Information" style="padding: 10px">
     <div class="header">
         <h3 align="left">Extra Information</h3>
@@ -555,87 +613,162 @@
             </tr>
             </thead>
         </table>
-        {% if p_rich_list %}
         <script>
-            var pe_result = "{{p_rich_list}}";
+            var pe_result = "{{p_dict}}";
             /*
             document.write(pe_result);
             */
-            var text_pe_res = pe_result.replace(/&#39;/gi, '"');
-            var pe_t = document.getElementById("rich_header");
+            var text_pe_res = pe_result.replace(/&#39;/gi, '"').replace(/\t/gi, "\\t").replace(/\r/gi, "\\r").replace(/\n/gi, "\\n").replace(/None/gi, '"none"').replace(/\\/gi, '/');
+            var pe_rich = document.getElementById("rich_header");
             var x_t = document.getElementById('xor_key');
 
             var json_pe = JSON.parse(text_pe_res);
 
             /* 파일 이름이 다르면 테이블이 변경됨 */
 
-            function change_page() {
-                pe_filename = "{{pe.filename}}";
+            function change_rich_page(fileName) {
+                pe_filename = fileName;
                 for (var fname in json_pe) {
                     if (fname == pe_filename) {
                         for (var rich in json_pe[fname]) {
                             //section 부분만 출력하기 위한 if문
                             //document.write(rich);
-                            if (rich == "xor key") {
-                                var x = x_t.insertRow(x_t.rows.length);
-                                var xor = x.insertCell(0);
+                            if (rich == 'rich header') {
+                                for (var xork in json_pe[fname][rich]) {
+                                    if (xork == "xor key") {
+                                        var x = x_t.insertRow(x_t.rows.length);
+                                        var xor = x.insertCell(0);
 
-                                xor.innerHTML = json_pe[fname][rich];
-                            } else {
-                                var new_row = pe_t.insertRow(pe_t.rows.length);
+                                        xor.innerHTML = json_pe[fname][rich][xork];
+                                    } else {
+                                        var new_row = pe_rich.insertRow(pe_rich.rows.length);
 
-                                var comp_name = new_row.insertCell(0);
-                                var count = new_row.insertCell(1);
+                                        var comp_name = new_row.insertCell(0);
+                                        var count = new_row.insertCell(1);
 
-                                comp_name.innerHTML = rich;
-                                count.innerHTML = json_pe[fname][rich];
+                                        comp_name.innerHTML = xork;
+                                        count.innerHTML = json_pe[fname][rich][xork];
+                                    }
+                                }
                             }
-
                         }
                     }
                 }
             }
 
-            change_page();
-
+            //change_rich_page(fileName);
         </script>
-        {% else %}
-        <h1>no result</h1>
-        {% endif %}
     </div>
 </div>
 
+<!-- pe_pdb -->
 <div id="pdb" style="padding: 10px">
     <div class="detail">
-        <table height=140px style="margin-left:20px;margin-top: 10px;" width=770px>
-            <div style="margin-top: 20px; margin-left: 10px;">
-                <h4 top=50px>PDB Information</h4>
-            </div>
-            <tr>
+        <div style="margin-top: 20px; margin-left: 10px;">
+            <h4 top=50px>PDB Information</h4>
+        </div>
+        <table height=140px id="pdb_table" style="margin-left:20px;margin-top: 10px;" width=770px>
+            <tr id="PDB Name">
                 <th>PDB Name</th>
-                <td>{{pe.pdbname}}</td>
             </tr>
-            <tr>
+            <tr id="PDB GUID">
                 <th>PDB GUID</th>
-                <td>{{pe.pdbguid}}</td>
             </tr>
-            <tr>
+            <tr id="PDB Age">
                 <th>PDB Age</th>
-                <td>{{pe.pdbage}}</td>
             </tr>
-            <tr>
+            <tr id="PDB Path">
                 <th>PDB Path</th>
-                <td>{{pe.pdbpath}}</td>
             </tr>
         </table>
+        <script>
+            var pe_result = "{{p_dict}}";
+            var text_pe_res = pe_result.replace(/&#39;/gi, '"').replace(/\t/gi, "\\t").replace(/\r/gi, "\\r").replace(/\n/gi, "\\n").replace(/None/gi, '"none"').replace(/\\/gi, '/');
+            var json_pe = JSON.parse(text_pe_res);
+
+            /* 파일 이름이 다르면 테이블이 변경됨 */
+            function change_pdb_page(fileName) {
+                pe_filename = fileName;
+                for (var fname in json_pe) {
+                    for (var pdb in json_pe[fname]) {
+                        //document.write(stringf)
+                        if (fname == pe_filename) {
+                            if (pdb == 'pdb_info') {
+                                var new_li = document.createElement('td');
+                                var copy = document.createTextNode(json_pe[fname][pdb]['pe_pdb_Name']);
+                                new_li.appendChild(copy);
+                                document.getElementById('PDB Name').appendChild(new_li);
+
+                                var new_li = document.createElement('td');
+                                var copy = document.createTextNode(json_pe[fname][pdb]['pe_pdb_GUID']);
+                                new_li.appendChild(copy);
+                                document.getElementById('PDB GUID').appendChild(new_li);
+
+                                var new_li = document.createElement('td');
+                                var copy = document.createTextNode(json_pe[fname][pdb]['pe_pdb_Age']);
+                                new_li.appendChild(copy);
+                                document.getElementById('PDB Age').appendChild(new_li);
+
+                                var new_li = document.createElement('td');
+                                var copy = document.createTextNode(json_pe[fname][pdb]['pe_pdb_Pdbpath']);
+                                new_li.appendChild(copy);
+                                document.getElementById('PDB Path').appendChild(new_li);
+                            }
+                        }
+                    }
+                }
+            }
+
+            //change_pdb_page(fileName);
+
+        </script>
     </div>
 </div>
 
+{% else %}
+<h1>No PE Information</h1>
+{% endif %}
 
-{% endfor %}
 </div>
 <br><br><br>
 
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css"
+      rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.js"></script>
+<script>
+    $(document).ready(function () {
+        var pe_result = "{{p_dict}}";
+        //document.write(pe_result);
+        var text_pe_res = pe_result.replace(/&#39;/gi, '"').replace(/\t/gi, "\\t").replace(/\r/gi, "\\r").replace(/\n/gi, "\\n").replace(/None/gi, '"none"').replace(/\\/gi, '/');
+        //document.write(text_pe_res);
+        var json_pe = JSON.parse(text_pe_res);
+
+        var pickerclass = document.getElementById('select_pe');
+        for (var standard in json_pe) {
+            var option = document.createElement("option");
+            option.value = standard;
+            option.text = standard;
+            pickerclass.appendChild(option);
+            $('#select_pe').selectpicker('refresh');
+        }
+
+        $("#select-pe").click(function () {
+            $("td").detach();
+            $("details").detach();
+            var fileName = $("#select_pe").children("option:selected").text();        // 기준 파일명을 가져옴
+            change_basic_page(fileName);
+            change_string_page(fileName);
+            change_header_page(fileName);
+            change_section_page(fileName);
+            change_rsrc_count_page(fileName);
+            change_rsrc_lang_page(fileName);
+            change_rsrc_list_page(fileName);
+            change_dll_page(fileName);
+            change_rich_page(fileName);
+            change_pdb_page(fileName);
+        });
+    })
+</script>
 {% endblock section %}
 
 {% block foot %}
