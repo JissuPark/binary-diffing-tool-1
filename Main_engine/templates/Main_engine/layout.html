@@ -6,19 +6,20 @@
     <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
     <meta content="width=device-width, initial-scale=1" name="viewport"/>
 
-    <title>{% block title %}Sleek - Admin Dashboard Template{% endblock %}</title>
+    <title>{% block title %}{% static 'Main_engine/images/main_logo.png' %}{% endblock %}</title>
 
     <link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet">
     <link href="{% static 'Main_engine/css/styles.css' %}" rel="stylesheet">
     <!-- GOOGLE FONTS -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500|Poppins:400,500,600,700|Roboto:400,500"
-          rel="stylesheet"/>
+          rel="stylesheet"/> <!--google font cdn-->
+    <link href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" rel="stylesheet"> <!--font awesome cdn-->
     <link href="https://cdn.materialdesignicons.com/3.0.39/css/materialdesignicons.min.css" rel="stylesheet"/>
 
     <!-- 먼지는 모르겠는데 순서가 중요함! 반드시 jquery 앞에 bootstrap 먼저 쓸 것!!! -->
     <script crossorigin="anonymous"
             integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
-            src="https://code.jquery.com/jquery-3.4.1.js"></script>
+            src="https://code.jquery.com/jquery-3.4.1.js"></script><!---->
     <script src="{% static 'Main_engine/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
     <script crossorigin="anonymous"
             integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
@@ -35,18 +36,15 @@
     <!-- SLEEK CSS -->
     <link href="{% static 'Main_engine/css/sleek.css' %}" id="sleek-css" rel="stylesheet"/>
     <!-- FAVICON -->
-    <link href="{% static 'Main_engine/img/favicon.png' %}" rel="shortcut icon"/>
+    <link href="{% static 'Main_engine/images/main_logo.png' %}" rel="shortcut icon"/>
 
     <!--플러그인의 jquery가 있으면 파일 선택이 안되고 없으면 스크롤이 안됨; -->
-    <!--    <script src="{% static 'Main_engine/plugins/jquery/jquery.min.js' %}"></script>-->
     <script src="{% static 'Main_engine/js/sleek.js' %}"></script>
-
     {% block head %}
     {% endblock head %}
     <style>
-
         button#select-oper, #select-pe {
-            background-color: #525252;
+            background-color: rgba(0, 0, 0, 0.8);
             border-radius: 5px;
             font-weight: bold;
             font-size: large;
@@ -79,12 +77,12 @@
     <!--side bar star-->
     <aside class="left-sidebar bg-sidebar">
         <div class="sidebar sidebar-with-footer" id="sidebar">
-            <!-- Application Brand -->
-            <div class="app-brand" style="background-color: rgba(241,34,96,0.8);">
+            <!-- Aplication Brand -->
+            <div class="app-brand" style="background-color: rgb(9, 51, 110);">
                 <a href="#">
-                    <img alt="...." src="{% static 'Main_engine/images/logo_black.png' %}" style="width: 40px;">
-
-                    <span class="brand-name" onclick="window.location=''">BINARY DIFFING</span>
+                    <img alt="...." src="{% static 'Main_engine/images/main_logo.png' %}" style="width: 60px;
+    margin-left: -18px;">
+                    <span class="brand-name" onclick="window.location=''" style="font-family: 'Poppins', sans-serif;">DIFFING SOURCE</span>
                 </a>
             </div>
             <!-- begin sidebar scrollbar -->
@@ -109,86 +107,92 @@
                             <span class="nav-text" onclick="window.location='result'">Result</span> <b
                                 class="caret"></b>
                         </a>
-                        <ul class="collapse" data-parent="#sidebar-menu"
-                            id="dashboard">
-                            <div class="sub-menu">
-                                <li>
-                                    <a class="sidenav-item-link" href="result#heuristic">
-                                        <span class="nav-text">heuristic score</span>
-                                    </a>
+                                <ul class="collapse" data-parent="#sidebar-menu"
+                                    id="dashboard">
+                                    <div class="sub-menu" style="background: rgba(10,10,10,0.7)">
+                                        <li>
+                                            <a class="sidenav-item-link" href="result#heuristic">
+                                                <span class="nav-text">SIMILARITY CORE</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="sidenav-item-link" href="result#detail">
+                                                <span class="nav-text">DETAIL</span>
+                                            </a>
+                                        </li>
+                                    </div>
+                                </ul>
                                 </li>
-                                <li>
-                                    <a class="sidenav-item-link" href="result#detail">
-                                        <span class="nav-text">Detail</span>
-                                    </a>
-                                </li>
-                            </div>
-                        </ul>
-                    </li>
 
-                    <!---pe start--->
-                    <li class="has-sub">
-                        <a aria-controls="pe_menu" aria-expanded="false" class="sidenav-item-link"
-                           data-target="#pe_menu"
-                           data-toggle="collapse" href="javascript:void(0)">
-                            <i class="mdi mdi-folder-multiple-outline"></i>
-                            <span class="nav-text" onclick="window.location='pe'">PE</span>
-                            <b class="caret"></b>
-                        </a>
-                        <ul class="collapse" data-parent="#sidebar-menu"
-                            id="pe_menu">
-                            <div class="sub-menu">
-                                <li>
-                                    <a class="sidenav-item-link" href="pe#Basic Properties">
-                                        <span class="nav-text">Basic Properties</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="sidenav-item-link" href="pe#Signature Info">
-                                        <span class="nav-text">Signature Info</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="sidenav-item-link" href="pe#Portable Executable Info">
-                                        <span class="nav-text">Portable Executable Info</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="sidenav-item-link" href="pe#Extra Information">
-                                        <span class="nav-text">Extra Information</span>
-                                    </a>
-                                </li>
-                            </div>
-                        </ul>
-                    </li>
-
-                    <!-----carts start------>
-                    <li class="has-sub">
-                        <a aria-controls="charts" aria-expanded="false" class="sidenav-item-link"
-                           data-target="#charts"
-                           data-toggle="collapse" href="javascript:void(0)">
-                            <i class="mdi mdi-chart-pie"></i>
-                            <span class="nav-text" onclick="window.location='cfg'">CFG</span> <b class="caret"></b>
-                        </a>
-                        <ul class="collapse" data-parent="#sidebar-menu"
-                            id="charts">
-                            <div class="sub-menu">
+                                <!---pe start--->
                                 <li class="has-sub">
-                                    <a aria-controls="authentication" aria-expanded="false" class="sidenav-item-link"
-                                       data-target="#authentication"
+                                    <a aria-controls="pe_menu" aria-expanded="false" class="sidenav-item-link"
+                                       data-target="#pe_menu"
                                        data-toggle="collapse" href="javascript:void(0)">
-                                        <span class="nav-text">Function_name</span> <b class="caret"></b>
+                                        <i class="mdi mdi-folder-multiple-outline"></i>
+                                        <span class="nav-text" onclick="window.location='pe'">PE</span>
+                                        <b class="caret"></b>
                                     </a>
-                                    <ul class="collapse" id="authentication">
-                                        <div class="sub-menu" id="func_menu"></div>
-                                    </ul>
-                                </li>
+                                            <ul class="collapse" data-parent="#sidebar-menu"
+                                                id="pe_menu">
+                                                <div class="sub-menu" style="background: rgba(10,10,10,0.7)">
+                                                    <li>
+                                                        <a class="sidenav-item-link" href="pe#Basic Properties">
+                                                            <span class="nav-text">Basic Properties</span>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="sidenav-item-link" href="pe#Signature Info">
+                                                            <span class="nav-text">Signature Info</span>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="sidenav-item-link" href="pe#Portable Executable Info">
+                                                            <span class="nav-text">Portable Executable Info</span>
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="sidenav-item-link" href="pe#Extra Information">
+                                                            <span class="nav-text">Extra Information</span>
+                                                        </a>
+                                                    </li>
+                                                </div>
+                                            </ul>
+                                            </li>
+
+                                            <!-----carts start------>
+                                            <li class="has-sub">
+                                                <a aria-controls="charts" aria-expanded="false"
+                                                   class="sidenav-item-link"
+                                                   data-target="#charts"
+                                                   data-toggle="collapse" href="javascript:void(0)">
+                                                    <i class="mdi mdi-chart-pie"></i>
+                                                    <span class="nav-text" onclick="window.location='cfg'">CFG</span> <b
+                                                        class="caret"></b>
+                                                </a>
+                                                        <ul class="collapse" data-parent="#sidebar-menu"
+                                                            id="charts">
+                                                            <div class="sub-menu"
+                                                                 style="background: rgba(10,10,10,0.7)">
+                                                                <li class="has-sub">
+                                                                    <a aria-controls="authentication"
+                                                                       aria-expanded="false" class="sidenav-item-link"
+                                                                       data-target="#authentication"
+                                                                       data-toggle="collapse" href="javascript:void(0)">
+                                                                        <span class="nav-text">Function_name</span> <b
+                                                                            class="caret"></b>
+                                                                    </a>
+                                                                    <ul class="collapse" id="authentication">
+                                                                        <div class="sub-menu" id="func_menu"
+                                                                             style="background: rgba(10,10,10,0.7)"></div>
+                                                                    </ul>
+                                                                </li>
+                                                            </div>
+                                                        </ul>
+                                                        </li>
+                                                </ul>
+                                        </div>
                             </div>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
     </aside>
 
     <div class="page-wrapper">
@@ -199,24 +203,24 @@
                 <button class="sidebar-toggle" id="sidebar-toggler">
                     <span class="sr-only">Toggle navigation</span>
                 </button>
-                {% if result or cfg %}
-                <div class="mt-1" style="display:inline-flex; width:70%;">
-                    <p class="file_text" style="font-family: 'Roboto Condensed', sans-serif; margin-top: 12px;">BASE
-                        FILE</p>
-                    <select class="selectpicker" data-live-search="true" data-size="5" data-width="20%"
-                            id="select_base"
-                            title="Choose base"></select>
-                    <p class="file_text" style="font-family: 'Roboto Condensed', sans-serif; margin-top: 12px; ">
-                        TARGET FILE</p>
+                 {% if result or cfg %}
+                    <div class="mt-1" style="display:inline-flex; width:70%;">
+                        <p class="file_text" style="font-family: 'Poppins', sans-serif; margin-top: 12px;">BASE
+                            FILE</p>
+                        <select id="select_base" class="selectpicker" data-live-search="true" data-width="20%"
+                                data-size="5"
+                                title="Choose base"></select>
+                        <p class="file_text" style="font-family: 'Poppins', sans-serif; margin-top: 12px; ">
+                            TARGET FILE</p>
 
-                    <select class="selectpicker" data-actions-box="true" data-size="5" data-width="20%"
-                            id="select_target" multiple title="Choose targets"></select>
+                        <select id="select_target" class="selectpicker" data-actions-box="true" data-width="20%"
+                                data-size="5" multiple title="Choose targets"></select>
 
-                    <button id="select-oper"
-                            style="font-family: 'Roboto Condensed', sans-serif; font-weight: bolder; color: white">
-                        SELECT
-                    </button>
-                </div>
+                        <button id="select-oper"
+                                style="font-family: 'Poppins', sans-serif; font-weight: bolder; color: white">
+                            SELECT
+                        </button>
+                    </div>
                 {% endif %}
                 {% if p_dict %}
                 <div class="mt-1" style="display:inline-flex; width:70%;">

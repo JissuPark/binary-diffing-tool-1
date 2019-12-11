@@ -139,7 +139,7 @@ def multiprocess_file(q, return_dict, flag):
                 fd1.close()
                 #print('idb존재함')
             elif file is None:
-                info = extract_asm_and_const.basicblock_idb_info_extraction(f_path)  # 함수대표값 및 상수값 출력
+                info = extract_asm_and_const.basicblock_info_extraction(f_path)  # 함수대표값 및 상수값 출력
                 with open(r"C:\malware\all_result\idb" + "\\" + file_filter + ".txt", 'w') as makefile:
                     json.dump(info, makefile, ensure_ascii=False, indent='\t')
                 Filter.objects.create(filehash=info['file_name'], idb_filepath=idb_file_path + file_filter)

@@ -1,6 +1,6 @@
 {% extends "Main_engine/layout.html" %}
 
-{% block title %} 결과 페이지 {% endblock %}
+{% block title %}DIFFING SOURCE{% endblock %}
 
 {% block head %}
 
@@ -11,7 +11,6 @@
     <script src="{% static 'Main_engine/js/defaults-ko_KR.min.js' %}"></script>
 
     <style>
-
 
         .table-borderless tbody tr:first-child td {
             padding-top: 1rem;
@@ -29,7 +28,6 @@
         /************************양쪽 next.prev 부분 쓰이는 css ************/
         /**이거 하드코딩 **/
         .previous {
-            background-color: #f1f1f1;
             color: black;
             position: relative;
             right: 40px;
@@ -37,8 +35,7 @@
         }
 
         .next {
-            background-color: #f1f1f1;
-            color: black;
+        color: black;
             position: relative;
             left: 97%;
             top: -130px;
@@ -46,7 +43,7 @@
 
         /**하드코딩 previous, next 수정해야해 **/
         .round {
-            border-radius: 50%;
+            border-radius: 36%;
         }
 
         /************************양쪽 next.prev 부분 쓰이는 css ************/
@@ -91,7 +88,7 @@
 
     {% load static %}
 
-    <h4 id="heuristic" style="font-weight: bold;">Heuristic Score</h4>
+    <h4 id="heuristic" style="font-weight: bold;">SIMILARITY SCORE</h4>
     <hr class="my-hr3" style="margin-top: 9px">
 
     <!--원래 있던 차트 부분-->
@@ -103,14 +100,16 @@
         </div>
     </div>
     <a id="prev" class="previous round"
-       style="z-index: 1; text-decoration: none; display: inline-block; padding: 8px 16px;"
-       onmouseover="this.style.background='#ddd'" onmouseout="this.style.background='#f1f1f1'">&#8249;</a>
+       style="z-index: 1; text-decoration: none; display: inline-block; padding: 7px 12px;"
+       onmouseover="this.style.background='#ddd'" onmouseout="this.style.background=''"><i class="fas fa-angle-left"
+                                                                                           style="font-size: x-large;"></i></a>
 
     <a id="next" class="next round"
-       style="z-index: 1; text-decoration: none; display: inline-block; padding: 8px 16px; margin-left: 14px"
-       onmouseover="this.style.background='#ddd'" onmouseout="this.style.background='#f1f1f1'">&#8250;</a>
+       style="z-index: 1; text-decoration: none; display: inline-block; padding: 7px 12px; margin-left: 10px"
+       onmouseover="this.style.background='#ddd'" onmouseout="this.style.background=''"><i class="fas fa-angle-right"
+                                                                                           style="font-size: x-large;"></i></a>
 
-    <h4 id="scoretable" class="mt-2 mb-3" style="font-weight: bold;">Detail</h4>
+    <h4 id="scoretable" class="mt-2 mb-3" style="font-weight: bold;">DETAIL</h4>
     <hr class="my-hr3">
 
     <div class="container-fluid col-12">
@@ -120,7 +119,7 @@
                 {% if result %}
                     <div id="result_json">
                         <table id="detail_table" class="table table-borderless table-hover"
-                               style="text-align: center; font-family: 'Roboto Condensed', sans-serif;">
+                               style="text-align: center; font-family: 'Poppins', sans-serif;">
                             <thead>
                             <tr>
                                 <th rowspan="2" align=center style="color: black; font-weight: bold">FILENAME</th>
@@ -230,18 +229,101 @@
                                         var base_panel_body = document.createElement("div");
                                         base_panel_body.id = "panel_body";
                                         base_panel_body.className = "panel-body";
-                                        if (standard.length > length) {
-                                            base_panel_body.innerHTML = "<p> BASE FILE : " + standard.substring(0, length).toUpperCase() + "...</p>" + "<br>" + "<p> FILE SIZE: 사이즈를 넣자</p>" + "<p> FILE TYPE: 타입을 넣자</p>";
-                                        } else {
-                                            base_panel_body.innerHTML = "<p> BASE FILE : " + standard.toUpperCase() + "</p>" + "<br>" + "<p> FILE SIZE: 사이즈를 넣자</p>" + "<p> FILE TYPE: 타입을 넣자</p>";
-                                        }
-                                        //"BASEFILE :" + standard.substring(0, length) + '...' +  "FILETYPE : " + "ssss" +  "FILESIZE : " + "zzzzzzzzzzz"
                                         document.getElementById("panel").appendChild(base_panel_body);
 
-                                        //var base_top_stats_panel = document.createElement("div");
+                                        var base_top_stats_panel = document.createElement("div");
+                                        base_top_stats_panel.id = "top_stats_panel";
+                                        base_top_stats_panel.className = "top-stats-panel";
+                                        document.getElementById("panel_body").appendChild(base_top_stats_panel);
 
+/*                                        var base_bar_stats = document.createElement("div");
+                                        base_bar_stats.id = "bar_stats";
+                                        base_bar_stats.className = "bar-stats";
+                                        base_bar_stats.style.height = "120px";
+                                        base_bar_stats.style.marginTop = "5px";
+                                        base_bar_stats.style.borderBottom = "white";
+                                        document.getElementById("top_stats_panel").appendChild(base_bar_stats); // 이부분실행하면 밑에 공간이 생김*/
 
+                                        var base_filename_info = document.createElement("span");
+                                        base_filename_info.id = "base_info";
+                                        base_filename_info.className = "badge badge-warning";
+                                        base_filename_info.textContent = "base file";
+                                        base_filename_info.style.color = "black";
+                                        base_filename_info.style.marginRight = "7px";
+                                        base_filename_info.style.padding = "0.2rem";
+                                        base_filename_info.style.fontWeight = "600";
+                                        //    padding: 0.2rem;   font-weight: 600;
+                                        document.getElementById("top_stats_panel").appendChild(base_filename_info);
+
+                                        var base_file_name = document.createElement("span");
+                                        base_file_name.setAttribute("data-toggle", "tooltip");
+                                        base_file_name.setAttribute("data-placement", "bottom");
+                                        base_file_name.setAttribute("title", standard);
+                                        if (standard.length > length) {
+                                            base_file_name.textContent = standard.substring(0, length).toUpperCase() + "...";
+                                        } else {
+                                            base_file_name.textContent = standard.toUpperCase();
+                                        }
+                                        document.getElementById("top_stats_panel").appendChild(base_file_name);
+
+                                        var base_info_br = document.createElement("br");
+                                        document.getElementById("top_stats_panel").appendChild(base_info_br);
+
+                                        var base_size_info = document.createElement("span");
+                                        base_size_info.className = "badge badge-warning";
+                                        base_size_info.textContent = "file size";
+                                        base_size_info.style.color = "black";
+                                        base_size_info.style.marginTop = "7px";
+                                        base_size_info.style.marginRight = "7px";
+                                        base_size_info.style.padding = "0.2rem";
+                                        base_size_info.style.fontWeight = "600";
+                                        document.getElementById("top_stats_panel").appendChild(base_size_info);
                                         // document.write(sel.selectedIndex + " is " + "<br>");
+
+                                        var base_file_size = document.createElement("span");
+                                        base_file_size.textContent = "사이즈";
+                                        document.getElementById("top_stats_panel").appendChild(base_file_size);
+                                        ///////////////////////////////////////////////////////////////////////////////////////////////
+
+                                        var base_file_br = document.createElement("br");
+                                        document.getElementById("top_stats_panel").appendChild(base_file_br);
+
+                                        var base_type_info = document.createElement("span");
+                                        base_type_info.className = "badge badge-warning";
+                                        base_type_info.textContent = "file type";
+                                        base_type_info.style.color = "black";
+                                        base_type_info.style.marginTop = "7px";
+                                        base_type_info.style.marginRight = "7px";
+                                        base_type_info.style.padding = "0.2rem";
+                                        base_type_info.style.fontWeight = "600";
+                                        document.getElementById("top_stats_panel").appendChild(base_type_info);
+
+                                        var base_file_type = document.createElement("span");
+                                        base_file_type.textContent = "TYPE";
+                                        document.getElementById("top_stats_panel").appendChild(base_file_type);
+                                        //////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                        //////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                        var base_type_br = document.createElement("br");
+                                        document.getElementById("top_stats_panel").appendChild(base_type_br);
+
+                                        var base_sha256_info = document.createElement("span");
+                                        base_sha256_info.className = "badge badge-warning";
+                                        base_sha256_info.textContent = "sha256";
+                                        base_sha256_info.style.color = "black";
+                                        base_sha256_info.style.marginTop = "7px";
+                                        base_sha256_info.style.marginRight = "7px";
+                                        base_sha256_info.style.padding = "0.2rem";
+                                        base_sha256_info.style.fontWeight = "600";
+                                        document.getElementById("top_stats_panel").appendChild(base_sha256_info);
+
+                                        var base_sha256 = document.createElement("span");
+                                        base_sha256.textContent = "sha256";
+                                        document.getElementById("top_stats_panel").appendChild(base_sha256);
+
+
+                                        //////////////////////////////////////////////////////////////////////////////////////////////////////////
                                         /* 대상이 변할때마다 */
                                         for (var target in json_res[standard]) {
                                             for (var t in targets) {
@@ -263,8 +345,8 @@
                                                     /* 열에 데이터 입력 */
                                                     /*filename.innerHTML = json_res[standard][target][0].toUpperCase();*/
                                                     filename.innerHTML = target.toUpperCase();
-                                                    bbh.innerHTML = json_res[standard][target][2];
-                                                    constvalue.innerHTML = json_res[standard][target][3];
+                                                    bbh.innerHTML = json_res[standard][target][2] * 100;
+                                                    constvalue.innerHTML = json_res[standard][target][3] * 100;
                                                     section.innerHTML = json_res[standard][target][4];
                                                     cert.innerHTML = json_res[standard][target][5];
                                                     pdb.innerHTML = json_res[standard][target][6];
@@ -388,17 +470,6 @@
                             };
                             // 페이지가 처음 뜰 때 기준은 처음으로 대상은 전부 선택해서 보여주도록
 
-                            /*그래프 카드 넘어가는 부분*/
-                            var width = $(".card").innerWidth();
-                            console.log(width);
-                            $("#prev").click(function () {
-                                console.log("left");
-                                $("#test").animate({scrollLeft: $("#test").scrollLeft() - width}, 800);
-                            });
-                            $("#next").click(function () {
-                                console.log("right");
-                                $("#test").animate({scrollLeft: $("#test").scrollLeft() + width}, 800);
-                            });
 
                             var first_base = $("#select_base").find('option:first');
                             first_base.attr('selected', 'selected');
@@ -409,6 +480,19 @@
                         })(jQuery);
 
 
+                        $(document).ready(function () {
+                            /*그래프 카드 넘어가는 부분*/
+                            var width = $("#col").innerWidth();
+                            console.log(width);
+                            $("#prev").click(function () {
+                                console.log("left" + $("#test").scrollLeft() + "=>" + width);
+                                $("#test").animate({scrollLeft: $("#test").scrollLeft() - width}, 800);
+                            });
+                            $("#next").click(function () {
+                                console.log("right" + $("#test").scrollLeft() + "=>" + width);
+                                $("#test").animate({scrollLeft: $("#test").scrollLeft() + width}, 800);
+                            });
+                        })
                     </script>
 
                     </div>

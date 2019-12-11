@@ -18,6 +18,7 @@ import os
 
 
 def showindex(request):
+    main_engine.delete_file()
     return render(request, 'Main_engine/index.html')
 
 def recent(request):
@@ -38,17 +39,20 @@ def pe(request):
 #
 #         return render(request, 'Main_engine/result.html', {'json_data': json_data})
 
+
 def cfg(request):
     cfg_dict = dict()
-    PATH = r'C:\malware\all_result\idb'
-    for file in os.listdir(PATH):
-        file_path = os.path.join(PATH, file)
-        cfg = open(file_path, 'rb')
-        cfg_dict[file] = json.loads(cfg.read())
-        cfg.close()
     cfg_file = open(r'C:\malware\all_result\cfg\result_cfg.txt', 'rb')
     match_cfg = json.loads(cfg_file.read())
     cfg_file.close()
+    for inputfile in match_cfg:
+        PATH = r'C:\malware\all_result\idb'
+        for file in os.listdir(PATH):
+            if file.split('.')[0] == inputfile:
+                file_path = os.path.join(PATH, file)
+                cfg = open(file_path, 'rb')
+                cfg_dict[file] = json.loads(cfg.read())
+                cfg.close()
     return render(request, 'Main_engine/cfg.html', {'cfg': cfg_dict, 'matching': match_cfg})
 
 
@@ -61,6 +65,7 @@ def cg(request):
             cg_dict[file] = json.loads(cg.read())
 
     return render(request, 'Main_engine/cg.html', {'cg': cg_dict})
+
 
 def loading(request):
 
@@ -98,9 +103,8 @@ def call_main(request):
     print('time is ????')
     print(stop - start)
 
-    main_engine.delete_file()
+    return render(request, 'Main_engine/result.html', {'result': result, 'pe_': pe_})
 
-    return render(request, 'Main_engine/result.html', {'result': result, 'pe_':pe_})
 
 
 def upload_file_dropzone(request):

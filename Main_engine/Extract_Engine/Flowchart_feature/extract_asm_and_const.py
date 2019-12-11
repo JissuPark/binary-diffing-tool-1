@@ -1,221 +1,229 @@
-import json
-import signal
-import timeit
 import idb
+import timeit
 import hashlib
+import json
 
-import pefile
-from Main_engine.Extract_Engine.Flowchart_feature import const_filter_indexs
+from Main_engine.Extract_Engine.Flowchart_feature import const_filter_indexs as _filter
 
-glo_constant = list()  # PE 전체의 constant 값을 담을 global list
-except_list = set() # 없는 opcode 저장용
+api = None
+filename = None
+imageBase = None
+glo_MinEA = None
+glo_MaxEA = None
+glo_Constants = list()
 
-class idb_info(object):
-    def __init__(self, api, fva):
-        self.api = api
-        self.fva = fva
-        self.function = self.api.ida_funcs.get_func(self.fva)
-        self.MinEA = hex(self.api.idc.MinEA())
-        self.MaxEA = hex(self.api.idc.MaxEA())
-        self.MinEA_int = int(self.MinEA, 16)
-        self.MaxEA_int = int(self.MaxEA, 16)
+# debug info
+except_list = set()
+err_log = list()
 
-class basic_block(idb_info):
-    def __init__(self, api, fva, func_name):
-        super(basic_block, self).__init__(api, fva)
-        self.func_name = func_name
 
-    def bbs(self, func_name_dicts, file_name):
-        # mutex_opcode_list = list()
-        flow_opcode = list()
-        flow_constants = list()
-        function_dicts = dict()
-        idb_info = dict()
-        func_name_dicts[self.func_name] = dict()
-        flow_branch = list()
+def extract_basic_block_info(fva, funcName, func_ext_dict):
+    global api
+    global imageBase
+    global glo_MinEA
+    global glo_MaxEA
+    global glo_Constants
+    global err_log
+    global except_list
 
-        # 함수 내에서 플로우 차트 추출
-        try:
-            function_flowchart = self.api.idaapi.FlowChart(self.function)
-            # 플로우 차트에서 반복문 돌려 각 베이직 블록 추출
-        except:
-            print('can not parsing flowchart!!!')
-            return
+    FlowChart_info = api.idaapi.FlowChart(api.ida_funcs.get_func(fva))
+    func_ext_dict[funcName] = dict()  # function level dict (key: funcName)
+    func_ext_const = list()  # function level extract constants list
+    bb_ext_dict = dict()  # block level dict (key: startAddress)
+    bb_branch = list()  # fuction in block branch info
 
-        for basicblock in function_flowchart:
-            try:
-                curaddr = basicblock.startEA
-                endaddr = basicblock.endEA
+    try:
+        for BasicBlock in FlowChart_info:
 
-                # 30bytes 이하 블럭 필터 비활성화
-                # if (endaddr - curaddr) < 30:  # 최소 바이트 50이상 할것
-                #     continue
+            curaddr = BasicBlock.startEA
+            endaddr = BasicBlock.endEA
+            opcodes = list()  # block level opcodes
+            disasms = list()  # block level operands
+            constants = list()  # block level constans
+            hex_opcodes = list()  # block level opcodes to convert integer (str->hex->int)
+            bb_ext_dict[hex(BasicBlock.startEA)] = dict()  # block level extract info dict
+            basic_block_prime = 1
 
-                opcodes = list()
-                hex_opcodes = list()
-                disasms = list()
-                block_constant = list()  # block 단위의 상수 (ascii string 뽑기)
-                function_dicts[hex(curaddr)] = dict()
-                basic_block_prime = 1
-                prime_dict = dict()
+            '''--- Extract fuction in Basic block Branch info ---'''
+            for succ in BasicBlock.succs():
+                bb_branch.append((hex(curaddr), hex(succ.startEA)))
 
-                ''' 베이직 블로 브랜치 추출 '''
-                for succ in basicblock.succs():
-                    flow_branch.append((hex(curaddr), hex(succ.startEA)))
+            while curaddr < endaddr:
+                # opcode = api.idc.GetMnem(curaddr) # disable code (overload call)
+                disasm = api.idc.GetDisasm(curaddr)
+                cutNumber = disasm.find('\t')
+                opcode = disasm[:cutNumber]  # block level 1 line opcode
+                operand = disasm[cutNumber:].replace('\t', '')  # block level 1 line operand
 
-                # 베이직 블록 내 어셈블리어 추출
-                while curaddr < endaddr:
-                    opcode = self.api.idc.GetMnem(curaddr)
-                    disasm = self.api.idc.GetDisasm(curaddr)
+                '''--- Get Prime ---'''
+                if opcode in _filter.prime_set.keys():
+                    basic_block_prime *= _filter.prime_set[opcode]
+                else:
+                    except_list.add(opcode)
 
-                    ''' opcode_prime 추출(임시명 BBP(basic block prime) '''
-                    if opcode in const_filter_indexs.prime_set.keys():
-                        basic_block_prime *= const_filter_indexs.prime_set[opcode]
-                        opcode_prime = const_filter_indexs.prime_set[opcode]  # opcode에 해당하는 소수
-                        # 이미 있는 opcode면 +1해주고 없으면 0으로 세팅해서 +1
-                        prime_dict[opcode_prime] = prime_dict[opcode_prime] + 1 if opcode_prime in prime_dict else 1
-                        ''' 요기 예외 처리 로직 넣어야함'''
-                    else:
-                        except_list.add(opcode)
+                '''--- constant value extraction ---'''
+                if operand == "":  # 0-Address Instruction Filter
+                    pass
+                else:
+                    operand = operand.split(',')
 
-                    '''--- 상수값 추출 시작 ---'''
-                    if opcode in const_filter_indexs.indexs:  # instruction white list
-                        operand = self.api.idc._disassemble(curaddr).op_str.split(',')
-                        if len(operand) == 2:  # operand가 2개일 때 조건입장
-                            unpack_1, unpack_2 = operand  # unpacking list
-                            operand_1 = unpack_1.strip()  # 공백제거
-                            operand_2 = unpack_2.strip()
+                    if len(operand) == 1:  # 1-Address Instruction Filter
+                        if operand[0] not in _filter.reg and '[' not in operand[0]:
+                            if '0x' in operand[0] and glo_MinEA <= int(operand[0], 16) <= glo_MaxEA:
+                                pass
+                            elif operand[0] not in imageBase and operand[0] not in _filter.logic:
+                                constants.append(operand[0])
 
-                            if operand_1 not in const_filter_indexs.pointer:  # esp, esi, ebp가 아니여야 입장
-                                if "ptr" not in operand_2 and operand_2 not in const_filter_indexs.logic:
-                                    if operand_2 not in const_filter_indexs.registers and "[" not in operand_2 and "]" not in operand_2:
-                                        if operand_2.find('0x') != -1 and self.MinEA_int <= int(operand_2, 16) and int(operand_2, 16) <= self.MaxEA_int:
-                                            pass
-                                        else:
-                                            glo_constant.append(operand_2)  # append file total constant
-                                            block_constant.append(operand_2)  # append block constant
+                    elif len(operand) == 2:  # 2-Address Instruction Filter
+                        operand_1, operand_2 = operand
+                        operand_2 = operand_2[1:]
 
-                        elif operand[0] != "": # 0주소 명령일 때 공백필터
-                            if operand[0] not in const_filter_indexs.registers and "ptr" not in operand[0] and operand[0] not in const_filter_indexs.logic:
-                                if operand[0].find('0x') != -1 and self.MinEA_int <= int(operand[0], 16) and int(operand[0], 16) <= self.MaxEA_int:
+                        if operand_1 not in _filter.pointer:
+                            if operand_2 not in _filter.reg and 'ptr' not in operand_2 and '[' not in operand_2:
+                                if '0x' in operand_2 and glo_MinEA <= int(operand_2, 16) <= glo_MaxEA:
                                     pass
-                                else:
-                                    glo_constant.append(operand[0])  # append file total constant
-                                    block_constant.append(operand[0])  # append block constant
+                                elif operand_2 not in imageBase and operand_2 not in _filter.logic:
+                                    constants.append(operand_2)
 
-                        else:   # 3주소 pass
-                            pass
-                    '''--- 상수값 추출 끝 ---'''
-                    # 3주소 명령도 있음? 그러면 위에 else로 빠져서 쓸모없는 값 뽑을 수 있음....
-                    opcodes.append(opcode)
-                    hex_opcodes.append(int(opcode.encode("utf-8").hex(), 16))
-                    disasms.append(disasm)
-                    curaddr = self.api.idc.NextHead(curaddr)
-                ''' ================================ END ONE BLOCK ================================'''
-                # 중복 값 제어 비활성화
-                # mutex_opcode = ' '.join(opcodes)  # mutex_opcode -> type(str)
-                # if mutex_opcode in mutex_opcode_list:
-                #     del function_dicts[hex(basicblock.startEA)]  # del 안하면 비어있는 딕셔너리 생김 ex) 0x402034 = {}
-                #     continue
-                # else:
-                #     mutex_opcode_list.append(mutex_opcode)
+                    else:  # 3-Address Instruction exception
+                        # print(f'[Debug][Sensing] 3-Address Instruction({funcName}-{hex(BasicBlock.startEA)})')
+                        operand_1, operand_2, operand_3 = operand
+                        operand_2 = operand_2[1:]
 
-                basicblock_dics = {
-                    'opcodes': opcodes,
-                    'disasms': disasms,
-                    'block_sha256': hashlib.sha256(hex(sum(hex_opcodes)).encode()).hexdigest(),  # add my codes
-                    'start_address': hex(basicblock.startEA),
-                    'end_address': hex(basicblock.endEA),
-                    'block_constant': ' '.join(block_constant),
-                    'block_prime': basic_block_prime,
-                    'prime_dict': prime_dict,
-                }
-                #flow_opcode.append(mutex_opcode)
-                function_dicts[hex(basicblock.startEA)] = basicblock_dics
-                if block_constant:
-                    flow_constants.append(' '.join(block_constant))
-            except:
-                continue
-        ''' ================================ END ONE Flowchart ================================'''
+                        if operand_1 not in _filter.pointer and operand_2 not in _filter.pointer:
 
-        func_name_dicts[self.func_name] = function_dicts
+                            if operand_2 not in _filter.reg and 'ptr' not in operand_2 and '[' not in operand_2:
+                                if '0x' in operand_2 and glo_MinEA <= int(operand_2, 16) <= glo_MaxEA:
+                                    pass
+                                elif operand_2 not in imageBase and operand_2 not in _filter.logic:
+                                    constants.append(operand_2)
 
-        if len(func_name_dicts[self.func_name]) == 0:
-            del func_name_dicts[self.func_name]  # del 안하면 비어있는 딕셔너리 생김
-        else:
-            func_name_dicts[self.func_name].update({'flow_opString': ' '.join(flow_opcode)})
-            # flow_opString 붙이는 부분에서 상수 strings도 붙여야 함수단위 상수셋팅 가능
-            func_name_dicts[self.func_name].update({'flow_constants': ' '.join(flow_constants)})
-            func_name_dicts[self.func_name].update({'flow_branches': flow_branch})
+                            if operand_3 not in _filter.reg and 'ptr' not in operand_3 and '[' not in operand_3:
+                                if '0x' in operand_3 and glo_MinEA <= int(operand_3, 16) <= glo_MaxEA:
+                                    pass
+                                elif operand_3 not in imageBase and operand_3 not in _filter.logic:
+                                    constants.append(operand_3)
+                '''--- END constant value extraction ---'''
 
-        idb_info['file_name'] = file_name
-        idb_info['func_name'] = func_name_dicts
+                opcodes.append(opcode)
+                hex_opcodes.append(int(opcode.encode("utf-8").hex(), 16))
+                disasms.append(disasm)
+                curaddr = api.idc.NextHead(curaddr)
+                del disasm, cutNumber, opcode, operand
 
-        return idb_info
+            temp = ' '.join(constants)
+            basicblock_dic = {
+                'opcodes': opcodes,
+                'disasms': disasms,
+                'block_sha256': hashlib.sha256(hex(sum(hex_opcodes)).encode()).hexdigest(),
+                'start_addr': hex(BasicBlock.startEA),
+                'end_addr': hex(endaddr),
+                'block_constant': temp,
+                'block_prime': basic_block_prime,
+            }
 
-def main(api, file_name):
-    function_dicts = dict()
-    func_name = list()
+            bb_ext_dict[hex(BasicBlock.startEA)] = basicblock_dic
+            if constants:
+                func_ext_const.append(temp)
+                glo_Constants.append(temp)
+                del temp
+            del basicblock_dic, constants, opcodes, disasms, hex_opcodes
+    except Exception as e:
+        err_log.append("Extract_" + str(e))
+
+    bb_ext_dict.update({'flow_constants': func_ext_const})
+    bb_ext_dict.update({'flow_branches': bb_branch})
+    func_ext_dict[funcName] = bb_ext_dict
+
+    del bb_ext_dict
+
+
+def main():
+    global filename
+    global api
+    global imageBase
+    global glo_MaxEA
+    global glo_MinEA
+    global err_log
+    global glo_Constants
+    global err_log
+    global except_list
+
+    func_ext_dict = dict()  # functionn level extract info dict
+    glo_MaxEA = int(hex(api.idc.MaxEA()), 16)
+    glo_MinEA = int(hex(api.idc.MinEA()), 16)
+    imageBase = _filter.imageBase
+    imageBase.append(str(hex(api.idaapi.get_imagebase())))
+
     func_branch = list()
-    cg_dict = dict()
+    func_name = list()
+    cg_info_dict = dict()
+
     for fva in api.idautils.Functions():
-        # 함수이름 출력
+        FuncName = api.idc.GetFunctionName(fva).lower()
+        if "sub_" in FuncName or "start" in FuncName or "main" in FuncName or "dllentry" in FuncName:
+            extract_basic_block_info(fva, FuncName, func_ext_dict)
+            func_name.append(FuncName)
 
-        fname = api.idc.GetFunctionName(fva).lower()
-
-        if 'dllentry' in fname or fname[:3] == 'sub' or fname[:5] == 'start' or fname.find('main') != -1:
-            func_name.append(fname)
             for addr in api.idautils.XrefsTo(fva, 0):
                 try:
-                    if not api.idc.GetDisasm(addr.src).find('call'):
-                        # print(f"T : From {api.ida_funcs.get_func_name(api.ida_funcs.get_func(addr.src).startEA)}({hex(addr.src)}): To {fname}({hex(addr.dst)}) :{api.idc.GetDisasm(addr.src)}")
+                    if addr.type is 17:
                         func_branch.append(
-                            (api.ida_funcs.get_func_name(api.ida_funcs.get_func(addr.src).startEA), fname))
-                except:
-                    pass
+                            (api.ida_funcs.get_func_name(api.ida_funcs.get_func(addr.src).startEA), FuncName))
+                except Exception as e:
+                    err_log.append("XrefsTo_" + str(e))
+            del FuncName
 
-            # main or start or sub_***** function. not library function
-            basicblock = basic_block(api, fva, fname)
+    cg_info_dict['f_name'] = func_name
+    cg_info_dict['f_branch'] = func_branch
 
-            # 베이직 블록 정보 추출 함수 실행
-            basicblock_function_dicts = basicblock.bbs(function_dicts, file_name)
+    # saved block flow graph
+    with open("C:\\malware\\all_result\\cg\\"+filename, 'w') as makefile:
+        json.dump(cg_info_dict, makefile, ensure_ascii=False, indent='\t')
 
-    # func_name = set(func_name)
-    cg_dict['f_name'] = func_name
-    cg_dict['f_branch'] = func_branch
+    del func_name, func_branch, cg_info_dict
+
+    return func_ext_dict
 
 
-    with open(r'C:\malware\all_result\cg' + "\\" + file_name + '.txt', 'w') as file:
-        json.dump(cg_dict, file, ensure_ascii=False, indent='\t')
+def basicblock_info_extraction(FROM_FILE):
+    global api
+    global glo_Constants
+    reslut_dic = dict()
+    api = open_idb(FROM_FILE)
 
-    return basicblock_function_dicts
+    # print(f"[INFO][Extract Binary][MD5]{api.idc.GetInputMD5()}")
+    print(f'[INFO][Extract Binary] {filename}')
+
+    func_ext_dict = main()
+    reslut_dic = ({"file_name": filename, "func_name": func_ext_dict, "constant": glo_Constants})
+
+    return reslut_dic
 
 
 def open_idb(FROM_FILE):
+    global filename
+    filename = FROM_FILE[FROM_FILE.rfind('\\') + 1:-4]
     with idb.from_file(FROM_FILE) as db:
         api = idb.IDAPython(db)
-        print(api)
         return api
-
-def basicblock_idb_info_extraction(FROM_FILE):
-
-    api = open_idb(FROM_FILE)
-    idb_sub_function_info = main(api, FROM_FILE[(FROM_FILE.rfind('\\'))+1:-4])
-    # 여기서 상수값 붙임. json 맨 아래에 통쨰로 붙이기 위함.
-    idb_sub_function_info.update({'constant': ' '.join(glo_constant)})
-    # END
-
-    return idb_sub_function_info
 
 
 if __name__ == "__main__":
-
     s = timeit.default_timer()  # start time
-    PATH = r"C:\malware\mal_idb\49B769536224F160B6087DC866EDF6445531C6136AB76B9D5079CE622B043200.idb"
-    idb_sub_function_info = basicblock_idb_info_extraction(PATH)
 
-    with open(r"C:\malware\all_result\test.txt", 'w') as makefile:
-        json.dump(idb_sub_function_info, makefile, ensure_ascii=False, indent='\t')
+    PATH = "D:\\out_idb\\Andariel\\a078d038b8b0bbc5b824ebb22ebbdd22670b00cada67be7a79082707b0ff8b1a.idb"
 
-    print(f"[+]running : {timeit.default_timer() - s}")  # end time
+    extract_info = basicblock_info_extraction(PATH)
+
+    # saved result
+    with open(r"D:\out_idb\Andariel\test.result", 'w') as makefile:
+        json.dump(extract_info, makefile, ensure_ascii=False, indent='\t')
+
+    # saved error log
+    err_log.append('unmatched prime set :' + ' '.join(except_list))
+    with open(r"D:\out_idb\Andariel\_logs_" + PATH[PATH.rfind('\\') + 1:-4] + ".log", 'w') as makefile:
+        json.dump(err_log, makefile, ensure_ascii=False, indent='\t')
+
+    print(f"[INFO] Total running time : {timeit.default_timer() - s}")  # end time
     print("-----END-----")
