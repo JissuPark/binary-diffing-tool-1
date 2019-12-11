@@ -1,33 +1,28 @@
-import win32api
+import pefile
+import json
 
 def getFileProperties(fname):
-
-    propNames = ('LegalCopyright', 'ProductName',  'OriginalFilename', 'InternalName',
-                 'ProductVersion', 'FileDescription', 'FileVersion', 'Comments')
-
-    props = {'StringFileInfo': None, 'FileVersion': None}
+    pe = pefile.PE(fname)
+    pe_string = dict()
+    # print(pe.VS_FIXEDFILEINFO)
 
     try:
-        fixedInfo = win32api.GetFileVersionInfo(fname, '\\')
-        props['FileVersion'] = "%d.%d.%d.%d" % (fixedInfo['FileVersionMS'] / 65536,
-                fixedInfo['FileVersionMS'] % 65536, fixedInfo['FileVersionLS'] / 65536,
-                fixedInfo['FileVersionLS'] % 65536)
-
-        lang, codepage = win32api.GetFileVersionInfo(fname, '\\VarFileInfo\\Translation')[0]
-
-        strInfo = {}
-        for propName in propNames:
-            strInfoPath = u'\\StringFileInfo\\%04X%04X\\%s' % (lang, codepage, propName)
-            ## print str_info
-            strInfo[propName] = win32api.GetFileVersionInfo(fname, strInfoPath)
-            #print(strInfo[propName])
-            # if propName == 'FileDescription':
-            #     strInfo[propName] = propNames[propName]
-            # else:
-            #     continue
-
-        props['StringFileInfo'] = strInfo
-        props['StringFileInfo']['FileVersion'] = props['FileVersion']
+        for fileinfo in pe.FileInfo:
+            for i in fileinfo:
+                if i.Key.decode() == 'StringFileInfo':
+                    for st in i.StringTable:
+                        for entry in st.entries.items():
+                            pe_string[entry[0].decode()] = entry[1].decode()
+                            if "TODO" in entry[1].decode():
+                                #print(entry[0].encode("ascii",'backslashreplace'), ":", entry[0].encode("ascii",'backslashreplace'))
+                                pe_string[entry[0].decode()] = "No Data"
     except:
         pass
-    return props
+
+    se = r'\u24d2'
+    for k in pe_string.keys():
+
+        pe_string[k] = pe_string[k].replace(se.encode().decode('unicode-escape'), "")
+
+    #print(json.dumps(pe_string, indent=4))
+    return pe_string

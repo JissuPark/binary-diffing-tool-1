@@ -221,7 +221,7 @@ class AnalyzePE:
         :return: score with weight
         '''
         if dict_s.get('hash') == None or dict_t.get('hash') == None:
-            return np.nan
+            return "No data"
         else:
             if dict_s['hash'] == dict_t['hash']:
                 score = 100
@@ -241,7 +241,7 @@ class AnalyzePE:
         guid_score = 0
         path_score = 0
         if dict_s['pe_pdb_GUID'] == "" or dict_t['pe_pdb_GUID'] == "":
-            return np.nan
+            return "No data"
         else:
             s_guid = hashlib.md5(dict_s['pe_pdb_GUID'].encode()).hexdigest()
             t_guid = hashlib.md5(dict_t['pe_pdb_GUID'].encode()).hexdigest()
@@ -279,7 +279,7 @@ class AnalyzePE:
                             else:
                                 continue
         else:
-            return np.nan
+            return "No data"
 
         '''
         리소스에 쉘코드가 삽입되어 있는 경우
@@ -307,7 +307,7 @@ class AnalyzePE:
         xor_score = 0
         prodid_score = 0
         if standard['rich_xor_key'] == "" or target['rich_xor_key'] == "":
-            return np.nan
+            return "No data"
         else:
             #rich header의 xor key 유사도(True or False)
             if standard['rich_xor_key'] == target['rich_xor_key']:
@@ -390,11 +390,11 @@ class AnalyzePE:
                 pe_t['pdb_score'] = res_pdb
                 pe_t['rsrc'] = res_rsrc
 
-                if np.isnan(pe_t['pdb_score']):
+                if pe_t['pdb_score'] == "No data":
                     all_score = Calc_Without_Pdb(pe_t)
-                elif np.isnan(pe_t['rsrc']):
+                elif pe_t['rsrc'] == "No data":
                     all_score = Calc_Without_Rsrc(pe_t)
-                elif np.isnan(pe_t['cert_score']):
+                elif pe_t['cert_score'] == "No data":
                     all_score = Calc_Without_Cert(pe_t)
                 else:
                     all_score = Calc_All(pe_t)
@@ -402,12 +402,12 @@ class AnalyzePE:
                 #print(f"pe all score :: {all_score}")
                 #print(f"pe_t :: {json.dumps(pe_t, indent=4)}")
 
-                if np.isnan(pe_t['pdb_score']):
-                    pe_t['pdb_score'] = "No Data"
-                if np.isnan(pe_t['rsrc']):
-                    pe_t['rsrc'] = "No Data"
-                if np.isnan(pe_t['cert_score']):
-                    pe_t['cert_score'] = "No Data"
+                # if np.isnan(pe_t['pdb_score']):
+                #     pe_t['pdb_score'] = "No Data"
+                # if np.isnan(pe_t['rsrc']):
+                #     pe_t['rsrc'] = "No Data"
+                # if np.isnan(pe_t['cert_score']):
+                #     pe_t['cert_score'] = "No Data"
 
 
                 pe_s[pe_info_t['file_name']] = pe_t

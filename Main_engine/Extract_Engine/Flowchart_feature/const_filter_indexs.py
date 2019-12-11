@@ -5,7 +5,7 @@ indexs = ['sldt', 'mov', 'push', 'pop', 'xchg', 'in', 'out', 'xlat', 'lea', 'lds
           'sal',
           'shr', 'shrd', 'sar', 'rol', 'ror', 'rcl', 'rcr', 'and', 'test', 'or', 'xor']
 
-registers = ['rax', 'eax', 'ax', 'al', 'rbx', 'ebx', 'bx', 'bl', 'rcx', 'ecx', 'cx', 'cl', 'rdx', 'edx', 'dx', 'dl',
+reg = ['rax', 'eax', 'ax', 'al', 'rbx', 'ebx', 'bx', 'bl', 'rcx', 'ecx', 'cx', 'cl', 'rdx', 'edx', 'dx', 'dl',
              'rsi', 'esi', 'si', 'sil', 'rdi', 'ah', 'ch', 'dh', 'bh', 'edi', 'di', 'dil', 'rbp', 'ebp', 'bp', 'bpl',
              'rsp', 'esp', 'sp', 'spl', 'r8', 'r8d',
              'r8w', 'r8b', 'r9', 'r9d', 'r9w', 'r9b', 'r10', 'r10d', 'r10w', 'r10b', 'r11', 'r11d', 'r11w', 'r11b',
@@ -15,8 +15,10 @@ registers = ['rax', 'eax', 'ax', 'al', 'rbx', 'ebx', 'bx', 'bl', 'rcx', 'ecx', '
 
 pointer = ['esp', 'esi', 'ebp']
 
-logic = ['0xffffffff', '0xffff0000', '0xfffffff0', '0xfffffffe']
-# logic 부분 더 추가해야함.
+logic = ['0xffffffff', '0xffff0000', '0x0000ffff', '0xffffff80', '0xfffffffe']
+
+imageBase = ['0x40000000', '0x10000000', '0x50000000', '0x70000000']
+
 
 opcodes = [
     'arpl', 'fstp8', 'pavgw', 'pabsw', 'fincstp', 'clflush', 'lidt', 'fld1', 'lfs', 'rsm', 'cvtps2pi', 'cmpxchg8b',
