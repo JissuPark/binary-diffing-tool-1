@@ -86,21 +86,24 @@
     {% load static %}
     <script>
         Dropzone.options.myAwesomeDropzone = {
-            accept: function (file, done) {
-                var ext = (file.name).split('.')[1];
-                switch (ext) {
-                    case 'exe':
-                        this.emit("thumbnail", file, "{% static 'Main_engine/images/filedropicon.png' %}");
-                        break;
-                    case 'sys':
-                        this.emit("thumbnail", file, "{% static 'Main_engine/images/filedropicon.png' %}");
-                        break;
-                    default:
-                        this.emit("thumbnail", file, "{% static 'Main_engine/images/filedropicon.png' %}");
-                }
-                file.previewTemplate.querySelector(".dz-image img").style.width = "100%";
-                done();
+          accept: function(file, done) {
+            var ext = (file.name).split('.')[1];
+            switch (ext) {
+              case 'exe':
+                this.emit("thumbnail", file, "{% static 'Main_engine/images/exe.png' %}");
+                break;
+              case 'sys':
+                this.emit("thumbnail", file, "{% static 'Main_engine/images/sys.png' %}");
+                break;
+              case 'dll':
+                this.emit("thumbnail", file, "{% static 'Main_engine/images/dll.png' %}");
+                break;
+              default:
+                this.emit("thumbnail", file, "{% static 'Main_engine/images/unk.png' %}");
             }
+            file.previewTemplate.querySelector(".dz-image img").style.width="100%";
+            done();
+          }
         };
     </script>
 </div>
@@ -110,17 +113,15 @@
      class="col-12">
     <input type="submit" value="DIFFING" onclick="location.href='{% url 'loading' %}'">
 
-<!--    <input type="submit" value="RECENT SCAN" onclick="location.href='{% url 'result' %}'"> -->
-
 </div>
 
 <!-- section end -->
 <!-- Footer -->
 <footer style="text-align: center">
-    <span style="cursor:pointer; font-size: 1.2rem; color: #cacaca" onclick="location.href='{% url 'result' %}'"><strong>RECENT SCAN |</strong>
-        <span style="font-size: 1.2rem; color: #cacaca"><strong>About</strong></span></span>
-
-    <p style="text-align: center; margin-top:0.7rem; font-size: 0.9rem; color: #cacaca" >© 2019 Best of the Best Team. Breakers – WinBinary
+    <span style="text-align: center; font-size: 1.2rem; color: #cacaca; cursor: pointer" onclick="location.href='{% url 'result' %}'"><strong>RECENT SCAN | </strong>
+    <span style="text-align: center; font-size: 1.2rem; color: #cacaca"><strong>About</strong></span>
+        </span>
+    <p style="text-align: center; font-size: 0.9rem; color: #cacaca; margin-top: 1rem">© 2019 Best of the Best Team. Breakers – WinBinary
         Diffing Tools v0.1
         Beta. All Rights Reserved</p>
 </footer>
