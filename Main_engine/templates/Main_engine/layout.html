@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html dir="ltr" lang="en">
 <head>
     {% load static %}
     <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
 
     <title>{% block title %}Sleek - Admin Dashboard Template{% endblock %}</title>
 
-  <link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet">
     <link href="{% static 'Main_engine/css/styles.css' %}" rel="stylesheet">
     <!-- GOOGLE FONTS -->
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500|Poppins:400,500,600,700|Roboto:400,500"
@@ -16,16 +16,16 @@
     <link href="https://cdn.materialdesignicons.com/3.0.39/css/materialdesignicons.min.css" rel="stylesheet"/>
 
     <!-- 먼지는 모르겠는데 순서가 중요함! 반드시 jquery 앞에 bootstrap 먼저 쓸 것!!! -->
-    <script src="https://code.jquery.com/jquery-3.4.1.js"
+    <script crossorigin="anonymous"
             integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
-            crossorigin="anonymous"></script>
+            src="https://code.jquery.com/jquery-3.4.1.js"></script>
     <script src="{% static 'Main_engine/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-        crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+    <script crossorigin="anonymous"
+            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+            src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script crossorigin="anonymous"
             integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
-            crossorigin="anonymous"></script>
+            src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
     <script src="{% static 'Main_engine/plugins/slimscrollbar/jquery.slimscroll.min.js' %}"></script>
 
     <!-- PLUGINS CSS STYLE -->
@@ -33,7 +33,7 @@
     <link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet">
     <link href="{% static 'Main_engine/css/styles.css' %}" rel="stylesheet">
     <!-- SLEEK CSS -->
-    <link id="sleek-css" rel="stylesheet" href="{% static 'Main_engine/css/sleek.css' %}"/>
+    <link href="{% static 'Main_engine/css/sleek.css' %}" id="sleek-css" rel="stylesheet"/>
     <!-- FAVICON -->
     <link href="{% static 'Main_engine/img/favicon.png' %}" rel="shortcut icon"/>
 
@@ -45,7 +45,7 @@
     {% endblock head %}
     <style>
 
-        button#select-oper {
+        button#select-oper, #select-pe {
             background-color: #525252;
             border-radius: 5px;
             font-weight: bold;
@@ -78,13 +78,13 @@
 <div class="wrapper">
     <!--side bar star-->
     <aside class="left-sidebar bg-sidebar">
-        <div id="sidebar" class="sidebar sidebar-with-footer">
+        <div class="sidebar sidebar-with-footer" id="sidebar">
             <!-- Application Brand -->
             <div class="app-brand" style="background-color: rgba(241,34,96,0.8);">
                 <a href="#">
-                    <img src="{% static 'Main_engine/images/logo_black.png' %}" alt="...." style="width: 40px;">
+                    <img alt="...." src="{% static 'Main_engine/images/logo_black.png' %}" style="width: 40px;">
 
-                    <span onclick="window.location=''" class="brand-name">BINARY DIFFING</span>
+                    <span class="brand-name" onclick="window.location=''">BINARY DIFFING</span>
                 </a>
             </div>
             <!-- begin sidebar scrollbar -->
@@ -93,24 +93,24 @@
                 <ul class="nav sidebar-inner" id="sidebar-menu">
 
                     <li class="has-sub">
-                        <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
+                        <a aria-controls="home" aria-expanded="false" class="sidenav-item-link"
                            data-target="#home"
-                           aria-expanded="false" aria-controls="home">
+                           data-toggle="collapse" href="javascript:void(0)">
                             <i class="mdi mdi-home"></i>
-                            <span onclick="window.location='/'" class="nav-text">HOME</span>
+                            <span class="nav-text" onclick="window.location='/'">HOME</span>
                         </a>
                     </li>
 
                     <li class="has-sub">
-                        <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
+                        <a aria-controls="dashboard" aria-expanded="false" class="sidenav-item-link"
                            data-target="#dashboard"
-                           aria-expanded="false" aria-controls="dashboard">
+                           data-toggle="collapse" href="javascript:void(0)">
                             <i class="mdi mdi-view-dashboard-outline"></i>
-                            <span onclick="window.location='result'" class="nav-text">Result</span> <b
+                            <span class="nav-text" onclick="window.location='result'">Result</span> <b
                                 class="caret"></b>
                         </a>
-                        <ul class="collapse" id="dashboard"
-                            data-parent="#sidebar-menu">
+                        <ul class="collapse" data-parent="#sidebar-menu"
+                            id="dashboard">
                             <div class="sub-menu">
                                 <li>
                                     <a class="sidenav-item-link" href="result#heuristic">
@@ -128,15 +128,15 @@
 
                     <!---pe start--->
                     <li class="has-sub">
-                        <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
+                        <a aria-controls="pe_menu" aria-expanded="false" class="sidenav-item-link"
                            data-target="#pe_menu"
-                           aria-expanded="false" aria-controls="pe_menu">
+                           data-toggle="collapse" href="javascript:void(0)">
                             <i class="mdi mdi-folder-multiple-outline"></i>
-                            <span onclick="window.location='pe'" class="nav-text">PE</span>
+                            <span class="nav-text" onclick="window.location='pe'">PE</span>
                             <b class="caret"></b>
                         </a>
-                        <ul class="collapse" id="pe_menu"
-                            data-parent="#sidebar-menu">
+                        <ul class="collapse" data-parent="#sidebar-menu"
+                            id="pe_menu">
                             <div class="sub-menu">
                                 <li>
                                     <a class="sidenav-item-link" href="pe#Basic Properties">
@@ -164,23 +164,23 @@
 
                     <!-----carts start------>
                     <li class="has-sub">
-                        <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
+                        <a aria-controls="charts" aria-expanded="false" class="sidenav-item-link"
                            data-target="#charts"
-                           aria-expanded="false" aria-controls="charts">
+                           data-toggle="collapse" href="javascript:void(0)">
                             <i class="mdi mdi-chart-pie"></i>
-                            <span onclick="window.location='cfg'" class="nav-text">CFG</span> <b class="caret"></b>
+                            <span class="nav-text" onclick="window.location='cfg'">CFG</span> <b class="caret"></b>
                         </a>
-                        <ul class="collapse" id="charts"
-                            data-parent="#sidebar-menu">
+                        <ul class="collapse" data-parent="#sidebar-menu"
+                            id="charts">
                             <div class="sub-menu">
                                 <li class="has-sub">
-                                    <a class="sidenav-item-link" href="javascript:void(0)" data-toggle="collapse"
+                                    <a aria-controls="authentication" aria-expanded="false" class="sidenav-item-link"
                                        data-target="#authentication"
-                                       aria-expanded="false" aria-controls="authentication">
+                                       data-toggle="collapse" href="javascript:void(0)">
                                         <span class="nav-text">Function_name</span> <b class="caret"></b>
                                     </a>
                                     <ul class="collapse" id="authentication">
-                                        <div id="func_menu" class="sub-menu"></div>
+                                        <div class="sub-menu" id="func_menu"></div>
                                     </ul>
                                 </li>
                             </div>
@@ -196,27 +196,39 @@
         <header class="main-header " id="header">
             <nav class="navbar navbar-static-top ">
                 <!-- Sidebar toggle button -->
-                <button id="sidebar-toggler" class="sidebar-toggle">
+                <button class="sidebar-toggle" id="sidebar-toggler">
                     <span class="sr-only">Toggle navigation</span>
                 </button>
                 {% if result or cfg %}
-                    <div class="mt-1" style="display:inline-flex; width:70%;">
-                        <p class="file_text" style="font-family: 'Roboto Condensed', sans-serif; margin-top: 12px;">BASE
-                            FILE</p>
-                        <select id="select_base" class="selectpicker" data-live-search="true" data-width="20%"
-                                data-size="5"
-                                title="Choose base"></select>
-                        <p class="file_text" style="font-family: 'Roboto Condensed', sans-serif; margin-top: 12px; ">
-                            TARGET FILE</p>
+                <div class="mt-1" style="display:inline-flex; width:70%;">
+                    <p class="file_text" style="font-family: 'Roboto Condensed', sans-serif; margin-top: 12px;">BASE
+                        FILE</p>
+                    <select class="selectpicker" data-live-search="true" data-size="5" data-width="20%"
+                            id="select_base"
+                            title="Choose base"></select>
+                    <p class="file_text" style="font-family: 'Roboto Condensed', sans-serif; margin-top: 12px; ">
+                        TARGET FILE</p>
 
-                        <select id="select_target" class="selectpicker" data-actions-box="true" data-width="20%"
-                                data-size="5" multiple title="Choose targets"></select>
+                    <select class="selectpicker" data-actions-box="true" data-size="5" data-width="20%"
+                            id="select_target" multiple title="Choose targets"></select>
 
-                        <button id="select-oper"
-                                style="font-family: 'Roboto Condensed', sans-serif; font-weight: bolder; color: white">
-                            SELECT
-                        </button>
-                    </div>
+                    <button id="select-oper"
+                            style="font-family: 'Roboto Condensed', sans-serif; font-weight: bolder; color: white">
+                        SELECT
+                    </button>
+                </div>
+                {% endif %}
+                {% if p_dict %}
+                <div class="mt-1" style="display:inline-flex; width:70%;">
+                    <p class="file_text" style="font-family: 'Roboto Condensed', sans-serif; margin-top: 12px;">FILE</p>
+                    <select class="selectpicker" data-size="5" data-width="50%"
+                            id="select_pe"
+                            title="Choose base"></select>
+                    <button id="select-pe"
+                            style="font-family: 'Roboto Condensed', sans-serif; font-weight: bolder; color: white">
+                        SELECT
+                    </button>
+                </div>
                 {% endif %}
             </nav>
         </header>

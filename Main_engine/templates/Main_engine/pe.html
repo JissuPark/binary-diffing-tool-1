@@ -13,11 +13,6 @@
 {% endblock head %}
 
 {% block section %}
-<br><br><br>
-
-<select class="selectpicker" data-size="5" data-width="50%"
-        id="select_base"
-        title="Choose base"></select>
 
 {% if p_dict %}
 <!-- pe_basic -->
@@ -748,31 +743,19 @@
         //document.write(text_pe_res);
         var json_pe = JSON.parse(text_pe_res);
 
-        var pickerclass = document.getElementById('select_base');
+        var pickerclass = document.getElementById('select_pe');
         for (var standard in json_pe) {
             var option = document.createElement("option");
             option.value = standard;
             option.text = standard;
             pickerclass.appendChild(option);
-            $('#select_base').selectpicker('refresh');
+            $('#select_pe').selectpicker('refresh');
         }
-        var st_file = $("#select_base").find('option:first');
 
-        change_basic_page(st_file);
-        change_string_page(st_file);
-        change_header_page(st_file);
-        change_section_page(st_file);
-        change_rsrc_count_page(st_file);
-        change_rsrc_lang_page(st_file);
-        change_rsrc_list_page(st_file);
-        change_dll_page(st_file);
-        change_rich_page(st_file);
-        change_pdb_page(st_file);
-        /* 기준이 바뀌면 대상에 disable 거는 함수 */
-        $("#select_base").on("changed.bs.select", function () {
+        $("#select-pe").click(function () {
             $("td").detach();
             $("details").detach();
-            var fileName = $("#select_base").children("option:selected").text();        // 기준 파일명을 가져옴
+            var fileName = $("#select_pe").children("option:selected").text();        // 기준 파일명을 가져옴
             change_basic_page(fileName);
             change_string_page(fileName);
             change_header_page(fileName);

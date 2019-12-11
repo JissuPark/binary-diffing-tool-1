@@ -64,11 +64,12 @@ def cg(request):
 
 def loading(request):
 
-    default_path = ["C:\\malware\\all_result\\result.txt", "C:\\malware\\all_result\\pe_all.txt"]
+    default_path = "C:\\malware\\all_result\\result.txt"
 
-    for path in default_path:
-        if os.path.isfile(path):
-            os.remove(path)
+    if os.path.isfile(default_path):
+        os.remove(default_path)
+
+    main_engine.delete_pe_recent()
 
     flag = file_check()
 

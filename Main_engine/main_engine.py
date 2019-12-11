@@ -332,9 +332,6 @@ def start_engine():
     # 0. 없는 폴더 먼저 생성
     create_folder()
 
-    #0.5 최근 pe 정보들 삭제
-    delete_pe_recent()
-
     # 1. pe 해시 체크 (동일한 파일 필터), 2.패킹 체크
     print("1) hash check")
     pe_check = Pe_Files_Check(PATH)
