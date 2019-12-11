@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Load</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'Main_engine/css/load2.css' %}">
+
+</head>
+
+<body>
+
+<div class="loading-container" style="margin-top: 320px;">
+    <div class="loading"></div>
+    <div id="loading-text">loading</div>
+</div>
+
+
+<script>
+        window.onload = function ()
+        {
+            var url = "{% url 'result' %}";
+            document.location.href = url;
+        }
+</script>
+</body>
+
+</html>
