@@ -139,6 +139,7 @@ def extract_basic_block_info(fva, funcName, func_ext_dict):
 
 
 def main():
+    global filename
     global api
     global imageBase
     global glo_MaxEA
@@ -177,7 +178,7 @@ def main():
     cg_info_dict['f_branch'] = func_branch
 
     # saved block flow graph
-    with open(r"D:\out_idb\Andariel\cg.txt", 'w') as makefile:
+    with open("C:\\malware\\all_result\\cg\\"+filename, 'w') as makefile:
         json.dump(cg_info_dict, makefile, ensure_ascii=False, indent='\t')
 
     del func_name, func_branch, cg_info_dict
@@ -216,7 +217,7 @@ if __name__ == "__main__":
     extract_info = basicblock_info_extraction(PATH)
 
     # saved result
-    with open(r"D:\out_idb\Andariel\test.reslut", 'w') as makefile:
+    with open(r"D:\out_idb\Andariel\test.result", 'w') as makefile:
         json.dump(extract_info, makefile, ensure_ascii=False, indent='\t')
 
     # saved error log
