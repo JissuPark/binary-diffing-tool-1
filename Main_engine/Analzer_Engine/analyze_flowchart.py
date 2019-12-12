@@ -196,7 +196,7 @@ class AnalyzeFlowchart:
                 #print(f"ㄴ[debug] constants find diff :: {s_comp_set} --- {t_comp_set}")
                 #print(f" ")
 
-        return float(str(matched / total_len)[:4])
+        return (matched / total_len)
 
     def get_match_func_level(self, _dict):
 
@@ -247,7 +247,7 @@ class AnalyzeFlowchart:
                 total_count += 1
         print(f'[analysis] Basic Block Constants similarity :::::::::::: ({total_sim}/{total_count}) : {float(str(total_sim / total_count)[:4])}')
         # print(f'ㄴ[debug] get const similarity time -> {timeit.default_timer() - st}')
-        return float(str(total_sim / total_count)[:4])
+        return (total_sim / total_count)
 
     def analyze_bbh(self, s_flow_data, t_flow_data):
         '''
