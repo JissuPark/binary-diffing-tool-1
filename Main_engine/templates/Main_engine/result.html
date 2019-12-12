@@ -57,7 +57,7 @@
 
 
         .card-outer {
-            height: 200px;
+            height: 14rem;
             width: 100%;
             overflow: hidden;
         }
@@ -243,86 +243,191 @@
                                                                                 base_bar_stats.style.borderBottom = "white";
                                                                                 document.getElementById("top_stats_panel").appendChild(base_bar_stats); // 이부분실행하면 밑에 공간이 생김*/
 
-                                        var base_filename_info = document.createElement("span");
-                                        base_filename_info.id = "base_info";
-                                        base_filename_info.className = "badge badge-warning";
-                                        base_filename_info.textContent = "base file";
-                                        base_filename_info.style.color = "black";
-                                        base_filename_info.style.marginRight = "7px";
-                                        base_filename_info.style.padding = "0.2rem";
-                                        base_filename_info.style.fontWeight = "600";
-                                        //    padding: 0.2rem;   font-weight: 600;
-                                        document.getElementById("top_stats_panel").appendChild(base_filename_info);
+                                        //////////////////////////////////////////base file name ////////////////////////////////
 
-                                        var base_file_name = document.createElement("span");
-                                        base_file_name.setAttribute("data-toggle", "tooltip");
-                                        base_file_name.setAttribute("data-placement", "bottom");
-                                        base_file_name.setAttribute("title", standard);
-                                        if (standard.length > length) {
-                                            base_file_name.textContent = standard.substring(0, length).toUpperCase() + "...";
-                                        } else {
-                                            base_file_name.textContent = standard.toUpperCase();
+                                        var pe_result = "{{p_basic}}";
+
+                                        var text_pe_res = pe_result.replace(/&#39;/gi, '"').replace(/\t/gi, "\\t").replace(/\r/gi, "\\r").replace(/\n/gi, "\\n").replace(/None/gi, '"none"').replace(/\\/gi, '/');
+
+                                        var json_pe = JSON.parse(text_pe_res);
+
+                                        for (var fileName in json_pe) {
+                                            if (standard == fileName) {
+
+                                                var base_filename_info = document.createElement("span");
+                                                base_filename_info.id = "base_info";
+                                                base_filename_info.className = "badge badge-warning";
+                                                base_filename_info.textContent = "base file";
+                                                base_filename_info.style.color = "black";
+                                                base_filename_info.style.marginRight = "7px";
+                                                base_filename_info.style.padding = "0.2rem";
+                                                base_filename_info.style.fontWeight = "600";
+                                                //    padding: 0.2rem;   font-weight: 600;
+                                                document.getElementById("top_stats_panel").appendChild(base_filename_info);
+
+                                                var base_file_name = document.createElement("span");
+                                                var file_name_text = base_file_name.textContent = standard;
+                                                //console.log(file_name_text); -> ok
+                                                if (file_name_text.length > length) {
+                                                    base_file_name.setAttribute("data-toggle", "tooltip");
+                                                    base_file_name.setAttribute("data-placement", "bottom");
+                                                    base_file_name.setAttribute("title", file_name_text);
+                                                    base_file_name.textContent = file_name_text.substring(0, length).toUpperCase() + "...";
+                                                } else {
+                                                    base_file_name.textContent = file_name_text.toUpperCase();
+                                                }
+                                                document.getElementById("top_stats_panel").appendChild(base_file_name);
+
+                                                var base_info_br = document.createElement("br");
+                                                document.getElementById("top_stats_panel").appendChild(base_info_br);
+
+
+                                                ///////////////////////////////////////////////////////////////////////////////////////////////
+                                                var base_size_info = document.createElement("span");
+                                                base_size_info.className = "badge badge-warning";
+                                                base_size_info.textContent = "file size";
+                                                base_size_info.style.color = "black";
+                                                base_size_info.style.marginTop = "7px";
+                                                base_size_info.style.marginRight = "7px";
+                                                base_size_info.style.padding = "0.2rem";
+                                                base_size_info.style.fontWeight = "600";
+                                                document.getElementById("top_stats_panel").appendChild(base_size_info);
+                                                // document.write(sel.selectedIndex + " is " + "<br>");
+
+                                                var base_file_size = document.createElement("span");
+                                                base_file_size.textContent = json_pe[fileName]['file size'];
+                                                base_file_size.style.fontSize = "12.7px";
+                                                document.getElementById("top_stats_panel").appendChild(base_file_size);
+                                                ///////////////////////////////////////////////////////////////////////////////////////////////
+
+                                                var base_file_br = document.createElement("br");
+                                                document.getElementById("top_stats_panel").appendChild(base_file_br);
+
+                                                var base_type_info = document.createElement("span");
+                                                base_type_info.className = "badge badge-warning";
+                                                base_type_info.textContent = "file type";
+                                                base_type_info.style.color = "black";
+                                                base_type_info.style.marginTop = "7px";
+                                                base_type_info.style.marginRight = "7px";
+                                                base_type_info.style.padding = "0.2rem";
+                                                base_type_info.style.fontWeight = "600";
+                                                document.getElementById("top_stats_panel").appendChild(base_type_info);
+
+                                                var base_file_type = document.createElement("span");
+                                                base_file_type.textContent = json_pe[fileName]['file_type'];
+                                                base_file_type.style.fontSize = "12.7px";
+                                                document.getElementById("top_stats_panel").appendChild(base_file_type);
+                                                //////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                                //////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                                var base_type_br = document.createElement("br");
+                                                document.getElementById("top_stats_panel").appendChild(base_type_br);
+
+                                                var base_sha256_info = document.createElement("span");
+                                                base_sha256_info.className = "badge badge-warning";
+                                                base_sha256_info.textContent = "sha256";
+                                                base_sha256_info.style.color = "black";
+                                                base_sha256_info.style.marginTop = "7px";
+                                                base_sha256_info.style.marginRight = "7px";
+                                                base_sha256_info.style.padding = "0.2rem";
+                                                base_sha256_info.style.fontWeight = "600";
+                                                document.getElementById("top_stats_panel").appendChild(base_sha256_info);
+
+                                                var base_sha256 = document.createElement("span");
+                                                var sha256_text = base_sha256.textContent = json_pe[fileName]['SHA-256 hash'];
+                                                base_sha256.style.fontSize = "12.7px";
+                                                if (sha256_text.length > length) {
+                                                    base_sha256.setAttribute("data-toggle", "tooltip");
+                                                    base_sha256.setAttribute("data-placement", "bottom");
+                                                    base_sha256.setAttribute("title", sha256_text);
+                                                    base_sha256.textContent = sha256_text.substring(0, length).toUpperCase() + "...";
+                                                } else {
+                                                    base_sha256.textContent = sha256_text.toUpperCase();
+                                                }
+                                                document.getElementById("top_stats_panel").appendChild(base_sha256);
+
+
+                                                //////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                                var base_sha256_br = document.createElement("br");
+                                                document.getElementById("top_stats_panel").appendChild(base_sha256_br);
+
+                                                var base_md5_info = document.createElement("span");
+                                                base_md5_info.className = "badge badge-warning";
+                                                base_md5_info.textContent = "md5";
+                                                base_md5_info.style.color = "black";
+                                                base_md5_info.style.marginTop = "7px";
+                                                base_md5_info.style.marginRight = "7px";
+                                                base_md5_info.style.padding = "0.2rem";
+                                                base_sha256_info.style.fontWeight = "600";
+                                                document.getElementById("top_stats_panel").appendChild(base_md5_info);
+
+                                                var base_md5 = document.createElement("span");
+                                                var md5_text = base_md5.textContent = json_pe[fileName]['MD5 hash'];
+                                                base_md5.style.fontSize = "12.7px";
+                                                if (md5_text.length > length) {
+                                                    base_md5.setAttribute("data-toggle", "tooltip");
+                                                    base_md5.setAttribute("data-placement", "bottom");
+                                                    base_md5.setAttribute("title", md5_text);
+                                                    base_md5.textContent = md5_text.substring(0, length).toUpperCase() + "...";
+                                                } else {
+                                                    base_md5.textContent = md5_text.toUpperCase();
+                                                }
+                                                document.getElementById("top_stats_panel").appendChild(base_md5);
+
+
+                                                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                                var base_ssdeep_br = document.createElement("br");
+                                                document.getElementById("top_stats_panel").appendChild(base_ssdeep_br);
+
+                                                var base_ssdeep_info = document.createElement("span");
+                                                base_ssdeep_info.className = "badge badge-warning";
+                                                base_ssdeep_info.textContent = "ssdeep";
+                                                base_ssdeep_info.style.color = "black";
+                                                base_ssdeep_info.style.marginTop = "7px";
+                                                base_ssdeep_info.style.marginRight = "7px";
+                                                base_ssdeep_info.style.padding = "0.2rem";
+                                                base_ssdeep_info.style.fontWeight = "600";
+                                                document.getElementById("top_stats_panel").appendChild(base_ssdeep_info);
+
+                                                var base_ssdeep_text = document.createElement("span");
+                                                var ssdeep_text = base_ssdeep_text.textContent = json_pe[fileName]['SSDEEP hash'];
+                                                base_ssdeep_text.style.fontSize = "12.7px";
+                                                if (ssdeep_text.length > length) {
+                                                    base_ssdeep_text.setAttribute("data-toggle", "tooltip");
+                                                    base_ssdeep_text.setAttribute("data-placement", "bottom");
+                                                    base_ssdeep_text.setAttribute("title", ssdeep_text);
+                                                    base_ssdeep_text.textContent = ssdeep_text.substring(0, length).toUpperCase() + "...";
+                                                } else {
+                                                    base_ssdeep_text.textContent = ssdeep_text.toUpperCase();
+                                                }
+                                                document.getElementById("top_stats_panel").appendChild(base_ssdeep_text);
+
+                                                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                                var base_timestamp_br = document.createElement("br");
+                                                document.getElementById("top_stats_panel").appendChild(base_timestamp_br);
+
+                                                var base_timestamp_info = document.createElement("span");
+                                                base_timestamp_info.className = "badge badge-warning";
+                                                base_timestamp_info.textContent = "timestamp";
+                                                base_timestamp_info.style.color = "black";
+                                                base_timestamp_info.style.marginTop = "7px";
+                                                base_timestamp_info.style.marginRight = "7px";
+                                                base_timestamp_info.style.padding = "0.2rem";
+                                                base_timestamp_info.style.fontWeight = "600";
+                                                document.getElementById("top_stats_panel").appendChild(base_timestamp_info);
+
+                                                var base_timestamp_text = document.createElement("span");
+                                                base_timestamp_text.textContent = json_pe[fileName]['time_date_stamp'];
+                                                base_timestamp_text.style.fontSize = "12.7px";
+                                                document.getElementById("top_stats_panel").appendChild(base_timestamp_text);
+
+                                            }
                                         }
-                                        document.getElementById("top_stats_panel").appendChild(base_file_name);
-
-                                        var base_info_br = document.createElement("br");
-                                        document.getElementById("top_stats_panel").appendChild(base_info_br);
-
-                                        var base_size_info = document.createElement("span");
-                                        base_size_info.className = "badge badge-warning";
-                                        base_size_info.textContent = "file size";
-                                        base_size_info.style.color = "black";
-                                        base_size_info.style.marginTop = "7px";
-                                        base_size_info.style.marginRight = "7px";
-                                        base_size_info.style.padding = "0.2rem";
-                                        base_size_info.style.fontWeight = "600";
-                                        document.getElementById("top_stats_panel").appendChild(base_size_info);
-                                        // document.write(sel.selectedIndex + " is " + "<br>");
-
-                                        var base_file_size = document.createElement("span");
-                                        base_file_size.textContent = "사이즈";
-                                        document.getElementById("top_stats_panel").appendChild(base_file_size);
-                                        ///////////////////////////////////////////////////////////////////////////////////////////////
-
-                                        var base_file_br = document.createElement("br");
-                                        document.getElementById("top_stats_panel").appendChild(base_file_br);
-
-                                        var base_type_info = document.createElement("span");
-                                        base_type_info.className = "badge badge-warning";
-                                        base_type_info.textContent = "file type";
-                                        base_type_info.style.color = "black";
-                                        base_type_info.style.marginTop = "7px";
-                                        base_type_info.style.marginRight = "7px";
-                                        base_type_info.style.padding = "0.2rem";
-                                        base_type_info.style.fontWeight = "600";
-                                        document.getElementById("top_stats_panel").appendChild(base_type_info);
-
-                                        var base_file_type = document.createElement("span");
-                                        base_file_type.textContent = "TYPE";
-                                        document.getElementById("top_stats_panel").appendChild(base_file_type);
-                                        //////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-                                        //////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-                                        var base_type_br = document.createElement("br");
-                                        document.getElementById("top_stats_panel").appendChild(base_type_br);
-
-                                        var base_sha256_info = document.createElement("span");
-                                        base_sha256_info.className = "badge badge-warning";
-                                        base_sha256_info.textContent = "sha256";
-                                        base_sha256_info.style.color = "black";
-                                        base_sha256_info.style.marginTop = "7px";
-                                        base_sha256_info.style.marginRight = "7px";
-                                        base_sha256_info.style.padding = "0.2rem";
-                                        base_sha256_info.style.fontWeight = "600";
-                                        document.getElementById("top_stats_panel").appendChild(base_sha256_info);
-
-                                        var base_sha256 = document.createElement("span");
-                                        base_sha256.textContent = "sha256";
-                                        document.getElementById("top_stats_panel").appendChild(base_sha256);
-
-
-                                        //////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                                         /* 대상이 변할때마다 */
                                         for (var target in json_res[standard]) {
                                             for (var t in targets) {
@@ -380,6 +485,7 @@
                                                     var panel = document.createElement("section");
                                                     panel.id = "panel" + i;
                                                     panel.className = "panel";
+                                                    panel.style.height = "12.8rem";
                                                     document.getElementById("card" + i).appendChild(panel);
 
                                                     var panel_body = document.createElement("div");

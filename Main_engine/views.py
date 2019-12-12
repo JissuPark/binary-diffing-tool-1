@@ -107,11 +107,26 @@ def call_main(request):
 
         pe_ = PE_info.objects.order_by('timenum').all()
 
+        p_basic = dict()
+
+        pe_result_list = os.listdir(r"C:\malware\all_result\pe_r")
+        for file in pe_result_list:
+            if os.path.isfile(r"C:\malware\all_result\pe_r" + "\\" + file):
+                with open(r"C:\malware\all_result\pe_r" + "\\" + file, 'rb') as f:
+                    result_pe = f.read()
+                    pe_data = json.loads(result_pe)
+                    #print(json.dumps(pe_data, indent=4))
+                    for item1, item2 in pe_data.items():
+                        if item1 == 'basic prop':
+                            p_basic[pe_data['file_name']] = item2
+                            #print(f"p_basic :: {json.dumps(p_basic, indent=4)}")
+        print(f"p_basic :: {json.dumps(p_basic, indent=4)}")
+
         stop = timeit.default_timer()
         print('time is ????')
         print(stop - start)
 
-        return render(request, 'Main_engine/result.html', {'result': result, 'pe_': pe_})
+        return render(request, 'Main_engine/result.html', {'result': result, 'pe_': pe_, 'p_basic': p_basic})
 
     except :
         print('page error')

@@ -17,6 +17,9 @@
     <link href="https://cdn.materialdesignicons.com/3.0.39/css/materialdesignicons.min.css" rel="stylesheet"/>
 
     <!-- 먼지는 모르겠는데 순서가 중요함! 반드시 jquery 앞에 bootstrap 먼저 쓸 것!!! -->
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script crossorigin="anonymous"
             integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
             src="https://code.jquery.com/jquery-3.4.1.js"></script><!---->
@@ -33,9 +36,7 @@
 
     <link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet">
     <link href="{% static 'Main_engine/css/styles.css' %}" rel="stylesheet">
-    <!-- SLEEK CSS -->
-    <link href="{% static 'Main_engine/css/sleek.css' %}" id="sleek-css" rel="stylesheet"/>
-    <!-- FAVICON -->
+    <!-- SLEEK CSS --><!-- FAVICON -->
     <link href="{% static 'Main_engine/images/main_logo.png' %}" rel="shortcut icon"/>
 
     <!--플러그인의 jquery가 있으면 파일 선택이 안되고 없으면 스크롤이 안됨; -->
@@ -67,7 +68,9 @@
             cursor: pointer;
         }
 
-
+        .badge-warning {
+            background-color: #fec400;
+        }
     </style>
 </head>
 <body class="sidebar-fixed sidebar-dark header-light header-fixed" id="body">
@@ -197,7 +200,31 @@
                            data-toggle="collapse" href="javascript:void(0)">
                             <i class="mdi mdi-lan"></i> <!--mdi 모양-->
                             <span class="nav-text" onclick="window.location='cg'">CG</span>
+                             <b
+                                class="caret"></b>
                         </a>
+
+                        <ul class="collapse" data-parent="#sidebar-menu"
+                            id="cg">
+
+                            <div class="sub-menu"
+                                 style="background: rgba(10,10,10,0.7)">
+                                <li class="has-sub">
+                                    <a aria-controls="cg"
+                                       aria-expanded="false" class="sidenav-item-link"
+                                       data-target="#cg"
+                                       data-toggle="collapse" href="javascript:void(0)">
+                                        <span class="nav-text">Function_name</span>
+                                        <b class="caret"></b>
+                                    </a>
+                                    <ul class="collapse" id="cg">
+                                        <div class="sub-menu" id="nav-cg"
+                                             style="background: rgba(10,10,10,0.7)"></div>
+                                    </ul>
+                                </li>
+                            </div>
+                        </ul>
+
                     </li>
                     <!--------------------------------------------------------------------------------------->
                 </ul>

@@ -267,12 +267,12 @@ class AnalyzeFlowchart:
         t_cmp_dic, whitelist_matched_dic2 = self.parser_bbh(t_flow_data)
         cmp_s, cmp_t, true_bb_const_sim = self.compare_bbh(s_cmp_dic, t_cmp_dic)
 
-        c_score = self.compare_prime(self.parser_bbh_T_F(cmp_s, ), self.parser_bbh_T_F(cmp_t, ), s_flow_data, t_flow_data)
+        #c_score = self.compare_prime(self.parser_bbh_T_F(cmp_s, ), self.parser_bbh_T_F(cmp_t, ), s_flow_data, t_flow_data)
 
 
         func_match_dict = self.get_match_func_level(true_bb_const_sim)
 
-        return algo.get_bbh_similarity(cmp_s, c_score), func_match_dict, whitelist_matched_dic1
+        return algo.get_bbh_similarity(cmp_s, ), func_match_dict, whitelist_matched_dic1
 
     def analyze_constant(self, standard, target):
         const_score = algo.get_string_similarity(standard['constant'][0], target['constant'][0])
