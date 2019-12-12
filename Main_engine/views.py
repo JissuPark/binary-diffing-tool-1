@@ -1,18 +1,11 @@
 import timeit
 
-from django.http import HttpResponse, Http404, HttpResponseRedirect, HttpRequest
-from django.template import loader
+
 from django.shortcuts import get_object_or_404, render, render_to_response
-from django.urls import reverse
-from django.contrib import messages
 from Main_engine import main_engine
 from Main_engine.Extract_Engine.PE_feature import extract_pe
-from collections import OrderedDict
 from .models import PE_info
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from pprint import pprint
-from django import template
-
 import json
 import os
 
@@ -66,9 +59,6 @@ def loading(request):
     if os.path.isfile(default_path):
         os.remove(default_path)
 
-
-    main_engine.delete_pe_recent()
-
     flag = file_check()
 
     if not flag:
@@ -79,7 +69,6 @@ def loading(request):
 
 def call_main(request):
     start = timeit.default_timer()
-
     try:
         if os.path.isfile(r"C:\malware\all_result\result.txt"):  # 경로가 파일인지 아닌지 검사
             result_file = open(r"C:\malware\all_result\result.txt", 'rb')
@@ -102,13 +91,13 @@ def call_main(request):
             if os.path.isfile(r"C:\malware\all_result\pe_r" + "\\" + file):
                 with open(r"C:\malware\all_result\pe_r" + "\\" + file, 'rb') as f:
                     result_pe = f.read()
-                    pe_data = json.loads(result_pe)
+                    pe_data = json.loads(result_pe, encoding='utf-8')
                     # print(json.dumps(pe_data, indent=4))
                     for item1, item2 in pe_data.items():
                         if item1 == 'basic prop':
                             p_basic[pe_data['file_name']] = item2
                             # print(f"p_basic :: {json.dumps(p_basic, indent=4)}")
-        #print(f"p_basic :: {json.dumps(p_basic, indent=4)}")
+        print(f"p_basic :: {json.dumps(p_basic, indent=4)}")
 
         stop = timeit.default_timer()
         print('time is ????')
