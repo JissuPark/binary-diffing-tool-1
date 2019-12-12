@@ -29,17 +29,6 @@ def pe(request):
     #print(p_dict)
     return render(request, 'Main_engine/pe.html', {'p_dict': p_dict})
 
-# def heuristic(request):
-#      with open(r"C:\malware\all_result\result.txt", "r") as json_file:
-#         json_data = json.load(json_file)
-#         #
-#         # for key in json_data:
-#         #     for vkey in json_data[key]:
-#         #         a = json_data[key][vkey][2]
-#
-#         return render(request, 'Main_engine/result.html', {'json_data': json_data})
-
-
 def cfg(request):
     cfg_dict = dict()
     cfg_file = open(r'C:\malware\all_result\cfg\result_cfg.txt', 'rb')
@@ -85,30 +74,28 @@ def loading(request):
 
 def call_main(request):
     start = timeit.default_timer()
-    try:
-        if os.path.isfile(r"C:\malware\all_result\result.txt"): #경로가 파일인지 아닌지 검사
-            result_file = open(r"C:\malware\all_result\result.txt", 'rb')
-            result = json.loads(result_file.read())
-            result_file.close()
-        else:
-            result = main_engine.start_engine()
 
-            with open(r"C:\malware\all_result\result.txt", 'w') as res:
-                json.dump(result, res, ensure_ascii=False, indent='\t')
+    if os.path.isfile(r"C:\malware\all_result\result.txt"): #경로가 파일인지 아닌지 검사
+        result_file = open(r"C:\malware\all_result\result.txt", 'rb')
+        result = json.loads(result_file.read())
+        result_file.close()
+    else:
+        result = main_engine.start_engine()
 
-        h_paginator = Paginator(result, 4)
+        with open(r"C:\malware\all_result\result.txt", 'w') as res:
+            json.dump(result, res, ensure_ascii=False, indent='\t')
 
-        pe_ = PE_info.objects.order_by('timenum').all()
+    h_paginator = Paginator(result, 4)
 
-        stop = timeit.default_timer()
-        print('time is ????')
-        print(stop - start)
+    pe_ = PE_info.objects.order_by('timenum').all()
 
-        return render(request, 'Main_engine/result.html', {'result': result, 'pe_': pe_})
+    stop = timeit.default_timer()
+    print('time is ????')
+    print(stop - start)
 
-    except :
-        print('page error')
-        return render(request, 'Main_engine/error.html')
+    return render(request, 'Main_engine/result.html', {'result': result, 'pe_': pe_})
+
+
 
 
 def upload_file_dropzone(request):
