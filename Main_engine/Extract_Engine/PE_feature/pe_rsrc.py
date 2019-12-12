@@ -34,6 +34,7 @@ TYPE_MAP = {
 
 COUNTRY_MAP = {
     0: "Unicode",
+    5: "CZECH NEUTRAL",
     1025: "Arabic - Saudi Arabia",
     1026: "Bulgarian",
     1027: "Catalan",

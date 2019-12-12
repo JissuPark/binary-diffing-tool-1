@@ -59,8 +59,6 @@ def loading(request):
     if os.path.isfile(default_path):
         os.remove(default_path)
 
-    #main_engine.delete_pe_recent()
-
     flag = file_check()
 
     if not flag:
@@ -71,46 +69,45 @@ def loading(request):
 
 def call_main(request):
     start = timeit.default_timer()
+    try:
+        if os.path.isfile(r"C:\malware\all_result\result.txt"):  # 경로가 파일인지 아닌지 검사
+            result_file = open(r"C:\malware\all_result\result.txt", 'rb')
+            result = json.loads(result_file.read())
+            result_file.close()
+        else:
+            result = main_engine.start_engine()
 
-#try:
-    if os.path.isfile(r"C:\malware\all_result\result.txt"):  # 경로가 파일인지 아닌지 검사
-        result_file = open(r"C:\malware\all_result\result.txt", 'rb')
-        result = json.loads(result_file.read())
-        result_file.close()
-    else:
-        result = main_engine.start_engine()
+            with open(r"C:\malware\all_result\result.txt", 'w') as res:
+                json.dump(result, res, ensure_ascii=False, indent='\t')
 
-        with open(r"C:\malware\all_result\result.txt", 'w') as res:
-            json.dump(result, res, ensure_ascii=False, indent='\t')
+        h_paginator = Paginator(result, 4)
 
-    h_paginator = Paginator(result, 4)
+        pe_ = PE_info.objects.order_by('timenum').all()
 
-    pe_ = PE_info.objects.order_by('timenum').all()
+        p_basic = dict()
 
-    p_basic = dict()
+        pe_result_list = os.listdir(r"C:\malware\all_result\pe_r")
+        for file in pe_result_list:
+            if os.path.isfile(r"C:\malware\all_result\pe_r" + "\\" + file):
+                with open(r"C:\malware\all_result\pe_r" + "\\" + file, 'rb') as f:
+                    result_pe = f.read()
+                    pe_data = json.loads(result_pe, encoding='utf-8')
+                    # print(json.dumps(pe_data, indent=4))
+                    for item1, item2 in pe_data.items():
+                        if item1 == 'basic prop':
+                            p_basic[pe_data['file_name']] = item2
+                            # print(f"p_basic :: {json.dumps(p_basic, indent=4)}")
+        print(f"p_basic :: {json.dumps(p_basic, indent=4)}")
 
-    pe_result_list = os.listdir(r"C:\malware\all_result\pe_r")
-    for file in pe_result_list:
-        if os.path.isfile(r"C:\malware\all_result\pe_r" + "\\" + file):
-            with open(r"C:\malware\all_result\pe_r" + "\\" + file, 'rb') as f:
-                result_pe = f.read()
-                pe_data = json.loads(result_pe, encoding='utf-8')
-                # print(json.dumps(pe_data, indent=4))
-                for item1, item2 in pe_data.items():
-                    if item1 == 'basic prop':
-                        p_basic[pe_data['file_name']] = item2
-                        # print(f"p_basic :: {json.dumps(p_basic, indent=4)}")
-    print(f"p_basic :: {json.dumps(p_basic, indent=4)}")
+        stop = timeit.default_timer()
+        print('time is ????')
+        print(stop - start)
 
-    stop = timeit.default_timer()
-    print('time is ????')
-    print(stop - start)
+        return render(request, 'Main_engine/result.html', {'result': result, 'pe_': pe_, 'p_basic': p_basic})
 
-    return render(request, 'Main_engine/result.html', {'result': result, 'pe_': pe_, 'p_basic': p_basic})
-
-#except:
-    #print('page error')
-    return render(request, 'Main_engine/error.html')
+    except:
+        print('page error')
+        return render(request, 'Main_engine/error.html')
 
 
 def upload_file_dropzone(request):

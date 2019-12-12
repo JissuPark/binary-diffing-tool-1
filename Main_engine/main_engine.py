@@ -166,10 +166,10 @@ def multiprocess_file(q, return_dict, flag):
                     #print("여기까진 괜찮음")
                     info, pe_info_DB = extract_pe.Pe_Feature(f_path, pe).all()  # pe 속성 출력
                     #print("여기도 괜찮음")
-                    with open(r"C:\malware\all_result\pe" + "\\" + file_filter2 + ".txt", 'w') as makefile:
+                    with open(r"C:\malware\all_result\pe" + "\\" + file_filter2 + ".txt", 'w', -1, "utf-8") as makefile:
                         json.dump(info, makefile, ensure_ascii=False, indent='\t')
 
-                    with open(r"C:\malware\all_result\pe_r" + "\\" + file_filter2 + ".txt", 'w') as makefile:
+                    with open(r"C:\malware\all_result\pe_r" + "\\" + file_filter2 + ".txt", 'w', -1, "utf-8") as makefile:
                         json.dump(info, makefile, ensure_ascii=False, indent='\t')
 
                     #print("여기는?")
@@ -178,8 +178,9 @@ def multiprocess_file(q, return_dict, flag):
                     pe_file.save()
                     pe.close()
                     print('pe없음')
-                except:
+                except Exception as e:
                     print('pe error !')
+                    print(e)
                     continue
 
         return_dict[f_path] = info
@@ -309,7 +310,9 @@ def delete_file():
 def delete_pe_recent():
     default_path = r"C:\malware\all_result\pe_r"
 
-    for r_file in default_path:
+    file_list = os.listdir(default_path)
+
+    for r_file in file_list:
         if os.path.isfile(r"C:\malware\all_result\pe_r" + "\\" + r_file):
             os.remove(r"C:\malware\all_result\pe_r" + "\\" + r_file)
         else:
