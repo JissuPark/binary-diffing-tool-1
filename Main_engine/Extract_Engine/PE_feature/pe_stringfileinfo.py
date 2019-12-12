@@ -22,7 +22,7 @@ def getFileProperties(fname):
     se = r'\u24d2'
     for k in pe_string.keys():
 
-        pe_string[k] = pe_string[k].replace(se.encode().decode('unicode-escape'), "")
+        pe_string[k] = pe_string[k].replace(se.encode().decode('unicode-escape'), "&#9426;")
 
     #print(json.dumps(pe_string, indent=4))
     return pe_string
