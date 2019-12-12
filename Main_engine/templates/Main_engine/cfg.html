@@ -210,7 +210,9 @@
             $("#select_target").selectpicker('refresh');                                // 새로고침
         });
 
-        var network = [];
+        var network = {};
+        var pos_old = '';
+        var pos_new = '';
         /* 그래프 그리는 함수 */
         $draw = function (file, fname) {
             //그림을 그릴 부분을 먼저 지워준다. (안 지우면 계속 추가됨)
@@ -322,6 +324,11 @@
                             direction: "UD",
                             sortMethod: 'directed'
                         }
+                    },
+                    interaction:{
+                        dragNodes: true,
+                        dragView: true,
+                        zoomView: true
                     }
                     // physics: {
                     //     hierarchicalRepulsion: {
@@ -332,29 +339,35 @@
                     // }
                 };
                 var canvas_ = document.getElementById('graph_' + index);
-                network[index] = new vis.Network(canvas_, data, options);
-
-                network[index].on('zoom', function (properties) {
-                    for (var i = 0; i < network.length; i++) {
-                        //여기다 드래그 이벤트 적용
-                        network[i].
+                network[targetlist[index][0]] = new vis.Network(canvas_, data, options);
+                //zoom 이벤트
+                network[targetlist[index][0]].on('zoom', function (properties) {
+                    var thisfile = this.body.container.innerText.split('\n')[0];
+                    var thisscale = this.body.view.scale;
+                    var thispos = network[thisfile].getViewPosition();
+                    for (curfile in network) {
+                        options = {
+                            scale: thisscale,
+                            position: {x: thispos.x, y: thispos.y}
+                        };
+                        network[curfile].moveTo(options);
                     }
                 });
-
-                network[index].on('dragEnd', function (properties) {
-                    var all_canvas = $('canvas');
-                    for (var i = 0; i < all_canvas.length; i++) {
-                        //여기다 드래그 이벤트 적용
-
-                        // var canvas_x = all_canvas[i].offsetLeft;console.log(canvas_x);
-                        // var canvas_y = all_canvas[i].offsetTop;console.log(canvas_y);
-                        // var pos_x = properties.pointer.canvas.x;console.log(pos_x);
-                        // var pos_y = properties.pointer.canvas.y;console.log(pos_y);
-                        // all_canvas[i].animate({offsetTop: pos_y},100);
-                        // all_canvas[i].animate({offsetLeft: pos_x},100);
-                    }
+                //drag 이벤트
+                network[targetlist[index][0]].on('dragStart', function (properties) {
+                    var thisfile = this.body.container.innerText.split('\n')[0];
+                    pos_old = network[thisfile].getViewPosition();
                 });
-
+                network[targetlist[index][0]].on('dragEnd', function (properties){
+                    var thisfile = this.body.container.innerText.split('\n')[0];
+                    pos_new = network[thisfile].getViewPosition();
+                    for (curfile in network){
+                        options = {
+                            position:{x: pos_new.x, y: pos_new.y}
+                        };
+                        network[curfile].moveTo(options);
+                   }
+                });
                 // 파일명, 함수명, 유사도 추가
                 var name_label = document.createElement('p');
                 name_label.innerText = targetlist[index][0] + '\n' + targetlist[index][1];
