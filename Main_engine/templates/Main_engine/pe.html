@@ -128,7 +128,11 @@
         <h3 align="left">Signature Info</h3>
     </div>
     <div class="detail">
+<<<<<<< HEAD
         <table height=220px id="fileinfo_table" style="margin-left: 20px; margin-top: 10px;" width=520px>
+=======
+        <table height=220px id="fileinfo_table" style="margin-left: 20px; margin-top: 10px;" width=600px>
+>>>>>>> upstream/master
             <tbody>
             <div style="margin-left: 10px; margin-top: 15px;">
                 <h4>File Version Information</h4>
@@ -161,7 +165,13 @@
         </table>
         <script>
             var pe_result = "{{p_dict}}";
+<<<<<<< HEAD
             var text_pe_res = pe_result.replace(/&#39;/gi, '"').replace(/\t/gi, "\\t").replace(/\r/gi, "\\r").replace(/\n/gi, "\\n").replace(/None/gi, '"none"').replace(/\\/gi, '/');
+=======
+            document.write("&#9426");
+            var text_pe_res = pe_result.replace(/&#39;/gi, '"').replace(/&amp;/gi, '&').replace(/\t/gi, "\\t").replace(/\r/gi, "\\r").replace(/\n/gi, "\\n").replace(/None/gi, '"none"').replace(/\\/gi, '/');
+
+>>>>>>> upstream/master
             var json_pe = JSON.parse(text_pe_res);
             //json_pe = json_pe.replace(/&amp;#9426;/gi, "ⓒ");
             /* 파일 이름이 다르면 테이블이 변경됨 */

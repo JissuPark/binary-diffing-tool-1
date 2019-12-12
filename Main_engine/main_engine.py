@@ -315,7 +315,7 @@ def delete_file():
             print('Directory Not Found')
 
 def delete_pe_recent():
-    default_path = os.listdir(r"C:\malware\all_result\pe_r")
+    default_path = r"C:\malware\all_result\pe_r"
 
     for r_file in default_path:
         if os.path.isfile(r"C:\malware\all_result\pe_r" + "\\" + r_file):
