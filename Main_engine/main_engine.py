@@ -367,9 +367,6 @@ def start_engine():
 
     return all_result
 
-#####################################
-
-
 # def idb_pe_feature(all_idb_info,all_pe_info):
 #     #print("allPeinfo:{}".format(all_pe_info))
 #     extract_pe_class = new_getinfo_pe.getinfo_pe()
