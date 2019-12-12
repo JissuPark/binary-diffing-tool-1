@@ -387,7 +387,7 @@ def idb_pe_feature(all_idb_info,all_pe_info):
                 for fname, value_1 in all_idb_info[idb_info]['func_name'].items():
                     if fname != "constant":
                         for sAddr, value_2 in value_1.items():
-                            if sAddr != "flow_opString" and sAddr != "flow_constants" and sAddr != "flow_branches":
+                            if sAddr != "flow_constants" and sAddr != "flow_branches":
                                 opcode_list=[opcode.upper() for opcode in all_idb_info[idb_info]['func_name'][fname][sAddr]['opcodes']]
                                 for opcode in opcode_list:
                                     try:
@@ -400,7 +400,10 @@ def idb_pe_feature(all_idb_info,all_pe_info):
                 pe_result_data=pe_result_data[:-1]
                 pe_result_data+=op_list_count
                 pe_result_data +=size_label
-                predict_labels = model.predict([pe_result_data])[0]
+                predict_labels = model.predict_proba([pe_result_data])[0]
+                print("============================ sex =========================================")
+                print(model.predict_proba([pe_result_data]))
+                print("============================ sex =========================================")
                 #predict_labels 0 은 비악성 1은 악성
                 ML_result_data[file_base_name]=predict_labels
     return ML_result_data

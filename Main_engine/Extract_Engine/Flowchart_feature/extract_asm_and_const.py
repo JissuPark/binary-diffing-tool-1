@@ -41,7 +41,7 @@ def extract_basic_block_info(fva, funcName, func_ext_dict):
             disasms = list()  # block level operands
             constants = list()  # block level constans
             hex_opcodes = list()  # block level opcodes to convert integer (str->hex->int)
-            bb_ext_dict[hex(BasicBlock.startEA)] = dict()  # block level extract info dict
+            #bb_ext_dict[hex(BasicBlock.startEA)] = dict()  # block level extract info dict
             basic_block_prime = 1
 
             '''--- Extract fuction in Basic block Branch info ---'''
@@ -121,8 +121,9 @@ def extract_basic_block_info(fva, funcName, func_ext_dict):
                 'block_constant': temp,
                 'block_prime': basic_block_prime,
             }
+            if basicblock_dic:
+                bb_ext_dict[hex(BasicBlock.startEA)] = basicblock_dic
 
-            bb_ext_dict[hex(BasicBlock.startEA)] = basicblock_dic
             if constants:
                 func_ext_const.append(temp)
                 glo_Constants.append(temp)
@@ -134,8 +135,9 @@ def extract_basic_block_info(fva, funcName, func_ext_dict):
 
     bb_ext_dict.update({'flow_constants': func_ext_const})
     bb_ext_dict.update({'flow_branches': bb_branch})
-    func_ext_dict[funcName] = bb_ext_dict
 
+    if bb_ext_dict:
+        func_ext_dict[funcName] = bb_ext_dict
     del bb_ext_dict
 
 
