@@ -1,18 +1,11 @@
 import timeit
 
-from django.http import HttpResponse, Http404, HttpResponseRedirect, HttpRequest
-from django.template import loader
+
 from django.shortcuts import get_object_or_404, render, render_to_response
-from django.urls import reverse
-from django.contrib import messages
 from Main_engine import main_engine
 from Main_engine.Extract_Engine.PE_feature import extract_pe
-from collections import OrderedDict
 from .models import PE_info
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from pprint import pprint
-from django import template
-
 import json
 import os
 
@@ -30,17 +23,6 @@ def pe(request):
     p_dict = extract_pe.pe_into_file()
     #print(p_dict)
     return render(request, 'Main_engine/pe.html', {'p_dict': p_dict})
-
-
-# def heuristic(request):
-#      with open(r"C:\malware\all_result\result.txt", "r") as json_file:
-#         json_data = json.load(json_file)
-#         #
-#         # for key in json_data:
-#         #     for vkey in json_data[key]:
-#         #         a = json_data[key][vkey][2]
-#
-#         return render(request, 'Main_engine/result.html', {'json_data': json_data})
 
 
 def cfg(request):
@@ -77,9 +59,6 @@ def loading(request):
     if os.path.isfile(default_path):
         os.remove(default_path)
 
-
-    main_engine.delete_pe_recent()
-
     flag = file_check()
 
     if not flag:
@@ -89,11 +68,9 @@ def loading(request):
 
 
 def call_main(request):
-
     start = timeit.default_timer()
-
     try:
-        if os.path.isfile(r"C:\malware\all_result\result.txt"): #경로가 파일인지 아닌지 검사
+        if os.path.isfile(r"C:\malware\all_result\result.txt"):  # 경로가 파일인지 아닌지 검사
             result_file = open(r"C:\malware\all_result\result.txt", 'rb')
             result = json.loads(result_file.read())
             result_file.close()
@@ -114,12 +91,12 @@ def call_main(request):
             if os.path.isfile(r"C:\malware\all_result\pe_r" + "\\" + file):
                 with open(r"C:\malware\all_result\pe_r" + "\\" + file, 'rb') as f:
                     result_pe = f.read()
-                    pe_data = json.loads(result_pe)
-                    #print(json.dumps(pe_data, indent=4))
+                    pe_data = json.loads(result_pe, encoding='utf-8')
+                    # print(json.dumps(pe_data, indent=4))
                     for item1, item2 in pe_data.items():
                         if item1 == 'basic prop':
                             p_basic[pe_data['file_name']] = item2
-                            #print(f"p_basic :: {json.dumps(p_basic, indent=4)}")
+                            # print(f"p_basic :: {json.dumps(p_basic, indent=4)}")
         print(f"p_basic :: {json.dumps(p_basic, indent=4)}")
 
         stop = timeit.default_timer()
@@ -128,9 +105,10 @@ def call_main(request):
 
         return render(request, 'Main_engine/result.html', {'result': result, 'pe_': pe_, 'p_basic': p_basic})
 
-    except :
+    except:
         print('page error')
         return render(request, 'Main_engine/error.html')
+
 
 def upload_file_dropzone(request):
     print('in upload file dropzone')

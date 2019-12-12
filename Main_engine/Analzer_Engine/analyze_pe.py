@@ -33,10 +33,10 @@ def Calc_All(pe_t):
 
 def Calc_Without_Pdb(pe_t):
     score = 0
-    if np.isnan(pe_t['rsrc']):
+    if pe_t['rsrc'] == 'No data':
         #pdb와 rsrc가 없는 경우
         score += Calc_Without_Pdb_and_Rsrc(pe_t)
-    elif np.isnan(pe_t['cert_score']):
+    elif pe_t['cert_score'] == 'No data':
         score += Calc_Without_Pdb_and_Cert(pe_t)
     else:
         #pdb만 없는 경우 가중치 부여
@@ -53,7 +53,7 @@ def Calc_Without_Pdb(pe_t):
 
 def Calc_Without_Pdb_and_Rsrc(pe_t):
     score = 0
-    if np.isnan(pe_t['cert_score']):
+    if pe_t['cert_score'] == 'No data':
         #pdb, rsrc, cert 모두 없는 경우
         score += Calc_Without_All(pe_t)
     else:
@@ -96,7 +96,7 @@ def Calc_Without_All(pe_t):
 
 def Calc_Without_Rsrc(pe_t):
     score = 0
-    if np.isnan(pe_t['cert_score']):
+    if pe_t['cert_score'] == 'No data':
         #rsrc와 cert가 없는 경우
         score += Calc_Without_Rsrc_and_Cert(pe_t)
     else:
@@ -307,7 +307,7 @@ class AnalyzePE:
         xor_score = 0
         prodid_score = 0
         if standard['rich_xor_key'] == "" or target['rich_xor_key'] == "":
-            return "No data"
+            return xor_score
         else:
             #rich header의 xor key 유사도(True or False)
             if standard['rich_xor_key'] == target['rich_xor_key']:
@@ -401,14 +401,6 @@ class AnalyzePE:
                 pe_t['pe_all_score'] = all_score
                 #print(f"pe all score :: {all_score}")
                 #print(f"pe_t :: {json.dumps(pe_t, indent=4)}")
-
-                # if np.isnan(pe_t['pdb_score']):
-                #     pe_t['pdb_score'] = "No Data"
-                # if np.isnan(pe_t['rsrc']):
-                #     pe_t['rsrc'] = "No Data"
-                # if np.isnan(pe_t['cert_score']):
-                #     pe_t['cert_score'] = "No Data"
-
 
                 pe_s[pe_info_t['file_name']] = pe_t
 

@@ -334,12 +334,12 @@
                 var canvas_ = document.getElementById('graph_' + index);
                 network[index] = new vis.Network(canvas_, data, options);
 
-                network[index].on('zoom', function (properties) {
-                    for (var i = 0; i < network.length; i++) {
-                        //여기다 드래그 이벤트 적용
-                        network[i].
-                    }
-                });
+                // network[index].on('zoom', function (properties) {
+                //     for (var i = 0; i < network.length; i++) {
+                //         //여기다 드래그 이벤트 적용
+                //         network[i].
+                //     }
+                // });
 
                 network[index].on('dragEnd', function (properties) {
                     var all_canvas = $('canvas');

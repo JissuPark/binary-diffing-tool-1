@@ -19,10 +19,15 @@ def getFileProperties(fname):
     except:
         pass
 
+    #copyright 특수문자 예외처리
     se = r'\u24d2'
     for k in pe_string.keys():
+        pe_string[k] = pe_string[k].replace(se.encode().decode('unicode-escape'), "&#9426;")
 
-        pe_string[k] = pe_string[k].replace(se.encode().decode('unicode-escape'), "")
+    # register 특수문자 예외처리
+    reg = r'\u00ae'
+    for k in pe_string.keys():
+        pe_string[k] = pe_string[k].replace(reg.encode().decode('unicode-escape'), "&#reg;")
 
     #print(json.dumps(pe_string, indent=4))
     return pe_string
