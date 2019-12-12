@@ -326,7 +326,9 @@
                 //그림그릴 장소 생성
                 var div = document.createElement('div');
                 div.id = "graph_" + index;
-                div.setAttribute('style', 'width: 100%; height: 90%;');
+                var hei = document.getElementById('div_'+index).offsetHeight - document.getElementById('name_'+index).offsetHeight-10;
+                div.style.width = '100%';
+                div.style.height = hei+"px";console.log(hei);
                 document.getElementById('div_' + index).appendChild(div);
 
                 //매칭 함수가 없는 경우 따로 표시
