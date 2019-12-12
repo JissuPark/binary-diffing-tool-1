@@ -265,7 +265,7 @@ class ParseRichHeader:
         rich_identifi_addr = data.find(b'Rich')
 
         if rich_identifi_addr == -1:
-            return "", {}  # if rich_header no exit
+            return "-", {}  # if rich_header no exit
 
         rich_offset = rich_identifi_addr + 4
         checksum_text = data[rich_offset: rich_offset+4]
