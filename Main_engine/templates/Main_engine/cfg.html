@@ -34,25 +34,6 @@
         height: 95%;
     }
 
-
-    div.groot-4 {
-        margin: 5px;
-        /*width: 300px;*/
-        border: 3px solid grey;
-    }
-
-    div.groot-3 {
-        margin: 5px;
-        /*width: 33%;*/
-        border: 3px solid grey;
-    }
-
-    div.groot-2 {
-        margin: 5px;
-        /*width: 50%;*/
-        border: 3px solid grey;
-    }
-
     div.blur {
         height: 100%;
         background-color: black;
@@ -67,12 +48,8 @@
         color: ghostwhite;
     }
 
-    div.seonea {
-        height: 100%;
-    }
-
     p.seonea {
-        margin-top: 60%;
+        margin-top: 50%;
         text-align: center;
         font-size: xx-large;
         font-weight: bold;
@@ -210,7 +187,7 @@
             $("#select_target").selectpicker('refresh');                                // 새로고침
         });
 
-        var network = {};
+        var network = [];
         var pos_old = '';
         var pos_new = '';
         /* 그래프 그리는 함수 */
@@ -280,28 +257,81 @@
                     }
                 }
             }
+
             //그릴거야
             var graph_cnt = targetlist.length;
             for (var index = 0; index < graph_cnt; index++) {
+
                 //그릴 그래프가 4개 이상인지 이하인지 확인
-                var div = document.createElement('div');
-                div.id = "graph_" + index;
+                var div_box = document.createElement('div');
+                div_box.id = "div_" + index;
                 if (graph_cnt > 3) {
-                    div.className = "col-xl-3 col-sm-6";
+                    div_box.className = "col-xl-3 col-sm-6";
                 } else {
-                    div.className = "col-xl-4 col-lg-6 col-12";
+                    div_box.className = "col-xl-4 col-lg-6 col-12";
                 }
+
                 //기준은 위치 고정
                 if (index == 0) {
-                    div.setAttribute("style", "position: sticky; left:0px; border: 3px solid red;  background-color:white; z-index: " + (graph_cnt - 1) + ";");
+                    div_box.setAttribute("style", "position: sticky; left:0px; border: 3px solid #fe5461;  background-color:white; z-index: " + (graph_cnt - 1) + ";");
                 } else {
-                    div.setAttribute("style", "border: 3px solid grey;");
+                    div_box.setAttribute("style", "border: 3px solid black;");
                 }
-                document.getElementById('test').appendChild(div);
+                document.getElementById('test').appendChild(div_box);
 
+                // 파일명, 함수명, 유사도 추가
+                var name_label = document.createElement('div');
+                name_label.id = 'name_' + index;
+                if (index == 0){name_label.style.borderBottom = " 2px solid #fe5461";}
+                else{name_label.style.borderBottom = " 2px solid black";}
+                name_label.style.overflow = "hidden";
+                name_label.style.whiteSpace = "nowrap";
+                name_label.style.textOverflow = "ellipsis";
+                var div_width = document.getElementById('div_' + index).offsetWidth - 20;
+                name_label.style.width = div_width;
+                name_label.style.display = "block";
+                name_label.style.padding = "0.2rem";
+                document.getElementById('div_' + index).appendChild(name_label);
 
+                //파일구분 뱃지
+                var filename_info = document.createElement("span");
+                if (index == 0) {
+                    filename_info.id = "base_info";
+                    filename_info.className = 'badge badge-danger';
+                    filename_info.textContent = "base file";
+                } else {
+                    filename_info.id = "target_info_" + index;
+                    filename_info.className = 'badge badge-dark';
+                    filename_info.textContent = "target file";
+                }
+                filename_info.style.marginLeft = "2px";
+                filename_info.style.padding = "0.2rem";
+                filename_info.style.fontSize = "100";
+                document.getElementById("name_" + index).appendChild(filename_info);
+                var br = document.createElement('br');
+                document.getElementById("name_" + index).appendChild(br);
+
+                //파일 명
+                var filename = document.createElement("span");
+                filename.textContent = "FileName : "+ targetlist[index][0];
+                document.getElementById("name_" + index).appendChild(filename);
+                var br = document.createElement('br');
+                document.getElementById("name_" + index).appendChild(br);
+
+                //함수 명
+                var funcname = document.createElement('span');
+                funcname.textContent = "Function : " + targetlist[index][1];
+                document.getElementById("name_" + index).appendChild(funcname);
+
+                //그림그릴 장소 생성
+                var div = document.createElement('div');
+                div.id = "graph_" + index;
+                div.setAttribute('style', 'width: 100%; height: 90%;');
+                document.getElementById('div_' + index).appendChild(div);
+
+                //매칭 함수가 없는 경우 따로 표시
                 if (targetlist[index][1] == 'none') {
-                    document.getElementById('graph_' + index).setAttribute('class', 'groot-3 saonea');
+                    document.getElementById('graph_' + index).setAttribute('style', 'height: 50%;');
                     var p = document.createElement('p');
                     p.className = 'seonea';
                     p.innerText = "There is not matched function.";
@@ -312,9 +342,7 @@
                     nodes: postoffice[targetlist[index][0]][targetlist[index][1]][0],
                     edges: postoffice[targetlist[index][0]][targetlist[index][1]][1]
                 };
-
                 var options = {
-                    // height: '90%',
                     layout: {
                         hierarchical: {
                             nodeSpacing: 200,
@@ -325,7 +353,7 @@
                             sortMethod: 'directed'
                         }
                     },
-                    interaction:{
+                    interaction: {
                         dragNodes: true,
                         dragView: true,
                         zoomView: true
@@ -339,10 +367,10 @@
                     // }
                 };
                 var canvas_ = document.getElementById('graph_' + index);
-                network[targetlist[index][0]] = new vis.Network(canvas_, data, options);
+                network[index] = new vis.Network(canvas_, data, options);
                 //zoom 이벤트
-                network[targetlist[index][0]].on('zoom', function (properties) {
-                    var thisfile = this.body.container.innerText.split('\n')[0];
+                network[index].on('zoom', function () {
+                    var thisfile = this.body.container.id.split('_')[1];
                     var thisscale = this.body.view.scale;
                     var thispos = network[thisfile].getViewPosition();
                     for (curfile in network) {
@@ -354,26 +382,20 @@
                     }
                 });
                 //drag 이벤트
-                network[targetlist[index][0]].on('dragStart', function (properties) {
-                    var thisfile = this.body.container.innerText.split('\n')[0];
+                network[index].on('dragStart', function () {
+                    var thisfile = this.body.container.id.split('_')[1];
                     pos_old = network[thisfile].getViewPosition();
                 });
-                network[targetlist[index][0]].on('dragEnd', function (properties){
-                    var thisfile = this.body.container.innerText.split('\n')[0];
+                network[index].on('dragEnd', function () {
+                    var thisfile = this.body.container.id.split('_')[1];
                     pos_new = network[thisfile].getViewPosition();
-                    for (curfile in network){
+                    for (curfile in network) {
                         options = {
-                            position:{x: pos_new.x, y: pos_new.y}
+                            position: {x: pos_new.x, y: pos_new.y}
                         };
                         network[curfile].moveTo(options);
-                   }
+                    }
                 });
-                // 파일명, 함수명, 유사도 추가
-                var name_label = document.createElement('p');
-                name_label.innerText = targetlist[index][0] + '\n' + targetlist[index][1];
-                name_label.setAttribute('style', 'position: absolute; word-wrap: break-word; text-overflow: ellipsis; width: 90%; z-index: 2; top: 3px;');
-                document.getElementById('graph_' + index).appendChild(name_label);
-                //////////////////////////
             }
         };
 
