@@ -181,7 +181,8 @@ class Pe_Feature:
             'SHA-1 hash': sha1,
             'SHA-256 hash': sha256,
             'Imp hash': ImpHash,
-            'SSDEEP hash': ssdeep_hash
+            'SSDEEP hash': ssdeep_hash,
+            'time_date_stamp': time_info
         }
 
         machine_bit = self.pe.FILE_HEADER.Machine
