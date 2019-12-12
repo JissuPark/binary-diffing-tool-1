@@ -108,7 +108,7 @@ def call_main(request):
                         if item1 == 'basic prop':
                             p_basic[pe_data['file_name']] = item2
                             # print(f"p_basic :: {json.dumps(p_basic, indent=4)}")
-        print(f"p_basic :: {json.dumps(p_basic, indent=4)}")
+        #print(f"p_basic :: {json.dumps(p_basic, indent=4)}")
 
         stop = timeit.default_timer()
         print('time is ????')
