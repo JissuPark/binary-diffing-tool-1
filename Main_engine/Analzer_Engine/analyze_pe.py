@@ -28,7 +28,7 @@ def Calc_All(pe_t):
 
     score = score / 6
     score = round(score, 2)
-    print(f"score for all :: {score}")
+    #print(f"score for all :: {score}")
     return score
 
 def Calc_Without_Pdb(pe_t):
@@ -48,7 +48,7 @@ def Calc_Without_Pdb(pe_t):
 
         score = score / 5
         score = round(score, 2)
-        print(f"score without pdb :: {score}")
+        #print(f"score without pdb :: {score}")
     return score
 
 def Calc_Without_Pdb_and_Rsrc(pe_t):
@@ -65,7 +65,7 @@ def Calc_Without_Pdb_and_Rsrc(pe_t):
 
         score = score / 4
         score = round(score, 2)
-        print(f"score without pdb and rsrc :: {score}")
+        #print(f"score without pdb and rsrc :: {score}")
     return score
 
 def Calc_Without_Pdb_and_Cert(pe_t):
@@ -78,7 +78,7 @@ def Calc_Without_Pdb_and_Cert(pe_t):
 
     score = score / 4
     score = round(score, 2)
-    print(f"score without pdb and cert :: {score}")
+    #print(f"score without pdb and cert :: {score}")
     return score
 
 def Calc_Without_All(pe_t):
@@ -90,7 +90,7 @@ def Calc_Without_All(pe_t):
 
     score = score / 3
     score = round(score, 2)
-    print(f"score without pdb, rsrc and cert :: {score}")
+    #print(f"score without pdb, rsrc and cert :: {score}")
 
     return score
 
@@ -110,7 +110,7 @@ def Calc_Without_Rsrc(pe_t):
 
         score = score / 5
         score = round(score, 2)
-        print(f"score without rsrc :: {score}")
+        #print(f"score without rsrc :: {score}")
     return score
 
 def Calc_Without_Rsrc_and_Cert(pe_t):
@@ -123,7 +123,7 @@ def Calc_Without_Rsrc_and_Cert(pe_t):
 
     score = score / 4
     score = round(score, 2)
-    print(f"score without rsrc and cert :: {score}")
+    #print(f"score without rsrc and cert :: {score}")
 
     return score
 
@@ -139,7 +139,7 @@ def Calc_Without_Cert(pe_t):
 
     score = score / 5
     score = round(score, 2)
-    print(f"score without cert :: {score}")
+    #print(f"score without cert :: {score}")
 
     return score
 
@@ -401,14 +401,6 @@ class AnalyzePE:
                 pe_t['pe_all_score'] = all_score
                 #print(f"pe all score :: {all_score}")
                 #print(f"pe_t :: {json.dumps(pe_t, indent=4)}")
-
-                # if np.isnan(pe_t['pdb_score']):
-                #     pe_t['pdb_score'] = "No Data"
-                # if np.isnan(pe_t['rsrc']):
-                #     pe_t['rsrc'] = "No Data"
-                # if np.isnan(pe_t['cert_score']):
-                #     pe_t['cert_score'] = "No Data"
-
 
                 pe_s[pe_info_t['file_name']] = pe_t
 
