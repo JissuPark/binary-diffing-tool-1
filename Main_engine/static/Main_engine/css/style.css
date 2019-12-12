@@ -38,7 +38,7 @@
 .widget-h {
     color: #afaebc;
     font-size: 16px;
-    margin: 0px 0px 10px 0px;
+    margin: 10px 0px 10px 0px;
     text-align: center;
     display: block;
     text-overflow: ellipsis;
@@ -46,7 +46,7 @@
 
 .bar-stats {
     height: 80px;
-    margin-top: 20px;
+    margin-top: 2rem;
     border-bottom: #aec785 2px solid;
     position: relative;
 }
