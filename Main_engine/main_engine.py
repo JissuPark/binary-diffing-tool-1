@@ -165,6 +165,8 @@ def multiprocess_file(q, return_dict, flag):
                 fd1 = open(pe_file.pe_filepath + ".txt", "rb")
                 info = json.loads(fd1.read(), encoding='utf-8')
                 fd1.close()
+                with open(r"C:\malware\all_result\pe_r" + "\\" + file_filter2 + ".txt", 'w') as makefile:
+                    json.dump(info, makefile, ensure_ascii=False, indent='\t')
                 print('pe존재함')
             elif pe_f is None:
                 try:

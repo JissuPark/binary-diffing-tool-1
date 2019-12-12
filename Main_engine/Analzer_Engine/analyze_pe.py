@@ -28,15 +28,15 @@ def Calc_All(pe_t):
 
     score = score / 6
     score = round(score, 2)
-    #print(f"score for all :: {score}")
+    print(f"score for all :: {score}")
     return score
 
 def Calc_Without_Pdb(pe_t):
     score = 0
-    if np.isnan(pe_t['rsrc']):
+    if pe_t['rsrc'] == 'No data':
         #pdb와 rsrc가 없는 경우
         score += Calc_Without_Pdb_and_Rsrc(pe_t)
-    elif np.isnan(pe_t['cert_score']):
+    elif pe_t['cert_score'] == 'No data':
         score += Calc_Without_Pdb_and_Cert(pe_t)
     else:
         #pdb만 없는 경우 가중치 부여
@@ -48,12 +48,12 @@ def Calc_Without_Pdb(pe_t):
 
         score = score / 5
         score = round(score, 2)
-        #print(f"score without pdb :: {score}")
+        print(f"score without pdb :: {score}")
     return score
 
 def Calc_Without_Pdb_and_Rsrc(pe_t):
     score = 0
-    if np.isnan(pe_t['cert_score']):
+    if pe_t['cert_score'] == 'No data':
         #pdb, rsrc, cert 모두 없는 경우
         score += Calc_Without_All(pe_t)
     else:
@@ -65,7 +65,7 @@ def Calc_Without_Pdb_and_Rsrc(pe_t):
 
         score = score / 4
         score = round(score, 2)
-        #print(f"score without pdb and rsrc :: {score}")
+        print(f"score without pdb and rsrc :: {score}")
     return score
 
 def Calc_Without_Pdb_and_Cert(pe_t):
@@ -78,7 +78,7 @@ def Calc_Without_Pdb_and_Cert(pe_t):
 
     score = score / 4
     score = round(score, 2)
-    #print(f"score without pdb and cert :: {score}")
+    print(f"score without pdb and cert :: {score}")
     return score
 
 def Calc_Without_All(pe_t):
@@ -90,13 +90,13 @@ def Calc_Without_All(pe_t):
 
     score = score / 3
     score = round(score, 2)
-    #print(f"score without pdb, rsrc and cert :: {score}")
+    print(f"score without pdb, rsrc and cert :: {score}")
 
     return score
 
 def Calc_Without_Rsrc(pe_t):
     score = 0
-    if np.isnan(pe_t['cert_score']):
+    if pe_t['cert_score'] == 'No data':
         #rsrc와 cert가 없는 경우
         score += Calc_Without_Rsrc_and_Cert(pe_t)
     else:
@@ -110,7 +110,7 @@ def Calc_Without_Rsrc(pe_t):
 
         score = score / 5
         score = round(score, 2)
-        #print(f"score without rsrc :: {score}")
+        print(f"score without rsrc :: {score}")
     return score
 
 def Calc_Without_Rsrc_and_Cert(pe_t):
@@ -123,7 +123,7 @@ def Calc_Without_Rsrc_and_Cert(pe_t):
 
     score = score / 4
     score = round(score, 2)
-    #print(f"score without rsrc and cert :: {score}")
+    print(f"score without rsrc and cert :: {score}")
 
     return score
 
@@ -139,7 +139,7 @@ def Calc_Without_Cert(pe_t):
 
     score = score / 5
     score = round(score, 2)
-    #print(f"score without cert :: {score}")
+    print(f"score without cert :: {score}")
 
     return score
 
@@ -307,7 +307,7 @@ class AnalyzePE:
         xor_score = 0
         prodid_score = 0
         if standard['rich_xor_key'] == "" or target['rich_xor_key'] == "":
-            return "No data"
+            return xor_score
         else:
             #rich header의 xor key 유사도(True or False)
             if standard['rich_xor_key'] == target['rich_xor_key']:

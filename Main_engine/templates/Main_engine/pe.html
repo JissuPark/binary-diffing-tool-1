@@ -128,7 +128,7 @@
         <h3 align="left">Signature Info</h3>
     </div>
     <div class="detail">
-        <table height=220px id="fileinfo_table" style="margin-left: 20px; margin-top: 10px;" width=400px>
+        <table height=220px id="fileinfo_table" style="margin-left: 20px; margin-top: 10px;" width=520px>
             <tbody>
             <div style="margin-left: 10px; margin-top: 15px;">
                 <h4>File Version Information</h4>
@@ -161,11 +161,9 @@
         </table>
         <script>
             var pe_result = "{{p_dict}}";
-
             var text_pe_res = pe_result.replace(/&#39;/gi, '"').replace(/\t/gi, "\\t").replace(/\r/gi, "\\r").replace(/\n/gi, "\\n").replace(/None/gi, '"none"').replace(/\\/gi, '/');
-
             var json_pe = JSON.parse(text_pe_res);
-
+            //json_pe = json_pe.replace(/&amp;#9426;/gi, "ⓒ");
             /* 파일 이름이 다르면 테이블이 변경됨 */
 
             function change_string_page(fileName) {
@@ -174,46 +172,50 @@
                     for (var stringf in json_pe[fname]) {
                         //document.write(stringf)
                         if (fname == pe_filename) {
-                            if (stringf == 'string file info') {
-                                var new_li = document.createElement('td');
-                                var copy = document.createTextNode(json_pe[fname][stringf]['LegalCopyright']);
-                                new_li.appendChild(copy);
-                                document.getElementById('Copyright').appendChild(new_li);
+                            if (Object.keys(json_pe[fname]['string file info']).length === 0) {
+                                break;
+                            } else {
+                                if (stringf == 'string file info') {
+                                    var new_li = document.createElement('td');
+                                    var copy = document.createTextNode(json_pe[fname][stringf]['LegalCopyright'].replace(/&amp;#9426;/gi, "ⓒ"));
+                                    new_li.appendChild(copy);
+                                    document.getElementById('Copyright').appendChild(new_li);
 
-                                var new_li = document.createElement('td');
-                                var copy = document.createTextNode(json_pe[fname][stringf]['ProductName']);
-                                new_li.appendChild(copy);
-                                document.getElementById('Product').appendChild(new_li);
+                                    var new_li = document.createElement('td');
+                                    var copy = document.createTextNode(json_pe[fname][stringf]['ProductName']);
+                                    new_li.appendChild(copy);
+                                    document.getElementById('Product').appendChild(new_li);
 
-                                var new_li = document.createElement('td');
-                                var copy = document.createTextNode(json_pe[fname][stringf]['FileDescription']);
-                                new_li.appendChild(copy);
-                                document.getElementById('Description').appendChild(new_li);
+                                    var new_li = document.createElement('td');
+                                    var copy = document.createTextNode(json_pe[fname][stringf]['FileDescription']);
+                                    new_li.appendChild(copy);
+                                    document.getElementById('Description').appendChild(new_li);
 
-                                var new_li = document.createElement('td');
-                                var copy = document.createTextNode(json_pe[fname][stringf]['OriginalFilename']);
-                                new_li.appendChild(copy);
-                                document.getElementById('Original_Name').appendChild(new_li);
+                                    var new_li = document.createElement('td');
+                                    var copy = document.createTextNode(json_pe[fname][stringf]['OriginalFilename']);
+                                    new_li.appendChild(copy);
+                                    document.getElementById('Original_Name').appendChild(new_li);
 
-                                var new_li = document.createElement('td');
-                                var copy = document.createTextNode(json_pe[fname][stringf]['InternalName']);
-                                new_li.appendChild(copy);
-                                document.getElementById('Internal_Name').appendChild(new_li);
+                                    var new_li = document.createElement('td');
+                                    var copy = document.createTextNode(json_pe[fname][stringf]['InternalName']);
+                                    new_li.appendChild(copy);
+                                    document.getElementById('Internal_Name').appendChild(new_li);
 
-                                var new_li = document.createElement('td');
-                                var copy = document.createTextNode(json_pe[fname][stringf]['FileVersion']);
-                                new_li.appendChild(copy);
-                                document.getElementById('File_Version').appendChild(new_li);
+                                    var new_li = document.createElement('td');
+                                    var copy = document.createTextNode(json_pe[fname][stringf]['FileVersion']);
+                                    new_li.appendChild(copy);
+                                    document.getElementById('File_Version').appendChild(new_li);
 
-                                var new_li = document.createElement('td');
-                                var copy = document.createTextNode(json_pe[fname][stringf]['ProductVersion']);
-                                new_li.appendChild(copy);
-                                document.getElementById('Product Version').appendChild(new_li);
+                                    var new_li = document.createElement('td');
+                                    var copy = document.createTextNode(json_pe[fname][stringf]['ProductVersion']);
+                                    new_li.appendChild(copy);
+                                    document.getElementById('Product Version').appendChild(new_li);
 
-                                var new_li = document.createElement('td');
-                                var copy = document.createTextNode(json_pe[fname][stringf]['Comments']);
-                                new_li.appendChild(copy);
-                                document.getElementById('Comments').appendChild(new_li);
+                                    var new_li = document.createElement('td');
+                                    var copy = document.createTextNode(json_pe[fname][stringf]['Comments']);
+                                    new_li.appendChild(copy);
+                                    document.getElementById('Comments').appendChild(new_li);
+                                }
                             }
                         }
                     }
@@ -736,38 +738,39 @@
       rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.js"></script>
 <script>
-    $(document).ready(function () {
-        var pe_result = "{{p_dict}}";
-        //document.write(pe_result);
-        var text_pe_res = pe_result.replace(/&#39;/gi, '"').replace(/\t/gi, "\\t").replace(/\r/gi, "\\r").replace(/\n/gi, "\\n").replace(/None/gi, '"none"').replace(/\\/gi, '/');
-        //document.write(text_pe_res);
-        var json_pe = JSON.parse(text_pe_res);
+    var pe_result = "{{p_dict}}";
+    //document.write(pe_result);
+    var text_pe_res = pe_result.replace(/&#39;/gi, '"').replace(/\t/gi, "\\t").replace(/\r/gi, "\\r").replace(/\n/gi, "\\n").replace(/None/gi, '"none"').replace(/\\/gi, '/');
+    //document.write(text_pe_res);
+    var json_pe = JSON.parse(text_pe_res);
 
-        var pickerclass = document.getElementById('select_pe');
-        for (var standard in json_pe) {
-            var option = document.createElement("option");
-            option.value = standard;
-            option.text = standard;
-            pickerclass.appendChild(option);
-            $('#select_pe').selectpicker('refresh');
-        }
+    var pickerclass = document.getElementById('select_pe');
+    for (var standard in json_pe) {
+        var option = document.createElement("option");
+        option.value = standard;
+        option.text = standard;
+        pickerclass.appendChild(option);
+        $('#select_pe').selectpicker('refresh');
+    }
 
-        $("#select-pe").click(function () {
-            $("td").detach();
-            $("details").detach();
-            var fileName = $("#select_pe").children("option:selected").text();        // 기준 파일명을 가져옴
-            change_basic_page(fileName);
-            change_string_page(fileName);
-            change_header_page(fileName);
-            change_section_page(fileName);
-            change_rsrc_count_page(fileName);
-            change_rsrc_lang_page(fileName);
-            change_rsrc_list_page(fileName);
-            change_dll_page(fileName);
-            change_rich_page(fileName);
-            change_pdb_page(fileName);
-        });
-    })
+    $("#select-pe").click(function () {
+        $("td").detach();
+        $("details").detach();
+        var fileName = $("#select_pe").children("option:selected").text();        // 기준 파일명을 가져옴
+        change_basic_page(fileName);
+        change_string_page(fileName);
+        change_header_page(fileName);
+        change_section_page(fileName);
+        change_rsrc_count_page(fileName);
+        change_rsrc_lang_page(fileName);
+        change_rsrc_list_page(fileName);
+        change_dll_page(fileName);
+        change_rich_page(fileName);
+        change_pdb_page(fileName);
+    });
+    //$(document).ready(function () {
+
+    //})
 </script>
 {% endblock section %}
 
