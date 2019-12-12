@@ -1,15 +1,9 @@
 #coding:utf-8
 import hashlib
-import json
 import django
-import timeit
-import os
 from multiprocessing import Process, Queue, Manager
-from collections import OrderedDict
 import pefile
-import shutil
 django.setup()
-
 from Main_engine.Extract_Engine import pe2idb
 from Main_engine.Extract_Engine.Flowchart_feature import extract_asm_and_const
 from Main_engine.Extract_Engine.PE_feature import extract_pe
@@ -19,10 +13,8 @@ from Main_engine.Unpacking import unpack_module
 from Main_engine.models import *
 from Main_engine.ML import new_getinfo_pe
 
-
-
 import os
-from sklearn.externals import joblib
+# from sklearn.externals import joblib
 import json
 from multiprocessing import Process, current_process, Queue, Pool
 
@@ -165,6 +157,8 @@ def multiprocess_file(q, return_dict, flag):
                 fd1 = open(pe_file.pe_filepath + ".txt", "rb")
                 info = json.loads(fd1.read(), encoding='utf-8')
                 fd1.close()
+                with open(r"C:\malware\all_result\pe_r" + "\\" + file_filter2 + ".txt", 'w') as makefile:
+                    json.dump(info, makefile, ensure_ascii=False, indent='\t')
                 print('pe존재함')
             elif pe_f is None:
                 try:
@@ -172,16 +166,21 @@ def multiprocess_file(q, return_dict, flag):
                     #print("여기까진 괜찮음")
                     info, pe_info_DB = extract_pe.Pe_Feature(f_path, pe).all()  # pe 속성 출력
                     #print("여기도 괜찮음")
-                    with open(r"C:\malware\all_result\pe" + "\\" + file_filter2 + ".txt", 'w') as makefile:
+                    with open(r"C:\malware\all_result\pe" + "\\" + file_filter2 + ".txt", 'w', -1, "utf-8") as makefile:
                         json.dump(info, makefile, ensure_ascii=False, indent='\t')
+
+                    with open(r"C:\malware\all_result\pe_r" + "\\" + file_filter2 + ".txt", 'w', -1, "utf-8") as makefile:
+                        json.dump(info, makefile, ensure_ascii=False, indent='\t')
+
                     #print("여기는?")
                     pe_file.pe_filepath = pe_file_path + file_filter2
                     #print("여기는?")
                     pe_file.save()
                     pe.close()
                     print('pe없음')
-                except:
+                except Exception as e:
                     print('pe error !')
+                    print(e)
                     continue
 
         return_dict[f_path] = info
@@ -289,7 +288,7 @@ def create_folder():
     # mal_exe는 drag&drop할 때 먼저 생성됨
     # mal_idb, all_result(idb, pe) 가 없으면 생성
 
-    default_path = ["C:\\malware\\mal_idb\\","C:\\malware\\all_result\\", "C:\\malware\\all_result\\idb", "C:\\malware\\all_result\\pe\\", "C:\\malware\\all_result\\cg\\", "C:\\malware\\all_result\\cfg\\"]
+    default_path = ["C:\\malware\\mal_idb\\","C:\\malware\\all_result\\", "C:\\malware\\all_result\\idb", "C:\\malware\\all_result\\pe\\", "C:\\malware\\all_result\\pe_r\\", "C:\\malware\\all_result\\cg\\", "C:\\malware\\all_result\\cfg\\"]
     for path in default_path:
         if os.path.exists(path):
             continue
@@ -297,7 +296,7 @@ def create_folder():
             os.makedirs(path)
 
 def delete_file():
-    default_path = ["C:\\malware\\mal_idb\\", "C:\\malware\\mal_exe\\"]
+    default_path = ["C:\\malware\\mal_idb\\", "C:\\malware\\mal_exe\\","C:\\malware\\all_result\\pe_r"]
 
     for path in default_path:
         if os.path.exists(path):
@@ -308,6 +307,18 @@ def delete_file():
         else:
             print('Directory Not Found')
 
+def delete_pe_recent():
+    default_path = r"C:\malware\all_result\pe_r"
+
+    file_list = os.listdir(default_path)
+
+    for r_file in file_list:
+        if os.path.isfile(r"C:\malware\all_result\pe_r" + "\\" + r_file):
+            os.remove(r"C:\malware\all_result\pe_r" + "\\" + r_file)
+        else:
+            print("no file to remove")
+    print("Recent PE removed")
+
 def start_engine():
     '''
     웹 서버에서 메인 엔진을 호출하면 엔진을 돌리기위한 함수
@@ -317,6 +328,7 @@ def start_engine():
 
     # 0. 없는 폴더 먼저 생성
     create_folder()
+
     # 1. pe 해시 체크 (동일한 파일 필터), 2.패킹 체크
     print("1) hash check")
     pe_check = Pe_Files_Check(PATH)
@@ -355,56 +367,49 @@ def start_engine():
 
     return all_result
 
-#####################################
-
-
-def idb_pe_feature(all_idb_info,all_pe_info):
-    #print("allPeinfo:{}".format(all_pe_info))
-    extract_pe_class = new_getinfo_pe.getinfo_pe()
-    model = joblib.load(os.getcwd()+"\\Main_engine\\ML\\"+'ML_model2.pkl')
-
-    ML_result_data = dict()
-    for pe_info in all_pe_info.keys():
-        file_full_path=all_pe_info[pe_info]['file_path']
-        file_base_name = all_pe_info[pe_info]['file_name']
-        # print(file_full_path)
-        # print(file_base_name)
-        for idb_info in all_idb_info.keys():
-
-            if all_idb_info[idb_info]['file_name']==file_base_name:
-            #if idb_info['file_name']==file_base_name:
-                result_opcoded_count_dict = {'MOV': 0, 'LEA': 0, 'ANDL': 0, 'JE': 0, 'ADD': 0, 'SBB': 0, 'SUB': 0, 'INT3': 0,\
-                                             'SHR': 0, 'OR': 0, 'JB': 0, 'DEC': 0, 'DECL': 0, 'INCL': 0, 'FXCH': 0, 'JP': 0, \
-                                             'FSTP': 0, 'NOT': 0, 'PUSHF': 0, 'XCHG': 0, 'ADC': 0, 'CLC': 0, 'LCALL': 0, 'AAA': 0, \
-                                             'FIADDL': 0, 'OUTSL': 0, 'XLAT': 0, 'ROLL': 0, 'LES': 0, 'OUTSB': 0, 'AAM': 0, 'DAS': 0, \
-                                             'CLD': 0, 'NOTB': 0, 'IRET': 0, 'FSTPS': 0, 'SS': 0, 'CMC': 0, 'RORB': 0, 'FNSAVE': 0,\
-                                             'FLDS': 0, 'FIADD': 0, 'JNO': 0, 'INCB': 0, 'CMPW': 0, 'ABCL': 0, 'MOVSWL': 0, 'SHRL': 0, \
-                                             'CPUID': 0, 'FIMUL': 0, 'RORL': 0, 'SAL': 0, 'FNCLEX': 0, 'SETG': 0, 'FSUBL': 0, 'FCMOVU': 0,\
-                                             'PSUBB': 0, 'DIVB': 0, 'RCRL': 0, 'MOVQ': 0, 'RDTSC': 0, 'RDPMC': 0, 'PCMPEQB': 0, 'FBLD': 0, \
-                                             'FCMOVB': 0, 'FUCOMI': 0, 'FLDLG2': 0, 'FABS': 0, 'FCHS': 0, 'PREFETCHNTA': 0, 'XGETBV': 0, \
-                                             'PI2FW': 0, 'FSTSW': 0, 'ADDPD': 0, 'DIVSD': 0, 'PALIGNR': 0, 'GETSEC': 0}
-
-                for fname, value_1 in all_idb_info[idb_info]['func_name'].items():
-                    if fname != "constant":
-                        for sAddr, value_2 in value_1.items():
-                            if sAddr != "flow_constants" and sAddr != "flow_branches":
-                                opcode_list=[opcode.upper() for opcode in all_idb_info[idb_info]['func_name'][fname][sAddr]['opcodes']]
-                                for opcode in opcode_list:
-                                    try:
-                                        result_opcoded_count_dict[opcode]+=1
-                                    except KeyError:continue
-                op_list_count = list(result_opcoded_count_dict.values())
-
-                pe_result_data=extract_pe_class.predict_peature_get_info(file_full_path)
-                size_label=pe_result_data[-1:]
-                pe_result_data=pe_result_data[:-1]
-                pe_result_data+=op_list_count
-                pe_result_data +=size_label
-                predict_labels = model.predict_proba([pe_result_data])[0]
-                print("============================ sex =========================================")
-                print(model.predict_proba([pe_result_data]))
-                print("============================ sex =========================================")
-                #predict_labels 0 은 비악성 1은 악성
-                ML_result_data[file_base_name]=predict_labels
-    return ML_result_data
-
+# def idb_pe_feature(all_idb_info,all_pe_info):
+#     #print("allPeinfo:{}".format(all_pe_info))
+#     extract_pe_class = new_getinfo_pe.getinfo_pe()
+#     model = joblib.load(os.getcwd()+"\\Main_engine\\ML\\"+'ML_model2.pkl')
+#
+#     ML_result_data = dict()
+#     for pe_info in all_pe_info.keys():
+#         file_full_path=all_pe_info[pe_info]['file_path']
+#         file_base_name = all_pe_info[pe_info]['file_name']
+#         # print(file_full_path)
+#         # print(file_base_name)
+#         for idb_info in all_idb_info.keys():
+#
+#             if all_idb_info[idb_info]['file_name']==file_base_name:
+#             #if idb_info['file_name']==file_base_name:
+#                 result_opcoded_count_dict = {'MOV': 0, 'LEA': 0, 'ANDL': 0, 'JE': 0, 'ADD': 0, 'SBB': 0, 'SUB': 0, 'INT3': 0,\
+#                                              'SHR': 0, 'OR': 0, 'JB': 0, 'DEC': 0, 'DECL': 0, 'INCL': 0, 'FXCH': 0, 'JP': 0, \
+#                                              'FSTP': 0, 'NOT': 0, 'PUSHF': 0, 'XCHG': 0, 'ADC': 0, 'CLC': 0, 'LCALL': 0, 'AAA': 0, \
+#                                              'FIADDL': 0, 'OUTSL': 0, 'XLAT': 0, 'ROLL': 0, 'LES': 0, 'OUTSB': 0, 'AAM': 0, 'DAS': 0, \
+#                                              'CLD': 0, 'NOTB': 0, 'IRET': 0, 'FSTPS': 0, 'SS': 0, 'CMC': 0, 'RORB': 0, 'FNSAVE': 0,\
+#                                              'FLDS': 0, 'FIADD': 0, 'JNO': 0, 'INCB': 0, 'CMPW': 0, 'ABCL': 0, 'MOVSWL': 0, 'SHRL': 0, \
+#                                              'CPUID': 0, 'FIMUL': 0, 'RORL': 0, 'SAL': 0, 'FNCLEX': 0, 'SETG': 0, 'FSUBL': 0, 'FCMOVU': 0,\
+#                                              'PSUBB': 0, 'DIVB': 0, 'RCRL': 0, 'MOVQ': 0, 'RDTSC': 0, 'RDPMC': 0, 'PCMPEQB': 0, 'FBLD': 0, \
+#                                              'FCMOVB': 0, 'FUCOMI': 0, 'FLDLG2': 0, 'FABS': 0, 'FCHS': 0, 'PREFETCHNTA': 0, 'XGETBV': 0, \
+#                                              'PI2FW': 0, 'FSTSW': 0, 'ADDPD': 0, 'DIVSD': 0, 'PALIGNR': 0, 'GETSEC': 0}
+#
+#                 for fname, value_1 in all_idb_info[idb_info]['func_name'].items():
+#                     if fname != "constant":
+#                         for sAddr, value_2 in value_1.items():
+#                             if sAddr != "flow_opString" and sAddr != "flow_constants" and sAddr != "flow_branches":
+#                                 opcode_list=[opcode.upper() for opcode in all_idb_info[idb_info]['func_name'][fname][sAddr]['opcodes']]
+#                                 for opcode in opcode_list:
+#                                     try:
+#                                         result_opcoded_count_dict[opcode]+=1
+#                                     except KeyError:continue
+#                 op_list_count = list(result_opcoded_count_dict.values())
+#
+#                 pe_result_data=extract_pe_class.predict_peature_get_info(file_full_path)
+#                 size_label=pe_result_data[-1:]
+#                 pe_result_data=pe_result_data[:-1]
+#                 pe_result_data+=op_list_count
+#                 pe_result_data +=size_label
+#                 predict_labels = model.predict([pe_result_data])[0]
+#                 #predict_labels 0 은 비악성 1은 악성
+#                 ML_result_data[file_base_name]=predict_labels
+#     return ML_result_data

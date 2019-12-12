@@ -33,10 +33,10 @@ def Calc_All(pe_t):
 
 def Calc_Without_Pdb(pe_t):
     score = 0
-    if np.isnan(pe_t['rsrc']):
+    if pe_t['rsrc'] == '-':
         #pdb와 rsrc가 없는 경우
         score += Calc_Without_Pdb_and_Rsrc(pe_t)
-    elif np.isnan(pe_t['cert_score']):
+    elif pe_t['cert_score'] == '-':
         score += Calc_Without_Pdb_and_Cert(pe_t)
     else:
         #pdb만 없는 경우 가중치 부여
@@ -53,7 +53,7 @@ def Calc_Without_Pdb(pe_t):
 
 def Calc_Without_Pdb_and_Rsrc(pe_t):
     score = 0
-    if np.isnan(pe_t['cert_score']):
+    if pe_t['cert_score'] == '-':
         #pdb, rsrc, cert 모두 없는 경우
         score += Calc_Without_All(pe_t)
     else:
@@ -96,7 +96,7 @@ def Calc_Without_All(pe_t):
 
 def Calc_Without_Rsrc(pe_t):
     score = 0
-    if np.isnan(pe_t['cert_score']):
+    if pe_t['cert_score'] == '-':
         #rsrc와 cert가 없는 경우
         score += Calc_Without_Rsrc_and_Cert(pe_t)
     else:
@@ -221,7 +221,7 @@ class AnalyzePE:
         :return: score with weight
         '''
         if dict_s.get('hash') == None or dict_t.get('hash') == None:
-            return np.nan
+            return "-"
         else:
             if dict_s['hash'] == dict_t['hash']:
                 score = 100
@@ -240,8 +240,8 @@ class AnalyzePE:
         '''
         guid_score = 0
         path_score = 0
-        if dict_s['pe_pdb_GUID'] == "" or dict_t['pe_pdb_GUID'] == "":
-            return np.nan
+        if dict_s['pe_pdb_GUID'] == "-" or dict_t['pe_pdb_GUID'] == "-":
+            return "-"
         else:
             s_guid = hashlib.md5(dict_s['pe_pdb_GUID'].encode()).hexdigest()
             t_guid = hashlib.md5(dict_t['pe_pdb_GUID'].encode()).hexdigest()
@@ -249,7 +249,7 @@ class AnalyzePE:
                 guid_score += 50
             else:
                 guid_score += 0
-        if dict_s['pe_pdb_Pdbpath'] == "" or dict_t['pe_pdb_Pdbpath'] == "":
+        if dict_s['pe_pdb_Pdbpath'] == "-" or dict_t['pe_pdb_Pdbpath'] == "-":
             path_score += 0
         else:
             path_score += NGram.compare(dict_s['pe_pdb_Pdbpath'], dict_t['pe_pdb_Pdbpath'], N=2) * 50
@@ -264,7 +264,7 @@ class AnalyzePE:
         리소스 데이터를 각각 ssdeep으로 비교해서 결과를 반환하는 함수
         :return: score list with weight
         '''
-        if standard != {} and target != {}:
+        if standard != "-" and target != "-":
             size = len(standard.keys())
             #print(f"size of rsrc :: {size}")
             flag = 0
@@ -279,7 +279,7 @@ class AnalyzePE:
                             else:
                                 continue
         else:
-            return np.nan
+            return "-"
 
         '''
         리소스에 쉘코드가 삽입되어 있는 경우
@@ -306,8 +306,8 @@ class AnalyzePE:
         '''
         xor_score = 0
         prodid_score = 0
-        if standard['rich_xor_key'] == "" or target['rich_xor_key'] == "":
-            return np.nan
+        if standard['rich_xor_key'] == "-" or target['rich_xor_key'] == "-":
+            return xor_score
         else:
             #rich header의 xor key 유사도(True or False)
             if standard['rich_xor_key'] == target['rich_xor_key']:
@@ -390,25 +390,17 @@ class AnalyzePE:
                 pe_t['pdb_score'] = res_pdb
                 pe_t['rsrc'] = res_rsrc
 
-                if np.isnan(pe_t['pdb_score']):
+                if pe_t['pdb_score'] == "-":
                     all_score = Calc_Without_Pdb(pe_t)
-                elif np.isnan(pe_t['rsrc']):
+                elif pe_t['rsrc'] == "-":
                     all_score = Calc_Without_Rsrc(pe_t)
-                elif np.isnan(pe_t['cert_score']):
+                elif pe_t['cert_score'] == "-":
                     all_score = Calc_Without_Cert(pe_t)
                 else:
                     all_score = Calc_All(pe_t)
                 pe_t['pe_all_score'] = all_score
                 #print(f"pe all score :: {all_score}")
                 #print(f"pe_t :: {json.dumps(pe_t, indent=4)}")
-
-                if np.isnan(pe_t['pdb_score']):
-                    pe_t['pdb_score'] = "No Data"
-                if np.isnan(pe_t['rsrc']):
-                    pe_t['rsrc'] = "No Data"
-                if np.isnan(pe_t['cert_score']):
-                    pe_t['cert_score'] = "No Data"
-
 
                 pe_s[pe_info_t['file_name']] = pe_t
 

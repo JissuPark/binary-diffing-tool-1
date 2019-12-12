@@ -7,6 +7,8 @@ from Main_engine.Extract_Engine.Flowchart_feature import const_filter_indexs as 
 
 api = None
 filename = None
+filetype = None
+
 imageBase = None
 glo_MinEA = None
 glo_MaxEA = None
@@ -192,6 +194,8 @@ def main():
 
 def basicblock_info_extraction(FROM_FILE):
     global api
+    global filetype
+
     global glo_Constants
     reslut_dic = dict()
     api = open_idb(FROM_FILE)
@@ -200,14 +204,19 @@ def basicblock_info_extraction(FROM_FILE):
     print(f'[INFO][Extract Binary] {filename}')
 
     func_ext_dict = main()
-    reslut_dic = ({"file_name": filename, "func_name": func_ext_dict, "constant": glo_Constants})
+
+    reslut_dic = ({"file_name": filename, "type" : filetype,"func_name": func_ext_dict, "constant": glo_Constants})
+
 
     return reslut_dic
 
 
 def open_idb(FROM_FILE):
     global filename
+    global filetype
     filename = FROM_FILE[FROM_FILE.rfind('\\') + 1:-4]
+    filetype = FROM_FILE[-3:]
+
     with idb.from_file(FROM_FILE) as db:
         api = idb.IDAPython(db)
         return api

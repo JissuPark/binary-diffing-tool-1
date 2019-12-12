@@ -34,6 +34,7 @@ TYPE_MAP = {
 
 COUNTRY_MAP = {
     0: "Unicode",
+    5: "CZECH NEUTRAL",
     1025: "Arabic - Saudi Arabia",
     1026: "Bulgarian",
     1027: "Catalan",
@@ -302,7 +303,7 @@ class RsrcParser:
         #리소스 엔트리를 가지고 있는지 확인
         if not hasattr(self.pe, 'DIRECTORY_ENTRY_RESOURCE'):
             print('PE doesn\'t has DIRECTORY_ENTRY_RESOURCE')
-            return {}, {}, {}
+            return "-", "-", "-"
 
         #가지고 있는 엔트리만큼 반복
         for resource_type in self.pe.DIRECTORY_ENTRY_RESOURCE.entries:
@@ -359,7 +360,7 @@ class RsrcParser:
                     entropy = self.get_entropy(data)
                     #print(f'entropy : {entropy}')
                     rsrc_entry['entropy'] = entropy
-                    #sha = '$' + sha_256
+
                     self.resource[sha_256] = {
                         'Resource Type': type,
                         'Resource NameID': resource_id.id,
