@@ -1,4 +1,6 @@
-import struct
+import pefile
+import json
+
 '''
 <Rich header format>
 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
@@ -228,24 +230,6 @@ class RichHeaderNotFoundException(Exception):
     2. find start_pe_header_address
     3. extract data from 0x80 ~ start_pe_header_address
 '''
-def get_rich_section(file_name):
-
-    '''
-        1. 0x3c ~ 0x40 : start pe_header address
-        2. 0x80 ~ start pe_header address : rich_header section scope
-    '''
-
-    fp=open(file_name,'rb')
-
-    data=fp.read()
-
-    if data == '': raise RichHeaderNotFoundException()     # exception no rich
-    end = struct.unpack('<I', data[0x3c:0x40])[0]             # find start address of pe_header
-    data = data[0x80:end]                                   # read 0x00 ~ end(pe header)
-    fp.close()
-
-    return data
-
 
 class ParseRichHeader:
     '''
@@ -255,62 +239,28 @@ class ParseRichHeader:
     '''
     def __init__(self, file_name):
         self.file_name=file_name
-       # self.parse(file_name)
-        # processing pe file for extract rich header
-        # parse function return riche_header data section from file_name
 
     def parse(self, file_name):
-        info_list = dict()
-        data = get_rich_section(file_name)
-        rich_identifi_addr = data.find(b'Rich')
+        pe = pefile.PE(file_name)
 
-        if rich_identifi_addr == -1:
-            return "-", {}  # if rich_header no exit
+        try:
+            rich = pe.parse_rich_header()
+            prod = dict()
+            prod_list = list()
 
-        rich_offset = rich_identifi_addr + 4
-        checksum_text = data[rich_offset: rich_offset+4]
-        xorkey = struct.unpack('<I', checksum_text)[0]
-        data = data[:rich_identifi_addr]                                                  # store compID and count
-
-        for i in range(16, rich_identifi_addr, 8):
-            compID = struct.unpack('<L', data[i:i+4])[0] ^ xorkey     # extract compID(mVC,prodID)
-            count = struct.unpack('<L', data[i+4:i+8])[0] ^ xorkey    # extract count
-            info_list[compID] = count
-        return xorkey, info_list
-
-    def extract_prodid(self):                                                   # prodid
-        set1 = []
-        for i in self.info_list:
-            set1.append(i.prodid)
-        return set1
-
-    def extract_clear_data(self):                                               # clear_data is (compid,count)
-        set1 = []
-        for i in self.info_list:
-            set1.append(hex(i.compid))
-            set1.append(hex(i.count))
-        return (set1)
-
-'''
-class Info:
-    def __init__(self, compID, count):
-        self.compid = compID
-        self.prodid = compID >> 16
-        self.build = compID & 0xffff
-        self.count = count
-'''
-
-'''
-if __name__ == "__main__":
-    PATH="D:\\JungJaeho\\STUDY\\self\\BOB\\BoB_Project\\Team_Breakers\\Training\\Study\\sample\\mid_GandCrab_exe\\2cb5cfdc436638575323eac73ed36acd84b4694c144a754772c67167b99d574c"
-    rich= ParseRichHeader(PATH)
-    xor_key=rich.xorkey
-
-    print(f'XorKey : {xor_key}')
-    print("ProID    name              count")
-    for key in rich.info_list.keys():
-        count=rich.info_list[key]
-        prodid=(key>>16)
-        prodid_name = PRODID_MAP[prodid] if prodid in PRODID_MAP else "<unknown>"
-        print('%6d   %-15s %5d' % (prodid, prodid_name, count))
-'''
+            for key in rich:
+                if key == 'checksum':
+                    xorkey = rich[key]
+                    prod['xor key'] = xorkey
+                if key == 'values':
+                    for i in range(len(rich[key])):
+                        if i % 2 == 0:
+                            compid = (rich[key][i] >> 16)
+                            prod_list.append(compid)
+                            prodid_name = PRODID_MAP[compid] if compid in PRODID_MAP else "<unknown>"
+                        else:
+                            count = rich[key][i]
+                            prod[prodid_name] = count
+            return xorkey, prod_list, prod
+        except:
+            return "-", [], {}
