@@ -13,7 +13,6 @@
 {% endblock head %}
 
 {% block section %}
-
 {% if p_dict %}
 <!-- pe_basic -->
 <div id="Basic Properties" style="padding: 10px">
@@ -22,30 +21,30 @@
     </div>
     <div class="detail" style="margin-left: 20px;">
 
-        <table height=300px width=1000px>
+        <table style="height: 300px; " >
             <tr id="File name">
-                <th>File name</th>
+                <th style="padding-right: 20px;">File name</th>
             </tr>
-            <tr id="File size">
-                <th>File size</th>
+            <tr id="File size" >
+                <th style="padding-right: 20px;">File size</th>
             </tr>
             <tr id="File type">
-                <th>File type</th>
+                <th style="padding-right: 20px;">File type</th>
             </tr>
             <tr id="MD5">
-                <th>MD5</th>
+                <th style="padding-right: 20px;">MD5</th>
             </tr>
             <tr id="SHA-1">
-                <th>SHA-1</th>
+                <th style="padding-right: 20px;">SHA-1</th>
             </tr>
             <tr id="SHA-256">
-                <th>SHA-256</th>
+                <th style="padding-right: 20px;">SHA-256</th>
             </tr>
             <tr id="Imphash">
-                <th>Imphash</th>
+                <th style="padding-right: 20px;">Imphash</th>
             </tr>
             <tr id="SSDEEP">
-                <th>SSDEEP</th>
+                <th style="padding-right: 20px;">SSDEEP</th>
             </tr>
         </table>
         <script>
@@ -110,7 +109,6 @@
                                 document.getElementById('SSDEEP').appendChild(new_li);
                             }
                         }
-
                     }
                 }
             }
@@ -240,7 +238,7 @@
     </div>
     <div class="detail">
 
-        <table height=100px style="margin-left: 20px; margin-top: 10px;" width=770px>
+        <table height=100px style="margin-left: 20px; margin-top: 10px; width: 600px">
             <div style="margin-left: 10px; margin-top: 15px;">
                 <h4>Header</h4>
             </div>
@@ -684,18 +682,18 @@
         <div style="margin-top: 20px; margin-left: 10px;">
             <h4 top=50px>PDB Information</h4>
         </div>
-        <table height=140px id="pdb_table" style="margin-left:20px;margin-top: 10px; width: 60%">
+        <table height=140px id="pdb_table" style="margin-left:20px;margin-top: 10px;">
             <tr id="PDB Name">
-                <th>PDB Name</th>
+                <th style="padding-right: 20px;">PDB Name</th>
             </tr>
             <tr id="PDB GUID">
-                <th>PDB GUID</th>
+                <th style="padding-right: 20px;">PDB GUID</th>
             </tr>
             <tr id="PDB Age">
-                <th>PDB Age</th>
+                <th style="padding-right: 20px;">PDB Age</th>
             </tr>
             <tr id="PDB Path">
-                <th>PDB Path</th>
+                <th style="padding-right: 20px;">PDB Path</th>
             </tr>
         </table>
         <script>

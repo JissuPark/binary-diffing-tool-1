@@ -339,7 +339,6 @@ def start_engine():
     result_pe = analyze.analyze_pe()
     result_idb = analyze.analyze_idb()
 
-
     print("6) Result SAVE")
     # 6. 결과 저장
     all_result = analyze.calculate_heuristic(result_idb, result_pe)
