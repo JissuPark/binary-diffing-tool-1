@@ -11,8 +11,15 @@ h4{
 }
 
 table{
+  table-layout: fixed;
   padding-left: 10px;
+
 }
+th{
+  margin-right: 20px !important;
+}
+
+
 
 summary{
   margin-top: 1rem !important;
