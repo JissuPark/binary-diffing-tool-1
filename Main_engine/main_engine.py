@@ -60,11 +60,7 @@ class Pe_Files_Check:
             if f_hash in self.pe_hash_dict.values():
                 os.remove(f_path)
             else:
-                #os.rename(f_path, os.path.join(self.pe_dir_path, f_hash))
                 pass
-
-                # 파일은 삭제하지만 해당 파일명(절대경로)와 해시정보는 DB에 있어야함.
-            # 추후 시각화할 때 정보 필요
             self.pe_hash_dict[f_path] = f_hash
 
 
@@ -143,7 +139,7 @@ def multiprocess_file(q, return_dict, flag):
 
             try:
                 pe_file = Filter.objects.get(filehash=file_filter2)
-                print(pe_file)
+                #print(pe_file)
             except Filter.DoesNotExist:
                 print('pe no db')
                 pe_file = None
@@ -157,24 +153,20 @@ def multiprocess_file(q, return_dict, flag):
                 fd1 = open(pe_file.pe_filepath + ".txt", "rb")
                 info = json.loads(fd1.read(), encoding='utf-8')
                 fd1.close()
-                with open(r"C:\malware\all_result\pe_r" + "\\" + file_filter2 + ".txt", 'w') as makefile:
+                with open(r"C:\malware\all_result\pe_r" + "\\" + file_filter2 + ".txt",  'w', -1, "utf-8") as makefile:
                     json.dump(info, makefile, ensure_ascii=False, indent='\t')
                 print('pe존재함')
             elif pe_f is None:
                 try:
                     pe = pefile.PE(f_path)
-                    #print("여기까진 괜찮음")
                     info, pe_info_DB = extract_pe.Pe_Feature(f_path, pe).all()  # pe 속성 출력
-                    #print("여기도 괜찮음")
                     with open(r"C:\malware\all_result\pe" + "\\" + file_filter2 + ".txt", 'w', -1, "utf-8") as makefile:
                         json.dump(info, makefile, ensure_ascii=False, indent='\t')
 
                     with open(r"C:\malware\all_result\pe_r" + "\\" + file_filter2 + ".txt", 'w', -1, "utf-8") as makefile:
                         json.dump(info, makefile, ensure_ascii=False, indent='\t')
 
-                    #print("여기는?")
                     pe_file.pe_filepath = pe_file_path + file_filter2
-                    #print("여기는?")
                     pe_file.save()
                     pe.close()
                     print('pe없음')
@@ -307,17 +299,6 @@ def delete_file():
         else:
             print('Directory Not Found')
 
-def delete_pe_recent():
-    default_path = r"C:\malware\all_result\pe_r"
-
-    file_list = os.listdir(default_path)
-
-    for r_file in file_list:
-        if os.path.isfile(r"C:\malware\all_result\pe_r" + "\\" + r_file):
-            os.remove(r"C:\malware\all_result\pe_r" + "\\" + r_file)
-        else:
-            print("no file to remove")
-    print("Recent PE removed")
 
 def start_engine():
     '''
@@ -335,8 +316,6 @@ def start_engine():
     print("2) packing check")
     file_hash_dict = pe_check.get_unique_pe_list()
 
-
-
     # 3. pe파일(+패킹 체크) -> idb 변환
     print("3) idb converter")
     flag = convert_idb(PATH, IDB_PATH)
@@ -347,28 +326,25 @@ def start_engine():
         print("4) extract IDB and PE")
         all_idb_info = Features.export_idb_info('idb')
         all_pe_info = Features.export_pe_info('pe')
-        print("5) Machine Learning")
+        #print("5) Machine Learning")
         #ML_result_data=idb_pe_feature(all_idb_info, all_pe_info)
         #print(ML_result_data)
     else:
         print('convert_idb is error')
 
     # 5. 분석 하기
-    print("6) Analyze file")
+    print("5) Analyze file")
     analyze = Analyze_files(all_idb_info, all_pe_info)
 
     result_pe = analyze.analyze_pe()
     result_idb = analyze.analyze_idb()
 
 
-    print("7) Result Csv SAVE")
+    print("6) Result SAVE")
     # 6. 결과 저장
     all_result = analyze.calculate_heuristic(result_idb, result_pe)
 
     return all_result
-
-#####################################
-
 
 # def idb_pe_feature(all_idb_info,all_pe_info):
 #     #print("allPeinfo:{}".format(all_pe_info))

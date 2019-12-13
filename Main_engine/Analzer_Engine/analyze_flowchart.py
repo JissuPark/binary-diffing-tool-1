@@ -24,7 +24,7 @@ class AnalyzeFlowchart:
 
         file_name = bloc_dict["file_name"]
         file_type = bloc_dict["type"]
-        print(f'[info] {file_name} WhiteList Filtering & Block hash/constants SET Create')
+        #print(f'[info] {file_name} WhiteList Filtering & Block hash/constants SET Create')
         block_hash_dic = dict()
         matched_dic = dict()
         block_constants_dic = dict()
@@ -38,7 +38,6 @@ class AnalyzeFlowchart:
             for y in bloc_dict["func_name"][x]:
 
                 if y != "flow_constants" and y != "flow_branches":
-
                     block_hash = bloc_dict["func_name"][x][y]["block_sha256"]
                     if block_hash in white.list :
                         matched_dic[x].update({y: {block_hash: white.list[block_hash]}})
@@ -128,7 +127,7 @@ class AnalyzeFlowchart:
         s_hash_dict = copy.deepcopy(s_flow_data)
         t_hash_dict = copy.deepcopy(t_flow_data)
 
-        print(f'[info] Compare Block hash SET ({s_name} ↔ {t_name})')
+        #print(f'[info] Compare Block hash SET ({s_name} ↔ {t_name})')
         matched_block_dic = dict()
 
         for s_fname, s_valueSet in s_hash_dict[s_name]['bbh'].items():
@@ -156,17 +155,13 @@ class AnalyzeFlowchart:
 
         s_fname, s_sAddr = stand_list
         t_fname, t_sAddr = target_list
-        ##################################################################################################################
         s_const_set = s_hash_dict[s_fname][s_sAddr]
         t_const_set = t_hash_dict[t_fname][t_sAddr]
-        ##################################################################################################################
         s_comp_set = copy.deepcopy(s_const_set)
         t_comp_set = copy.deepcopy(t_const_set)
-        ##################################################################################################################
         matched = 0
-        total_len = 0
-        ##################################################################################################################
-        # 상세 비교 전 dict 통째 비교 전처리
+        # total_len = 0
+
         if s_const_set == t_const_set:
             return 1.0
         else:
@@ -188,11 +183,6 @@ class AnalyzeFlowchart:
                             matched += t_const_set[t_const]
                             s_comp_set[s_const] = s_comp_set[s_const] - t_comp_set[t_const]
                             del t_comp_set[t_const]
-
-            # print(f" total: {total_len}  matched: {matched}  sim: {matched/total_len}")
-            # pprint(s_comp_set)
-            # pprint(t_comp_set)
-            # print(" ************************** ")
             '''
             print(s_hash_dict[s_fname][s_sAddr])
             print(f"ㄴ[debug] stand_values : {sum(list(s_hash_dict[s_fname][s_sAddr].values()))}   {s_fname}-{s_sAddr}")
@@ -200,12 +190,12 @@ class AnalyzeFlowchart:
             print(t_hash_dict[t_fname][t_sAddr])
             print(f"ㄴ[debug] Sstand_values : {sum(list(t_hash_dict[t_fname][t_sAddr].values()))}   {t_fname}-{t_sAddr}")
             '''
+            #if (matched / total_len) < 1.0:
+                #print(f"[debug] unmatched constants :: {s_hash_dict[s_fname][s_sAddr]} --- {t_hash_dict[t_fname][t_sAddr]}")
+                #print(f"ㄴ[debug] constants find diff :: {s_comp_set} --- {t_comp_set}")
+                #print(f" ")
 
-            # if (matched / total_len) < 1.0:
-            # print(f"[debug] unmatched constants :: {s_hash_dict[s_fname][s_sAddr]} --- {t_hash_dict[t_fname][t_sAddr]}")
-            # print(f"ㄴ[debug] constants find diff :: {s_comp_set} --- {t_comp_set}")
-            # print(f" ")
-        return float(str(matched / total_len)[:4])
+        return (matched / total_len)
 
     def get_match_func_level(self, _dict):
 
@@ -256,7 +246,7 @@ class AnalyzeFlowchart:
                 total_count += 1
         print(f'[analysis] Basic Block Constants similarity :::::::::::: ({total_sim}/{total_count}) : {float(str(total_sim / total_count)[:4])}')
         # print(f'ㄴ[debug] get const similarity time -> {timeit.default_timer() - st}')
-        return float(str(total_sim / total_count)[:4])
+        return (total_sim / total_count)
 
     def analyze_bbh(self, s_flow_data, t_flow_data):
         '''
@@ -266,9 +256,7 @@ class AnalyzeFlowchart:
         s_cmp_dic, whitelist_matched_dic1 = self.parser_bbh(s_flow_data)
         t_cmp_dic, whitelist_matched_dic2 = self.parser_bbh(t_flow_data)
         cmp_s, cmp_t, true_bb_const_sim = self.compare_bbh(s_cmp_dic, t_cmp_dic)
-
         #c_score = self.compare_prime(self.parser_bbh_T_F(cmp_s, ), self.parser_bbh_T_F(cmp_t, ), s_flow_data, t_flow_data)
-
 
         func_match_dict = self.get_match_func_level(true_bb_const_sim)
 

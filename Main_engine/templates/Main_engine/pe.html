@@ -128,7 +128,7 @@
         <h3 align="left">Signature Info</h3>
     </div>
     <div class="detail">
-        <table height=220px id="fileinfo_table" style="margin-left: 20px; margin-top: 10px;" width=600px>
+        <table height=220px id="fileinfo_table" style="margin-left: 20px; margin-top: 10px; width: 15%">
 
             <tbody>
             <div style="margin-left: 10px; margin-top: 15px;">
@@ -175,10 +175,10 @@
                     for (var stringf in json_pe[fname]) {
                         //document.write(stringf)
                         if (fname == pe_filename) {
-                            if (Object.keys(json_pe[fname]['string file info']).length === 0) {
-                                break;
-                            } else {
-                                if (stringf == 'string file info') {
+                            if (stringf == 'string file info') {
+                                if (Object.keys(json_pe[fname]['string file info']).length === 0) {
+                                    break;
+                                } else {
                                     var new_li = document.createElement('td');
                                     var copy = document.createTextNode(json_pe[fname][stringf]['LegalCopyright'].replace(/&amp;#9426;/gi, "ⓒ"));
                                     new_li.appendChild(copy);
@@ -407,16 +407,30 @@
                     if (fname == pe_filename) {
                         for (var rsrc in json_pe[fname]) {
                             if (rsrc == 'rsrc_count') {
-                                for (var item in json_pe[fname][rsrc]) {
-                                    //resource 부분만 출력하기 위한 if문
+                                if (Object.keys(json_pe[fname][rsrc]).length === 0) {
+                                    for (var item in json_pe[fname][rsrc]) {
+                                        //resource 부분만 출력하기 위한 if문
 
-                                    var new_row = pe_resource_count.insertRow(pe_resource_count.rows.length);
+                                        var new_row = pe_resource_count.insertRow(pe_resource_count.rows.length);
 
-                                    var Resource_name = new_row.insertCell(0);
-                                    var Count = new_row.insertCell(1);
+                                        var Resource_name = new_row.insertCell(0);
+                                        var Count = new_row.insertCell(1);
 
-                                    Resource_name.innerHTML = item;
-                                    Count.innerHTML = json_pe[fname][rsrc][item];
+                                        Resource_name.innerHTML = "-";
+                                        Count.innerHTML = "-";
+                                    }
+                                } else {
+                                    for (var item in json_pe[fname][rsrc]) {
+                                        //resource 부분만 출력하기 위한 if문
+
+                                        var new_row = pe_resource_count.insertRow(pe_resource_count.rows.length);
+
+                                        var Resource_name = new_row.insertCell(0);
+                                        var Count = new_row.insertCell(1);
+
+                                        Resource_name.innerHTML = item;
+                                        Count.innerHTML = json_pe[fname][rsrc][item];
+                                    }
                                 }
                             }
                         }
@@ -506,8 +520,6 @@
             var pe_resource_list = document.getElementById("contained_resource_list_table");
 
             var json_pe = JSON.parse(text_pe_res);
-
-            //document.write(json_pe);
 
             /* 파일 이름이 다르면 테이블이 변경됨 */
 
@@ -672,7 +684,7 @@
         <div style="margin-top: 20px; margin-left: 10px;">
             <h4 top=50px>PDB Information</h4>
         </div>
-        <table height=140px id="pdb_table" style="margin-left:20px;margin-top: 10px;" width=770px>
+        <table height=140px id="pdb_table" style="margin-left:20px;margin-top: 10px; width: 60%">
             <tr id="PDB Name">
                 <th>PDB Name</th>
             </tr>
@@ -756,7 +768,23 @@
         $('#select_pe').selectpicker('refresh');
     }
 
-    $("#select-pe").click(function () {
+    window.onload=function() {
+        $("td").detach();
+        $("details").detach();
+        var fileName = $("#select_pe").children("option:eq(1)").text();        // 기준 파일명을 가져옴
+        change_basic_page(fileName);
+        change_string_page(fileName);
+        change_header_page(fileName);
+        change_section_page(fileName);
+        change_rsrc_count_page(fileName);
+        change_rsrc_lang_page(fileName);
+        change_rsrc_list_page(fileName);
+        change_dll_page(fileName);
+        change_rich_page(fileName);
+        change_pdb_page(fileName);
+    }
+
+    $("#select-pe").unbind('click').on('click', function () {
         $("td").detach();
         $("details").detach();
         var fileName = $("#select_pe").children("option:selected").text();        // 기준 파일명을 가져옴
@@ -771,6 +799,11 @@
         change_rich_page(fileName);
         change_pdb_page(fileName);
     });
+    // var first_base = $("#select_pe").find('option:eq(1)');
+    // //console.log(first_base.text());
+    // first_base.attr('selected', 'selected');
+    // $pe_all();
+
     //$(document).ready(function () {
 
     //})

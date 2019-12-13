@@ -111,7 +111,7 @@
     <h4 id="scoretable" class="mt-2 mb-3" style="font-weight: bold;">DETAIL</h4>
     <hr class="my-hr3">
 
-    <div class="container-fluid col-8" style="float:left">
+    <div class="container-fluid col-12">
         <div class="card pl-4 pr-4">
             <div class="table-responsive ">
                 {% csrf_token %}
@@ -431,8 +431,8 @@
                                                     /* 열에 데이터 입력 */
                                                     /*filename.innerHTML = json_res[standard][target][0].toUpperCase();*/
                                                     filename.innerHTML = target.substring(0 , length).toUpperCase() + "...";
-                                                    bbh.innerHTML = json_res[standard][target][2] * 100;
-                                                    constvalue.innerHTML = json_res[standard][target][3] * 100;
+                                                    bbh.innerHTML = json_res[standard][target][2];
+                                                    constvalue.innerHTML = json_res[standard][target][3];
                                                     section.innerHTML = json_res[standard][target][4];
                                                     cert.innerHTML = json_res[standard][target][5];
                                                     pdb.innerHTML = json_res[standard][target][6];
@@ -448,8 +448,8 @@
                                                         console.log(typeof json_res[standard][target][data])
                                                     }
                                                     */
-                                                    var basic_block = json_res[standard][target][2] * 100;
-                                                    var constant = json_res[standard][target][3] * 100;
+                                                    var basic_block = json_res[standard][target][2];
+                                                    var constant = json_res[standard][target][3];
                                                     var f_name = json_res[standard][target][0];
                                                     var pe_all_score = json_res[standard][target][9];
                                                     height = [basic_block + "%", constant + "%", pe_all_score + "%"];
