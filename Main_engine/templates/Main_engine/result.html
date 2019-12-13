@@ -121,9 +121,14 @@
                                style="text-align: center; font-family: 'Poppins', sans-serif;">
                             <thead>
                             <tr>
-                                <th rowspan="2" align=center style="color: black; font-weight: bold; padding-top: 20px">FILENAME</th>
-                                <th colspan="2" style="color: black; font-weight: bold; padding-top: 20px">ALGORITHM</th>
-                                <th colspan="5" style="color: black; font-weight: bold;  padding-top: 20px">PE META DATA</th>
+                                <th rowspan="2" align=center style="color: black; font-weight: bold; padding-top: 20px">
+                                    FILENAME
+                                </th>
+                                <th colspan="2" style="color: black; font-weight: bold; padding-top: 20px">ALGORITHM
+                                </th>
+                                <th colspan="5" style="color: black; font-weight: bold;  padding-top: 20px">PE META
+                                    DATA
+                                </th>
                             </tr>
                             <tr>
                                 <th style="color: black; font-weight: bold; padding-top: 20px">BASIC BLOCK</th>
@@ -223,6 +228,7 @@
                                         var base_panel = document.createElement("section");
                                         base_panel.id = "panel";
                                         base_panel.className = "panel";
+                                        base_panel.style.height = "12.8rem";
                                         document.getElementById("card").appendChild(base_panel);
 
                                         var base_panel_body = document.createElement("div");
@@ -429,10 +435,12 @@
                                                     var xor = new_row.insertCell(7);
 
                                                     /* 열에 데이터 입력 */
+                                                    var bbh_value = json_res[standard][target][2];
                                                     /*filename.innerHTML = json_res[standard][target][0].toUpperCase();*/
-                                                    filename.innerHTML = target.substring(0 , length).toUpperCase() + "...";
-                                                    bbh.innerHTML = json_res[standard][target][2];
-                                                    constvalue.innerHTML = json_res[standard][target][3];
+                                                    filename.innerHTML = target.substring(0, length).toUpperCase() + "...";
+                                                    bbh.innerHTML = Math.floor(bbh_value * 10000) / 100;
+                                                    var const_value = json_res[standard][target][3];
+                                                    constvalue.innerHTML = Math.floor(const_value * 10000) / 100;
                                                     section.innerHTML = json_res[standard][target][4];
                                                     cert.innerHTML = json_res[standard][target][5];
                                                     pdb.innerHTML = json_res[standard][target][6];
@@ -448,9 +456,11 @@
                                                         console.log(typeof json_res[standard][target][data])
                                                     }
                                                     */
-                                                    var basic_block = json_res[standard][target][2];
-                                                    var constant = json_res[standard][target][3];
-                                                    var f_name = json_res[standard][target][0];
+                                                    var basic_block_value = json_res[standard][target][2];
+                                                    var basic_block = Math.floor(basic_block_value * 10000) / 100;
+                                                    var constant_value = json_res[standard][target][3];
+                                                    var constant = Math.floor(constant_value * 10000) / 100;
+                                                    //var f_name = json_res[standard][target][0];
                                                     var pe_all_score = json_res[standard][target][9];
                                                     height = [basic_block + "%", constant + "%", pe_all_score + "%"];
 
