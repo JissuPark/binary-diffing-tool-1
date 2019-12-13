@@ -12,53 +12,28 @@
 <style>
     * {
         font-family: 'Poppins', sans-serif;
-
     }
-
     .graph-outer {
         height: 100%;
         width: 100%;
         overflow: hidden;
     }
-
     .graph-inner {
         width: 100%;
         height: 100%;
         overflow-x: scroll;
         display: flex;
     }
-
     .paint {
         display: block;
         width: 100%;
         height: 95%;
     }
-
-
-    div.groot-4 {
-        margin: 5px;
-        /*width: 300px;*/
-        border: 3px solid grey;
-    }
-
-    div.groot-3 {
-        margin: 5px;
-        /*width: 33%;*/
-        border: 3px solid grey;
-    }
-
-    div.groot-2 {
-        margin: 5px;
-        /*width: 50%;*/
-        border: 3px solid grey;
-    }
-
     div.blur {
         height: 100%;
         background-color: black;
         opacity: 0.4;
     }
-
     p.blur {
         margin-top: 60%;
         text-align: center;
@@ -66,18 +41,12 @@
         font-weight: bold;
         color: ghostwhite;
     }
-
-    div.seonea {
-        height: 100%;
-    }
-
     p.seonea {
-        margin-top: 60%;
+        margin-top: 50%;
         text-align: center;
         font-size: xx-large;
         font-weight: bold;
     }
-
 </style>
 {% endblock head %}
 
@@ -97,18 +66,13 @@
 <script type="text/javascript" src="https://unpkg.com/vis-network@6.4.6/dist/vis-network.js"></script>
 <script>
     (function ($) {
-
         var cfgdata = "{{cfg}}";
         var text_res = cfgdata.replace(/\n/gi, '\\n').replace(/&#39;/gi, '"').replace(/\t/gi, '\\t');
         var json_res = JSON.parse(text_res);
-
         var matchdata = "{{matching}}";
         var match_text = matchdata.replace(/\n/gi, "\\n").replace(/\t/gi, "\\t").replace(/&#39;/gi, '"');
         var match_json = JSON.parse(match_text);
-
         var postoffice = {};
-
-
         var pickerclass = document.getElementsByClassName("selectpicker");
         for (var picker = 0; picker < pickerclass.length; picker++) {
             for (var standard in match_json) {
@@ -116,27 +80,22 @@
                 option.value = standard;
                 option.text = standard;
                 pickerclass.item(picker).appendChild(option);
-
             }
         }
-
         /* 함수이름 버튼 만드는 함수 */
         function makebt(file, fname) {
             var li = document.createElement("li");
             li.id = "li_" + fname;
-
             li.onclick = function () {
                 $draw(file, fname);
             }; //button click 하면 함수 그려주기
             document.getElementById('func_menu').appendChild(li);
-
             var a = document.createElement("a");
             a.id = "a_" + fname;
             a.className = "sidenav-item-link";
             a.textContent = fname;
             document.getElementById("li_" + fname).appendChild(a);
         }
-
         /* 그래프 그리기 위한 변수 생성 */
         function boxing(array, branches) {
             var nodes = [];
@@ -155,7 +114,6 @@
                 nodes.push(node_dict);
             }
             var Nodes = new vis.DataSet(nodes);
-
             var edges = [];
             for (var branch in branches) {
                 var start = [];
@@ -181,11 +139,9 @@
                     edges.push(edge_dict);
                 }
             }
-
             var Edges = new vis.DataSet(edges);
             return [Nodes, Edges];
         }
-
         /* 버튼 클릭하면 데이터 변하게 하는 함수 */
         $("#select-oper").click(function () {
             $("#func_menu").empty();
@@ -209,8 +165,9 @@
             $("#select_target").find('[value="' + selected + '"]').prop('disabled', true);// 기준과 같은 옵션 disable
             $("#select_target").selectpicker('refresh');                                // 새로고침
         });
-
         var network = [];
+        var pos_old = '';
+        var pos_new = '';
         /* 그래프 그리는 함수 */
         $draw = function (file, fname) {
             //그림을 그릴 부분을 먼저 지워준다. (안 지우면 계속 추가됨)
@@ -282,24 +239,70 @@
             var graph_cnt = targetlist.length;
             for (var index = 0; index < graph_cnt; index++) {
                 //그릴 그래프가 4개 이상인지 이하인지 확인
-                var div = document.createElement('div');
-                div.id = "graph_" + index;
+                var div_box = document.createElement('div');
+                div_box.id = "div_" + index;
                 if (graph_cnt > 3) {
-                    div.className = "col-xl-3 col-sm-6";
+                    div_box.className = "col-xl-3 col-sm-6";
                 } else {
-                    div.className = "col-xl-4 col-lg-6 col-12";
+                    div_box.className = "col-xl-4 col-lg-6 col-12";
                 }
                 //기준은 위치 고정
                 if (index == 0) {
-                    div.setAttribute("style", "position: sticky; left:0px; border: 3px solid red;  background-color:white; z-index: " + (graph_cnt - 1) + ";");
+                    div_box.setAttribute("style", "position: sticky; left:0px; border: 3px solid #fe5461;  background-color:white; z-index: " + (graph_cnt - 1) + ";");
                 } else {
-                    div.setAttribute("style", "border: 3px solid grey;");
+                    div_box.setAttribute("style", "border: 3px solid black;");
                 }
-                document.getElementById('test').appendChild(div);
-
-
+                document.getElementById('test').appendChild(div_box);
+                // 파일명, 함수명, 유사도 추가
+                var name_label = document.createElement('div');
+                name_label.id = 'name_' + index;
+                if (index == 0){name_label.style.borderBottom = " 2px solid #fe5461";}
+                else{name_label.style.borderBottom = " 2px solid black";}
+                name_label.style.overflow = "hidden";
+                name_label.style.whiteSpace = "nowrap";
+                name_label.style.textOverflow = "ellipsis";
+                var div_width = document.getElementById('div_' + index).offsetWidth - 20;
+                name_label.style.width = div_width;
+                name_label.style.display = "block";
+                name_label.style.padding = "0.2rem";
+                document.getElementById('div_' + index).appendChild(name_label);
+                //파일구분 뱃지
+                var filename_info = document.createElement("span");
+                if (index == 0) {
+                    filename_info.id = "base_info";
+                    filename_info.className = 'badge badge-danger';
+                    filename_info.textContent = "base file";
+                } else {
+                    filename_info.id = "target_info_" + index;
+                    filename_info.className = 'badge badge-dark';
+                    filename_info.textContent = "target file";
+                }
+                filename_info.style.marginLeft = "2px";
+                filename_info.style.padding = "0.2rem";
+                filename_info.style.fontSize = "100";
+                document.getElementById("name_" + index).appendChild(filename_info);
+                var br = document.createElement('br');
+                document.getElementById("name_" + index).appendChild(br);
+                //파일 명
+                var filename = document.createElement("span");
+                filename.textContent = "FileName : "+ targetlist[index][0];
+                document.getElementById("name_" + index).appendChild(filename);
+                var br = document.createElement('br');
+                document.getElementById("name_" + index).appendChild(br);
+                //함수 명
+                var funcname = document.createElement('span');
+                funcname.textContent = "Function : " + targetlist[index][1];
+                document.getElementById("name_" + index).appendChild(funcname);
+                //그림그릴 장소 생성
+                var div = document.createElement('div');
+                div.id = "graph_" + index;
+                var hei = document.getElementById('div_'+index).offsetHeight - document.getElementById('name_'+index).offsetHeight-10;
+                div.style.width = '100%';
+                div.style.height = hei+"px";console.log(hei);
+                document.getElementById('div_' + index).appendChild(div);
+                //매칭 함수가 없는 경우 따로 표시
                 if (targetlist[index][1] == 'none') {
-                    document.getElementById('graph_' + index).setAttribute('class', 'groot-3 saonea');
+                    document.getElementById('graph_' + index).setAttribute('style', 'height: 50%;');
                     var p = document.createElement('p');
                     p.className = 'seonea';
                     p.innerText = "There is not matched function.";
@@ -310,9 +313,7 @@
                     nodes: postoffice[targetlist[index][0]][targetlist[index][1]][0],
                     edges: postoffice[targetlist[index][0]][targetlist[index][1]][1]
                 };
-
                 var options = {
-                    // height: '90%',
                     layout: {
                         hierarchical: {
                             nodeSpacing: 200,
@@ -322,6 +323,11 @@
                             direction: "UD",
                             sortMethod: 'directed'
                         }
+                    },
+                    interaction: {
+                        dragNodes: true,
+                        dragView: true,
+                        zoomView: true
                     }
                     // physics: {
                     //     hierarchicalRepulsion: {
@@ -333,37 +339,36 @@
                 };
                 var canvas_ = document.getElementById('graph_' + index);
                 network[index] = new vis.Network(canvas_, data, options);
-
-                // network[index].on('zoom', function (properties) {
-                //     for (var i = 0; i < network.length; i++) {
-                //         //여기다 드래그 이벤트 적용
-                //         network[i].
-                //     }
-                // });
-
-                network[index].on('dragEnd', function (properties) {
-                    var all_canvas = $('canvas');
-                    for (var i = 0; i < all_canvas.length; i++) {
-                        //여기다 드래그 이벤트 적용
-
-                        // var canvas_x = all_canvas[i].offsetLeft;console.log(canvas_x);
-                        // var canvas_y = all_canvas[i].offsetTop;console.log(canvas_y);
-                        // var pos_x = properties.pointer.canvas.x;console.log(pos_x);
-                        // var pos_y = properties.pointer.canvas.y;console.log(pos_y);
-                        // all_canvas[i].animate({offsetTop: pos_y},100);
-                        // all_canvas[i].animate({offsetLeft: pos_x},100);
+                //zoom 이벤트
+                network[index].on('zoom', function () {
+                    var thisfile = this.body.container.id.split('_')[1];
+                    var thisscale = this.body.view.scale;
+                    var thispos = network[thisfile].getViewPosition();
+                    for (curfile in network) {
+                        options = {
+                            scale: thisscale,
+                            position: {x: thispos.x, y: thispos.y}
+                        };
+                        network[curfile].moveTo(options);
                     }
                 });
-
-                // 파일명, 함수명, 유사도 추가
-                var name_label = document.createElement('p');
-                name_label.innerText = targetlist[index][0] + '\n' + targetlist[index][1];
-                name_label.setAttribute('style', 'position: absolute; word-wrap: break-word; text-overflow: ellipsis; width: 90%; z-index: 2; top: 3px;');
-                document.getElementById('graph_' + index).appendChild(name_label);
-                //////////////////////////
+                //drag 이벤트
+                network[index].on('dragStart', function () {
+                    var thisfile = this.body.container.id.split('_')[1];
+                    pos_old = network[thisfile].getViewPosition();
+                });
+                network[index].on('dragEnd', function () {
+                    var thisfile = this.body.container.id.split('_')[1];
+                    pos_new = network[thisfile].getViewPosition();
+                    for (curfile in network) {
+                        options = {
+                            position: {x: pos_new.x, y: pos_new.y}
+                        };
+                        network[curfile].moveTo(options);
+                    }
+                });
             }
         };
-
         var index = 0;
         var first_file = "";
         var first_func = "";
@@ -382,7 +387,6 @@
                 for (var startaddr in json_res[file]['func_name'][funcname]) {
                     if (startaddr != "flow_opString" && startaddr != "flow_constants" && startaddr != "flow_branches") {
                         var block = startaddr + "\n";
-
                         for (var curaddr in json_res[file]['func_name'][funcname][startaddr]['disasms']) {
                             block = block + json_res[file]['func_name'][funcname][startaddr]['disasms'][curaddr] + '\n';
                         }
@@ -399,18 +403,14 @@
             index++;
             postoffice[json_res[file]['file_name']] = boxes;
         }
-
         // 페이지가 처음 뜰 때 기준은 처음으로 대상은 전부 선택해서 보여주도록
         var first_base = $("#select_base").find('option:first');
         first_base.attr('selected', 'selected');
         $('#select_target option').prop('selected', true);
         $('#select_target').find('[value="' + first_base.text() + '"]').prop('selected', false);
         $('#select_target').find('[value="' + first_base.text() + '"]').prop('disabled', true);
-
         $draw(first_file, first_func);
     })(jQuery);
-
-
 </script>
 {% else %}
 <h2>Nope!</h2>
