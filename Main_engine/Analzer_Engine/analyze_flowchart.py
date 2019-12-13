@@ -24,7 +24,7 @@ class AnalyzeFlowchart:
 
         file_name = bloc_dict["file_name"]
         file_type = bloc_dict["type"]
-        print(f'[info] {file_name} WhiteList Filtering & Block hash/constants SET Create')
+        #print(f'[info] {file_name} WhiteList Filtering & Block hash/constants SET Create')
         block_hash_dic = dict()
         matched_dic = dict()
         block_constants_dic = dict()
@@ -127,7 +127,7 @@ class AnalyzeFlowchart:
         s_hash_dict = copy.deepcopy(s_flow_data)
         t_hash_dict = copy.deepcopy(t_flow_data)
 
-        print(f'[info] Compare Block hash SET ({s_name} ↔ {t_name})')
+        #print(f'[info] Compare Block hash SET ({s_name} ↔ {t_name})')
         matched_block_dic = dict()
 
         for s_fname, s_valueSet in s_hash_dict[s_name]['bbh'].items():
