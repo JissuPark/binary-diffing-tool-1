@@ -171,13 +171,11 @@ def packer_check(queue, pack_path, unpack_path):
 
         else:
             yara_tag=os.path.join(pack_path, yara_match_result)[:-1]
-            print(yara_tag)
+            #print(yara_tag)
             if not (os.path.isdir(yara_tag)): os.makedirs(yara_tag)
             yara_tag_sample_path=os.path.join(yara_tag,sample_basename)
-            print(yara_tag_sample_path)
+            #print(yara_tag_sample_path)
             shutil.copy(sample_path, yara_tag_sample_path)
-            #os.remove(sample_path)
-            print('aaaaaaaaaaaaaa')
             continue
 
     return
