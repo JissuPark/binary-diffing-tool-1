@@ -42,7 +42,7 @@ def get_bbh_similarity(_s_dict, correction_score=0):
     # print(f'stand_hash_count ::: {stand_hash_count}')
     # print(f'기준 바이너리 hash 수 : {stand_hash_count}')
 
-    return round((true_count / stand_hash_count), 2)
+    return (true_count / stand_hash_count)
 
 def get_bb_const_similarity(_dict):
 
@@ -59,7 +59,7 @@ def get_bb_const_similarity(_dict):
     # print(f'[debug] -> -> -> -> const sim = ({total_sim}/{total_count}) : {float(str(total_sim / total_count)[:4])}')
     # print(f'ㄴ[debug] get const similarity time -> {timeit.default_timer() - st}')
     # print(" ")
-    return float(str(total_sim / total_count)[:4])
+    return (total_sim / total_count)
 
 
 def get_data_similarity(self, stand_data, target_data):
