@@ -12,34 +12,28 @@
 <style>
     * {
         font-family: 'Poppins', sans-serif;
-
     }
-
     .graph-outer {
         height: 100%;
         width: 100%;
         overflow: hidden;
     }
-
     .graph-inner {
         width: 100%;
         height: 100%;
         overflow-x: scroll;
         display: flex;
     }
-
     .paint {
         display: block;
         width: 100%;
         height: 95%;
     }
-
     div.blur {
         height: 100%;
         background-color: black;
         opacity: 0.4;
     }
-
     p.blur {
         margin-top: 60%;
         text-align: center;
@@ -47,14 +41,12 @@
         font-weight: bold;
         color: ghostwhite;
     }
-
     p.seonea {
         margin-top: 50%;
         text-align: center;
         font-size: xx-large;
         font-weight: bold;
     }
-
 </style>
 {% endblock head %}
 
@@ -74,18 +66,13 @@
 <script type="text/javascript" src="https://unpkg.com/vis-network@6.4.6/dist/vis-network.js"></script>
 <script>
     (function ($) {
-
         var cfgdata = "{{cfg}}";
         var text_res = cfgdata.replace(/\n/gi, '\\n').replace(/&#39;/gi, '"').replace(/\t/gi, '\\t');
         var json_res = JSON.parse(text_res);
-
         var matchdata = "{{matching}}";
         var match_text = matchdata.replace(/\n/gi, "\\n").replace(/\t/gi, "\\t").replace(/&#39;/gi, '"');
         var match_json = JSON.parse(match_text);
-
         var postoffice = {};
-
-
         var pickerclass = document.getElementsByClassName("selectpicker");
         for (var picker = 0; picker < pickerclass.length; picker++) {
             for (var standard in match_json) {
@@ -93,27 +80,22 @@
                 option.value = standard;
                 option.text = standard;
                 pickerclass.item(picker).appendChild(option);
-
             }
         }
-
         /* 함수이름 버튼 만드는 함수 */
         function makebt(file, fname) {
             var li = document.createElement("li");
             li.id = "li_" + fname;
-
             li.onclick = function () {
                 $draw(file, fname);
             }; //button click 하면 함수 그려주기
             document.getElementById('func_menu').appendChild(li);
-
             var a = document.createElement("a");
             a.id = "a_" + fname;
             a.className = "sidenav-item-link";
             a.textContent = fname;
             document.getElementById("li_" + fname).appendChild(a);
         }
-
         /* 그래프 그리기 위한 변수 생성 */
         function boxing(array, branches) {
             var nodes = [];
@@ -132,7 +114,6 @@
                 nodes.push(node_dict);
             }
             var Nodes = new vis.DataSet(nodes);
-
             var edges = [];
             for (var branch in branches) {
                 var start = [];
@@ -158,11 +139,9 @@
                     edges.push(edge_dict);
                 }
             }
-
             var Edges = new vis.DataSet(edges);
             return [Nodes, Edges];
         }
-
         /* 버튼 클릭하면 데이터 변하게 하는 함수 */
         $("#select-oper").click(function () {
             $("#func_menu").empty();
@@ -186,7 +165,6 @@
             $("#select_target").find('[value="' + selected + '"]').prop('disabled', true);// 기준과 같은 옵션 disable
             $("#select_target").selectpicker('refresh');                                // 새로고침
         });
-
         var network = [];
         var pos_old = '';
         var pos_new = '';
@@ -257,11 +235,9 @@
                     }
                 }
             }
-
             //그릴거야
             var graph_cnt = targetlist.length;
             for (var index = 0; index < graph_cnt; index++) {
-
                 //그릴 그래프가 4개 이상인지 이하인지 확인
                 var div_box = document.createElement('div');
                 div_box.id = "div_" + index;
@@ -270,7 +246,6 @@
                 } else {
                     div_box.className = "col-xl-4 col-lg-6 col-12";
                 }
-
                 //기준은 위치 고정
                 if (index == 0) {
                     div_box.setAttribute("style", "position: sticky; left:0px; border: 3px solid #fe5461;  background-color:white; z-index: " + (graph_cnt - 1) + ";");
@@ -278,7 +253,6 @@
                     div_box.setAttribute("style", "border: 3px solid black;");
                 }
                 document.getElementById('test').appendChild(div_box);
-
                 // 파일명, 함수명, 유사도 추가
                 var name_label = document.createElement('div');
                 name_label.id = 'name_' + index;
@@ -292,7 +266,6 @@
                 name_label.style.display = "block";
                 name_label.style.padding = "0.2rem";
                 document.getElementById('div_' + index).appendChild(name_label);
-
                 //파일구분 뱃지
                 var filename_info = document.createElement("span");
                 if (index == 0) {
@@ -310,19 +283,16 @@
                 document.getElementById("name_" + index).appendChild(filename_info);
                 var br = document.createElement('br');
                 document.getElementById("name_" + index).appendChild(br);
-
                 //파일 명
                 var filename = document.createElement("span");
                 filename.textContent = "FileName : "+ targetlist[index][0];
                 document.getElementById("name_" + index).appendChild(filename);
                 var br = document.createElement('br');
                 document.getElementById("name_" + index).appendChild(br);
-
                 //함수 명
                 var funcname = document.createElement('span');
                 funcname.textContent = "Function : " + targetlist[index][1];
                 document.getElementById("name_" + index).appendChild(funcname);
-
                 //그림그릴 장소 생성
                 var div = document.createElement('div');
                 div.id = "graph_" + index;
@@ -330,7 +300,6 @@
                 div.style.width = '100%';
                 div.style.height = hei+"px";console.log(hei);
                 document.getElementById('div_' + index).appendChild(div);
-
                 //매칭 함수가 없는 경우 따로 표시
                 if (targetlist[index][1] == 'none') {
                     document.getElementById('graph_' + index).setAttribute('style', 'height: 50%;');
@@ -400,7 +369,6 @@
                 });
             }
         };
-
         var index = 0;
         var first_file = "";
         var first_func = "";
@@ -419,7 +387,6 @@
                 for (var startaddr in json_res[file]['func_name'][funcname]) {
                     if (startaddr != "flow_opString" && startaddr != "flow_constants" && startaddr != "flow_branches") {
                         var block = startaddr + "\n";
-
                         for (var curaddr in json_res[file]['func_name'][funcname][startaddr]['disasms']) {
                             block = block + json_res[file]['func_name'][funcname][startaddr]['disasms'][curaddr] + '\n';
                         }
@@ -436,18 +403,14 @@
             index++;
             postoffice[json_res[file]['file_name']] = boxes;
         }
-
         // 페이지가 처음 뜰 때 기준은 처음으로 대상은 전부 선택해서 보여주도록
         var first_base = $("#select_base").find('option:first');
         first_base.attr('selected', 'selected');
         $('#select_target option').prop('selected', true);
         $('#select_target').find('[value="' + first_base.text() + '"]').prop('selected', false);
         $('#select_target').find('[value="' + first_base.text() + '"]').prop('disabled', true);
-
         $draw(first_file, first_func);
     })(jQuery);
-
-
 </script>
 {% else %}
 <h2>Nope!</h2>

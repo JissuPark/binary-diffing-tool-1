@@ -113,15 +113,15 @@
      class="col-12">
     <input type="submit" value="DIFFING" onclick="location.href='{% url 'loading' %}'">
 
-    <input type="submit" value="RECENT SCAN" onclick="location.href='{% url 'result' %}'">
-
 </div>
 
 <!-- section end -->
 <!-- Footer -->
-<footer>
-    <p style="text-align: center; font-size: 1.2rem; color: #cacaca"><strong>About</strong></p>
-    <p style="text-align: center; font-size: 0.9rem; color: #cacaca">© 2019 Best of the Best Team. Breakers – WinBinary
+<footer style="text-align: center">
+    <span style="text-align: center; font-size: 1.2rem; color: #cacaca; cursor: pointer" onclick="location.href='{% url 'result' %}'"><strong>RECENT SCAN | </strong>
+    <span style="text-align: center; font-size: 1.2rem; color: #cacaca"><strong>About</strong></span>
+        </span>
+    <p style="text-align: center; font-size: 0.9rem; color: #cacaca; margin-top: 1rem">© 2019 Best of the Best Team. Breakers – WinBinary
         Diffing Tools v0.1
         Beta. All Rights Reserved</p>
 </footer>
