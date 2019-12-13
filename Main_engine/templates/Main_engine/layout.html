@@ -195,8 +195,8 @@
                     </li>
                     <!-------------------------------------------------------------------->
                     <li class="has-sub">
-                        <a aria-controls="cg" aria-expanded="false" class="sidenav-item-link"
-                           data-target="#cg"
+                        <a aria-controls="cg_menu" aria-expanded="false" class="sidenav-item-link"
+                           data-target="#cg_menu"
                            data-toggle="collapse" href="javascript:void(0)">
                             <i class="mdi mdi-lan"></i> <!--mdi 모양-->
                             <span class="nav-text" onclick="window.location='cg'">CG</span>
@@ -205,19 +205,19 @@
                         </a>
 
                         <ul class="collapse" data-parent="#sidebar-menu"
-                            id="cg">
+                            id="cg_menu">
 
                             <div class="sub-menu"
                                  style="background: rgba(10,10,10,0.7)">
                                 <li class="has-sub">
-                                    <a aria-controls="authentication"
+                                    <a aria-controls="CG"
                                        aria-expanded="false" class="sidenav-item-link"
-                                       data-target="#authentication"
+                                       data-target="#CG"
                                        data-toggle="collapse" href="javascript:void(0)">
                                         <span class="nav-text">CG_Function</span><b
                                             class="caret"></b>
                                     </a>
-                                    <ul class="collapse" id="authentication">
+                                    <ul class="collapse" id="CG">
                                         <div class="sub-menu" id="nav-cg"
                                              style="background: rgba(10,10,10,0.7)"></div>
                                     </ul>
@@ -275,7 +275,7 @@
             </nav>
         </header>
 
-        <div class="content-wrapper" style="background-color: rgba(255,255,255,0.8); color: rgba(0,0,0,0.8)">
+        <div id= "wrapper" class="content-wrapper" style="background-color: rgba(255,255,255,0.8); color: rgba(0,0,0,0.8)">
             <div class="content" style="padding-top: 20px">
                 {% block section %}
                 {% endblock %}

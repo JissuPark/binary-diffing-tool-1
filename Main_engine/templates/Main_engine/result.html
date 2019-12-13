@@ -111,7 +111,7 @@
     <h4 id="scoretable" class="mt-2 mb-3" style="font-weight: bold;">DETAIL</h4>
     <hr class="my-hr3">
 
-    <div class="container-fluid col-12">
+    <div class="container-fluid col-8" style="float:left">
         <div class="card pl-4 pr-4">
             <div class="table-responsive ">
                 {% csrf_token %}
@@ -121,18 +121,18 @@
                                style="text-align: center; font-family: 'Poppins', sans-serif;">
                             <thead>
                             <tr>
-                                <th rowspan="2" align=center style="color: black; font-weight: bold">FILENAME</th>
-                                <th colspan="2" style="color: black; font-weight: bold">ALGORITHM</th>
-                                <th colspan="5" style="color: black; font-weight: bold">PE META DATA</th>
+                                <th rowspan="2" align=center style="color: black; font-weight: bold; padding-top: 20px">FILENAME</th>
+                                <th colspan="2" style="color: black; font-weight: bold; padding-top: 20px">ALGORITHM</th>
+                                <th colspan="5" style="color: black; font-weight: bold;  padding-top: 20px">PE META DATA</th>
                             </tr>
                             <tr>
-                                <th style="color: black; font-weight: bold">BASIC BLOCK</th>
-                                <th style="color: black; font-weight: bold">CONSTANT</th>
-                                <th style="color: black; font-weight: bold">SECTION DATA</th>
-                                <th style="color: black; font-weight: bold">CERTIFICATE</th>
-                                <th style="color: black; font-weight: bold">PDB</th>
-                                <th style="color: black; font-weight: bold">IMPHASH</th>
-                                <th style="color: black; font-weight: bold">RICH HEADER</th>
+                                <th style="color: black; font-weight: bold; padding-top: 20px">BASIC BLOCK</th>
+                                <th style="color: black; font-weight: bold; padding-top: 20px">CONSTANT</th>
+                                <th style="color: black; font-weight: bold; padding-top: 20px">SECTION DATA</th>
+                                <th style="color: black; font-weight: bold; padding-top: 20px">CERTIFICATE</th>
+                                <th style="color: black; font-weight: bold; padding-top: 20px">PDB</th>
+                                <th style="color: black; font-weight: bold; padding-top: 20px">IMPHASH</th>
+                                <th style="color: black; font-weight: bold; padding-top: 20px">RICH HEADER</th>
                                 <!-- <th>file_info</th> -->
                             </tr>
                             </thead>
@@ -268,7 +268,7 @@
                                                 var base_file_name = document.createElement("span");
                                                 var file_name_text = base_file_name.textContent = standard;
                                                 //console.log(file_name_text); -> ok
-                                                base_file_name.style.fontSize = "12.7px";
+                                                base_file_name.style.fontSize = "12.5px";
                                                 if (file_name_text.length > length) {
                                                     base_file_name.setAttribute("data-toggle", "tooltip");
                                                     base_file_name.setAttribute("data-placement", "bottom");
@@ -301,25 +301,6 @@
                                                 document.getElementById("top_stats_panel").appendChild(base_file_size);
                                                 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-                                                var base_file_br = document.createElement("br");
-                                                document.getElementById("top_stats_panel").appendChild(base_file_br);
-
-                                                var base_type_info = document.createElement("span");
-                                                base_type_info.className = "badge badge-warning";
-                                                base_type_info.textContent = "file type";
-                                                base_type_info.style.color = "black";
-                                                base_type_info.style.marginTop = "7px";
-                                                base_type_info.style.marginRight = "7px";
-                                                base_type_info.style.padding = "0.2rem";
-                                                base_type_info.style.fontWeight = "600";
-                                                document.getElementById("top_stats_panel").appendChild(base_type_info);
-
-                                                var base_file_type = document.createElement("span");
-                                                base_file_type.textContent = json_pe[fileName]['file_type'];
-                                                base_file_type.style.fontSize = "12.7px";
-                                                document.getElementById("top_stats_panel").appendChild(base_file_type);
-                                                //////////////////////////////////////////////////////////////////////////////////////////////////////////
-
                                                 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                                                 var base_type_br = document.createElement("br");
@@ -337,7 +318,7 @@
 
                                                 var base_sha256 = document.createElement("span");
                                                 var sha256_text = base_sha256.textContent = json_pe[fileName]['SHA-256 hash'];
-                                                base_sha256.style.fontSize = "12.7px";
+                                                base_sha256.style.fontSize = "12.5px";
                                                 if (sha256_text.length > length) {
                                                     base_sha256.setAttribute("data-toggle", "tooltip");
                                                     base_sha256.setAttribute("data-placement", "bottom");
@@ -366,7 +347,7 @@
 
                                                 var base_md5 = document.createElement("span");
                                                 var md5_text = base_md5.textContent = json_pe[fileName]['MD5 hash'];
-                                                base_md5.style.fontSize = "12.7px";
+                                                base_md5.style.fontSize = "12.5px";
                                                 if (md5_text.length > length) {
                                                     base_md5.setAttribute("data-toggle", "tooltip");
                                                     base_md5.setAttribute("data-placement", "bottom");
@@ -395,7 +376,7 @@
 
                                                 var base_ssdeep_text = document.createElement("span");
                                                 var ssdeep_text = base_ssdeep_text.textContent = json_pe[fileName]['SSDEEP hash'];
-                                                base_ssdeep_text.style.fontSize = "12.7px";
+                                                base_ssdeep_text.style.fontSize = "12.5px";
                                                 if (ssdeep_text.length > length) {
                                                     base_ssdeep_text.setAttribute("data-toggle", "tooltip");
                                                     base_ssdeep_text.setAttribute("data-placement", "bottom");
@@ -423,7 +404,7 @@
 
                                                 var base_timestamp_text = document.createElement("span");
                                                 base_timestamp_text.textContent = json_pe[fileName]['time_date_stamp'];
-                                                base_timestamp_text.style.fontSize = "12.7px";
+                                                base_timestamp_text.style.fontSize = "12.5px";
                                                 document.getElementById("top_stats_panel").appendChild(base_timestamp_text);
 
                                             }
@@ -449,7 +430,7 @@
 
                                                     /* 열에 데이터 입력 */
                                                     /*filename.innerHTML = json_res[standard][target][0].toUpperCase();*/
-                                                    filename.innerHTML = target.toUpperCase();
+                                                    filename.innerHTML = target.substring(0 , length).toUpperCase() + "...";
                                                     bbh.innerHTML = json_res[standard][target][2] * 100;
                                                     constvalue.innerHTML = json_res[standard][target][3] * 100;
                                                     section.innerHTML = json_res[standard][target][4];
@@ -588,7 +569,7 @@
 
                         $(document).ready(function () {
                             /*그래프 카드 넘어가는 부분*/
-                            var width = $("#col").innerWidth();
+                            var width = $("#col").width();
                             console.log(width);
                             $("#prev").click(function () {
                                 console.log("left" + $("#test").scrollLeft() + "=>" + width);
@@ -599,6 +580,8 @@
                                 $("#test").animate({scrollLeft: $("#test").scrollLeft() + width}, 800);
                             });
                         })
+
+
                     </script>
 
                     </div>
