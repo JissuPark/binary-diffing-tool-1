@@ -108,7 +108,7 @@ def exe_list_to_queue(PE_D_PATH, q):
 
 
 def exec_idat(EXE_F_PATH, pe_flag):
-    print(pe_flag)
+    #print(pe_flag)
     # print(f"binary::{EXE_F_PATH}")
     if pe_flag == IDAT or pe_flag == IDAT64:
         # -A :
