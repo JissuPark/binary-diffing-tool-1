@@ -126,35 +126,35 @@
         <h3 align="left">Signature Info</h3>
     </div>
     <div class="detail">
-        <table height=220px id="fileinfo_table" style="margin-left: 20px; margin-top: 10px; width: 15%">
+        <table height=220px id="fileinfo_table" style="margin-left: 20px; margin-top: 10px;">
 
             <tbody>
             <div style="margin-left: 10px; margin-top: 15px;">
                 <h4>File Version Information</h4>
             </div>
             <tr id="Copyright">
-                <th>Copyright</th>
+                <th style="padding-right: 20px">Copyright</th>
             </tr>
             <tr id="Product">
-                <th>Product</th>
+                <th style="padding-right: 20px">Product</th>
             </tr>
             <tr id="Description">
-                <th>Description</th>
+                <th style="padding-right: 20px">Description</th>
             </tr>
             <tr id="Original_Name">
-                <th>Original Name</th>
+                <th style="padding-right: 20px">Original Name</th>
             </tr>
             <tr id="Internal_Name">
-                <th>Internal Name</th>
+                <th style="padding-right: 20px">Internal Name</th>
             </tr>
             <tr id="File_Version">
-                <th>File Version</th>
+                <th style="padding-right: 20px">File Version</th>
             </tr>
             <tr id="Product Version">
-                <th>Product Version</th>
+                <th style="padding-right: 20px">Product Version</th>
             </tr>
             <tr id="Comments">
-                <th>Comments</th>
+                <th style="padding-right: 20px">Comments</th>
             </tr>
             </tbody>
         </table>
@@ -238,21 +238,21 @@
     </div>
     <div class="detail">
 
-        <table height=100px style="margin-left: 20px; margin-top: 10px; width: 600px">
+        <table style="margin-left: 20px; margin-top: 10px; height: 100px; white-space: nowrap;">
             <div style="margin-left: 10px; margin-top: 15px;">
                 <h4>Header</h4>
             </div>
             <tr id="Target Machine">
-                <th>Target Machine</th>
+                <th style="padding-right: 20px">Target Machine</th>
             </tr>
             <tr id="Compilation Time">
-                <th>Compilation Time</th>
+                <th style="padding-right: 20px">Compilation Time</th>
             </tr>
             <tr id="Entry Point">
-                <th>Entry Point</th>
+                <th style="padding-right: 20px">Entry Point</th>
             </tr>
             <tr id="Contained Sections">
-                <th>Contained Sections</th>
+                <th style="padding-right: 20px">Contained Sections</th>
             </tr>
         </table>
         <script>
@@ -304,18 +304,18 @@
 <!-- pe_section -->
 <div id="section" style="padding: 10px">
     <div class="detail">
-        <table height=160px id="section_table" style="margin-left: 20px;margin-top: 15px;" width=1000px>
+        <table height=160px id="section_table" style="margin-left: 20px;margin-top: 15px;">
             <thead>
             <div style="margin-top: 25px; margin-left: 10px;">
                 <h4>Sections</h4>
             </div>
             <tr>
-                <th>Name</th>
-                <th>Virtual Address</th>
-                <th>Virtual Size</th>
-                <th>Raw Size</th>
-                <th>Entropy</th>
-                <th>MD5</th>
+                <th style="padding-right: 40px">Name</th>
+                <th style="padding-right: 40px">Virtual Address</th>
+                <th style="padding-right: 40px">Virtual Size</th>
+                <th style="padding-right: 40px">Raw Size</th>
+                <th style="padding-right: 100px">Entropy</th>
+                <th style="padding-right: 40px">MD5</th>
             </tr>
             </thead>
         </table>
@@ -374,14 +374,14 @@
 <!-- pe_rsrc_count -->
 <div id="rsrc_count" style="padding: 10px">
     <div class="detail">
-        <table height=160px id="contained_resource_table" style="margin-left: 20px;margin-top: 10px;" width=200px>
+        <table height=160px id="contained_resource_table" style="margin-left: 20px;margin-top: 10px;">
             <thead>
             <div style="margin-top: 20px; margin-left: 10px;">
                 <h4 top=50px>Contained Resources By Type</h4>
             </div>
             <tr>
-                <th>Resource Name</th>
-                <th>Count</th>
+                <th style="padding-right: 40px">Resource Name</th>
+                <th style="padding-right: 40px">Count</th>
             </tr>
             </thead>
         </table>
@@ -444,15 +444,14 @@
 <!-- pe_rsrc_lang -->
 <div style="padding: 10px">
     <div class="detail">
-        <table height=160px id="contained_resource_language_table" style="margin-left: 20px;margin-top: 10px;"
-               width=230px>
+        <table height=160px id="contained_resource_language_table" style="margin-left: 20px;margin-top: 10px; width: 400px">
             <thead>
             <div style="margin-top: 20px;margin-left: 10px;">
                 <h4 top=50px>Contained Resources By Language</h4>
             </div>
             <tr>
-                <th>Resource Language</th>
-                <th>Count</th>
+                <th style="padding-right: 40px">Resource Language</th>
+                <th style="padding-right: 40px">Count</th>
             </tr>
             </thead>
         </table>
@@ -503,9 +502,11 @@
             <div style="margin-top: 20px; margin-left: 10px;">
                 <h4>Contained Resources</h4>
             </div>
+
             <tr>
-                <th style="width: 600px">SHA-256</th>
-                <th style="width: 200px">Type</th>
+                <th style="padding-right: 550px">SHA-256</th>
+                <th style="padding-right: 120px">Type</th>
+
                 <th>Language</th>
             </tr>
             </thead>
@@ -613,14 +614,14 @@
         <div style="margin-top: 20px; margin-left: 10px;">
             <h4 top=50px>Rich Header</h4>
         </div>
-        <table height=160px id="xor_key" style="margin-left: 20px;margin-top: 15px;" width=300px>
+        <table height=160px id="xor_key" style="margin-left: 20px;margin-top: 15px; width: 300px">
             <thead>
             <tr>
                 <th>Xor Key</th>
             </tr>
             </thead>
         </table>
-        <table height=160px id="rich_header" style="margin-left: 20px;" width=200px>
+        <table height=160px id="rich_header" style="margin-left: 20px; width: 300px">
             <thead>
             <tr>
                 <th>Compiler Name</th>

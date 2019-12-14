@@ -61,14 +61,15 @@
     </style>
 </head>
 <body>
-<h2 style="color: white; font-family: 'Poppins', sans-serif; font-weight:bold; font-size:30px; text-align: center; padding-top: 6rem;"
-    id="Try-it-out-1">DIFFING SOURCE</h2>
+<div style="text-align: center">
+    <img alt="...." src="{% static 'Main_engine/images/logo2_diffeye(w).png' %}" style="width: 15%; margin-top: 56px;">
+</div>
 <!--class name 삭제-->
 {#<div id='container' style="text-align: center; width: 100%; justify-content: center; margin-top: -5.6em;"#}
 {#     class="col-12">#}
 <div style="width: 100%; text-align: center; margin-top: 6rem">
 
-    <div id="dropzone 1" style="display: inline-block; width: 35%;">
+    <div id="dropzone 1" style="display: inline-block; width: 35%; margin-top: -55px">
         <form action="{% url 'upload' %}" class="dropzone needsclick dz-clickable" id="myAwesomeDropzone"
               style="border-color: rgba(255,255,255,0.5); border-width: 1px;">
             {% csrf_token %}
@@ -86,24 +87,24 @@
     {% load static %}
     <script>
         Dropzone.options.myAwesomeDropzone = {
-          accept: function(file, done) {
-            var ext = (file.name).split('.')[1];
-            switch (ext) {
-              case 'exe':
-                this.emit("thumbnail", file, "{% static 'Main_engine/images/exe.png' %}");
-                break;
-              case 'sys':
-                this.emit("thumbnail", file, "{% static 'Main_engine/images/sys.png' %}");
-                break;
-              case 'dll':
-                this.emit("thumbnail", file, "{% static 'Main_engine/images/dll.png' %}");
-                break;
-              default:
-                this.emit("thumbnail", file, "{% static 'Main_engine/images/unk.png' %}");
+            accept: function (file, done) {
+                var ext = (file.name).split('.')[1];
+                switch (ext) {
+                    case 'exe':
+                        this.emit("thumbnail", file, "{% static 'Main_engine/images/exe.png' %}");
+                        break;
+                    case 'sys':
+                        this.emit("thumbnail", file, "{% static 'Main_engine/images/sys.png' %}");
+                        break;
+                    case 'dll':
+                        this.emit("thumbnail", file, "{% static 'Main_engine/images/dll.png' %}");
+                        break;
+                    default:
+                        this.emit("thumbnail", file, "{% static 'Main_engine/images/unk.png' %}");
+                }
+                file.previewTemplate.querySelector(".dz-image img").style.width = "100%";
+                done();
             }
-            file.previewTemplate.querySelector(".dz-image img").style.width="100%";
-            done();
-          }
         };
     </script>
 </div>
@@ -117,12 +118,16 @@
 
 <!-- section end -->
 <!-- Footer -->
+
 <footer style="text-align: center">
     <p>
-    <a style="text-align: center; font-size: 1.2rem; color: #cacaca; cursor: pointer" href='{% url 'result' %}'><strong>RECENT SCAN | </strong>
-    <a style="text-align: center; font-size: 1.2rem; color: #cacaca" href ='{% url 'about' %}'><strong>About</strong></a>
+        <a style="text-align: center; font-size: 1.2rem; color: #cacaca; cursor: pointer"
+           href='{% url 'result' %}'><strong>Recent Scan | </strong>
+            <a style="text-align: center; font-size: 1.2rem; color: #cacaca"
+               href='{% url 'about' %}'><strong>About</strong></a>
         </a></p>
-    <p style="text-align: center; font-size: 0.9rem; color: #cacaca; margin-top: 1rem">© 2019 Best of the Best Team. Breakers – WinBinary
+    <p style="text-align: center; font-size: 0.9rem; color: #cacaca; margin-top: 1rem">© 2019 Best of the Best Team.
+        Breakers – WinBinary
         Diffing Tools v0.1
         Beta. All Rights Reserved</p>
 </footer>

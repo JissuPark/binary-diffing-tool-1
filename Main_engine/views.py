@@ -20,7 +20,6 @@ def about(request):
 def recent(request):
     return render(request, 'Main_engine/index.html')
 
-
 def pe(request):
     p_dict = extract_pe.pe_into_file()
     #print(p_dict)
@@ -71,12 +70,23 @@ def loading(request):
     if os.path.isfile(default_path):
         os.remove(default_path)
 
+    default_path3 = "C:\\malware\\all_result\\pe_r"
+
+
+    if os.path.exists(default_path3):
+        for file in os.scandir(default_path3):
+            print(file.path)
+            os.remove(file.path)
+        print('Remove All File')
+    else:
+        print('Directory Not Found')
+
     flag = file_check()
 
     if not flag:
         return render(request, 'Main_engine/index.html', {'message': 'directory is empty or filetype is not pe !!'})
     else:
-        return render(request, 'Main_engine/loading.html')
+        return render(request, 'Main_engine/loading.html', )
 
 
 def call_main(request):
@@ -108,13 +118,11 @@ def call_main(request):
                     for item1, item2 in pe_data.items():
                         if item1 == 'basic prop':
                             p_basic[pe_data['file_name']] = item2
-                            # print(f"p_basic :: {json.dumps(p_basic, indent=4)}")
-        #print(f"p_basic :: {json.dumps(p_basic, indent=4)}")
+
 
         stop = timeit.default_timer()
         print('time is ????')
         print(stop - start)
-
         return render(request, 'Main_engine/result.html', {'result': result, 'pe_': pe_, 'p_basic': p_basic})
 
     except:

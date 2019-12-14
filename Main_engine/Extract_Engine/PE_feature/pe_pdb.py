@@ -8,7 +8,12 @@ class PDB_analyze():
         self.pe = pefile.PE(self.filename)
 
     def pdb_data(self):  # pdb 추출하는 함수
-        PDB_dict = dict()
+        PDB_dict = {
+            "pe_pdb_Name": "-",
+            "pe_pdb_GUID": "-",
+            "pe_pdb_Age": "-",
+            "pe_pdb_Pdbpath": "-"
+        }
         if hasattr(self.pe, u"DIRECTORY_ENTRY_DEBUG"):
             for i in self.pe.DIRECTORY_ENTRY_DEBUG:
                 entry = i.entry
@@ -49,17 +54,9 @@ class PDB_analyze():
                     return PDB_dict
 
                 else:
-                    PDB_dict["pe_pdb_Name"] = "-"
-                    PDB_dict["pe_pdb_GUID"] = "-"
-                    PDB_dict["pe_pdb_Age"] = "-"
-                    PDB_dict["pe_pdb_Pdbpath"] = "-"
                     self.pe.close()
                     return PDB_dict
         else:
-            PDB_dict["pe_pdb_Name"] = "-"
-            PDB_dict["pe_pdb_GUID"] = "-"
-            PDB_dict["pe_pdb_Age"] = "-"
-            PDB_dict["pe_pdb_Pdbpath"] = "-"
             self.pe.close()
             return PDB_dict
 
