@@ -288,7 +288,7 @@ def create_folder():
             os.makedirs(path)
 
 def delete_file():
-    default_path = ["C:\\malware\\mal_idb\\", "C:\\malware\\mal_exe\\","C:\\malware\\all_result\\pe_r"]
+    default_path = ["C:\\malware\\mal_idb\\", "C:\\malware\\mal_exe\\"]
 
     for path in default_path:
         if os.path.exists(path):
