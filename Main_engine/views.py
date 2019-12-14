@@ -14,6 +14,8 @@ def showindex(request):
     main_engine.delete_file()
     return render(request, 'Main_engine/index.html')
 
+def about(request):
+    return render(request, 'Main_engine/about.html')
 
 def recent(request):
     return render(request, 'Main_engine/index.html')
