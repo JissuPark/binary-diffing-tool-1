@@ -1,13 +1,11 @@
 import hashlib
 import filetype
-import numpy as np
 import ssdeep
 import magic
 import os
 import math
 import json
 
-import pefile
 from Main_engine.Extract_Engine.PE_feature import pe_pdb, pe_rsrc, pe_rich, pe_stringfileinfo
 from Main_engine.models import PE_info
 
@@ -86,34 +84,10 @@ class Pe_Feature:
 
     def extract_rich(self):
         rich = pe_rich.ParseRichHeader(self.file_name)
-        rich_dict = dict()
-        try:
-            xor, flag = rich.parse(self.file_name)
+        xor, prod_list, prod = rich.parse(self.file_name)
 
-            if flag != {}:
-                xor_key = xor
+        return xor, prod_list, prod
 
-                # rich_dict = dict()
-                prod_list = list()
-                # print(f'XorKey : {xor_key}')
-                # print("ProID    name              count")
-                rich_dict['xor key'] = xor
-                for key in flag.keys():
-                    count = flag[key]
-                    mcv = (key << 16)
-                    prodid = (key >> 16)
-                    prod_list.append(prodid)
-                    prodid_name = pe_rich.PRODID_MAP[prodid] if prodid in pe_rich.PRODID_MAP else "<unknown>"
-                    #print('%6d   %-15s %5d     %6d' % (prodid, prodid_name, count, mcv))
-                    rich_dict[prodid_name] = count
-                # print(f"xor key :: {xor_key}")
-                # print(f"prod_list :: {prod_list}")
-                # print(f"rich_dict :: {rich_dict}")
-                return xor_key, prod_list, rich_dict
-            else:
-                return "", [], {}
-        except:
-            return "", [], {}
 
     def filetypes(self):
         '''
