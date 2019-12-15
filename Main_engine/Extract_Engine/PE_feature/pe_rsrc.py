@@ -234,25 +234,6 @@ wCertificateType_kind = {
     4: "WIN_CERT_TYPE_TS_STACK_SIGNED"
 }
 
-'''
-def make_country_dic():
-    #파일을 읽어서 원하는 정보만을 추출해 dictionary 형태로 저장
-    with open(r"C:\\Users\qkrwl\PycharmProjects\study\language.txt", 'r') as lgg:
-        lines = lgg.readlines()
-        res1 = dict()
-        for line in lines:
-            country_name = line.split("\t")[0]              #국가이름을 추출
-            country_id = int(line.split("\t")[3])           #국가코드(id)를 추출
-            res1[country_id] = country_name                 #dic의 형태로 저장
-
-    # 국가의 이름순으로 저장되어있으므로 id순으로 재정렬
-    res2 = sorted(res1.items())
-
-    #출력을 통해서 dictionary를 만들 수 있도록 한다.
-    for item in res2:
-        print(f'{item[0]}: "{item[1]}",')
-'''
-
 def match_type(type):
     return TYPE_MAP[type] if type in TYPE_MAP else "UNKNOWN"
 
@@ -345,7 +326,6 @@ class RsrcParser:
                     data = self.pe.get_data(resource_lang.data.struct.OffsetToData,
                                            resource_lang.data.struct.Size)
 
-                    #이 시부레 새끼도 ssdeep 조져야함 중요한 건 ssdeep 조져야 하는 애들이 byte type이라 json에 넣을 수 없단거임
                     #resouce 데이터(해시화) 출력 성공
                     data = data.decode('Latin-1').replace(u"\u0000", u"").replace(u"\u000B", u"")
                     sha_256 = hashlib.sha256(data.encode()).hexdigest()
@@ -390,11 +370,7 @@ class RsrcParser:
 
     def extract_sections_privileges(self):
         section_dict = {}
-        known_sections = set(
-            ['.text', '.data', '.rdata', '.idata', '.edata', '.rsrc', '.bss', '.crt', '.tls', '.rsrc', '.crt', '.reloc',
-             '.edata', '.sdata', '.ndata', '.itext', '.code', 'code']
-        )
-        ### 이부분에 있던 코드들 전부 불필요한 부분이라 삭제
+
         for section in self.pe.sections:
             try:
                 # 섹션 이름 추출
@@ -409,8 +385,7 @@ class RsrcParser:
                 raw_size = section.SizeOfRawData
             except:
                 continue
-            #권한 확인 부분 삭제
-            #각 섹션별 데이터 해시와 섹션 시작 offset주소부분이 중복되어 출력되서 다음과 같이 수정
+
             section_dict[section_name] = {
                 'section_name': section_name,
                 'entropy': entropy,
@@ -422,9 +397,7 @@ class RsrcParser:
                 'offset': offset,
                 'character': character
             }
-        # non_sus_sections = len(set(tmp).intersection(sections))
-        # result = [len(tmp) - non_sus_sections, non_sus_sections]
-        # return json.dumps(section_dict, indent=4)
+
         return section_dict
 
     def extractPKCS7(self):
@@ -462,7 +435,6 @@ class RsrcParser:
                     pkcs_dict['VirtualAddress'] = hex(sigoff)
                     pkcs_dict['totalsize'] = totsize
 
-                    #이 새끼는 ssdeep으로 조져서 hash값 구해야 돼 근데 내 컴이 ssdeep이 안돼 아주 드러워
                     #인증서 해시화 성공
                     #thesig = ssdeep.hash(thesig)
                     thesig = hashlib.md5(thesig).hexdigest().upper()

@@ -519,7 +519,7 @@ class ParseRichHeader:
                             if compid in PRODID_MAP:
                                 prodid_name = PRODID_MAP[compid]
                             else:
-                                print(f"{hex(rich[key][i])} :: {compid} is not in PRODID_MAP")
+                                #print(f"{hex(rich[key][i])} :: {compid} is not in PRODID_MAP")
                                 if hex(rich[key][i]) in UNKNOWN_COMP:
                                     prodid_name = UNKNOWN_COMP[hex(rich[key][i])]
                                 else:
