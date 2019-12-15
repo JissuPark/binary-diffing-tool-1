@@ -194,16 +194,14 @@
                         </ul>
                     </li>
                     <!-------------------------------------------------------------------->
-
-                     <li class="has-sub">
-
+                    <li class="has-sub">
                         <a aria-controls="cg_menu" aria-expanded="false" class="sidenav-item-link"
                            data-target="#cg_menu"
                            data-toggle="collapse" href="javascript:void(0)">
                             <i class="mdi mdi-lan"></i> <!--mdi 모양-->
                             <span class="nav-text" onclick="window.location='cg'">CG</span>
-                             <b
-                                class="caret"></b>
+                            <b
+                                    class="caret"></b>
                         </a>
 
                         <ul class="collapse" data-parent="#sidebar-menu"
@@ -216,7 +214,7 @@
                                        aria-expanded="false" class="sidenav-item-link"
                                        data-target="#CG"
                                        data-toggle="collapse" href="javascript:void(0)">
-                                        <span class="nav-text">CG_Function</span><b
+                                        <span class="nav-text">File_name</span><b
                                             class="caret"></b>
                                     </a>
                                     <ul class="collapse" id="CG">
@@ -243,36 +241,36 @@
                     <span class="sr-only">Toggle navigation</span>
                 </button>
                 {% if result or cfg %}
-                    <div class="mt-1" style="display:inline-flex; width:70%;">
-                        <p class="file_text" style="font-family: 'Poppins', sans-serif; margin-top: 12px;">BASE
-                            FILE</p>
-                        <select id="select_base" class="selectpicker" data-live-search="true" data-width="20%"
-                                data-size="5"
-                                title="Choose base"></select>
-                        <p class="file_text" style="font-family: 'Poppins', sans-serif; margin-top: 12px; ">
-                            TARGET FILE</p>
+                <div class="mt-1" style="display:inline-flex; width:70%;">
+                    <p class="file_text" style="font-family: 'Poppins', sans-serif; margin-top: 12px;">BASE
+                        FILE</p>
+                    <select id="select_base" class="selectpicker" data-live-search="true" data-width="20%"
+                            data-size="5"
+                            title="Choose base"></select>
+                    <p class="file_text" style="font-family: 'Poppins', sans-serif; margin-top: 12px; ">
+                        TARGET FILE</p>
 
-                        <select id="select_target" class="selectpicker" data-actions-box="true" data-width="20%"
-                                data-size="5" multiple title="Choose targets"></select>
+                    <select id="select_target" class="selectpicker" data-actions-box="true" data-width="20%"
+                            data-size="5" multiple title="Choose targets"></select>
 
-                        <button id="select-oper"
-                                style="font-family: 'Poppins', sans-serif; font-weight: bolder; color: white">
-                            SELECT
-                        </button>
-                    </div>
+                    <button id="select-oper"
+                            style="font-family: 'Poppins', sans-serif; font-weight: bolder; color: white">
+                        SELECT
+                    </button>
+                </div>
                 {% endif %}
                 {% if p_dict %}
-                    <div class="mt-1" style="display:inline-flex; width:70%;">
-                        <p class="file_text" style="font-family: 'Roboto Condensed', sans-serif; margin-top: 12px;">
-                            FILE</p>
-                        <select class="selectpicker" data-size="5" data-width="50%"
-                                id="select_pe"
-                                title="Choose base"></select>
-                        <button id="select-pe"
-                                style="font-family: 'Roboto Condensed', sans-serif; font-weight: bolder; color: white">
-                            SELECT
-                        </button>
-                    </div>
+                <div class="mt-1" style="display:inline-flex; width:70%;">
+                    <p class="file_text" style="font-family: 'Roboto Condensed', sans-serif; margin-top: 12px;">
+                        FILE</p>
+                    <select class="selectpicker" data-size="5" data-width="50%"
+                            id="select_pe"
+                            title="Choose base"></select>
+                    <button id="select-pe"
+                            style="font-family: 'Roboto Condensed', sans-serif; font-weight: bolder; color: white">
+                        SELECT
+                    </button>
+                </div>
                 {% endif %}
             </nav>
         </header>

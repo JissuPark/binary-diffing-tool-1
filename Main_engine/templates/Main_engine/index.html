@@ -60,74 +60,95 @@
 
     </style>
 </head>
+
 <body>
 <h2 style="color: white; font-family: 'Poppins', sans-serif; font-weight:bold; font-size:30px; text-align: center; padding-top: 6rem;"
     id="Try-it-out-1">DIFFING SOURCE</h2>
 <!--class name 삭제-->
-{#<div id='container' style="text-align: center; width: 100%; justify-content: center; margin-top: -5.6em;"#}
-{#     class="col-12">#}
-<div style="width: 100%; text-align: center; margin-top: 6rem">
+{#
+<div id='container' style="text-align: center; width: 100%; justify-content: center; margin-top: -5.6em;" #}
+     {# class="col-12">#}
+    <div style="width: 100%; text-align: center; margin-top: 6rem">
 
-    <div id="dropzone 1" style="display: inline-block; width: 35%;">
-        <form action="{% url 'upload' %}" class="dropzone needsclick dz-clickable" id="myAwesomeDropzone"
-              style="border-color: rgba(255,255,255,0.5); border-width: 1px;">
-            {% csrf_token %}
-            <div class="dz-message needsclick"> <!--밑에 생김--->
-                <div class="dz-message info">
-                    <img src="{% static 'Main_engine/images/filedropicon.png' %}" alt="..."
-                         style="width: 100px; margin-left: -0.4em">
-                    <br>
-                    <strong style="font-family: 'Poppins', sans-serif; color: white; font-size: 15px">(2MB/1EA) </strong>
+        <div id="dropzone 1" style="display: inline-block; width: 35%;">
+            <form action="{% url 'upload' %}" enctype="multipart/form-data" class="dropzone needsclick dz-clickable" id="myAwesomeDropzone"
+                  style="border-color: rgba(255,255,255,0.5); border-width: 1px;">
+                {% csrf_token %}
+                <div class="dz-message needsclick"> <!--밑에 생김--->
+                    <div class="dz-message info">
+                        <img src="{% static 'Main_engine/images/filedropicon.png' %}" alt="..."
+                             style="width: 100px; margin-left: -0.4em">
+                        <br>
+                        <strong style="font-family: 'Poppins', sans-serif; color: white; font-size: 15px">(2MB/1EA) </strong>
+                    </div>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
-
-    {% load static %}
-    <script>
-        Dropzone.options.myAwesomeDropzone = {
-          accept: function(file, done) {
-            var ext = (file.name).split('.')[1];
-            switch (ext) {
-              case 'exe':
-                this.emit("thumbnail", file, "{% static 'Main_engine/images/exe.png' %}");
-                break;
-              case 'sys':
-                this.emit("thumbnail", file, "{% static 'Main_engine/images/sys.png' %}");
-                break;
-              case 'dll':
-                this.emit("thumbnail", file, "{% static 'Main_engine/images/dll.png' %}");
-                break;
-              default:
-                this.emit("thumbnail", file, "{% static 'Main_engine/images/unk.png' %}");
-            }
-            file.previewTemplate.querySelector(".dz-image img").style.width="100%";
-            done();
-          }
-        };
-    </script>
-</div>
 
 </div>
 <div style="float: left; padding: 5rem; font-family: 'Poppins', sans-serif; font-size: 13px; text-align: center;"
      class="col-12">
-    <input type="submit" value="DIFFING" onclick="location.href='{% url 'loading' %}'">
+    <input type="submit" value="DIFFING" id="submitfiles">
 
 </div>
+{% load static %}
+<script>
+    Dropzone.options.myAwesomeDropzone = {
+        paramName: 'file',
+        uploadMultiple: true,   //멀티업로드: 설정
+        parallelUploads: 20,    //동시 업로드 파일 개수: 20개
+        maxFiles: 20,           //올릴 수 있는 파일 개수: 20개
+        autoProcessQueue: false, //자동 업로드: 해제
+        filesizeBase: 1024,     //파일 사이즈: 1메가
+        maxFilesize: 2,         //파일 최대 용량: 2메가
+        acceptedFiles: ".exe, .sys, .dll, ",
 
+        accept: function (file, done) {
+            var ext = (file.name).split('.')[1];
+            switch (ext) {
+                case 'exe':
+                    this.emit("thumbnail", file, "{% static 'Main_engine/images/exe.png' %}");
+                    break;
+                case 'sys':
+                    this.emit("thumbnail", file, "{% static 'Main_engine/images/sys.png' %}");
+                    break;
+                case 'dll':
+                    this.emit("thumbnail", file, "{% static 'Main_engine/images/dll.png' %}");
+                    break;
+                default:
+                    this.emit("thumbnail", file, "{% static 'Main_engine/images/unk.png' %}");
+            }
+            file.previewTemplate.querySelector(".dz-image img").style.width = "100%";
+            done();
+        },
+        init: function () {
+            myDropzone = this;
+            var submitBTN = document.querySelector("#submitfiles");
+            submitBTN.addEventListener("click", function () {
+                myDropzone.processQueue();
+            });
+            this.on("success", function (data) {
+                window.location.href = "{% url 'loading' %}";
+            })
+        }
+    };
+</script>
 <!-- section end -->
 <!-- Footer -->
 <footer style="text-align: center">
-    <span style="text-align: center; font-size: 1.2rem; color: #cacaca; cursor: pointer" onclick="location.href='{% url 'result' %}'"><strong>RECENT SCAN | </strong>
+    <span style="text-align: center; font-size: 1.2rem; color: #cacaca; cursor: pointer"
+          onclick="location.href='{% url 'result' %}'"><strong>RECENT SCAN | </strong>
     <span style="text-align: center; font-size: 1.2rem; color: #cacaca"><strong>About</strong></span>
         </span>
-    <p style="text-align: center; font-size: 0.9rem; color: #cacaca; margin-top: 1rem">© 2019 Best of the Best Team. Breakers – WinBinary
+    <p style="text-align: center; font-size: 0.9rem; color: #cacaca; margin-top: 1rem">© 2019 Best of the Best Team.
+        Breakers – WinBinary
         Diffing Tools v0.1
         Beta. All Rights Reserved</p>
 </footer>
 <!-- Footer end -->
 {% if message %}
-    <script>alert('{{message}}');</script>
+<script>alert('{{message}}');</script>
 {% endif %}
 
 </body>
