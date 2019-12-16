@@ -174,7 +174,7 @@ var Dropzone = function (_Emitter) {
          * How many file uploads to process in parallel (See the
          * Enqueuing file uploads* documentation section for more info)
          */
-        parallelUploads: 2,
+        parallelUploads: 100,
 
         /**
          * Whether to send multiple files in one request. If
@@ -183,7 +183,7 @@ var Dropzone = function (_Emitter) {
          * also trigger additional events (like `processingmultiple`). See the events
          * documentation section for more information.
          */
-        uploadMultiple: false,
+        uploadMultiple: true,
 
         /**
          * Whether you want files to be uploaded in chunks to your server. This can't be
@@ -208,7 +208,7 @@ var Dropzone = function (_Emitter) {
         /**
          * If `true`, the individual chunks of a file are being uploaded simultaneously.
          */
-        parallelChunkUploads: false,
+        parallelChunkUploads: true,
 
         /**
          * Whether a chunk should be retried if it fails.

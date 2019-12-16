@@ -197,7 +197,7 @@ def basicblock_info_extraction(FROM_FILE):
     global filetype
 
     global glo_Constants
-    reslut_dic = dict()
+    result_dic = dict()
     api = open_idb(FROM_FILE)
 
     # print(f"[INFO][Extract Binary][MD5]{api.idc.GetInputMD5()}")
@@ -205,10 +205,10 @@ def basicblock_info_extraction(FROM_FILE):
 
     func_ext_dict = main()
 
-    reslut_dic = ({"file_name": filename, "type" : filetype,"func_name": func_ext_dict, "constant": glo_Constants})
+    result_dic = ({"file_name": filename, "type" : filetype,"func_name": func_ext_dict, "constant": glo_Constants})
 
 
-    return reslut_dic
+    return result_dic
 
 
 def open_idb(FROM_FILE):

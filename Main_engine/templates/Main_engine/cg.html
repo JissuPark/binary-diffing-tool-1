@@ -88,7 +88,7 @@
 
             var array = {};
             var branches = [];
-            for (var file in json_res) {
+            for (var file in json_res) {console.log(file);
                 makebt(file);
                 for (var funcname in json_res[file]['f_name']) {
                     array[json_res[file]['f_name'][funcname]] = json_res[file]['f_name'][funcname];
@@ -97,10 +97,6 @@
                 graph = boxing(array, branches);
                 boxes[file] = graph;
             }
-
-
-            // draw(boxes[funcname]);
-
         </script>
     {% else %}
         <h2>Nope!</h2>

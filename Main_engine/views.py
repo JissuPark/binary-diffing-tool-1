@@ -1,7 +1,5 @@
 import timeit
-
-
-from django.shortcuts import get_object_or_404, render, render_to_response
+from django.shortcuts import get_object_or_404, render, render_to_response, redirect
 from Main_engine import main_engine
 from Main_engine.Extract_Engine.PE_feature import extract_pe
 from .models import PE_info
@@ -54,7 +52,7 @@ def cg(request):
 
 
 def loading(request):
-
+    print(request)
     default_path = "C:\\malware\\all_result\\result.txt"
 
     default_path2 = "C:\\malware\\all_result\\pe_r"
@@ -131,49 +129,38 @@ def call_main(request):
 
 
 def upload_file_dropzone(request):
-    print('in upload file dropzone')
-
     if request.method == 'POST':
-        # print('here is post')
-        handle_uploaded_file(request.FILES['file'])
-        # print(request.FILES['file'])
-
-    return render(request, 'Main_engine/index.html')
-
+        for filekey in request.FILES:
+            file = request.FILES[filekey]
+            with open('C:\\malware\\mal_exe\\' + file.name, 'wb+') as uploaded_file:
+                for chunk in file.chunks():
+                    uploaded_file.write(chunk)
+    # return render(request, 'Main_engine/index.html', {'input': flag})
+    # loading(request)
+    return redirect('loading')
 
 def file_check():
-    '''
+    """
     파일의 타입, 크기, 갯수를 체크해서 입장여부를 판단해주는 함수
     :return: T/F
-    '''
+    """
 
     if len(os.listdir(r'C:\malware\mal_exe')) == 0:
         print('[DEBUG]directory is empty!')
         return False
 
-    for file in os.listdir(r'C:\malware\mal_exe'):
-        # 이름에서 확장자를 추출해 비교하는 로직
-        extension = ['exe', 'dll', 'sys', 'idb', 'i64']
-        file_extension = file.split('.')[-1]
-        print(f'[DEBUG] {file} is {file_extension}')
-        # 확장자가 없는 경우, 넘어감
-        if file == file_extension:
-            continue
-        # 확장자가 리스트에 없는 경우 해당 파일을 삭제하고 false 반환
-        if file_extension not in extension:
-            os.remove(os.path.join(r'C:\malware\mal_exe', file))
-            return False
-    # # # 전부 돌았는데 false가 반환되지 않았다면 true 반환
+    # for file in os.listdir(r'C:\malware\mal_exe'):
+    #     # 이름에서 확장자를 추출해 비교하는 로직
+    #     extension = ['exe', 'dll', 'sys', 'idb', 'i64']
+    #     file_extension = file.split('.')[-1]
+    #     print(f'[DEBUG] {file} is {file_extension}')
+    #     # 확장자가 있는 경우, 넘어감
+    #     if file == file_extension:
+    #         continue
+    #     # 확장자가 리스트에 없는 경우 해당 파일을 삭제하고 false 반환
+    #     if file_extension not in extension:
+    #         os.remove(os.path.join(r'C:\malware\mal_exe', file))
+    #         return False
+    # 전부 돌았는데 false가 반환되지 않았다면 true 반환
     return True
 
-
-def handle_uploaded_file(file):
-    '''
-    파일을 받아서 파일의 이름으로 폴더에 저장해주는 함수
-    :param file: 업로드 된 파일
-    :return: None
-    '''
-
-    with open('C:\\malware\\mal_exe\\' + file.name, 'wb+') as uploaded_file:
-        for chunk in file.chunks():
-            uploaded_file.write(chunk)
