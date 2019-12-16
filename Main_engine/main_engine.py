@@ -312,6 +312,7 @@ def start_engine():
 
     # 1. pe 해시 체크 (동일한 파일 필터), 2.패킹 체크
     print("1) hash check")
+    hash_check = "hash_check"
     pe_check = Pe_Files_Check(PATH)
     print("2) packing check")
     file_hash_dict = pe_check.get_unique_pe_list()
