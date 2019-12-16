@@ -1,6 +1,6 @@
 {% extends "Main_engine/layout.html" %}
 
-{% block title %}DIFFING SOURCE{% endblock %}
+{% block title %}DiffEye{% endblock %}
 
 {% block head %}
 
@@ -113,7 +113,7 @@
 
     <div class="container-fluid col-12">
         <div class="card pl-4 pr-4">
-            <div class="table-responsive ">
+            <div class="table-responsive" style="display: block">
                 {% csrf_token %}
                 {% if result %}
                     <div id="result_json">
@@ -155,426 +155,489 @@
                     </div>
                     <script>
                         (function ($) {
-                            /* 엔진에서 받아온 값 */
-                            var result = "{{result}}";
-                            /* JSON.parse()에서 따옴표, nan 기타 등등 있으면 오류남 */
-                            var text_res = result.replace(/&#39;/gi, '"').replace(/\t/gi, "\\t").replace(/\r/gi, "\\r").replace(/\n/gi, "\\n").replace(/nan/gi, '"nan"');
-                            /* 결과값 파싱해서 테이블 추가하는 부분 */
-                            /* 테이블 불러오기 */
-                            var res_table = document.getElementById("result_table");
-                            var dat_table = document.getElementById("detail_table");
-                            /* 결과 데이터 파싱 */
+                                /* 엔진에서 받아온 값 */
+                                var result = "{{result}}";
+                                /* JSON.parse()에서 따옴표, nan 기타 등등 있으면 오류남 */
+                                var text_res = result.replace(/&#39;/gi, '"').replace(/\t/gi, "\\t").replace(/\r/gi, "\\r").replace(/\n/gi, "\\n").replace(/nan/gi, '"nan"');
+                                /* 결과값 파싱해서 테이블 추가하는 부분 */
+                                /* 테이블 불러오기 */
+                                var res_table = document.getElementById("result_table");
+                                var dat_table = document.getElementById("detail_table");
+                                /* 결과 데이터 파싱 */
 
-                            var json_res = JSON.parse(text_res);
-                            /* 파일에 맞게 동적으로 dropdown에 option 추가해주는 부분 */
-                            var pickerclass = document.getElementsByClassName("selectpicker");
-                            for (var picker = 0; picker < pickerclass.length; picker++) {
-                                for (var standard in json_res) {
-                                    var option = document.createElement("option");
-                                    option.value = standard;
-                                    option.text = standard;
-                                    pickerclass.item(picker).appendChild(option);
+                                var json_res = JSON.parse(text_res);
 
+                                // console.log(json_res["630d925fd51964cae86892647069f3555874f48cba2f7be0920c9293b376f0af"]);
+                                /* 파일에 맞게 동적으로 dropdown에 option 추가해주는 부분 */
+                                var pickerclass = document.getElementsByClassName("selectpicker");
+                                for (var picker = 0; picker < pickerclass.length; picker++) {
+                                    for (var standard in json_res) {
+                                        var option = document.createElement("option");
+                                        option.value = standard;
+                                        option.text = standard;
+                                        pickerclass.item(picker).appendChild(option);
+
+                                    }
                                 }
-                            }
-                            /* 버튼 클릭하면 데이터 변하게 하는 함수 */
-                            $("#select-oper").click(function () {
-                                $all_select();
-                            });
+                                /* 버튼 클릭하면 데이터 변하게 하는 함수 */
+                                $("#select-oper").click(function () {
+                                    $all_select();
+                                });
 
 
-                            /* 기준이 바뀌면 대상에 disable 거는 함수 */
-                            $("#select_base").on("changed.bs.select", function () {
-                                var selected = $("#select_base").children("option:selected").text();        // 기준 파일명을 가져옴
-                                $("#select_target option").prop('disabled', false);                         // 전체 초기화
-                                $('#select_target').find('[value="' + selected + '"]').prop('selected', false);// 체크도 해제
-                                $("#select_target").find('[value="' + selected + '"]').prop('disabled', true);// 기준과 같은 옵션 disable
-                                $("#select_target").selectpicker('refresh');                                // 새로고침
-                            });
+                                /* 기준이 바뀌면 대상에 disable 거는 함수 */
+                                $("#select_base").on("changed.bs.select", function () {
+                                    var selected = $("#select_base").children("option:selected").text();        // 기준 파일명을 가져옴
+                                    $("#select_target option").prop('disabled', false);                         // 전체 초기화
+                                    $('#select_target').find('[value="' + selected + '"]').prop('selected', false);// 체크도 해제
+                                    $("#select_target").find('[value="' + selected + '"]').prop('disabled', true);// 기준과 같은 옵션 disable
+                                    $("#select_target").selectpicker('refresh');                                // 새로고침
+                                });
 
-                            var length = 13;
-                            var i = 0;
-                            var array = [" pink", "", " yellow-b"];
-                            var b_array = [" pink", " green", " yellow-b"];
-                            var bar_title = ["BASICBLOCK", "CONSTANT", "PE"];
+                                var length = 13;
+                                var i = 0;
+                                var array = [" pink", "", " yellow-b"];
+                                var b_array = [" pink", " green", " yellow-b"];
+                                var bar_title = ["BASICBLOCK", "CONSTANT", "PE"];
 
+                                var total_score = [];
+                                /* 기준이 변하면 테이블이 변경될 수 있도록 */
+                                $all_select = function () {
+                                    var targets = $('#select_target').val();
+                                    $("#test").empty();
+                                    /* 기준이 변할때마다 테이블을 지우고 새로 시작 */
+                                    for (var row = dat_table.rows.length - 1; row > 1; row--) {
+                                        dat_table.deleteRow(row);
+                                    }
+                                    for (var standard in json_res) {
+                                        var height = [];
+                                        var selected = $("#select_base").children("option:selected").text();
+                                        if (standard == selected) {
+                                            var base_col = document.createElement("div");
+                                            base_col.id = "col";
+                                            base_col.className = "col-xl-2 col-lo-3 col-12";
+                                            base_col.style.position = "sticky";
+                                            base_col.style.zIndex = "1";
+                                            base_col.style.top = "0px";
+                                            base_col.style.left = "0px";
+                                            document.getElementById("test").appendChild(base_col);
 
-                            /* 기준이 변하면 테이블이 변경될 수 있도록 */
-                            $all_select = function () {
-                                var targets = $('#select_target').val();
-                                $("#test").empty();
-                                /* 기준이 변할때마다 테이블을 지우고 새로 시작 */
-                                for (var row = dat_table.rows.length - 1; row > 1; row--) {
-                                    dat_table.deleteRow(row);
-                                }
-                                for (var standard in json_res) {
-                                    var height = [];
-                                    var selected = $("#select_base").children("option:selected").text();
-                                    if (standard == selected) {
-                                        var base_col = document.createElement("div");
-                                        base_col.id = "col";
-                                        base_col.className = "col-xl-2 col-lo-3 col-12";
-                                        base_col.style.position = "sticky";
-                                        base_col.style.zIndex = "1";
-                                        base_col.style.top = "0px";
-                                        base_col.style.left = "0px";
-                                        document.getElementById("test").appendChild(base_col);
+                                            var base_card = document.createElement("div");
+                                            base_card.id = "card";
+                                            base_card.className = "card";
+                                            document.getElementById("col").appendChild(base_card);
 
-                                        var base_card = document.createElement("div");
-                                        base_card.id = "card";
-                                        base_card.className = "card";
-                                        document.getElementById("col").appendChild(base_card);
+                                            var base_panel = document.createElement("section");
+                                            base_panel.id = "panel";
+                                            base_panel.className = "panel";
+                                            base_panel.style.height = "12.8rem";
+                                            document.getElementById("card").appendChild(base_panel);
 
-                                        var base_panel = document.createElement("section");
-                                        base_panel.id = "panel";
-                                        base_panel.className = "panel";
-                                        base_panel.style.height = "12.8rem";
-                                        document.getElementById("card").appendChild(base_panel);
+                                            var base_panel_body = document.createElement("div");
+                                            base_panel_body.id = "panel_body";
+                                            base_panel_body.className = "panel-body";
+                                            document.getElementById("panel").appendChild(base_panel_body);
 
-                                        var base_panel_body = document.createElement("div");
-                                        base_panel_body.id = "panel_body";
-                                        base_panel_body.className = "panel-body";
-                                        document.getElementById("panel").appendChild(base_panel_body);
+                                            var base_top_stats_panel = document.createElement("div");
+                                            base_top_stats_panel.id = "top_stats_panel";
+                                            base_top_stats_panel.className = "top-stats-panel";
+                                            document.getElementById("panel_body").appendChild(base_top_stats_panel);
 
-                                        var base_top_stats_panel = document.createElement("div");
-                                        base_top_stats_panel.id = "top_stats_panel";
-                                        base_top_stats_panel.className = "top-stats-panel";
-                                        document.getElementById("panel_body").appendChild(base_top_stats_panel);
+                                            /*                                        var base_bar_stats = document.createElement("div");
+                                                                                    base_bar_stats.id = "bar_stats";
+                                                                                    base_bar_stats.className = "bar-stats";
+                                                                                    base_bar_stats.style.height = "120px";
+                                                                                    base_bar_stats.style.marginTop = "5px";
+                                                                                    base_bar_stats.style.borderBottom = "white";
+                                                                                    document.getElementById("top_stats_panel").appendChild(base_bar_stats); // 이부분실행하면 밑에 공간이 생김*/
 
-                                        /*                                        var base_bar_stats = document.createElement("div");
-                                                                                base_bar_stats.id = "bar_stats";
-                                                                                base_bar_stats.className = "bar-stats";
-                                                                                base_bar_stats.style.height = "120px";
-                                                                                base_bar_stats.style.marginTop = "5px";
-                                                                                base_bar_stats.style.borderBottom = "white";
-                                                                                document.getElementById("top_stats_panel").appendChild(base_bar_stats); // 이부분실행하면 밑에 공간이 생김*/
+                                            //////////////////////////////////////////base file name ////////////////////////////////
 
-                                        //////////////////////////////////////////base file name ////////////////////////////////
+                                            var pe_result = "{{p_basic}}";
 
-                                        var pe_result = "{{p_basic}}";
+                                            var text_pe_res = pe_result.replace(/&#39;/gi, '"').replace(/\t/gi, "\\t").replace(/\r/gi, "\\r").replace(/\n/gi, "\\n").replace(/None/gi, '"none"').replace(/\\/gi, '/');
 
-                                        var text_pe_res = pe_result.replace(/&#39;/gi, '"').replace(/\t/gi, "\\t").replace(/\r/gi, "\\r").replace(/\n/gi, "\\n").replace(/None/gi, '"none"').replace(/\\/gi, '/');
+                                            var json_pe = JSON.parse(text_pe_res);
 
-                                        var json_pe = JSON.parse(text_pe_res);
+                                            for (var fileName in json_pe) {
+                                                if (standard == fileName) {
+///////////////////////////////////////////////////////////base file info start///////////////////////////////////////////////////////////////////////
+                                                    var base_filename_info = document.createElement("span");
+                                                    base_filename_info.id = "base_info";
+                                                    base_filename_info.className = "badge badge-warning";
+                                                    base_filename_info.textContent = "base file";
+                                                    base_filename_info.style.color = "black";
+                                                    base_filename_info.style.marginRight = "7px";
+                                                    base_filename_info.style.padding = "0.2rem";
+                                                    base_filename_info.style.fontWeight = "600";
+                                                    //    padding: 0.2rem;   font-weight: 600;
+                                                    document.getElementById("top_stats_panel").appendChild(base_filename_info);
 
-                                        for (var fileName in json_pe) {
-                                            if (standard == fileName) {
-
-                                                var base_filename_info = document.createElement("span");
-                                                base_filename_info.id = "base_info";
-                                                base_filename_info.className = "badge badge-warning";
-                                                base_filename_info.textContent = "base file";
-                                                base_filename_info.style.color = "black";
-                                                base_filename_info.style.marginRight = "7px";
-                                                base_filename_info.style.padding = "0.2rem";
-                                                base_filename_info.style.fontWeight = "600";
-                                                //    padding: 0.2rem;   font-weight: 600;
-                                                document.getElementById("top_stats_panel").appendChild(base_filename_info);
-
-                                                var base_file_name = document.createElement("span");
-                                                var file_name_text = base_file_name.textContent = standard;
-                                                //console.log(file_name_text); -> ok
-                                                base_file_name.style.fontSize = "12.5px";
-                                                if (file_name_text.length > length) {
-                                                    base_file_name.setAttribute("data-toggle", "tooltip");
-                                                    base_file_name.setAttribute("data-placement", "bottom");
-                                                    base_file_name.setAttribute("title", file_name_text);
-                                                    base_file_name.textContent = file_name_text.substring(0, length).toUpperCase() + "...";
-                                                } else {
-                                                    base_file_name.textContent = file_name_text.toUpperCase();
-                                                }
-                                                document.getElementById("top_stats_panel").appendChild(base_file_name);
-
-                                                var base_info_br = document.createElement("br");
-                                                document.getElementById("top_stats_panel").appendChild(base_info_br);
-
-
-                                                ///////////////////////////////////////////////////////////////////////////////////////////////
-                                                var base_size_info = document.createElement("span");
-                                                base_size_info.className = "badge badge-warning";
-                                                base_size_info.textContent = "file size";
-                                                base_size_info.style.color = "black";
-                                                base_size_info.style.marginTop = "7px";
-                                                base_size_info.style.marginRight = "7px";
-                                                base_size_info.style.padding = "0.2rem";
-                                                base_size_info.style.fontWeight = "600";
-                                                document.getElementById("top_stats_panel").appendChild(base_size_info);
-                                                // document.write(sel.selectedIndex + " is " + "<br>");
-
-                                                var base_file_size = document.createElement("span");
-                                                base_file_size.textContent = json_pe[fileName]['file size'];
-                                                base_file_size.style.fontSize = "12.7px";
-                                                document.getElementById("top_stats_panel").appendChild(base_file_size);
-                                                ///////////////////////////////////////////////////////////////////////////////////////////////
-
-                                                //////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-                                                var base_type_br = document.createElement("br");
-                                                document.getElementById("top_stats_panel").appendChild(base_type_br);
-
-                                                var base_sha256_info = document.createElement("span");
-                                                base_sha256_info.className = "badge badge-warning";
-                                                base_sha256_info.textContent = "sha256";
-                                                base_sha256_info.style.color = "black";
-                                                base_sha256_info.style.marginTop = "7px";
-                                                base_sha256_info.style.marginRight = "7px";
-                                                base_sha256_info.style.padding = "0.2rem";
-                                                base_sha256_info.style.fontWeight = "600";
-                                                document.getElementById("top_stats_panel").appendChild(base_sha256_info);
-
-                                                var base_sha256 = document.createElement("span");
-                                                var sha256_text = base_sha256.textContent = json_pe[fileName]['SHA-256 hash'];
-                                                base_sha256.style.fontSize = "12.5px";
-                                                if (sha256_text.length > length) {
-                                                    base_sha256.setAttribute("data-toggle", "tooltip");
-                                                    base_sha256.setAttribute("data-placement", "bottom");
-                                                    base_sha256.setAttribute("title", sha256_text);
-                                                    base_sha256.textContent = sha256_text.substring(0, length).toUpperCase() + "...";
-                                                } else {
-                                                    base_sha256.textContent = sha256_text.toUpperCase();
-                                                }
-                                                document.getElementById("top_stats_panel").appendChild(base_sha256);
-
-
-                                                //////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-                                                var base_sha256_br = document.createElement("br");
-                                                document.getElementById("top_stats_panel").appendChild(base_sha256_br);
-
-                                                var base_md5_info = document.createElement("span");
-                                                base_md5_info.className = "badge badge-warning";
-                                                base_md5_info.textContent = "md5";
-                                                base_md5_info.style.color = "black";
-                                                base_md5_info.style.marginTop = "7px";
-                                                base_md5_info.style.marginRight = "7px";
-                                                base_md5_info.style.padding = "0.2rem";
-                                                base_sha256_info.style.fontWeight = "600";
-                                                document.getElementById("top_stats_panel").appendChild(base_md5_info);
-
-                                                var base_md5 = document.createElement("span");
-                                                var md5_text = base_md5.textContent = json_pe[fileName]['MD5 hash'];
-                                                base_md5.style.fontSize = "12.5px";
-                                                if (md5_text.length > length) {
-                                                    base_md5.setAttribute("data-toggle", "tooltip");
-                                                    base_md5.setAttribute("data-placement", "bottom");
-                                                    base_md5.setAttribute("title", md5_text);
-                                                    base_md5.textContent = md5_text.substring(0, length).toUpperCase() + "...";
-                                                } else {
-                                                    base_md5.textContent = md5_text.toUpperCase();
-                                                }
-                                                document.getElementById("top_stats_panel").appendChild(base_md5);
-
-
-                                                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-                                                var base_ssdeep_br = document.createElement("br");
-                                                document.getElementById("top_stats_panel").appendChild(base_ssdeep_br);
-
-                                                var base_ssdeep_info = document.createElement("span");
-                                                base_ssdeep_info.className = "badge badge-warning";
-                                                base_ssdeep_info.textContent = "ssdeep";
-                                                base_ssdeep_info.style.color = "black";
-                                                base_ssdeep_info.style.marginTop = "7px";
-                                                base_ssdeep_info.style.marginRight = "7px";
-                                                base_ssdeep_info.style.padding = "0.2rem";
-                                                base_ssdeep_info.style.fontWeight = "600";
-                                                document.getElementById("top_stats_panel").appendChild(base_ssdeep_info);
-
-                                                var base_ssdeep_text = document.createElement("span");
-                                                var ssdeep_text = base_ssdeep_text.textContent = json_pe[fileName]['SSDEEP hash'];
-                                                base_ssdeep_text.style.fontSize = "12.5px";
-                                                if (ssdeep_text.length > length) {
-                                                    base_ssdeep_text.setAttribute("data-toggle", "tooltip");
-                                                    base_ssdeep_text.setAttribute("data-placement", "bottom");
-                                                    base_ssdeep_text.setAttribute("title", ssdeep_text);
-                                                    base_ssdeep_text.textContent = ssdeep_text.substring(0, length).toUpperCase() + "...";
-                                                } else {
-                                                    base_ssdeep_text.textContent = ssdeep_text.toUpperCase();
-                                                }
-                                                document.getElementById("top_stats_panel").appendChild(base_ssdeep_text);
-
-                                                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-                                                var base_timestamp_br = document.createElement("br");
-                                                document.getElementById("top_stats_panel").appendChild(base_timestamp_br);
-
-                                                var base_timestamp_info = document.createElement("span");
-                                                base_timestamp_info.className = "badge badge-warning";
-                                                base_timestamp_info.textContent = "timestamp";
-                                                base_timestamp_info.style.color = "black";
-                                                base_timestamp_info.style.marginTop = "7px";
-                                                base_timestamp_info.style.marginRight = "7px";
-                                                base_timestamp_info.style.padding = "0.2rem";
-                                                base_timestamp_info.style.fontWeight = "600";
-                                                document.getElementById("top_stats_panel").appendChild(base_timestamp_info);
-
-                                                var base_timestamp_text = document.createElement("span");
-                                                base_timestamp_text.textContent = json_pe[fileName]['time_date_stamp'];
-                                                base_timestamp_text.style.fontSize = "12.5px";
-                                                document.getElementById("top_stats_panel").appendChild(base_timestamp_text);
-
-                                            }
-                                        }
-                                        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                        /* 대상이 변할때마다 */
-                                        for (var target in json_res[standard]) {
-                                            for (var t in targets) {
-                                                // 선택된 대상에 대해서만 보여줌
-                                                if (target == targets[t]) {
-
-                                                    /* 하단에 행 추가 */
-                                                    var new_row = res_table.insertRow(res_table.rows.length);
-                                                    /* 행에 열 추가 */
-                                                    var filename = new_row.insertCell(0);
-                                                    var bbh = new_row.insertCell(1);
-                                                    var constvalue = new_row.insertCell(2);
-                                                    var section = new_row.insertCell(3);
-                                                    var cert = new_row.insertCell(4);
-                                                    var pdb = new_row.insertCell(5);
-                                                    var imph = new_row.insertCell(6);
-                                                    var xor = new_row.insertCell(7);
-
-                                                    /* 열에 데이터 입력 */
-                                                    var bbh_value = json_res[standard][target][2];
-                                                    /*filename.innerHTML = json_res[standard][target][0].toUpperCase();*/
-                                                    filename.innerHTML = target.substring(0, length).toUpperCase() + "...";
-                                                    bbh.innerHTML = Math.floor(bbh_value * 10000) / 100;
-                                                    var const_value = json_res[standard][target][3];
-                                                    constvalue.innerHTML = Math.floor(const_value * 10000) / 100;
-                                                    section.innerHTML = json_res[standard][target][4];
-                                                    cert.innerHTML = json_res[standard][target][5];
-                                                    pdb.innerHTML = json_res[standard][target][6];
-                                                    imph.innerHTML = json_res[standard][target][7];
-                                                    xor.innerHTML = json_res[standard][target][8];
-
-                                                    /*test*/
-
-                                                    /*test */
-                                                    /*출력해서 맞는지 확인
-                                                    for(var data in json_res[standard][target]){
-                                                        document.write("data is "+ data +" "+ json_res[standard][target][data] + "<br>");
-                                                        console.log(typeof json_res[standard][target][data])
-                                                    }
-                                                    */
-                                                    var basic_block_value = json_res[standard][target][2];
-                                                    var basic_block = Math.floor(basic_block_value * 10000) / 100;
-                                                    var constant_value = json_res[standard][target][3];
-                                                    var constant = Math.floor(constant_value * 10000) / 100;
-                                                    //var f_name = json_res[standard][target][0];
-                                                    var pe_all_score = json_res[standard][target][9];
-                                                    height = [basic_block + "%", constant + "%", pe_all_score + "%"];
-
-                                                    var col = document.createElement("div");
-                                                    col.id = "col" + i;
-                                                    col.className = " col-xl-2 col-lo-4 col-12 ";
-                                                    document.getElementById("test").appendChild(col);
-
-                                                    var card = document.createElement("div");
-                                                    card.id = "card" + i;
-                                                    card.className = "card";
-                                                    document.getElementById("col" + i).appendChild(card);
-
-                                                    var panel = document.createElement("section");
-                                                    panel.id = "panel" + i;
-                                                    panel.className = "panel";
-                                                    panel.style.height = "12.8rem";
-                                                    document.getElementById("card" + i).appendChild(panel);
-
-                                                    var panel_body = document.createElement("div");
-                                                    panel_body.id = "panel_body" + i;
-                                                    panel_body.className = "panel-body";
-                                                    document.getElementById("panel" + i).appendChild(panel_body);
-
-                                                    var top_stats_panel = document.createElement("div");
-                                                    top_stats_panel.id = "top_stats_panel" + i;
-                                                    top_stats_panel.className = "top-stats-panel";
-                                                    document.getElementById("panel_body" + i).appendChild(top_stats_panel);
-
-                                                    var h4 = document.createElement("h4");
-                                                    h4.id = "widget-h";
-                                                    h4.className = "widget-h";
-                                                    h4.style.color = "rgba(0,0,0,0.7)";
-                                                    h4.setAttribute("data-toggle", "tooltip");
-                                                    h4.setAttribute("data-placement", "bottom");
-                                                    h4.setAttribute("title", target);
-                                                    if (target.length > length) {
-                                                        h4.textContent = target.substring(0, length).toUpperCase() + "...";
+                                                    var base_file_name = document.createElement("span");
+                                                    var file_name_text = base_file_name.textContent = standard;
+                                                    //console.log(file_name_text); -> ok
+                                                    base_file_name.style.fontSize = "12.5px";
+                                                    if (file_name_text.length > length) {
+                                                        base_file_name.setAttribute("data-toggle", "tooltip");
+                                                        base_file_name.setAttribute("data-placement", "bottom");
+                                                        base_file_name.setAttribute("title", file_name_text);
+                                                        base_file_name.textContent = file_name_text.substring(0, length).toUpperCase() + "...";
                                                     } else {
-                                                        h4.textContent = target.toUpperCase();
+                                                        base_file_name.textContent = file_name_text.toUpperCase();
                                                     }
-                                                    document.getElementById("top_stats_panel" + i).appendChild(h4);
+                                                    document.getElementById("top_stats_panel").appendChild(base_file_name);
 
-                                                    var bar_stats = document.createElement("div");
-                                                    bar_stats.id = "bar_stats" + i;
-                                                    bar_stats.className = "bar-stats";
-                                                    document.getElementById("top_stats_panel" + i).appendChild(bar_stats);
+                                                    var base_info_br = document.createElement("br");
+                                                    document.getElementById("top_stats_panel").appendChild(base_info_br);
 
-                                                    var progress_stat_bar = document.createElement("ul");
-                                                    progress_stat_bar.id = "progress_stat_bar" + i;
-                                                    progress_stat_bar.className = "progress-stat-bar clearfix";
-                                                    document.getElementById("bar_stats" + i).appendChild(progress_stat_bar);
 
-                                                    //막대 바 부분
-                                                    for (var a = i * 3; a <= (i * 3) + 2; a++) {
-                                                        var percent = document.createElement("li");
-                                                        percent.id = "percent" + a;
-                                                        percent.setAttribute("data-percent", "50%");
-                                                        document.getElementById("progress_stat_bar" + i).appendChild(percent);
+                                                    ///////////////////////////////////////////////////////////////////////////////////////////////
+                                                    var base_size_info = document.createElement("span");
+                                                    base_size_info.className = "badge badge-warning";
+                                                    base_size_info.textContent = "file size";
+                                                    base_size_info.style.color = "black";
+                                                    base_size_info.style.marginTop = "12px";
+                                                    base_size_info.style.marginRight = "7px";
+                                                    base_size_info.style.padding = "0.2rem";
+                                                    base_size_info.style.fontWeight = "600";
+                                                    document.getElementById("top_stats_panel").appendChild(base_size_info);
+                                                    // document.write(sel.selectedIndex + " is " + "<br>");
 
-                                                        var percent_span = document.createElement("span");
-                                                        percent_span.id = "percent_span" + a;
-                                                        percent_span.className = "progress-stat-percent" + array[(a % 3)];
-                                                        percent_span.style = "height: " + height[(a % 3)];
-                                                        percent_span.setAttribute("data-toggle", "tooltip");
-                                                        percent_span.setAttribute("data-placement", "left");
-                                                        percent_span.setAttribute("title", height[(a % 3)]);
-                                                        document.getElementById("percent" + a).appendChild(percent_span);
+                                                    var base_file_size = document.createElement("span");
+                                                    base_file_size.textContent = json_pe[fileName]['file size'];
+                                                    base_file_size.style.fontSize = "12.7px";
+                                                    document.getElementById("top_stats_panel").appendChild(base_file_size);
+                                                    ///////////////////////////////////////////////////////////////////////////////////////////////
+
+                                                    //////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                                    var base_type_br = document.createElement("br");
+                                                    document.getElementById("top_stats_panel").appendChild(base_type_br);
+
+                                                    var base_sha256_info = document.createElement("span");
+                                                    base_sha256_info.className = "badge badge-warning";
+                                                    base_sha256_info.textContent = "sha256";
+                                                    base_sha256_info.style.color = "black";
+                                                    base_sha256_info.style.marginTop = "12px";
+                                                    base_sha256_info.style.marginRight = "7px";
+                                                    base_sha256_info.style.padding = "0.2rem";
+                                                    base_sha256_info.style.fontWeight = "600";
+                                                    document.getElementById("top_stats_panel").appendChild(base_sha256_info);
+
+                                                    var base_sha256 = document.createElement("span");
+                                                    var sha256_text = base_sha256.textContent = json_pe[fileName]['SHA-256 hash'];
+                                                    base_sha256.style.fontSize = "12.5px";
+                                                    if (sha256_text.length > length) {
+                                                        base_sha256.setAttribute("data-toggle", "tooltip");
+                                                        base_sha256.setAttribute("data-placement", "bottom");
+                                                        base_sha256.setAttribute("title", sha256_text);
+                                                        base_sha256.textContent = sha256_text.substring(0, length).toUpperCase() + "...";
+                                                    } else {
+                                                        base_sha256.textContent = sha256_text.toUpperCase();
                                                     }
+                                                    document.getElementById("top_stats_panel").appendChild(base_sha256);
 
 
-                                                    var bar_legend = document.createElement("ul");
-                                                    bar_legend.id = "bar_legend" + i;
-                                                    bar_legend.className = "bar-legend";
-                                                    document.getElementById("bar_stats" + i).appendChild(bar_legend);
+                                                    //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-                                                    // //표시부분
-                                                    for (var b = i * 3; b <= (i * 3) + 2; b++) {
-                                                        //li생성
-                                                        var legend_pointer = document.createElement("li");
-                                                        legend_pointer.id = "legend_pointer" + b;
-                                                        document.getElementById("bar_legend" + i).appendChild(legend_pointer);
+                                                    var base_sha256_br = document.createElement("br");
+                                                    document.getElementById("top_stats_panel").appendChild(base_sha256_br);
 
-                                                        //span 생성
-                                                        var legend_span = document.createElement("span");
-                                                        legend_span.id = "legend_span";
-                                                        legend_span.className = "bar-legend-pointer" + b_array[(b % 3)];
-                                                        document.getElementById("legend_pointer" + b).appendChild(legend_span);
+                                                    var base_md5_info = document.createElement("span");
+                                                    base_md5_info.className = "badge badge-warning";
+                                                    base_md5_info.textContent = "md5";
+                                                    base_md5_info.style.color = "black";
+                                                    base_md5_info.style.marginTop = "12px";
+                                                    base_md5_info.style.marginRight = "7px";
+                                                    base_md5_info.style.padding = "0.2rem";
+                                                    base_sha256_info.style.fontWeight = "600";
+                                                    document.getElementById("top_stats_panel").appendChild(base_md5_info);
 
-                                                        var test = document.createTextNode(bar_title[(b % 3)] + " " + height[(b % 3)]); //베이직블록 유사도 : pe 유사도, 상수 유사도 -> string fix, values 동적 할당
-                                                        document.getElementById("legend_pointer" + b).appendChild(test);
+                                                    var base_md5 = document.createElement("span");
+                                                    var md5_text = base_md5.textContent = json_pe[fileName]['MD5 hash'];
+                                                    base_md5.style.fontSize = "12.5px";
+                                                    if (md5_text.length > length) {
+                                                        base_md5.setAttribute("data-toggle", "tooltip");
+                                                        base_md5.setAttribute("data-placement", "bottom");
+                                                        base_md5.setAttribute("title", md5_text);
+                                                        base_md5.textContent = md5_text.substring(0, length).toUpperCase() + "...";
+                                                    } else {
+                                                        base_md5.textContent = md5_text.toUpperCase();
                                                     }
+                                                    document.getElementById("top_stats_panel").appendChild(base_md5);
+
+
+                                                    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                                    var base_ssdeep_br = document.createElement("br");
+                                                    document.getElementById("top_stats_panel").appendChild(base_ssdeep_br);
+
+                                                    var base_ssdeep_info = document.createElement("span");
+                                                    base_ssdeep_info.className = "badge badge-warning";
+                                                    base_ssdeep_info.textContent = "ssdeep";
+                                                    base_ssdeep_info.style.color = "black";
+                                                    base_ssdeep_info.style.marginTop = "12px";
+                                                    base_ssdeep_info.style.marginRight = "7px";
+                                                    base_ssdeep_info.style.padding = "0.2rem";
+                                                    base_ssdeep_info.style.fontWeight = "600";
+                                                    document.getElementById("top_stats_panel").appendChild(base_ssdeep_info);
+
+                                                    var base_ssdeep_text = document.createElement("span");
+                                                    var ssdeep_text = base_ssdeep_text.textContent = json_pe[fileName]['SSDEEP hash'];
+                                                    base_ssdeep_text.style.fontSize = "12.5px";
+                                                    if (ssdeep_text.length > length) {
+                                                        base_ssdeep_text.setAttribute("data-toggle", "tooltip");
+                                                        base_ssdeep_text.setAttribute("data-placement", "bottom");
+                                                        base_ssdeep_text.setAttribute("title", ssdeep_text);
+                                                        base_ssdeep_text.textContent = ssdeep_text.substring(0, length).toUpperCase() + "...";
+                                                    } else {
+                                                        base_ssdeep_text.textContent = ssdeep_text.toUpperCase();
+                                                    }
+                                                    document.getElementById("top_stats_panel").appendChild(base_ssdeep_text);
+
+                                                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                                    var base_timestamp_br = document.createElement("br");
+                                                    document.getElementById("top_stats_panel").appendChild(base_timestamp_br);
+
+                                                    var base_timestamp_info = document.createElement("span");
+                                                    base_timestamp_info.className = "badge badge-warning";
+                                                    base_timestamp_info.textContent = "timestamp";
+                                                    base_timestamp_info.style.color = "black";
+                                                    base_timestamp_info.style.marginTop = "12px";
+                                                    base_timestamp_info.style.marginRight = "7px";
+                                                    base_timestamp_info.style.padding = "0.2rem";
+                                                    base_timestamp_info.style.fontWeight = "600";
+                                                    document.getElementById("top_stats_panel").appendChild(base_timestamp_info);
+
+                                                    var base_timestamp_text = document.createElement("span");
+                                                    base_timestamp_text.textContent = json_pe[fileName]['time_date_stamp'];
+                                                    base_timestamp_text.style.fontSize = "12.5px";
+                                                    document.getElementById("top_stats_panel").appendChild(base_timestamp_text);
+
                                                 }
-                                                i++;
                                             }
-                                            i = 0;
-
-                                            $(function () {
-                                                $('[data-toggle="tooltip"]').tooltip()
+                                            ///////////////////////////////////////////////////base file info_end///////////////////////////////////////////////////////////////////////////////
+                                            /* 대상이 변할때마다 */
+                                            /* 타겟의 유사도 스코어에 따라 오름차순으로 딕셔너리 정렬
+                                               참고 http://dudmy.net/javascript/2015/11/16/javascript-sort/  */
+                                            /*var json_res_total = [];
+                                            for (var target in json_res[standard]) {
+                                                json_res_total.push(json_res[standard][target]);
+                                            }
+                                            var sort_test = json_res_total.sort(function (a, b) {
+                                                return a[2] + a[3] + a[9] > b[2] + b[3] + b[9] ? -1 :
+                                                    a[2] + a[3] + a[9] < b[2] + b[3] + b[9] ? 1 : 0;
                                             });
+    //                                        console.log(json_res_total);
+                                            console.log(sort_test);
+
+                                            //console.log(json_res_array);
+                                            for (var test1 in sort_test) {
+                                                console.log("test1 ----------> " + sort_test[test1][0]);
+
+
+
+
+
+                                            {#for(var test2 in sort_test[test1]){#}
+
+
+
+
+
+                                            {#    console.log("test2 ----------> " + test2[0][0]);#}
+                                            {
+
+
+
+
+                                            #}#}
+                                            }
+*/
+                                            for (var target in json_res[standard]) {
+                                                /*for (var t in target) {
+                                                    var test_array = sort_test[target];
+                                                    console.log("target ==> " + test_array);
+                                                    //sort_test.forEach(function (target) {*/
+                                                for (var t in targets) {
+                                                    // 선택된 대상에 대해서만 보여줌
+                                                    //if (target == targets[t]) {
+                                                    if (target == targets[t]) { //요상해~~~~~~~~~~~
+                                                        //console.log("Aaaa");
+                                                        /* 하단에 행 추가 */
+                                                        var new_row = res_table.insertRow(res_table.rows.length);
+                                                        new_row.id = "tr" + i;
+                                                        /* 행에 열 추가 */
+                                                        var filename = new_row.insertCell(0);
+                                                        var bbh = new_row.insertCell(1);
+                                                        var constvalue = new_row.insertCell(2);
+                                                        var section = new_row.insertCell(3);
+                                                        var cert = new_row.insertCell(4);
+                                                        var pdb = new_row.insertCell(5);
+                                                        var imph = new_row.insertCell(6);
+                                                        var xor = new_row.insertCell(7);
+
+                                                        /* 열에 데이터 입력 */
+                                                        var bbh_value = json_res[standard][target][2];
+                                                        //var bbh_value = target[2];
+                                                        /*filename.innerHTML = json_res[standard][target][0].toUpperCase();*/
+                                                        if (filename.length > length) {
+                                                            filename.setAttribute("data-toggle", "tooltip");
+                                                            filename.setAttribute("data-placement", "bottom");
+                                                            filename.setAttribute("title", filename);
+                                                            filename.innerHTML = target.substring(0, length).toUpperCase() + "...";
+                                                        } else {
+                                                            filename.innerHTML = target.toUpperCase();
+                                                        }
+                                                        bbh.innerHTML = Math.floor(bbh_value * 10000) / 100;
+                                                        var const_value = json_res[standard][target][3];
+                                                        constvalue.innerHTML = Math.floor(const_value * 10000) / 100;
+                                                        section.innerHTML = json_res[standard][target][4];
+                                                        cert.innerHTML = json_res[standard][target][5];
+                                                        pdb.innerHTML = json_res[standard][target][6];
+                                                        imph.innerHTML = json_res[standard][target][7];
+                                                        xor.innerHTML = json_res[standard][target][8];
+
+                                                        /*test*/
+
+                                                        /*test */
+                                                        /*출력해서 맞는지 확인
+                                                        for(var data in json_res[standard][target]){
+                                                            document.write("data is "+ data +" "+ json_res[standard][target][data] + "<br>");
+                                                            console.log(typeof json_res[standard][target][data])
+                                                        }
+                                                        */
+
+                                                        var basic_block_value = json_res[standard][target][2];
+                                                        var basic_block = Math.floor(basic_block_value * 10000) / 100; //basic_block 최종 스코어
+                                                        var constant_value = json_res[standard][target][3];
+                                                        var constant = Math.floor(constant_value * 10000) / 100; //constant 최종 스코어
+                                                        //var f_name = json_res[standard][target][0];
+                                                        var pe_all_score = json_res[standard][target][9]; //pe 최종 스코어
+                                                        height = [basic_block + "%", constant + "%", pe_all_score + "%"];
+
+                                                        var col = document.createElement("div");
+                                                        col.id = "col" + i;
+                                                        col.className = " col-xl-2 col-lo-4 col-12 ";
+                                                        document.getElementById("test").appendChild(col);
+
+                                                        var card = document.createElement("div");
+                                                        card.id = "card" + i;
+                                                        card.className = "card";
+                                                        document.getElementById("col" + i).appendChild(card);
+
+                                                        var panel = document.createElement("section");
+                                                        panel.id = "panel" + i;
+                                                        panel.className = "panel";
+                                                        panel.style.height = "12.8rem";
+                                                        document.getElementById("card" + i).appendChild(panel);
+
+                                                        var panel_body = document.createElement("div");
+                                                        panel_body.id = "panel_body" + i;
+                                                        panel_body.className = "panel-body";
+                                                        document.getElementById("panel" + i).appendChild(panel_body);
+
+                                                        var top_stats_panel = document.createElement("div");
+                                                        top_stats_panel.id = "top_stats_panel" + i;
+                                                        top_stats_panel.className = "top-stats-panel";
+                                                        document.getElementById("panel_body" + i).appendChild(top_stats_panel);
+
+                                                        var h4 = document.createElement("h4");
+                                                        h4.id = "widget-h";
+                                                        h4.className = "widget-h";
+                                                        h4.style.color = "rgba(0,0,0,0.7)";
+                                                        if (target.length > length) {
+                                                            h4.setAttribute("data-toggle", "tooltip");
+                                                            h4.setAttribute("data-placement", "bottom");
+                                                            h4.setAttribute("title", target); //타겟 정보 가져옴
+                                                            h4.textContent = target.substring(0, length).toUpperCase() + "...";
+                                                        } else {
+                                                            h4.textContent = target.toUpperCase();
+                                                        }
+                                                        document.getElementById("top_stats_panel" + i).appendChild(h4);
+
+                                                        var bar_stats = document.createElement("div");
+                                                        bar_stats.id = "bar_stats" + i;
+                                                        bar_stats.className = "bar-stats";
+                                                        document.getElementById("top_stats_panel" + i).appendChild(bar_stats);
+
+                                                        var progress_stat_bar = document.createElement("ul");
+                                                        progress_stat_bar.id = "progress_stat_bar" + i;
+                                                        progress_stat_bar.className = "progress-stat-bar clearfix";
+                                                        document.getElementById("bar_stats" + i).appendChild(progress_stat_bar);
+
+                                                        //막대 바 부분
+                                                        for (var a = i * 3; a <= (i * 3) + 2; a++) {
+                                                            var percent = document.createElement("li");
+                                                            percent.id = "percent" + a;
+                                                            percent.setAttribute("data-percent", "50%");
+                                                            document.getElementById("progress_stat_bar" + i).appendChild(percent);
+
+                                                            var percent_span = document.createElement("span");
+                                                            percent_span.id = "percent_span" + a;
+                                                            percent_span.className = "progress-stat-percent" + array[(a % 3)];
+                                                            percent_span.style = "height: " + height[(a % 3)];
+                                                            percent_span.setAttribute("data-toggle", "tooltip");
+                                                            percent_span.setAttribute("data-placement", "left");
+                                                            percent_span.setAttribute("title", height[(a % 3)]);
+                                                            document.getElementById("percent" + a).appendChild(percent_span);
+                                                        }
+
+
+                                                        var bar_legend = document.createElement("ul");
+                                                        bar_legend.id = "bar_legend" + i;
+                                                        bar_legend.className = "bar-legend";
+                                                        document.getElementById("bar_stats" + i).appendChild(bar_legend);
+
+                                                        // //표시부분
+                                                        for (var b = i * 3; b <= (i * 3) + 2; b++) {
+                                                            //li생성
+                                                            var legend_pointer = document.createElement("li");
+                                                            legend_pointer.id = "legend_pointer" + b;
+                                                            document.getElementById("bar_legend" + i).appendChild(legend_pointer);
+
+                                                            //span 생성
+                                                            var legend_span = document.createElement("span");
+                                                            legend_span.id = "legend_span";
+                                                            legend_span.className = "bar-legend-pointer" + b_array[(b % 3)];
+                                                            document.getElementById("legend_pointer" + b).appendChild(legend_span);
+
+                                                            var test = document.createTextNode(bar_title[(b % 3)] + " " + height[(b % 3)]); //베이직블록 유사도 : pe 유사도, 상수 유사도 -> string fix, values 동적 할당
+                                                            document.getElementById("legend_pointer" + b).appendChild(test);
+                                                        }
+                                                    }
+                                                    //var count = 0;
+//                                                   var new_line= "#tr" + i;
+                                                    /*참고 사이트  : https://yunzema.tistory.com/49 .off()*/
+/*                                                    $(new_line).off().click(function () {
+                                                      console.log("0번째");
+                                                    });*/
+                                                    i++;
+                                                }
+                                                i = 0;
+
+                                                $(function () {
+                                                    $('[data-toggle="tooltip"]').tooltip()
+                                                });
+                                            }
+
+
                                         }
                                     }
                                 }
-                            };
-                            // 페이지가 처음 뜰 때 기준은 처음으로 대상은 전부 선택해서 보여주도록
+                                ;
+                                // 페이지가 처음 뜰 때 기준은 처음으로 대상은 전부 선택해서 보여주도록
 
 
-                            var first_base = $("#select_base").find('option:first');
-                            first_base.attr('selected', 'selected');
-                            $('#select_target option').prop('selected', true);
-                            $('#select_target').find('[value="' + first_base.text() + '"]').prop('selected', false);
-                            $('#select_target').find('[value="' + first_base.text() + '"]').prop('disabled', true);
-                            $all_select();
-                        })(jQuery);
+                                var first_base = $("#select_base").find('option:first');
+                                first_base.attr('selected', 'selected');
+                                $('#select_target option').prop('selected', true);
+                                $('#select_target').find('[value="' + first_base.text() + '"]').prop('selected', false);
+                                $('#select_target').find('[value="' + first_base.text() + '"]').prop('disabled', true);
+                                $all_select();
+                            }
+                        )(jQuery);
 
 
                         $(document).ready(function () {

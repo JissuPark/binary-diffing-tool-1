@@ -12,10 +12,11 @@ def showindex(request):
     main_engine.delete_file()
     return render(request, 'Main_engine/index.html')
 
+def about(request):
+    return render(request, 'Main_engine/about.html')
 
 def recent(request):
     return render(request, 'Main_engine/index.html')
-
 
 def pe(request):
     p_dict = extract_pe.pe_into_file()
@@ -83,7 +84,7 @@ def loading(request):
     if not flag:
         return render(request, 'Main_engine/index.html', {'message': 'directory is empty or filetype is not pe !!'})
     else:
-        return render(request, 'Main_engine/loading.html')
+        return render(request, 'Main_engine/loading.html', )
 
 
 def call_main(request):
@@ -120,7 +121,6 @@ def call_main(request):
         stop = timeit.default_timer()
         print('time is ????')
         print(stop - start)
-
         return render(request, 'Main_engine/result.html', {'result': result, 'pe_': pe_, 'p_basic': p_basic})
 
     except:
