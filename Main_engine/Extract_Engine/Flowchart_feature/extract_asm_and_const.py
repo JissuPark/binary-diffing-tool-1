@@ -1,19 +1,9 @@
-import shutil
-import signal
-from functools import wraps
-
 import idb
 import timeit
 import hashlib
 import json
 
 from Main_engine.Extract_Engine.Flowchart_feature import const_filter_indexs as _filter
-
-C_END     = "\033[0m"
-C_BOLD    = "\033[1m"
-C_INVERSE = "\033[7m"
-C_RED    = "\033[31m"
-C_YELLOW = "\033[33m"
 
 api = None
 filename = None
@@ -28,37 +18,8 @@ glo_Constants = list()
 except_list = set()
 err_log = list()
 
-def timeout(seconds=100, error_message="[Coercion] infinite loop detection"):
-    def decorator(func):
-        def _handle_timeout(signum, frame):
-            raise TimeoutError(error_message)
 
-        def wrapper(*args, **kwargs):
-            signal.signal(signal.SIGALRM, _handle_timeout)
-            signal.alarm(seconds)
-            try:
-                result = func(*args, **kwargs)
-            finally:
-                signal.alarm(0)
-            return result
-
-        return wraps(func)(wrapper)
-
-    return decorator
-
-@timeout(30)
-def get_flow_chart(fva):
-    global api
-
-    FlowChart_info = api.idaapi.FlowChart(api.ida_funcs.get_func(fva))
-
-    return FlowChart_info
-
-@timeout(30)
-def get_disasm(curaddr):
-    return api.idc.GetDisasm(curaddr)
-
-def extract_basic_block_info(fva, funcName, func_ext_dict,FROM_FILE):
+def extract_basic_block_info(fva, funcName, func_ext_dict):
     global api
     global imageBase
     global glo_MinEA
@@ -67,121 +28,112 @@ def extract_basic_block_info(fva, funcName, func_ext_dict,FROM_FILE):
     global err_log
     global except_list
 
+    FlowChart_info = api.idaapi.FlowChart(api.ida_funcs.get_func(fva))
     func_ext_dict[funcName] = dict()  # function level dict (key: funcName)
     func_ext_const = list()  # function level extract constants list
     bb_ext_dict = dict()  # block level dict (key: startAddress)
     bb_branch = list()  # fuction in block branch info
 
     try:
-        FlowChart_info = get_flow_chart(fva)
-        try:
-            for BasicBlock in FlowChart_info:
+        for BasicBlock in FlowChart_info:
 
-                curaddr = BasicBlock.startEA
-                endaddr = BasicBlock.endEA
-                opcodes = list()  # block level opcodes
-                disasms = list()  # block level operands
-                constants = list()  # block level constans
-                hex_opcodes = list()  # block level opcodes to convert integer (str->hex->int)
-                #bb_ext_dict[hex(BasicBlock.startEA)] = dict()  # block level extract info dict
-                basic_block_prime = 1
+            curaddr = BasicBlock.startEA
+            endaddr = BasicBlock.endEA
+            opcodes = list()  # block level opcodes
+            disasms = list()  # block level operands
+            constants = list()  # block level constans
+            hex_opcodes = list()  # block level opcodes to convert integer (str->hex->int)
+            #bb_ext_dict[hex(BasicBlock.startEA)] = dict()  # block level extract info dict
+            basic_block_prime = 1
 
-                '''--- Extract fuction in Basic block Branch info ---'''
-                for succ in BasicBlock.succs():
-                    bb_branch.append((hex(curaddr), hex(succ.startEA)))
+            '''--- Extract fuction in Basic block Branch info ---'''
+            for succ in BasicBlock.succs():
+                bb_branch.append((hex(curaddr), hex(succ.startEA)))
 
-                while curaddr < endaddr:
-                    # opcode = api.idc.GetMnem(curaddr) # disable code (overload call)
-                    try:
-                        disasm = get_disasm(curaddr) #여기를 함수로 만들어서 타임아웃 걸기
-                    except Exception as e:
-                        continue
-                    cutNumber = disasm.find('\t')
-                    opcode = disasm[:cutNumber]  # block level 1 line opcode
-                    operand = disasm[cutNumber:].replace('\t', '')  # block level 1 line operand
+            while curaddr < endaddr:
+                # opcode = api.idc.GetMnem(curaddr) # disable code (overload call)
+                disasm = api.idc.GetDisasm(curaddr)
+                cutNumber = disasm.find('\t')
+                opcode = disasm[:cutNumber]  # block level 1 line opcode
+                operand = disasm[cutNumber:].replace('\t', '')  # block level 1 line operand
 
-                    '''--- Get Prime ---'''
-                    if opcode in _filter.prime_set.keys():
-                        basic_block_prime *= _filter.prime_set[opcode]
-                    else:
-                        except_list.add(opcode)
+                '''--- Get Prime ---'''
+                if opcode in _filter.prime_set.keys():
+                    basic_block_prime *= _filter.prime_set[opcode]
+                else:
+                    except_list.add(opcode)
 
-                    '''--- constant value extraction ---'''
-                    if operand == "":  # 0-Address Instruction Filter
-                        pass
-                    else:
-                        operand = operand.split(',')
+                '''--- constant value extraction ---'''
+                if operand == "":  # 0-Address Instruction Filter
+                    pass
+                else:
+                    operand = operand.split(',')
 
-                        if len(operand) == 1:  # 1-Address Instruction Filter
-                            if operand[0] not in _filter.reg and '[' not in operand[0]:
-                                if '0x' in operand[0] and glo_MinEA <= int(operand[0], 16) <= glo_MaxEA:
+                    if len(operand) == 1:  # 1-Address Instruction Filter
+                        if operand[0] not in _filter.reg and '[' not in operand[0]:
+                            if '0x' in operand[0] and glo_MinEA <= int(operand[0], 16) <= glo_MaxEA:
+                                pass
+                            elif operand[0] not in imageBase and operand[0] not in _filter.logic:
+                                constants.append(operand[0])
+
+                    elif len(operand) == 2:  # 2-Address Instruction Filter
+                        operand_1, operand_2 = operand
+                        operand_2 = operand_2[1:]
+
+                        if operand_1 not in _filter.pointer:
+                            if operand_2 not in _filter.reg and 'ptr' not in operand_2 and '[' not in operand_2:
+                                if '0x' in operand_2 and glo_MinEA <= int(operand_2, 16) <= glo_MaxEA:
                                     pass
-                                elif operand[0] not in imageBase and operand[0] not in _filter.logic:
-                                    constants.append(operand[0])
+                                elif operand_2 not in imageBase and operand_2 not in _filter.logic:
+                                    constants.append(operand_2)
 
-                        elif len(operand) == 2:  # 2-Address Instruction Filter
-                            operand_1, operand_2 = operand
-                            operand_2 = operand_2[1:]
+                    else:  # 3-Address Instruction exception
+                        # print(f'[Debug][Sensing] 3-Address Instruction({funcName}-{hex(BasicBlock.startEA)})')
+                        operand_1, operand_2, operand_3 = operand
+                        operand_2 = operand_2[1:]
 
-                            if operand_1 not in _filter.pointer:
-                                if operand_2 not in _filter.reg and 'ptr' not in operand_2 and '[' not in operand_2:
-                                    if '0x' in operand_2 and glo_MinEA <= int(operand_2, 16) <= glo_MaxEA:
-                                        pass
-                                    elif operand_2 not in imageBase and operand_2 not in _filter.logic:
-                                        constants.append(operand_2)
+                        if operand_1 not in _filter.pointer and operand_2 not in _filter.pointer:
 
-                        else:  # 3-Address Instruction exception
-                            # print(f'[Debug][Sensing] 3-Address Instruction({funcName}-{hex(BasicBlock.startEA)})')
-                            operand_1, operand_2, operand_3 = operand
-                            operand_2 = operand_2[1:]
+                            if operand_2 not in _filter.reg and 'ptr' not in operand_2 and '[' not in operand_2:
+                                if '0x' in operand_2 and glo_MinEA <= int(operand_2, 16) <= glo_MaxEA:
+                                    pass
+                                elif operand_2 not in imageBase and operand_2 not in _filter.logic:
+                                    constants.append(operand_2)
 
-                            if operand_1 not in _filter.pointer and operand_2 not in _filter.pointer:
+                            if operand_3 not in _filter.reg and 'ptr' not in operand_3 and '[' not in operand_3:
+                                if '0x' in operand_3 and glo_MinEA <= int(operand_3, 16) <= glo_MaxEA:
+                                    pass
+                                elif operand_3 not in imageBase and operand_3 not in _filter.logic:
+                                    constants.append(operand_3)
+                '''--- END constant value extraction ---'''
 
-                                if operand_2 not in _filter.reg and 'ptr' not in operand_2 and '[' not in operand_2:
-                                    if '0x' in operand_2 and glo_MinEA <= int(operand_2, 16) <= glo_MaxEA:
-                                        pass
-                                    elif operand_2 not in imageBase and operand_2 not in _filter.logic:
-                                        constants.append(operand_2)
+                opcodes.append(opcode)
+                hex_opcodes.append(int(opcode.encode("utf-8").hex(), 16))
+                disasms.append(disasm)
+                curaddr = api.idc.NextHead(curaddr)
+                del disasm, cutNumber, opcode, operand
 
-                                if operand_3 not in _filter.reg and 'ptr' not in operand_3 and '[' not in operand_3:
-                                    if '0x' in operand_3 and glo_MinEA <= int(operand_3, 16) <= glo_MaxEA:
-                                        pass
-                                    elif operand_3 not in imageBase and operand_3 not in _filter.logic:
-                                        constants.append(operand_3)
-                    '''--- END constant value extraction ---'''
+            temp = ' '.join(constants)
+            basicblock_dic = {
+                'opcodes': opcodes,
+                'disasms': disasms,
+                'block_sha256': hashlib.sha256(hex(sum(hex_opcodes)).encode()).hexdigest(),
+                'start_addr': hex(BasicBlock.startEA),
+                'end_addr': hex(endaddr),
+                'block_constant': temp,
+                'block_prime': basic_block_prime,
+            }
+            if basicblock_dic:
+                bb_ext_dict[hex(BasicBlock.startEA)] = basicblock_dic
 
-                    opcodes.append(opcode)
-                    hex_opcodes.append(int(opcode.encode("utf-8").hex(), 16))
-                    disasms.append(disasm)
-                    curaddr = api.idc.NextHead(curaddr)
-                    del disasm, cutNumber, opcode, operand
-
-                temp = ' '.join(constants)
-                basicblock_dic = {
-                    'opcodes': opcodes,
-                    'disasms': disasms,
-                    'block_sha256': hashlib.sha256(hex(sum(hex_opcodes)).encode()).hexdigest(),
-                    'start_addr': hex(BasicBlock.startEA),
-                    'end_addr': hex(endaddr),
-                    'block_constant': temp,
-                    'block_prime': basic_block_prime,
-                }
-                if basicblock_dic:
-                    bb_ext_dict[hex(BasicBlock.startEA)] = basicblock_dic
-
-                if constants:
-                    func_ext_const.append(temp)
-                    glo_Constants.append(temp)
-                    del temp
-                del basicblock_dic, constants, opcodes, disasms, hex_opcodes
-        except Exception as e:
-            # print(f'[debug] Extract_ {e}')
-            err_log.append("Extract_" + str(e))
-    except Exception:
-        print(C_BOLD + C_RED + "[Detection] =====> infinite loop sensing <===== " + C_END)
-        print(C_BOLD + C_RED + f"ㄴ {filename}" + C_END)
-        shutil.move(FROM_FILE, "C:\\malware\\error\\" )
-        print(C_BOLD + C_INVERSE + f"[MOVED] {filename} -> C:\\malware\\error\\{filename}" + C_END)
+            if constants:
+                func_ext_const.append(temp)
+                glo_Constants.append(temp)
+                del temp
+            del basicblock_dic, constants, opcodes, disasms, hex_opcodes
+    except Exception as e:
+        # print(f'[debug] Extract_ {e}')
+        err_log.append("Extract_" + str(e))
 
     bb_ext_dict.update({'flow_constants': func_ext_const})
     bb_ext_dict.update({'flow_branches': bb_branch})
@@ -191,7 +143,7 @@ def extract_basic_block_info(fva, funcName, func_ext_dict,FROM_FILE):
     del bb_ext_dict
 
 
-def main(FROM_FILE):
+def main():
     global filename
     global api
     global imageBase
@@ -215,7 +167,7 @@ def main(FROM_FILE):
     for fva in api.idautils.Functions():
         FuncName = api.idc.GetFunctionName(fva).lower()
         if "sub_" in FuncName or "start" in FuncName or "main" in FuncName or "dllentry" in FuncName:
-            extract_basic_block_info(fva, FuncName, func_ext_dict,FROM_FILE)
+            extract_basic_block_info(fva, FuncName, func_ext_dict)
             func_name.append(FuncName)
 
             for addr in api.idautils.XrefsTo(fva, 0):
@@ -251,7 +203,7 @@ def basicblock_info_extraction(FROM_FILE):
     # print(f"[INFO][Extract Binary][MD5]{api.idc.GetInputMD5()}")
     print(f'[INFO][Extract Binary] {filename}')
 
-    func_ext_dict = main(FROM_FILE)
+    func_ext_dict = main()
 
     result_dic = ({"file_name": filename, "type" : filetype,"func_name": func_ext_dict, "constant": glo_Constants})
 

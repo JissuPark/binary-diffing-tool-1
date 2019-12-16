@@ -53,10 +53,6 @@ IDAT_PATH = [
 '''
 def pe_check(PE_F_PATH):
 
-    f = open(PE_F_PATH, 'rb')
-    f_data = f.read()
-    f.close()
-
     # MZ signature & PE signature 확인
     try:
         # pe format인거 확인 후, pefile 열기
@@ -121,7 +117,7 @@ def exec_idat(EXE_F_PATH, pe_flag):
         except:
             print('idat error')
         return pe_flag
-    #        return process
+
     else:
         # pe_flag가 IDAT(0) 혹은 IDAT(1)이 아닌 경우에는
         # 먼저 idat.exe을 실행한다.
@@ -130,15 +126,11 @@ def exec_idat(EXE_F_PATH, pe_flag):
             process = subprocess.Popen([IDAT_PATH[IDAT], "-A", "-B", "-P+", EXE_F_PATH], shell=True)
             process.wait()
             return IDAT
-        #            return process
+
         except:
             process = subprocess.Popen([IDAT_PATH[IDAT64], "-A", "-B", "-P+", EXE_F_PATH], shell=True)
             process.wait()
             return IDAT64
-
-
-#           return process
-
 
 '''
  * exe_to_idb                                                                          
