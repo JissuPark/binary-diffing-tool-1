@@ -9,10 +9,14 @@ import os
 
 check_file_flag = 0
 no_pe_file =""
+all_file_error = 0
 
 def showindex(request):
     global check_file_flag
     global no_pe_file
+    global all_file_error
+
+    all_file_error = 0
     check_file_flag = 0
     no_pe_file = ""
     main_engine.delete_file()
@@ -60,6 +64,9 @@ def cg(request):
 def loading(request):
     global check_file_flag
     global no_pe_file
+    global all_file_error
+
+    error_count = 0
     print(request)
     file_folder = "C:\\malware\\mal_exe"
     default_path = "C:\\malware\\all_result\\result.txt"
@@ -91,23 +98,28 @@ def loading(request):
     flag = file_check()
 
     print(f"::{flag}")
+    count = 0
 
     if os.path.exists(file_folder):
         print("file exit")
         for file in os.scandir(file_folder):
             print(file.path)
+            count += 1
             flag2 = main_engine.pe2idb.pe_check(file.path)
             if flag2 == -1:
                 flag = False
+                error_count += 1
                 print(f"base file :: {os.path.basename(file.path)}")
                 no_pe_file += os.path.basename(file.path) + ', '
                 if os.path.isfile(file.path):
                     os.remove(file.path)
                 check_file_flag = 1
 
+    if count == error_count:
+        all_file_error = 1
 
-    if flag is None:
-        return render(request, 'Main_engine/index.html', {'message': 'directory is empty !!'})
+    if flag is None or all_file_error == 1:
+        return render(request, 'Main_engine/index.html', {'message': 'directory is empty or all file are not pe !!'})
     elif flag is False or check_file_flag == 1:
         return render(request, 'Main_engine/loading.html', {'message': no_pe_file+' is(are) not pe !!'})
     else:
