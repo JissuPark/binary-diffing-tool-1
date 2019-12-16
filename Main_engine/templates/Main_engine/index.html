@@ -2,8 +2,11 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>WinBinary Diffing Service - Breakers</title>
     {% load static %}
+
+    <title>DiffEye</title>
+
+    <link href="{% static 'Main_engine/images/logo_diffeye.png' %}" rel="shortcut icon"/> <!--title logo 부분 -->
     <script src="{% static 'Main_engine/js/dropzone.js' %}"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -17,22 +20,21 @@
 
         input {
             font-weight: bolder;
-            background: rgba(241, 34, 96, 0.8);
-            color: white;
-            border-radius: 10px;
+            background: transparent;
             width: 150px;
             border: none;
             position: relative;
             height: 50px;
-            font-size: 1.5em;
+            font-size: 1.1em;
+            color: rgb(58, 80, 139);
             cursor: pointer;
             transition: 800ms ease all;
-            outline: none;
+            outline: rgb(58, 80, 139) solid 2px;
         }
 
         input:hover {
-            background: white;
-            color: black;
+            background: rgba(255, 255, 255, 0.8);
+            color: rgb(58, 80, 139);
         }
 
         input:before, input:after {
@@ -84,7 +86,6 @@
         </form>
     </div>
 
-    {% load static %}
     <script>
         Dropzone.options.myAwesomeDropzone = {
             accept: function (file, done) {
@@ -110,7 +111,7 @@
 </div>
 
 </div>
-<div style="float: left; padding: 5rem; font-family: 'Poppins', sans-serif; font-size: 13px; text-align: center;"
+<div style="float: left; padding: 3.7rem; font-family: 'Poppins', sans-serif; font-size: 13px; text-align: center;"
      class="col-12">
     <input type="submit" value="DIFFING" onclick="location.href='{% url 'loading' %}'">
 

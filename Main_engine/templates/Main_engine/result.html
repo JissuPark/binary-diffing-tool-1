@@ -1,6 +1,6 @@
 {% extends "Main_engine/layout.html" %}
 
-{% block title %}DIFFING SOURCE{% endblock %}
+{% block title %}DiffEye{% endblock %}
 
 {% block head %}
 
@@ -296,7 +296,7 @@
                                                     base_size_info.className = "badge badge-warning";
                                                     base_size_info.textContent = "file size";
                                                     base_size_info.style.color = "black";
-                                                    base_size_info.style.marginTop = "7px";
+                                                    base_size_info.style.marginTop = "12px";
                                                     base_size_info.style.marginRight = "7px";
                                                     base_size_info.style.padding = "0.2rem";
                                                     base_size_info.style.fontWeight = "600";
@@ -318,7 +318,7 @@
                                                     base_sha256_info.className = "badge badge-warning";
                                                     base_sha256_info.textContent = "sha256";
                                                     base_sha256_info.style.color = "black";
-                                                    base_sha256_info.style.marginTop = "7px";
+                                                    base_sha256_info.style.marginTop = "12px";
                                                     base_sha256_info.style.marginRight = "7px";
                                                     base_sha256_info.style.padding = "0.2rem";
                                                     base_sha256_info.style.fontWeight = "600";
@@ -347,7 +347,7 @@
                                                     base_md5_info.className = "badge badge-warning";
                                                     base_md5_info.textContent = "md5";
                                                     base_md5_info.style.color = "black";
-                                                    base_md5_info.style.marginTop = "7px";
+                                                    base_md5_info.style.marginTop = "12px";
                                                     base_md5_info.style.marginRight = "7px";
                                                     base_md5_info.style.padding = "0.2rem";
                                                     base_sha256_info.style.fontWeight = "600";
@@ -376,7 +376,7 @@
                                                     base_ssdeep_info.className = "badge badge-warning";
                                                     base_ssdeep_info.textContent = "ssdeep";
                                                     base_ssdeep_info.style.color = "black";
-                                                    base_ssdeep_info.style.marginTop = "7px";
+                                                    base_ssdeep_info.style.marginTop = "12px";
                                                     base_ssdeep_info.style.marginRight = "7px";
                                                     base_ssdeep_info.style.padding = "0.2rem";
                                                     base_ssdeep_info.style.fontWeight = "600";
@@ -404,7 +404,7 @@
                                                     base_timestamp_info.className = "badge badge-warning";
                                                     base_timestamp_info.textContent = "timestamp";
                                                     base_timestamp_info.style.color = "black";
-                                                    base_timestamp_info.style.marginTop = "7px";
+                                                    base_timestamp_info.style.marginTop = "12px";
                                                     base_timestamp_info.style.marginRight = "7px";
                                                     base_timestamp_info.style.padding = "0.2rem";
                                                     base_timestamp_info.style.fontWeight = "600";
@@ -437,11 +437,20 @@
                                                 console.log("test1 ----------> " + sort_test[test1][0]);
 
 
+
+
+
                                             {#for(var test2 in sort_test[test1]){#}
+
+
+
 
 
                                             {#    console.log("test2 ----------> " + test2[0][0]);#}
                                             {
+
+
+
 
                                             #}#}
                                             }
@@ -458,9 +467,9 @@
                                                         //console.log("Aaaa");
                                                         /* 하단에 행 추가 */
                                                         var new_row = res_table.insertRow(res_table.rows.length);
+                                                        new_row.id = "tr" + i;
                                                         /* 행에 열 추가 */
                                                         var filename = new_row.insertCell(0);
-                                                        filename.id = "filename" + i;
                                                         var bbh = new_row.insertCell(1);
                                                         var constvalue = new_row.insertCell(2);
                                                         var section = new_row.insertCell(3);
@@ -473,7 +482,14 @@
                                                         var bbh_value = json_res[standard][target][2];
                                                         //var bbh_value = target[2];
                                                         /*filename.innerHTML = json_res[standard][target][0].toUpperCase();*/
-                                                        filename.innerHTML = target.substring(0, length).toUpperCase() + "...";
+                                                        if (filename.length > length) {
+                                                            filename.setAttribute("data-toggle", "tooltip");
+                                                            filename.setAttribute("data-placement", "bottom");
+                                                            filename.setAttribute("title", filename);
+                                                            filename.innerHTML = target.substring(0, length).toUpperCase() + "...";
+                                                        } else {
+                                                            filename.innerHTML = target.toUpperCase();
+                                                        }
                                                         bbh.innerHTML = Math.floor(bbh_value * 10000) / 100;
                                                         var const_value = json_res[standard][target][3];
                                                         constvalue.innerHTML = Math.floor(const_value * 10000) / 100;
@@ -591,6 +607,12 @@
                                                             document.getElementById("legend_pointer" + b).appendChild(test);
                                                         }
                                                     }
+                                                    //var count = 0;
+//                                                   var new_line= "#tr" + i;
+                                                    /*참고 사이트  : https://yunzema.tistory.com/49 .off()*/
+/*                                                    $(new_line).off().click(function () {
+                                                      console.log("0번째");
+                                                    });*/
                                                     i++;
                                                 }
                                                 i = 0;

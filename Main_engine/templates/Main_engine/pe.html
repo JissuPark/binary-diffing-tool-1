@@ -1,9 +1,11 @@
 {% extends "Main_engine/layout.html" %}
 
 {% block head %}
+    {% block title %}PE{% endblock %}
 {% load static %}
 <link href="{% static 'Main_engine/css/pe.css' %}" rel="stylesheet">
 <script src="{% static 'Main_engine/js/defaults-ko_KR.min.js' %}"></script>
+    <link href="{% static 'Main_engine/images/logo_diffeye.png' %}" rel="shortcut icon"/> <!--title logo 부분 -->
 <style>
     .content {
         font-family: 'Roboto Condensed', sans-serif !important;
