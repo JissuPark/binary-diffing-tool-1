@@ -86,15 +86,6 @@ def loading(request):
 
     default_path3 = "C:\\malware\\all_result\\pe_r"
 
-
-    if os.path.exists(default_path3):
-        for file in os.scandir(default_path3):
-            print(file.path)
-            os.remove(file.path)
-        print('Remove All File')
-    else:
-        print('Directory Not Found')
-
     flag = file_check()
 
     print(f"::{flag}")

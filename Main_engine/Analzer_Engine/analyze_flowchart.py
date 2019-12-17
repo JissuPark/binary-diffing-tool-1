@@ -244,7 +244,7 @@ class AnalyzeFlowchart:
             for y, z in x.items():
                 total_sim += (list(z.values())[0])
                 total_count += 1
-        print(f'[analysis] Basic Block Constants similarity :::::::::::: ({total_sim}/{total_count}) : {float(str(total_sim / total_count)[:4])}')
+        #print(f'[analysis] Basic Block Constants similarity :::::::::::: ({total_sim}/{total_count}) : {float(str(total_sim / total_count)[:4])}')
         # print(f'ㄴ[debug] get const similarity time -> {timeit.default_timer() - st}')
         return (total_sim / total_count)
 
@@ -319,7 +319,7 @@ class AnalyzeFlowchart:
                                                     s_cm_dic[s_name]['constant'], t_cm_dic[t_name]['constant'])
             if (f_score[0] > 80) and (const_score > 0):
                 cnt += 1
-                print(f_score, const_score)
+                #print(f_score, const_score)
         return cnt
 
     def factorization(self, num):
