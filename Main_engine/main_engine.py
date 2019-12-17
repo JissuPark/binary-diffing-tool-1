@@ -259,7 +259,7 @@ class Analyze_files:
                 idb_final_score[value_i[0]] = semifinal
                 pe_final_score[value_pe[0]] = semifinal
 
-            sorted(idb_final_score.items(), key=(lambda i: i[1][10]), reverse=True)
+            sorted(idb_final_score.items(), key=(lambda i: i[1][11]), reverse=True)
             real_final[key_i[0]] = idb_final_score
             real_final[key_pe[0]] = pe_final_score
 
