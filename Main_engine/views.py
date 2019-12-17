@@ -167,8 +167,7 @@ def upload_file_dropzone(request):
             with open('C:\\malware\\mal_exe\\' + file.name, 'wb+') as uploaded_file:
                 for chunk in file.chunks():
                     uploaded_file.write(chunk)
-    # return render(request, 'Main_engine/index.html', {'input': flag})
-    # loading(request)
+
     return redirect('loading')
 
 

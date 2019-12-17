@@ -222,7 +222,7 @@
                         }
                     }
                 }
-                for (white_func in match_json[filename]['whitelist'][filename]) {console.log(white_func);
+                for (white_func in match_json[filename]['whitelist'][filename]) {
                     for (white_addr in match_json[filename]['whitelist'][filename][white_func]) {
                         var match_node = postoffice[filename][white_func][0];
 
@@ -300,7 +300,7 @@
                 div.id = "graph_" + index;
                 var hei = document.getElementById('div_'+index).offsetHeight - document.getElementById('name_'+index).offsetHeight-10;
                 div.style.width = '100%';
-                div.style.height = hei+"px";console.log(hei);
+                div.style.height = hei+"px";
                 document.getElementById('div_' + index).appendChild(div);
                 //매칭 함수가 없는 경우 따로 표시
                 if (targetlist[index][1] == 'none') {
