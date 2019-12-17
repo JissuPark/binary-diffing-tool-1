@@ -254,10 +254,11 @@ class Analyze_files:
                 semifinal[7] = (value_pe[1]['imphash'])
                 semifinal[8] = (value_pe[1]['rich'])
                 semifinal[9] = (value_pe[1]['pe_all_score'])
-
+                semifinal[10] = (value_i[1]['bbh'] + value_i[1]['const_value'] + value_pe[1]['pe_all_score'])
                 idb_final_score[value_i[0]] = semifinal
                 pe_final_score[value_pe[0]] = semifinal
 
+            sorted(idb_final_score.items(), key=(lambda i: i[1][10]), reverse=True)
             real_final[key_i[0]] = idb_final_score
             real_final[key_pe[0]] = pe_final_score
 
