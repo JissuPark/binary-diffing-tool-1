@@ -223,8 +223,9 @@
                     }
                 }
                 for (white_func in match_json[filename]['whitelist']) {
-                    for (white_addr in match_json[filename]['whitelist'][white_func]) {
+                    for (white_addr in match_json[filename]['whitelist'][filename][white_func]) {console.log(white_func);
                         var match_node = postoffice[filename][white_func][0];
+
                         match_node.update({
                             id: white_addr,
                             color: {
