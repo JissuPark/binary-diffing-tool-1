@@ -123,8 +123,8 @@ def call_main(request):
 
         return render(request, 'Main_engine/result.html', {'result': result, 'pe_': pe_, 'p_basic': p_basic})
 
-    except:
-        print('page error')
+    except Exception as e:
+        print(f'[DEBUG]Page error by {e}')
         return render(request, 'Main_engine/error.html')
 
 
