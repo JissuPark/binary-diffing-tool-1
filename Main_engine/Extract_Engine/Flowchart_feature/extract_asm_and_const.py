@@ -166,7 +166,7 @@ def main():
 
     for fva in api.idautils.Functions():
         FuncName = api.idc.GetFunctionName(fva).lower()
-        if "sub_" in FuncName or "start" in FuncName or "main" in FuncName or "dllentry" in FuncName:
+        if FuncName == "sub" or "start" in FuncName or "main" in FuncName or "dllentry" in FuncName:
             extract_basic_block_info(fva, FuncName, func_ext_dict)
             func_name.append(FuncName)
 
@@ -176,7 +176,6 @@ def main():
                         func_branch.append(
                             (api.ida_funcs.get_func_name(api.ida_funcs.get_func(addr.src).startEA), FuncName))
                 except Exception as e:
-                    # print(f'[debug] XrefsTo_ {e}')
                     err_log.append("XrefsTo_" + str(e))
             del FuncName
 
@@ -197,7 +196,7 @@ def basicblock_info_extraction(FROM_FILE):
     global filetype
 
     global glo_Constants
-    reslut_dic = dict()
+    result_dic = dict()
     api = open_idb(FROM_FILE)
 
     # print(f"[INFO][Extract Binary][MD5]{api.idc.GetInputMD5()}")
@@ -205,10 +204,10 @@ def basicblock_info_extraction(FROM_FILE):
 
     func_ext_dict = main()
 
-    reslut_dic = ({"file_name": filename, "type" : filetype,"func_name": func_ext_dict, "constant": glo_Constants})
+    result_dic = ({"file_name": filename, "type" : filetype,"func_name": func_ext_dict, "constant": glo_Constants})
 
 
-    return reslut_dic
+    return result_dic
 
 
 def open_idb(FROM_FILE):

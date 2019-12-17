@@ -2,8 +2,11 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>WinBinary Diffing Service - Breakers</title>
     {% load static %}
+
+    <title>DiffEye</title>
+
+    <link href="{% static 'Main_engine/images/logo_diffeye.png' %}" rel="shortcut icon"/> <!--title logo 부분 -->
     <script src="{% static 'Main_engine/js/dropzone.js' %}"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -17,22 +20,21 @@
 
         input {
             font-weight: bolder;
-            background: rgba(241, 34, 96, 0.8);
-            color: white;
-            border-radius: 10px;
+            background: transparent;
             width: 150px;
             border: none;
             position: relative;
             height: 50px;
-            font-size: 1.5em;
+            font-size: 1.1em;
+            color: rgb(58, 80, 139);
             cursor: pointer;
             transition: 800ms ease all;
-            outline: none;
+            outline: rgb(58, 80, 139) solid 2px;
         }
 
         input:hover {
-            background: white;
-            color: black;
+            background: rgba(255, 255, 255, 0.8);
+            color: rgb(58, 80, 139);
         }
 
         input:before, input:after {
@@ -62,13 +64,13 @@
 </head>
 
 <body>
-<h2 style="color: white; font-family: 'Poppins', sans-serif; font-weight:bold; font-size:30px; text-align: center; padding-top: 6rem;"
-    id="Try-it-out-1">DIFFING SOURCE</h2>
+<div style="text-align: center">
+    <img alt="...." src="{% static 'Main_engine/images/logo2_diffeye(w).png' %}" style="width: 15%; margin-top: 56px;">
+</div>
 <!--class name 삭제-->
-{#
-<div id='container' style="text-align: center; width: 100%; justify-content: center; margin-top: -5.6em;" #}
-     {# class="col-12">#}
-    <div style="width: 100%; text-align: center; margin-top: 6rem">
+
+<div id='container' style="text-align: center; width: 100%; justify-content: center; margin-top: 1.6em;">
+    <div style="width: 100%; text-align: center; margin-top:  3rem">
 
         <div id="dropzone 1" style="display: inline-block; width: 35%;">
             <form action="{% url 'upload' %}" enctype="multipart/form-data" class="dropzone needsclick dz-clickable" id="myAwesomeDropzone"
@@ -86,8 +88,9 @@
         </div>
     </div>
 
+
 </div>
-<div style="float: left; padding: 5rem; font-family: 'Poppins', sans-serif; font-size: 13px; text-align: center;"
+<div style="float: left; padding: 3.7rem; font-family: 'Poppins', sans-serif; font-size: 13px; text-align: center;"
      class="col-12">
     <input type="submit" value="DIFFING" id="submitfiles">
 
@@ -136,7 +139,9 @@
 </script>
 <!-- section end -->
 <!-- Footer -->
+
 <footer style="text-align: center">
+
     <span style="text-align: center; font-size: 1.2rem; color: #cacaca; cursor: pointer"
           onclick="location.href='{% url 'result' %}'"><strong>RECENT SCAN | </strong>
     <span style="text-align: center; font-size: 1.2rem; color: #cacaca"><strong>About</strong></span>

@@ -243,7 +243,8 @@ class Analyze_files:
             idb_final_score = dict()
             pe_final_score = dict()
             for value_i, value_pe in zip(key_i[1].items(), key_pe[1].items()):
-                semifinal = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+                semifinal = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
                 semifinal[0] = (value_pe[1]['file_hash'])
                 semifinal[1] = (value_pe[1]['time_date_stamp'])
                 semifinal[2] = (value_i[1]['bbh'])
@@ -253,13 +254,14 @@ class Analyze_files:
                 semifinal[6] = (value_pe[1]['pdb_score'])
                 semifinal[7] = (value_pe[1]['imphash'])
                 semifinal[8] = (value_pe[1]['rich'])
-                semifinal[9] = (value_pe[1]['pe_all_score'])
-                semifinal[10] = (value_i[1]['bbh']+value_i[1]['const_value']+value_pe[1]['pe_all_score'])
+                semifinal[9] = (value_pe[1]['rsrc'])
+                semifinal[10] = (value_pe[1]['pe_all_score'])
+                semifinal[11] = (value_i[1]['bbh'] + value_i[1]['const_value'] + value_pe[1]['pe_all_score'])
 
                 idb_final_score[value_i[0]] = semifinal
                 pe_final_score[value_pe[0]] = semifinal
 
-            sorted(idb_final_score.items(), key=(lambda i: i[1][10]), reverse=True)
+            sorted(idb_final_score.items(), key=(lambda i: i[1][11]), reverse=True)
 
             real_final[key_i[0]] = idb_final_score
             real_final[key_pe[0]] = pe_final_score
@@ -283,7 +285,7 @@ def create_folder():
     # mal_exe는 drag&drop할 때 먼저 생성됨
     # mal_idb, all_result(idb, pe) 가 없으면 생성
 
-    default_path = ["C:\\malware\\mal_idb\\","C:\\malware\\all_result\\", "C:\\malware\\all_result\\idb", "C:\\malware\\all_result\\pe\\", "C:\\malware\\all_result\\pe_r\\", "C:\\malware\\all_result\\cg\\", "C:\\malware\\all_result\\cfg\\"]
+    default_path = ["C:\\malware\\mal_idb\\","C:\\malware\\all_result\\", "C:\\malware\\all_result\\idb", "C:\\malware\\all_result\\pe\\", "C:\\malware\\all_result\\pe_r\\", "C:\\malware\\all_result\\cg\\", "C:\\malware\\all_result\\cfg\\","C:\\malware\\error\\"]
     for path in default_path:
         if os.path.exists(path):
             continue
@@ -315,6 +317,7 @@ def start_engine():
 
     # 1. pe 해시 체크 (동일한 파일 필터), 2.패킹 체크
     print("1) hash check")
+    hash_check = "hash_check"
     pe_check = Pe_Files_Check(PATH)
     print("2) packing check")
     file_hash_dict = pe_check.get_unique_pe_list()

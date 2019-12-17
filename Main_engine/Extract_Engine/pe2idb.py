@@ -58,25 +58,26 @@ def pe_check(PE_F_PATH):
     f.close()
 
     # MZ signature & PE signature 확인
-    try:
-        # pe format인거 확인 후, pefile 열기
-        pe = pefile.PE(PE_F_PATH, fast_load=True)
-        m_bit = pe.FILE_HEADER.Machine
-        pe.close()
-        if m_bit == HEX_M_32:
-            return IDAT
-        elif m_bit == HEX_M_64_AMD or m_bit == HEX_M_64_IA:
-            return IDAT64
-        pe.close()
+    if f_data[0:2] == BYTES_SIG_MZ and f_data[2:512].find(BYTES_SIG_PE) != -1:
+        try:
+            # pe format인거 확인 후, pefile 열기
+            pe = pefile.PE(PE_F_PATH, fast_load=True)
+            m_bit = pe.FILE_HEADER.Machine
+            pe.close()
+            if m_bit == HEX_M_32:
+                return IDAT
+            elif m_bit == HEX_M_64_AMD or m_bit == HEX_M_64_IA:
+                return IDAT64
 
-    except:
-        # pe format인데, 패킹되어 있는 경우 except로 들어올 것임.
-        # pefile 모듈을 사용할 수 없기 때문
-        # 이 경우 일단 idat.exe 돌리고, exception나면 idat64.exe으로..!
-        print("PE_UNKNOWN - PACKING")
-        return PE_UNKNOWN
-
-
+        except:
+            # pe format인데, 패킹되어 있는 경우 except로 들어올 것임.
+            # pefile 모듈을 사용할 수 없기 때문
+            # 이 경우 일단 idat.exe 돌리고, exception나면 idat64.exe으로..!
+            print("PE_UNKNOWN - PACKING")
+            return PE_UNKNOWN
+    else:
+        print("PE_CHECK_ERROR")
+        return PE_CHECK_ERROR
 
 '''
  * exe_list_to_queue                                                                   
@@ -108,8 +109,7 @@ def exe_list_to_queue(PE_D_PATH, q):
 
 
 def exec_idat(EXE_F_PATH, pe_flag):
-    #print(pe_flag)
-    # print(f"binary::{EXE_F_PATH}")
+
     if pe_flag == IDAT or pe_flag == IDAT64:
         # -A :
         # -B : batch mode. IDA는 .IDB와 .ASM 파일을 자동 생성한다.
@@ -121,7 +121,7 @@ def exec_idat(EXE_F_PATH, pe_flag):
         except:
             print('idat error')
         return pe_flag
-    #        return process
+
     else:
         # pe_flag가 IDAT(0) 혹은 IDAT(1)이 아닌 경우에는
         # 먼저 idat.exe을 실행한다.
@@ -130,15 +130,11 @@ def exec_idat(EXE_F_PATH, pe_flag):
             process = subprocess.Popen([IDAT_PATH[IDAT], "-A", "-B", "-P+", EXE_F_PATH], shell=True)
             process.wait()
             return IDAT
-        #            return process
+
         except:
             process = subprocess.Popen([IDAT_PATH[IDAT64], "-A", "-B", "-P+", EXE_F_PATH], shell=True)
             process.wait()
             return IDAT64
-
-
-#           return process
-
 
 '''
  * exe_to_idb                                                                          
@@ -185,8 +181,9 @@ def exe_to_idb(exe_q, pack_path, unpack_path,):  ### Multiprocessing할 때, tar
             else:
                 pass
                 #print(f_path+'  '+'pe error')
-        except:pass
-            #print('this pe is error pefile!!')
+        except Exception as e:
+            print('this pe is error pefile!!')
+            print(f" ㄴ {e}")
 
 
 '''

@@ -15,14 +15,17 @@
     <div id="loading-text">loading</div>
 </div>
 
+{% if message %}
+<script>alert('{{message}}');</script>
+{% endif %}
 
 <script>
+
         window.onload = function ()
         {
             var url = "{% url 'result' %}";
             document.location.href = url;
         }
-
 
 </script>
 </body>

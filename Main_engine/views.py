@@ -7,10 +7,24 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import json
 import os
 
+check_file_flag = 0
+no_pe_file =""
+all_file_error = 0
 
 def showindex(request):
+    global check_file_flag
+    global no_pe_file
+    global all_file_error
+
+    all_file_error = 0
+    check_file_flag = 0
+    no_pe_file = ""
     main_engine.delete_file()
     return render(request, 'Main_engine/index.html')
+
+
+def about(request):
+    return render(request, 'Main_engine/about.html')
 
 
 def recent(request):
@@ -19,7 +33,7 @@ def recent(request):
 
 def pe(request):
     p_dict = extract_pe.pe_into_file()
-    #print(p_dict)
+    # print(p_dict)
     return render(request, 'Main_engine/pe.html', {'p_dict': p_dict})
 
 
@@ -51,7 +65,13 @@ def cg(request):
 
 
 def loading(request):
+    global check_file_flag
+    global no_pe_file
+    global all_file_error
+
+    error_count = 0
     print(request)
+    file_folder = "C:\\malware\\mal_exe"
     default_path = "C:\\malware\\all_result\\result.txt"
 
     default_path2 = "C:\\malware\\all_result\\pe_r"
@@ -67,23 +87,36 @@ def loading(request):
     if os.path.isfile(default_path):
         os.remove(default_path)
 
-    default_path3 = "C:\\malware\\all_result\\pe_r"
-
-
-    if os.path.exists(default_path3):
-        for file in os.scandir(default_path3):
-            print(file.path)
-            os.remove(file.path)
-        print('Remove All File')
-    else:
-        print('Directory Not Found')
-
     flag = file_check()
 
-    if not flag:
-        return render(request, 'Main_engine/index.html', {'message': 'directory is empty or filetype is not pe !!'})
+    print(f"::{flag}")
+    count = 0
+
+    if os.path.exists(file_folder):
+        print("file exit")
+        for file in os.scandir(file_folder):
+            print(file.path)
+            count += 1
+            flag2 = main_engine.pe2idb.pe_check(file.path)
+            if flag2 == -1:
+                flag = False
+                error_count += 1
+                print(f"base file :: {os.path.basename(file.path)}")
+                no_pe_file += os.path.basename(file.path) + ', '
+                if os.path.isfile(file.path):
+                    os.remove(file.path)
+                check_file_flag = 1
+
+    if count == error_count:
+        all_file_error = 1
+
+    if flag is None or all_file_error == 1:
+        return render(request, 'Main_engine/index.html', {'message': 'directory is empty or all file are not pe !!'})
+    elif flag is False or check_file_flag == 1:
+        return render(request, 'Main_engine/loading.html', {'message': no_pe_file+' is(are) not pe !!'})
     else:
         return render(request, 'Main_engine/loading.html')
+
 
 
 def call_main(request):
@@ -116,15 +149,14 @@ def call_main(request):
                         if item1 == 'basic prop':
                             p_basic[pe_data['file_name']] = item2
 
-
         stop = timeit.default_timer()
         print('time is ????')
         print(stop - start)
-
         return render(request, 'Main_engine/result.html', {'result': result, 'pe_': pe_, 'p_basic': p_basic})
 
     except Exception as e:
         print(f'[DEBUG]Page error by {e}')
+
         return render(request, 'Main_engine/error.html')
 
 
@@ -139,6 +171,7 @@ def upload_file_dropzone(request):
     # loading(request)
     return redirect('loading')
 
+
 def file_check():
     """
     파일의 타입, 크기, 갯수를 체크해서 입장여부를 판단해주는 함수
@@ -147,11 +180,12 @@ def file_check():
 
     if len(os.listdir(r'C:\malware\mal_exe')) == 0:
         print('[DEBUG]directory is empty!')
-        return False
+        return None
 
     # for file in os.listdir(r'C:\malware\mal_exe'):
     #     # 이름에서 확장자를 추출해 비교하는 로직
-    #     extension = ['exe', 'dll', 'sys', 'idb', 'i64']
+    #     extension = ['exe', 'dll', 'sys',' ']
+    #     print("jaeho")
     #     file_extension = file.split('.')[-1]
     #     print(f'[DEBUG] {file} is {file_extension}')
     #     # 확장자가 있는 경우, 넘어감
@@ -159,8 +193,8 @@ def file_check():
     #         continue
     #     # 확장자가 리스트에 없는 경우 해당 파일을 삭제하고 false 반환
     #     if file_extension not in extension:
+    #         print('jaeho2')
     #         os.remove(os.path.join(r'C:\malware\mal_exe', file))
     #         return False
-    # 전부 돌았는데 false가 반환되지 않았다면 true 반환
+    # # 전부 돌았는데 false가 반환되지 않았다면 true 반환
     return True
-

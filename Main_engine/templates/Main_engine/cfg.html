@@ -1,8 +1,9 @@
 {% extends "Main_engine/layout.html" %}
 
-{% block title %} CFG page {% endblock %}
+{% block title %}CFG  {% endblock %}
 {% block head %}
 {% load static %}
+    <link href="{% static 'Main_engine/images/logo_diffeye.png' %}" rel="shortcut icon"/> <!--title logo 부분 -->
 <link href="{% static 'Main_engine/css/styles.css' %}" rel="stylesheet">
 <link rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css">
@@ -221,9 +222,10 @@
                         }
                     }
                 }
-                for (white_func in match_json[filename]['whitelist']) {
-                    for (white_addr in match_json[filename]['whitelist'][white_func]) {
+                for (white_func in match_json[filename]['whitelist'][filename]) {console.log(white_func);
+                    for (white_addr in match_json[filename]['whitelist'][filename][white_func]) {
                         var match_node = postoffice[filename][white_func][0];
+
                         match_node.update({
                             id: white_addr,
                             color: {
@@ -305,7 +307,7 @@
                     document.getElementById('graph_' + index).setAttribute('style', 'height: 50%;');
                     var p = document.createElement('p');
                     p.className = 'seonea';
-                    p.innerText = "There is not matched function.";
+                    p.innerText = "There is no matched function.";
                     document.getElementById("graph_" + index).appendChild(p);
                     continue;
                 }
