@@ -243,7 +243,7 @@ class Analyze_files:
             idb_final_score = dict()
             pe_final_score = dict()
             for value_i, value_pe in zip(key_i[1].items(), key_pe[1].items()):
-                semifinal = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                semifinal = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
                 semifinal[0] = (value_pe[1]['file_hash'])
                 semifinal[1] = (value_pe[1]['time_date_stamp'])
                 semifinal[2] = (value_i[1]['bbh'])
@@ -253,12 +253,14 @@ class Analyze_files:
                 semifinal[6] = (value_pe[1]['pdb_score'])
                 semifinal[7] = (value_pe[1]['imphash'])
                 semifinal[8] = (value_pe[1]['rich'])
-                semifinal[9] = (value_pe[1]['pe_all_score'])
-                semifinal[10] = (value_i[1]['bbh'] + value_i[1]['const_value'] + value_pe[1]['pe_all_score'])
+                semifinal[9] = (value_pe[1]['rsrc'])
+                semifinal[10] = (value_pe[1]['pe_all_score'])
+                semifinal[11] = (value_i[1]['bbh'] + value_i[1]['const_value'] + value_pe[1]['pe_all_score'])
+
                 idb_final_score[value_i[0]] = semifinal
                 pe_final_score[value_pe[0]] = semifinal
 
-            sorted(idb_final_score.items(), key=(lambda i: i[1][10]), reverse=True)
+            sorted(idb_final_score.items(), key=(lambda i: i[1][11]), reverse=True)
             real_final[key_i[0]] = idb_final_score
             real_final[key_pe[0]] = pe_final_score
 
