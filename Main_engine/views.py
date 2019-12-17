@@ -12,15 +12,18 @@ def showindex(request):
     main_engine.delete_file()
     return render(request, 'Main_engine/index.html')
 
+
 def about(request):
     return render(request, 'Main_engine/about.html')
+
 
 def recent(request):
     return render(request, 'Main_engine/index.html')
 
+
 def pe(request):
     p_dict = extract_pe.pe_into_file()
-    #print(p_dict)
+    # print(p_dict)
     return render(request, 'Main_engine/pe.html', {'p_dict': p_dict})
 
 
@@ -70,7 +73,6 @@ def loading(request):
 
     default_path3 = "C:\\malware\\all_result\\pe_r"
 
-
     if os.path.exists(default_path3):
         for file in os.scandir(default_path3):
             print(file.path)
@@ -117,13 +119,12 @@ def call_main(request):
                         if item1 == 'basic prop':
                             p_basic[pe_data['file_name']] = item2
 
-
         stop = timeit.default_timer()
         print('time is ????')
         print(stop - start)
         return render(request, 'Main_engine/result.html', {'result': result, 'pe_': pe_, 'p_basic': p_basic})
 
-    except:
+    except :
         print('page error')
         return render(request, 'Main_engine/error.html')
 
@@ -138,6 +139,7 @@ def upload_file_dropzone(request):
     # return render(request, 'Main_engine/index.html', {'input': flag})
     # loading(request)
     return redirect('loading')
+
 
 def file_check():
     """
@@ -163,4 +165,3 @@ def file_check():
     #         return False
     # 전부 돌았는데 false가 반환되지 않았다면 true 반환
     return True
-
