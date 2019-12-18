@@ -222,7 +222,7 @@ class AnalyzeFlowchart:
             for matched_count, sim in similer_info[baseFunc][targetFunc].items():
                 # print(f'{base_count} - {target_count} - {matched_count} - {sim}')
                 # (matched_count / target_count)
-                func_dic.update({baseFunc: {targetFunc: {base_count: {target_count: {matched_count: {(matched_count / target_count)}}}}}})
+                func_dic.update({baseFunc: {targetFunc: {base_count: {target_count: {matched_count: (matched_count / target_count)}}}}})
         return func_dic
 
     def compare_bbh(self, s_flow_data, t_flow_data, flow_const):
@@ -285,7 +285,7 @@ class AnalyzeFlowchart:
                 del const_matched_bb_dic[baseFunc]
 
 
-        return dict({s_name: s_hash_dict[s_name]['bbh']}), dict({t_name: t_hash_dict[t_name]['bbh']}), const_matched_bb_dic
+        return dict({s_name: s_hash_dict[s_name]['bbh']}), dict({t_name: t_hash_dict[t_name]['bbh']}), const_matched_bb_dic, func_sim_info
 
     def compare_bb_const(self, stand_list, target_list, s_hash_dict, t_hash_dict):
 
@@ -327,7 +327,7 @@ class AnalyzeFlowchart:
 
         return (matched / total_len)
 
-    def get_match_func_level(self, _dict):
+    def get_match_func_level(self, _dict, sim_dict):
 
         bb_count = 0
         func_match_dic = dict()
@@ -357,10 +357,15 @@ class AnalyzeFlowchart:
 
                 # print(f'{func} -> matched -> {vote_func}')
                 # print(f' ㄴ[debug] {temp} vote -> -> {vote_func}')
-                func_match_dic.update({func: [vote_func, block_match]})
+                # print(f"[DEBUG] if {sim_dict[func][vote_func]}")
+
+                func_match_dic.update({func: [vote_func, block_match, sim_dict[func][vote_func]]})
+
             else:
                 # print(f'{func} -> matched -> {temp_result[0]}')
-                func_match_dic.update({func: [temp_result[0], block_match]})
+                # print(f"[DEBUG] else {sim_dict[func][temp_result[0]]}")
+
+                func_match_dic.update({func: [temp_result[0], block_match, sim_dict[func][temp_result[0]]]})
 
         return func_match_dic
 
@@ -389,11 +394,11 @@ class AnalyzeFlowchart:
         flow_const_dict.update({"base": s_flow_const_dict})
         flow_const_dict.update({"target": t_flow_const_dict})
 
-        cmp_s, cmp_t, true_bb_const_sim = self.compare_bbh(s_cmp_dic, t_cmp_dic, flow_const_dict)
+        cmp_s, cmp_t, true_bb_const_sim, func_sim = self.compare_bbh(s_cmp_dic, t_cmp_dic, flow_const_dict)
 
         #c_score = self.compare_prime(self.parser_bbh_T_F(cmp_s, ), self.parser_bbh_T_F(cmp_t, ), s_flow_data, t_flow_data)
 
-        func_match_dict = self.get_match_func_level(true_bb_const_sim)
+        func_match_dict = self.get_match_func_level(true_bb_const_sim, func_sim)
 
         return algo.get_bbh_similarity(cmp_s, ), func_match_dict, whitelist_matched_dic1, true_bb_const_sim
 

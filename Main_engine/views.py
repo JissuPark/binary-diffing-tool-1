@@ -155,7 +155,8 @@ def call_main(request):
         return render(request, 'Main_engine/result.html', {'result': result, 'pe_': pe_, 'p_basic': p_basic})
 
     except Exception as e:
-        print(f'[Debug]page error by {e}')
+        print(f'[DEBUG]Page error by {e}')
+
         return render(request, 'Main_engine/error.html')
 
 
@@ -166,8 +167,7 @@ def upload_file_dropzone(request):
             with open('C:\\malware\\mal_exe\\' + file.name, 'wb+') as uploaded_file:
                 for chunk in file.chunks():
                     uploaded_file.write(chunk)
-    # return render(request, 'Main_engine/index.html', {'input': flag})
-    # loading(request)
+
     return redirect('loading')
 
 

@@ -8,8 +8,14 @@
 
     <link href="{% static 'Main_engine/images/logo_diffeye.png' %}" rel="shortcut icon"/> <!--title logo 부분 -->
     <script src="{% static 'Main_engine/js/dropzone.js' %}"></script>
+    <script crossorigin="anonymous"
+            integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+            src="https://code.jquery.com/jquery-3.4.1.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script crossorigin="anonymous"
+            integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+            src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="{% static 'Main_engine/css/dropzone.css' %}">
     <style>
         @import url("https://fonts.googleapis.com/css?family=Noto+Sans+KR&display=swap");
@@ -73,7 +79,8 @@
     <div style="width: 100%; text-align: center; margin-top:  3rem">
 
         <div id="dropzone 1" style="display: inline-block; width: 35%;">
-            <form action="{% url 'upload' %}" enctype="multipart/form-data" class="dropzone needsclick dz-clickable" id="myAwesomeDropzone"
+            <form action="{% url 'upload' %}" enctype="multipart/form-data" class="dropzone needsclick dz-clickable"
+                  id="myAwesomeDropzone"
                   style="border-color: rgba(255,255,255,0.5); border-width: 1px;">
                 {% csrf_token %}
                 <div class="dz-message needsclick"> <!--밑에 생김--->
@@ -93,8 +100,28 @@
 <div style="float: left; padding: 3.7rem; font-family: 'Poppins', sans-serif; font-size: 13px; text-align: center;"
      class="col-12">
     <input type="submit" value="DIFFING" id="submitfiles">
-
 </div>
+
+<!--&lt;!&ndash; Modal button &ndash;&gt;-->
+<!--<button type="button" class='btn btn-primary' data-toggle="modal" data-target="#myModal"> sign in</button>-->
+<!--&lt;!&ndash; Modal page &ndash;&gt;-->
+<!--<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">-->
+<!--        <div class="modal-dialog" role="document">-->
+<!--            <div class="modal-content">-->
+<!--                <div class="modal-header">-->
+<!--                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span-->
+<!--                            aria-hidden="true">&times;</span></button>-->
+<!--                    <h4 class="modal-title" id="myModalLabel">Sign in</h4>-->
+<!--                </div>-->
+<!--                <div class="modal-body">-->
+<!--                    Modal 내용-->
+<!--                </div>-->
+<!--                <div class="modal-footer">-->
+<!--                    <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
 {% load static %}
 <script>
     Dropzone.options.myAwesomeDropzone = {

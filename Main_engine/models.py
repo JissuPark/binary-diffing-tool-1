@@ -32,3 +32,12 @@ class PE_info(models.Model):
     pdbguid = models.TextField(null=True)
     pdbage = models.TextField(null=True)
     pdbpath = models.TextField(null=True)
+
+
+class Login(models.Model):
+    username = models.CharField(max_length=20, primary_key=True)
+    password = models.CharField(max_length=20)
+    register_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.username
