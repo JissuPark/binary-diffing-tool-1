@@ -43,6 +43,7 @@ class AnalyzeFlowchart:
                     flow_const_dict.update({x: bloc_dict["func_name"][x]["flow_constants"]})
                 elif y != "flow_constants" and y != "flow_branches":
                     block_hash = bloc_dict["func_name"][x][y]['block_sha256']
+
                     if block_hash in white.list:
                         # print(f'[sensing] white_list -> {block_hash} : {white.list[block_hash]}')
                         matched_dic[x].update({y: {block_hash: white.list[block_hash]}})
@@ -381,8 +382,8 @@ class AnalyzeFlowchart:
         basic block hash(함수 대표값)을 비교해서 점수에 가중치를 매겨 반환하는 함수
         '''
 
-        s_cmp_dic, whitelist_matched_dic1, s_flow_const_dict = self.parser_bbh(s_flow_data)
-        t_cmp_dic, whitelist_matched_dic2, t_flow_const_dict = self.parser_bbh(t_flow_data)
+        s_cmp_dic, whitelist_matched_dic1, s_flow_const_dict, = self.parser_bbh(s_flow_data)
+        t_cmp_dic, whitelist_matched_dic2, t_flow_const_dict, = self.parser_bbh(t_flow_data)
 
         flow_const_dict = dict()
         flow_const_dict.update({"base": s_flow_const_dict})
