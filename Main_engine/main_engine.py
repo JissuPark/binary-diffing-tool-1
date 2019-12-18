@@ -136,6 +136,7 @@ def multiprocess_file(q, return_dict, flag):
         elif flag == 'pe':
 
             file_filter2 = f_path[f_path.rfind('\\') + 1:]
+            #print()
 
             try:
                 pe_file = Filter.objects.get(filehash=file_filter2)
