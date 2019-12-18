@@ -201,27 +201,27 @@
                                 match_base_node.update({
                                     id: match_json[filename][t][fname][1][addr][0],
                                     color: {
-                                        border: "black",
-                                        background: "white",
-                                        highlight: {border: "black", background: "white"}
+                                        border: "green",
+                                        background: "lightgreen",
+                                        highlight: {border: "green", background: "lightgreen"}
                                     }
                                 });
                                 if (match_json[filename][t][fname][1][addr][1] == 1) {
                                     match_target_node.update({
                                         id: addr,
                                         color: {
-                                            border: "black",
-                                            background: "white",
-                                            highlight: {border: "black", background: "white"}
+                                            border: "green",
+                                            background: "lightgreen",
+                                            highlight: {border: "green", background: "lightgreen"}
                                         }
                                     });
                                 } else {
                                     match_target_node.update({
                                         id: addr,
                                         color: {
-                                            border: "green",
-                                            background: "lightgreen",
-                                            highlight: {border: "green", background: "lightgreen"}
+                                            border: "#3f35c2",
+                                            background: "#e5e9ff",
+                                            highlight: {border: "#3f35c2", background: "#e5e9ff"}
                                         }
                                     });
                                 }
@@ -238,9 +238,9 @@
                         match_node.update({
                             id: white_addr,
                             color: {
-                                border: "#3f35c2",
-                                background: "#e5e9ff",
-                                highlight: {border: "#3f35c2", background: "#e5e9ff"}
+                                border: "black",
+                                background: "white",
+                                highlight: {border: "black", background: "white"}
                             }
                         });
                     }
@@ -311,7 +311,7 @@
                             for (let b_cnt in simdict) {
                                 for (let t_cnt in simdict[b_cnt]) {
                                     for (let m_cnt in simdict[b_cnt][t_cnt])
-                                        similarity.textContent = simdict[b_cnt][t_cnt][m_cnt] * 100 + "% (" + m_cnt + "/" + t_cnt + ")";
+                                        similarity.textContent = Math.floor(simdict[b_cnt][t_cnt][m_cnt] * 100) + "% (" + m_cnt + "/" + t_cnt + ")";
                                 }
                             }
                             similarity.className = 'badge badge-warning';

@@ -196,7 +196,7 @@ def main(tag):
     cg_info_dict['f_branch'] = func_branch
 
     # saved block flow graph
-    with open("C:\\malware\\all_result\\cg\\"+filename, 'w') as makefile:
+    with open("C:\\malware\\all_result\\cg\\"+filename+".txt", 'w') as makefile:
         json.dump(cg_info_dict, makefile, ensure_ascii=False, indent='\t')
 
     del func_name, func_branch, cg_info_dict

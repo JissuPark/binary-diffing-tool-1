@@ -2,7 +2,7 @@ import timeit
 from django.shortcuts import get_object_or_404, render, render_to_response, redirect
 from Main_engine import main_engine
 from Main_engine.Extract_Engine.PE_feature import extract_pe
-from .models import PE_info
+from .models import PE_info #, Login
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import json
 import os
@@ -10,6 +10,8 @@ import os
 check_file_flag = 0
 no_pe_file =""
 all_file_error = 0
+INPUTFILES = []
+
 
 def showindex(request):
     global check_file_flag
@@ -57,9 +59,12 @@ def cg(request):
     cg_dict = dict()
     PATH = r'C:\malware\all_result\cg'
     for file in os.listdir(PATH):
-        file_path = os.path.join(PATH, file)
-        with open(file_path, 'rb') as cg:
-            cg_dict[file] = json.loads(cg.read())
+        print(file[:-4])
+        print(INPUTFILES)
+        if file[:-4] in INPUTFILES:
+            file_path = os.path.join(PATH, file)
+            with open(file_path, 'rb') as cg:
+                cg_dict[file] = json.loads(cg.read())
 
     return render(request, 'Main_engine/cg.html', {'cg': cg_dict})
 
@@ -161,10 +166,12 @@ def call_main(request):
 
 
 def upload_file_dropzone(request):
+    INPUTFILES.clear()
     if request.method == 'POST':
         for filekey in request.FILES:
             file = request.FILES[filekey]
             with open('C:\\malware\\mal_exe\\' + file.name, 'wb+') as uploaded_file:
+                INPUTFILES.append(file.name)
                 for chunk in file.chunks():
                     uploaded_file.write(chunk)
 
@@ -197,3 +204,18 @@ def file_check():
     #         return False
     # # 전부 돌았는데 false가 반환되지 않았다면 true 반환
     return True
+
+
+# def signup(request):
+#     if request.method == "POST":
+#         user_id = request.POST['ID']
+#         user_pw = request.POST['PW']
+#         # pw_check = request.POST['PWcheck']
+#
+#         user = Login(
+#             id=user_id,
+#             password=user_pw
+#         )
+#         user.save()
+#
+#         return render(request, "index.html")

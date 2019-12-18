@@ -1,4 +1,6 @@
 from django.urls import path, include
+from tensorflow_core.python.framework.ops import name_scope
+
 from . import views
 from Main_engine import main_engine
 
@@ -16,4 +18,5 @@ urlpatterns = [
     path('cg', views.cg, name='cg'),
     path('error', views.call_main, name='error'),
     path('about', views.about, name='about'),
+    # path('signup', views.signup, name='signup'),
 ]
