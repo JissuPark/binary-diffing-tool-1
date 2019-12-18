@@ -43,6 +43,7 @@ class AnalyzeFlowchart:
                     flow_const_dict.update({x: bloc_dict["func_name"][x]["flow_constants"]})
                 elif y != "flow_constants" and y != "flow_branches":
                     block_hash = bloc_dict["func_name"][x][y]['block_sha256']
+
                     if block_hash in white.list:
                         # print(f'[sensing] white_list -> {block_hash} : {white.list[block_hash]}')
                         matched_dic[x].update({y: {block_hash: white.list[block_hash]}})
@@ -386,8 +387,8 @@ class AnalyzeFlowchart:
         basic block hash(함수 대표값)을 비교해서 점수에 가중치를 매겨 반환하는 함수
         '''
 
-        s_cmp_dic, whitelist_matched_dic1, s_flow_const_dict = self.parser_bbh(s_flow_data)
-        t_cmp_dic, whitelist_matched_dic2, t_flow_const_dict = self.parser_bbh(t_flow_data)
+        s_cmp_dic, whitelist_matched_dic1, s_flow_const_dict, = self.parser_bbh(s_flow_data)
+        t_cmp_dic, whitelist_matched_dic2, t_flow_const_dict, = self.parser_bbh(t_flow_data)
 
         flow_const_dict = dict()
         flow_const_dict.update({"base": s_flow_const_dict})
@@ -399,11 +400,51 @@ class AnalyzeFlowchart:
 
         func_match_dict = self.get_match_func_level(true_bb_const_sim, func_sim)
 
-        return algo.get_bbh_similarity(cmp_s, ), func_match_dict, whitelist_matched_dic1
+        return algo.get_bbh_similarity(cmp_s, ), func_match_dict, whitelist_matched_dic1, true_bb_const_sim
 
-    def analyze_constant(self, standard, target):
-        const_score = algo.get_string_similarity(standard['constant'][0], target['constant'][0])
-        return const_score['2-Gram']
+    def analyze_constant(self, standard, target, true_bb_const_sim):
+        const_score = list()
+        const_socre_2 = self.get_all_const_similer(standard['constant'],target['constant'])
+        const_score.append(true_bb_const_sim)
+        const_score.append(const_socre_2)
+        return const_score
+
+    def parser_all_constants(self, _list):
+        temp_list = list()
+        for i in _list:
+            for temp in i.split(" "):
+                temp_list.append(temp)
+
+        temp_dic = dict()
+        for i in temp_list:
+            if i in temp_dic:
+                temp_dic[i] = temp_dic[i] + 1
+            else:
+                temp_dic.update({i: 1})
+
+        return temp_dic
+
+    def get_all_const_similer(self,_base, _target):
+        base_const = self.parser_all_constants(_base)
+        target_const = self.parser_all_constants(_target)
+        const_total_count = len(base_const) + len(target_const)
+
+        diff_dic = dict()
+        for base in base_const:
+            if base in target_const:
+                if base_const[base] < target_const[base]:
+                    diff_count = target_const[base] - base_const[base]
+                    if diff_count != 0:
+                        diff_dic.update({base: diff_count})
+                elif base_const[base] > target_const[base]:
+                    diff_count = base_const[base] - target_const[base]
+                    if diff_count != 0:
+                        diff_dic.update({base: diff_count})
+                elif base_const[base] == target_const[base]:
+                    pass
+        const_diff_count = len(diff_dic)
+
+        return ((const_total_count - const_diff_count) / const_total_count)
 
     def compare_prime(self, base, target, base_idb, target_idb):
         s_cm_dic, whitelist_dic1 = self.parser_bbh(base_idb)
@@ -490,8 +531,8 @@ class AnalyzeFlowchart:
                 if index_1 == index_2:
                     continue
 
-                idb_t['bbh'], idb_func_s[idb_info_t['file_name']], idb_func_s['whitelist'] = self.analyze_bbh(idb_info_s, idb_info_t)
-                idb_t['const_value'] = self.analyze_constant(idb_info_s, idb_info_t)
+                idb_t['bbh'], idb_func_s[idb_info_t['file_name']], idb_func_s['whitelist'], true_bb_const_sim = self.analyze_bbh(idb_info_s, idb_info_t)
+                idb_t['const_value'] = self.analyze_constant(idb_info_s, idb_info_t, true_bb_const_sim)
 
                 idb_s[idb_info_t['file_name']] = idb_t
 

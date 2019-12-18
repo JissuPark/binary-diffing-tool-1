@@ -102,26 +102,26 @@
     <input type="submit" value="DIFFING" id="submitfiles">
 </div>
 
-<!-- Modal button -->
-<button type="button" class='btn btn-primary' data-toggle="modal" data-target="#myModal"> sign in</button>
-<!-- Modal page -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">Sign in</h4>
-                </div>
-                <div class="modal-body">
-                    Modal 내용
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
-                </div>
-            </div>
-        </div>
-    </div>
+<!--&lt;!&ndash; Modal button &ndash;&gt;-->
+<!--<button type="button" class='btn btn-primary' data-toggle="modal" data-target="#myModal"> sign in</button>-->
+<!--&lt;!&ndash; Modal page &ndash;&gt;-->
+<!--<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">-->
+<!--        <div class="modal-dialog" role="document">-->
+<!--            <div class="modal-content">-->
+<!--                <div class="modal-header">-->
+<!--                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span-->
+<!--                            aria-hidden="true">&times;</span></button>-->
+<!--                    <h4 class="modal-title" id="myModalLabel">Sign in</h4>-->
+<!--                </div>-->
+<!--                <div class="modal-body">-->
+<!--                    Modal 내용-->
+<!--                </div>-->
+<!--                <div class="modal-footer">-->
+<!--                    <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
 {% load static %}
 <script>
     Dropzone.options.myAwesomeDropzone = {
@@ -169,11 +169,11 @@
 
 <footer style="text-align: center">
 
+     <span style="text-align: center; font-size: 1.2rem; color: #cacaca; cursor: pointer"
+          onclick="location.href='{% url 'result' %}'"><strong>RECENT SCAN | </strong></span>
     <span style="text-align: center; font-size: 1.2rem; color: #cacaca; cursor: pointer"
-          onclick="location.href='{% url 'result' %}'"><strong>RECENT SCAN | </strong>
-    <span style="text-align: center; font-size: 1.2rem; color: #cacaca"><strong>About</strong></span>
-        </span>
-    <p style="text-align: center; font-size: 0.9rem; color: #cacaca; margin-top: 1rem">© 2019 Best of the Best Team.s
+          onclick="location.href='{% url 'about' %}'"><strong>About</strong></span>
+    <p style="text-align: center; font-size: 0.9rem; color: #cacaca; margin-top: 1rem">© 2019 Best of the Best Team.
         Breakers – WinBinary
         Diffing Tools v0.1
         Beta. All Rights Reserved</p>
