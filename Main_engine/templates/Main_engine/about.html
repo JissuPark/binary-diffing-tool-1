@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
+    {% load static %}
     <title>ABOUT</title>
 
     <link href="{% static 'Main_engine/images/logo_diffeye.png' %}" rel="shortcut icon"/> <!--title logo 부분 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-            integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
-            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
 
     <style>
         /*
@@ -56,18 +55,15 @@
             <!-- Team item-->
             <div class="col-xl-3 col-sm-6 mb-5">
                 <div class="bg-white rounded shadow-sm py-5 px-4"><img
-                        src="https://res.cloudinary.com/mhmd/image/upload/v1556834132/avatar-4_ozhrib.png" alt=""
-                        width="100" class="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm">
+                        src="{% static 'Main_engine/images/곽경주.png ' %}"
+                        width="100px" height="100px" class="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm">
                     <h5 class="mb-0">곽경주</h5><span
                             class="small text-uppercase text-muted">Mentor</span>
                     <ul class="social mb-0 list-inline mt-3">
-                        <li class="list-inline-item"><a href="#" class="social-link"><i
+                        <li class="list-inline-item"><a href="https://www.facebook.com/kwak.kj" class="social-link"><i
                                 class="fa fa-facebook-f"></i></a></li>
-                        <li class="list-inline-item"><a href="#" class="social-link"><i class="fa fa-twitter"></i></a>
-                        </li>
-                        <li class="list-inline-item"><a href="#" class="social-link"><i class="fa fa-instagram"></i></a>
-                        </li>
-                        <li class="list-inline-item"><a href="#" class="social-link"><i class="fa fa-linkedin"></i></a>
+                        <li class="list-inline-item"><a href="#" class="social-link"><i
+                                class="fa fa-github"></i></a>
                         </li>
                     </ul>
                 </div>
@@ -77,18 +73,15 @@
             <!-- Team item-->
             <div class="col-xl-3 col-sm-6 mb-5">
                 <div class="bg-white rounded shadow-sm py-5 px-4"><img
-                        src="https://res.cloudinary.com/mhmd/image/upload/v1556834132/avatar-4_ozhrib.png" alt=""
+                        src="{% static 'Main_engine/images/박세한.png ' %}"
                         width="100" class="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm">
                     <h5 class="mb-0">박세한</h5><span
                             class="small text-uppercase text-muted">Mentor</span>
                     <ul class="social mb-0 list-inline mt-3">
-                        <li class="list-inline-item"><a href="#" class="social-link"><i
+                        <li class="list-inline-item"><a href="https://www.facebook.com/combab0" class="social-link"><i
                                 class="fa fa-facebook-f"></i></a></li>
-                        <li class="list-inline-item"><a href="#" class="social-link"><i class="fa fa-twitter"></i></a>
-                        </li>
-                        <li class="list-inline-item"><a href="#" class="social-link"><i class="fa fa-instagram"></i></a>
-                        </li>
-                        <li class="list-inline-item"><a href="#" class="social-link"><i class="fa fa-linkedin"></i></a>
+                        <li class="list-inline-item"><a href="#" class="social-link"><i
+                                class="fa fa-github"></i></a>
                         </li>
                     </ul>
                 </div>
@@ -98,18 +91,15 @@
             <!-- Team item-->
             <div class="col-xl-3 col-sm-6 mb-5">
                 <div class="bg-white rounded shadow-sm py-5 px-4"><img
-                        src="https://res.cloudinary.com/mhmd/image/upload/v1556834132/avatar-4_ozhrib.png" alt=""
+                        src="{% static 'Main_engine/images/이동주.png ' %}"
                         width="100" class="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm">
                     <h5 class="mb-0">이동주</h5><span
-                            class="small text-uppercase text-muted">Project Leader</span>
+                            class="small text-uppercase text-muted">Project Leader <br> email : stop2y@naver.com</span>
                     <ul class="social mb-0 list-inline mt-3">
-                        <li class="list-inline-item"><a href="#" class="social-link"><i
+                        <li class="list-inline-item"><a href=https://www.facebook.com/profile.php?id=100017203236885" class="social-link"><i
                                 class="fa fa-facebook-f"></i></a></li>
-                        <li class="list-inline-item"><a href="#" class="social-link"><i class="fa fa-twitter"></i></a>
-                        </li>
-                        <li class="list-inline-item"><a href="#" class="social-link"><i class="fa fa-instagram"></i></a>
-                        </li>
-                        <li class="list-inline-item"><a href="#" class="social-link"><i class="fa fa-linkedin"></i></a>
+                        <li class="list-inline-item"><a href="https://github.com/dlehdwncy2" class="social-link"><i
+                                class="fa fa-github"></i></a>
                         </li>
                     </ul>
                 </div>
@@ -120,28 +110,25 @@
 
             <div class="col-xl-3 col-sm-6 mb-5">
                 <div class="bg-white rounded shadow-sm py-5 px-4"><img
-                        src="https://res.cloudinary.com/mhmd/image/upload/v1556834132/avatar-4_ozhrib.png" alt=""
+                        src="{% static 'Main_engine/images/원혜린.png ' %}"
                         width="100" class="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm">
                     <h5 class="mb-0">원혜린</h5><span
                             class="small text-uppercase text-muted">Project Leader</span>
                     <ul class="social mb-0 list-inline mt-3">
-                        <li class="list-inline-item"><a href="#" class="social-link"><i
+                        <li class="list-inline-item"><a href="https://www.facebook.com/1hyerin" class="social-link"><i
                                 class="fa fa-facebook-f"></i></a></li>
-                        <li class="list-inline-item"><a href="#" class="social-link"><i class="fa fa-twitter"></i></a>
-                        </li>
-                        <li class="list-inline-item"><a href="#" class="social-link"><i class="fa fa-instagram"></i></a>
-                        </li>
-                        <li class="list-inline-item"><a href="#" class="social-link"><i class="fa fa-linkedin"></i></a>
+                        <li class="list-inline-item"><a href="#" class="social-link"><i
+                                class="fa fa-github"></i></a>
                         </li>
                     </ul>
                 </div>
             </div>
             <!--end-->
         </div>
-
+        </div>
         <!---------------------------- ----------------------new page---------------------------------------------------------->
         <div class="bg-light py-5">
-            <div class="container py-5">
+            <div class="container">
                 <div class="row mb-4">
                     <div class="col-lg-5">
                         <h2 class="display-4 font-weight-light">Our team</h2>
@@ -152,73 +139,18 @@
 
                 <div class="row text-center">
                     <!-- Team item-->
-                    <div class="col-xl-4 col-lg-6 col-12">
+                    <div class="mt-3 col-xl-4 col-lg-6 col-12">
                         <div class="bg-white rounded shadow-sm py-5 px-4"><img
-                                src="https://res.cloudinary.com/mhmd/image/upload/v1556834132/avatar-4_ozhrib.png"
+                                src="{% static 'Main_engine/images/박지수.png ' %}"
                                 alt=""
                                 width="100" class="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm">
                             <h5 class="mb-0">박지수</h5><span
-                                    class="small text-uppercase text-muted">Breakers</span>
+                                    class="small text-uppercase text-muted">Breakers<br> email : qkrwltn9412@gmail.com</span>
                             <ul class="social mb-0 list-inline mt-3">
-                                <li class="list-inline-item"><a href="#" class="social-link"><i
+                                <li class="list-inline-item"><a href="https://www.facebook.com/profile.php?id=100027205430876" class="social-link"><i
                                         class="fa fa-facebook-f"></i></a></li>
-                                <li class="list-inline-item"><a href="#" class="social-link"><i
-                                        class="fa fa-twitter"></i></a>
-                                </li>
-                                <li class="list-inline-item"><a href="#" class="social-link"><i
-                                        class="fa fa-instagram"></i></a>
-                                </li>
-                                <li class="list-inline-item"><a href="#" class="social-link"><i
-                                        class="fa fa-linkedin"></i></a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <!-- End-->
-
-                    <!-- Team item-->
-                    <div class="col-xl-4 col-lg-6 col-12">
-                        <div class="bg-white rounded shadow-sm py-5 px-4"><img
-                                src="https://res.cloudinary.com/mhmd/image/upload/v1556834132/avatar-4_ozhrib.png"
-                                alt=""
-                                width="100" class="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm">
-                            <h5 class="mb-0">전현목</h5><span
-                                    class="small text-uppercase text-muted">Breakers</span>
-                            <ul class="social mb-0 list-inline mt-3">
-                                <li class="list-inline-item"><a href="#" class="social-link"><i
-                                        class="fa fa-facebook-f"></i></a></li>
-                                <li class="list-inline-item"><a href="#" class="social-link"><i
-                                        class="fa fa-twitter"></i></a>
-                                </li>
-                                <li class="list-inline-item"><a href="#" class="social-link"><i
-                                        class="fa fa-instagram"></i></a>
-                                </li>
-                                <li class="list-inline-item"><a href="#" class="social-link"><i
-                                        class="fa fa-linkedin"></i></a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <!-- End-->
-
-                    <!-- Team item-->
-                    <div class="col-xl-4 col-lg-6 col-12">
-                        <div class="bg-white rounded shadow-sm py-5 px-4"><img
-                                src="https://res.cloudinary.com/mhmd/image/upload/v1556834130/avatar-3_hzlize.png"
-                                alt=""
-                                width="100" class="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm">
-                            <h5 class="mb-0">정재호</h5><span class="small text-uppercase text-muted">Breakers</span>
-                            <ul class="social mb-0 list-inline mt-3">
-                                <li class="list-inline-item"><a href="#" class="social-link"><i
-                                        class="fa fa-facebook-f"></i></a></li>
-                                <li class="list-inline-item"><a href="#" class="social-link"><i
-                                        class="fa fa-twitter"></i></a>
-                                </li>
-                                <li class="list-inline-item"><a href="#" class="social-link"><i
-                                        class="fa fa-instagram"></i></a>
-                                </li>
-                                <li class="list-inline-item"><a href="#" class="social-link"><i
-                                        class="fa fa-linkedin"></i></a>
+                                <li class="list-inline-item"><a href="https://github.com/JissuPark/" class="social-link"><i
+                                        class="fa fa-github"></i></a>
                                 </li>
                             </ul>
                         </div>
@@ -228,22 +160,53 @@
                     <!-- Team item-->
                     <div class="mt-3 col-xl-4 col-lg-6 col-12">
                         <div class="bg-white rounded shadow-sm py-5 px-4"><img
-                                src="https://res.cloudinary.com/mhmd/image/upload/v1556834133/avatar-2_f8dowd.png"
+                                src="{% static 'Main_engine/images/전현목.png ' %}"
+                                alt=""
+                                width="100" class="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm">
+                            <h5 class="mb-0">전현목</h5><span
+                                    class="small text-uppercase text-muted">Breakers<br> email : w0rld@securityplus.or.kr</span>
+                            <ul class="social mb-0 list-inline mt-3">
+                                <li class="list-inline-item"><a href="https://www.facebook.com/code8080" class="social-link"><i
+                                        class="fa fa-facebook-f"></i></a></li>
+                                <li class="list-inline-item"><a href="https://github.com/Newbie-2o19" class="social-link"><i
+                                        class="fa fa-github"></i></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- End-->
+
+                    <!-- Team item-->
+                    <div class="mt-3 col-xl-4 col-lg-6 col-12">
+                        <div class="bg-white rounded shadow-sm py-5 px-4"><img
+                                src="{% static 'Main_engine/images/정재호.png ' %}"
+                                alt=""
+                                width="100" class="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm">
+                            <h5 class="mb-0">정재호</h5><span class="small text-uppercase text-muted">Breakers<br> email : wogh8732@naver.com</span>
+                            <ul class="social mb-0 list-inline mt-3">
+                                <li class="list-inline-item"><a href="https://www.facebook.com/wogh8732" class="social-link"><i
+                                        class="fa fa-facebook-f"></i></a></li>
+                                <li class="list-inline-item"><a href="https://github.com/vhok74" class="social-link"><i
+                                        class="fa fa-github"></i></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- End-->
+
+                    <!-- Team item-->
+                    <div class="mt-3 col-xl-4 col-lg-6 col-12">
+                        <div class="bg-white rounded shadow-sm py-5 px-4"><img
+                                src="{% static 'Main_engine/images/남훈.png ' %}"
                                 alt=""
                                 width="100" class="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm">
                             <h5 class="mb-0">남훈</h5><span
                                     class="small text-uppercase text-muted">Breakers</span>
                             <ul class="social mb-0 list-inline mt-3">
-                                <li class="list-inline-item"><a href="#" class="social-link"><i
+                                <li class="list-inline-item"><a href="https://www.facebook.com/profile.php?id=100008972565727" class="social-link"><i
                                         class="fa fa-facebook-f"></i></a></li>
                                 <li class="list-inline-item"><a href="#" class="social-link"><i
-                                        class="fa fa-twitter"></i></a>
-                                </li>
-                                <li class="list-inline-item"><a href="#" class="social-link"><i
-                                        class="fa fa-instagram"></i></a>
-                                </li>
-                                <li class="list-inline-item"><a href="#" class="social-link"><i
-                                        class="fa fa-linkedin"></i></a>
+                                        class="fa fa-github"></i></a>
                                 </li>
                             </ul>
                         </div>
@@ -253,22 +216,16 @@
                     <!-- Team item-->
                     <div class="mt-3 col-xl-4 col-lg-6 col-12">
                         <div class="bg-white rounded shadow-sm py-5 px-4"><img
-                                src="https://res.cloudinary.com/mhmd/image/upload/v1556834133/avatar-1_s02nlg.png"
+                                src="{% static 'Main_engine/images/이선애.png ' %}"
                                 alt=""
                                 width="100" class="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm">
                             <h5 class="mb-0">이선애</h5><span
-                                    class="small text-uppercase text-muted">Breakers</span>
+                                    class="small text-uppercase text-muted">Breakers<br> email : securit2.salee@gmail.com</span>
                             <ul class="social mb-0 list-inline mt-3">
-                                <li class="list-inline-item"><a href="#" class="social-link"><i
+                                <li class="list-inline-item"><a href="https://www.facebook.com/dltjsdornjs" class="social-link"><i
                                         class="fa fa-facebook-f"></i></a></li>
                                 <li class="list-inline-item"><a href="#" class="social-link"><i
-                                        class="fa fa-twitter"></i></a>
-                                </li>
-                                <li class="list-inline-item"><a href="#" class="social-link"><i
-                                        class="fa fa-instagram"></i></a>
-                                </li>
-                                <li class="list-inline-item"><a href="#" class="social-link"><i
-                                        class="fa fa-linkedin"></i></a>
+                                        class="fa fa-github"></i></a>
                                 </li>
                             </ul>
                         </div>
@@ -278,22 +235,16 @@
                     <!-- Team item-->
                     <div class="mt-3 col-xl-4 col-lg-6 col-12">
                         <div class="bg-white rounded shadow-sm py-5 px-4"><img
-                                src="https://res.cloudinary.com/mhmd/image/upload/v1556834133/avatar-2_f8dowd.png"
+                                src="{% static 'Main_engine/images/권채영.png ' %}"
                                 alt=""
                                 width="100" class="img-fluid rounded-circle mb-3 img-thumbnail shadow-sm">
                             <h5 class="mb-0">권채영</h5><span
-                                    class="small text-uppercase text-muted">Breakers</span>
+                                    class="small text-uppercase text-muted">Breakers <br> email : icodud0923@naver.com</span>
                             <ul class="social mb-0 list-inline mt-3">
-                                <li class="list-inline-item"><a href="#" class="social-link"><i
+                                <li class="list-inline-item"><a href="https://www.facebook.com/chaeyoung0923" class="social-link"><i
                                         class="fa fa-facebook-f"></i></a></li>
-                                <li class="list-inline-item"><a href="#" class="social-link"><i
-                                        class="fa fa-twitter"></i></a>
-                                </li>
-                                <li class="list-inline-item"><a href="#" class="social-link"><i
-                                        class="fa fa-instagram"></i></a>
-                                </li>
-                                <li class="list-inline-item"><a href="#" class="social-link"><i
-                                        class="fa fa-linkedin"></i></a>
+                                <li class="list-inline-item"><a href="https://github.com/chaeyoungi" class="social-link"><i
+                                        class="fa fa-github"></i></a>
                                 </li>
                             </ul>
                         </div>
@@ -303,6 +254,7 @@
                 </div>
             </div>
         </div>
+</div>
 
 
         <footer class="bg-light pb-5">
