@@ -104,7 +104,7 @@ def convert_idb(PATH,IDB_PATH):
     # idb 변환
     return pe2idb.create_idb(PATH, IDB_PATH)
 
-def multiprocess_file(q, return_dict,return_dict2, flag, tag):
+def multiprocess_file(q, return_dict, flag, tag):
     while q.empty() != True:
         f_path = q.get()
 
@@ -200,11 +200,10 @@ class Exract_Feature:
             manager = Manager()
             pe2idb.exe_list_to_queue(path, q)
             return_dict = manager.dict()
-            return_dict2 = manager.dict()
 
             procs = list()
             for i in range(os.cpu_count() // 2 + 1):
-                proc = Process(target=multiprocess_file, args=[q, return_dict,return_dict2, flag, self.tag])
+                proc = Process(target=multiprocess_file, args=[q, return_dict, flag, self.tag])
                 procs.append(proc)
                 proc.start()
             for p in procs:

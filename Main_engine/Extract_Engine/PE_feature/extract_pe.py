@@ -218,10 +218,10 @@ class Pe_Feature:
         pdb_age = PDB['pe_pdb_Age']
         pdb_path = PDB['pe_pdb_Pdbpath']
 
-        PE_info.objects.create(filename=f_name, imphash=ImpHash, filesize=file_size, filetype=file_type, sha_256=sha256,
-                               timestamp=TimeStamp, year=Year, timenum=TimeInNum,
-                               ssdeep=ssdeep_hash, sha_1=sha1, md5=MD5, Targetmachine=mac, EntryPoint=Ent_point,
-                               ContainedSections=Section_num, pdbname=pdb_name, pdbguid=pdb_guid, pdbage=pdb_age, pdbpath=pdb_path)
+        # PE_info.objects.create(filename=f_name, imphash=ImpHash, filesize=file_size, filetype=file_type, sha_256=sha256,
+        #                        timestamp=TimeStamp, year=Year, timenum=TimeInNum,
+        #                        ssdeep=ssdeep_hash, sha_1=sha1, md5=MD5, Targetmachine=mac, EntryPoint=Ent_point,
+        #                        ContainedSections=Section_num, pdbname=pdb_name, pdbguid=pdb_guid, pdbage=pdb_age, pdbpath=pdb_path)
 
         f_name_hash.close()
 
