@@ -3,7 +3,7 @@
 {% block title %}CFG  {% endblock %}
 {% block head %}
 {% load static %}
-    <link href="{% static 'Main_engine/images/logo_diffeye.png' %}" rel="shortcut icon"/> <!--title logo 부분 -->
+<link href="{% static 'Main_engine/images/logo_diffeye.png' %}" rel="shortcut icon"/> <!--title logo 부분 -->
 <link href="{% static 'Main_engine/css/styles.css' %}" rel="stylesheet">
 <link rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css">
@@ -14,27 +14,32 @@
     * {
         font-family: 'Poppins', sans-serif;
     }
+
     .graph-outer {
         height: 100%;
         width: 100%;
         overflow: hidden;
     }
+
     .graph-inner {
         width: 100%;
         height: 100%;
         overflow-x: scroll;
         display: flex;
     }
+
     .paint {
         display: block;
         width: 100%;
         height: 95%;
     }
+
     div.blur {
         height: 100%;
         background-color: black;
         opacity: 0.4;
     }
+
     p.blur {
         margin-top: 60%;
         text-align: center;
@@ -42,6 +47,7 @@
         font-weight: bold;
         color: ghostwhite;
     }
+
     p.seonea {
         margin-top: 50%;
         text-align: center;
@@ -83,6 +89,7 @@
                 pickerclass.item(picker).appendChild(option);
             }
         }
+
         /* 함수이름 버튼 만드는 함수 */
         function makebt(file, fname) {
             var li = document.createElement("li");
@@ -97,6 +104,7 @@
             a.textContent = fname;
             document.getElementById("li_" + fname).appendChild(a);
         }
+
         /* 그래프 그리기 위한 변수 생성 */
         function boxing(array, branches) {
             var nodes = [];
@@ -143,6 +151,7 @@
             var Edges = new vis.DataSet(edges);
             return [Nodes, Edges];
         }
+
         /* 버튼 클릭하면 데이터 변하게 하는 함수 */
         $("#select-oper").click(function () {
             $("#func_menu").empty();
@@ -258,8 +267,11 @@
                 // 파일명, 함수명, 유사도 추가
                 var name_label = document.createElement('div');
                 name_label.id = 'name_' + index;
-                if (index == 0){name_label.style.borderBottom = " 2px solid #fe5461";}
-                else{name_label.style.borderBottom = " 2px solid black";}
+                if (index == 0) {
+                    name_label.style.borderBottom = " 2px solid #fe5461";
+                } else {
+                    name_label.style.borderBottom = " 2px solid black";
+                }
                 name_label.style.overflow = "hidden";
                 name_label.style.whiteSpace = "nowrap";
                 name_label.style.textOverflow = "ellipsis";
@@ -268,6 +280,7 @@
                 name_label.style.display = "block";
                 name_label.style.padding = "0.2rem";
                 document.getElementById('div_' + index).appendChild(name_label);
+
                 //파일구분 뱃지
                 var filename_info = document.createElement("span");
                 if (index == 0) {
@@ -280,27 +293,54 @@
                     filename_info.textContent = "target file";
                 }
                 filename_info.style.marginLeft = "2px";
-                filename_info.style.padding = "0.2rem";
+                // filename_info.style.padding = "0.2rem";
                 filename_info.style.fontSize = "100";
                 document.getElementById("name_" + index).appendChild(filename_info);
+
+
+                if (index != 0) {
+                    let basefile = targetlist[0][0];
+                    let basefunc = targetlist[0][1];
+                    let targetfile = targetlist[index][0];
+                    let targetfunc = targetlist[index][1];
+                    if (targetfunc != 'none') {
+                        if (3 == match_json[basefile][targetfile][basefunc].length) {
+                            var similarity = document.createElement("span");
+                            let simdict = match_json[basefile][targetfile][basefunc][2];
+                            console.log(simdict);
+                            for (let b_cnt in simdict) {
+                                for (let t_cnt in simdict[b_cnt]) {
+                                    for (let m_cnt in simdict[b_cnt][t_cnt])
+                                        similarity.textContent = simdict[b_cnt][t_cnt][m_cnt] * 100 + "% (" + m_cnt + "/" + t_cnt + ")";
+                                }
+                            }
+                            similarity.className = 'badge badge-warning';
+                            document.getElementById('name_' + index).appendChild(similarity);
+                        }
+                    }
+                }
+
                 var br = document.createElement('br');
                 document.getElementById("name_" + index).appendChild(br);
+
                 //파일 명
                 var filename = document.createElement("span");
-                filename.textContent = "FileName : "+ targetlist[index][0];
+                filename.textContent = "FileName : " + targetlist[index][0];
                 document.getElementById("name_" + index).appendChild(filename);
                 var br = document.createElement('br');
                 document.getElementById("name_" + index).appendChild(br);
+
                 //함수 명
                 var funcname = document.createElement('span');
                 funcname.textContent = "Function : " + targetlist[index][1];
                 document.getElementById("name_" + index).appendChild(funcname);
+
                 //그림그릴 장소 생성
                 var div = document.createElement('div');
                 div.id = "graph_" + index;
-                var hei = document.getElementById('div_'+index).offsetHeight - document.getElementById('name_'+index).offsetHeight-10;
+                var hei = document.getElementById('div_' + index).offsetHeight - document.getElementById('name_' + index).offsetHeight - 10;
                 div.style.width = '100%';
-                div.style.height = hei+"px";
+                div.style.height = hei + "px";
                 document.getElementById('div_' + index).appendChild(div);
                 //매칭 함수가 없는 경우 따로 표시
                 if (targetlist[index][1] == 'none') {
