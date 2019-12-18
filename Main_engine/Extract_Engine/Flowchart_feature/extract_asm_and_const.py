@@ -166,7 +166,7 @@ def main():
 
     for fva in api.idautils.Functions():
         FuncName = api.idc.GetFunctionName(fva).lower()
-        if "sub_" in FuncName or "start" in FuncName or "main" in FuncName or "dllentry" in FuncName:
+        if FuncName[:3] == 'sub' or "start" in FuncName or "main" in FuncName or "dllentry" in FuncName:
             extract_basic_block_info(fva, FuncName, func_ext_dict)
             func_name.append(FuncName)
 
@@ -176,7 +176,6 @@ def main():
                         func_branch.append(
                             (api.ida_funcs.get_func_name(api.ida_funcs.get_func(addr.src).startEA), FuncName))
                 except Exception as e:
-                    # print(f'[debug] XrefsTo_ {e}')
                     err_log.append("XrefsTo_" + str(e))
             del FuncName
 

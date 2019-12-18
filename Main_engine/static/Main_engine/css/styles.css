@@ -4314,7 +4314,7 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
 
 .card-body {
     flex: 1 1 auto;
-    padding: 1.25rem
+    padding: 0.5rem
 }
 
 .card-title {
