@@ -241,5 +241,3 @@ def pe_into_file():
             f.close()
 
     return p_dict
-# if __name__ == "__main__":
-#     pe = Pe_Feature(r"C:\malware\mid_GandCrab_exe\test")

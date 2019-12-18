@@ -104,7 +104,7 @@ def convert_idb(PATH,IDB_PATH):
     # idb 변환
     return pe2idb.create_idb(PATH, IDB_PATH)
 
-def multiprocess_file(q, return_dict, flag):
+def multiprocess_file(q, return_dict,return_dict2, flag, tag):
     while q.empty() != True:
         f_path = q.get()
 
@@ -127,7 +127,7 @@ def multiprocess_file(q, return_dict, flag):
                 fd1.close()
                 #print('idb존재함')
             elif file is None:
-                info = extract_asm_and_const.basicblock_info_extraction(f_path)  # 함수대표값 및 상수값 출력
+                info, tagging = extract_asm_and_const.basicblock_info_extraction(f_path, tag)  # 함수대표값 및 상수값 출력
                 with open(r"C:\malware\all_result\idb" + "\\" + file_filter + ".txt", 'w') as makefile:
                     json.dump(info, makefile, ensure_ascii=False, indent='\t')
                 Filter.objects.create(filehash=info['file_name'], idb_filepath=idb_file_path + file_filter)
@@ -158,23 +158,23 @@ def multiprocess_file(q, return_dict, flag):
                     json.dump(info, makefile, ensure_ascii=False, indent='\t')
                 print('pe존재함')
             elif pe_f is None:
-                try:
-                    pe = pefile.PE(f_path)
-                    info, pe_info_DB = extract_pe.Pe_Feature(f_path, pe).all()  # pe 속성 출력
-                    with open(r"C:\malware\all_result\pe" + "\\" + file_filter2 + ".txt", 'w', -1, "utf-8") as makefile:
-                        json.dump(info, makefile, ensure_ascii=False, indent='\t')
+            #try:
+                pe = pefile.PE(f_path)
+                info, pe_info_DB = extract_pe.Pe_Feature(f_path, pe).all()  # pe 속성 출력
+                with open(r"C:\malware\all_result\pe" + "\\" + file_filter2 + ".txt", 'w', -1, "utf-8") as makefile:
+                    json.dump(info, makefile, ensure_ascii=False, indent='\t')
 
-                    with open(r"C:\malware\all_result\pe_r" + "\\" + file_filter2 + ".txt", 'w', -1, "utf-8") as makefile:
-                        json.dump(info, makefile, ensure_ascii=False, indent='\t')
+                with open(r"C:\malware\all_result\pe_r" + "\\" + file_filter2 + ".txt", 'w', -1, "utf-8") as makefile:
+                    json.dump(info, makefile, ensure_ascii=False, indent='\t')
 
-                    pe_file.pe_filepath = pe_file_path + file_filter2
-                    pe_file.save()
-                    pe.close()
-                    print('pe없음')
-                except Exception as e:
-                    print('pe error !')
-                    print(e)
-                    continue
+                pe_file.pe_filepath = pe_file_path + file_filter2
+                pe_file.save()
+                pe.close()
+                print('pe없음')
+            #except Exception as e:
+                # print('pe error !')
+                # print(e)
+                # continue
 
         return_dict[f_path] = info
 
@@ -183,6 +183,10 @@ class Exract_Feature:
     def __init__(self, path, idb_path):
         self.path = path
         self.idb_path = idb_path
+
+        with open(r"C:\malware\malware.hashSet", 'rb') as f:
+            result_pe = f.read()
+            self.tag = json.loads(result_pe)
 
     def export_by_multi(self, flag):
 
@@ -196,9 +200,11 @@ class Exract_Feature:
             manager = Manager()
             pe2idb.exe_list_to_queue(path, q)
             return_dict = manager.dict()
+            return_dict2 = manager.dict()
+
             procs = list()
             for i in range(os.cpu_count() // 2 + 1):
-                proc = Process(target=multiprocess_file, args=[q, return_dict, flag])
+                proc = Process(target=multiprocess_file, args=[q, return_dict,return_dict2, flag, self.tag])
                 procs.append(proc)
                 proc.start()
             for p in procs:
