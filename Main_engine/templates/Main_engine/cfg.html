@@ -98,7 +98,7 @@
             for (var standard in match_json) {
                 var option = document.createElement("option");
                 option.value = standard;
-                option.text = standard.substring(0,20)+"...";
+                option.text = standard.substring(0, 20) + "...";
                 pickerclass.item(picker).appendChild(option);
             }
         }
@@ -207,6 +207,54 @@
                     for (target in targets) {
                         var t = targets[target];
                         //대상 중에서 기준 함수명을 찾는다.
+                        if (match_json[filename][t].hasOwnProperty('similar')) {
+                            for (basesim in match_json[filename][t]['similar']) {
+                                let sim_b_func = basesim.split('-')[0];
+                                console.log(sim_b_func);
+                                let sim_b_block = basesim.split('-')[1];
+                                console.log(sim_b_block);
+                                let sim_t_func = match_json[filename][t]['similar'][basesim].split('-')[0];
+                                console.log(sim_t_func);
+                                let sim_t_block = match_json[filename][t]['similar'][basesim].split('-')[1];
+                                console.log(sim_b_block);
+                                var match_b_node = postoffice[filename][sim_b_func][0];
+                                var match_t_node = postoffice[t][sim_t_func][0];
+                                match_b_node.update({
+                                    id: sim_b_block,
+                                    color: {
+                                        border: "#ffca2b",
+                                        background: "#ffe699",
+                                        highlight: {border: "#ffca2b", background: "#ffe699"}
+                                    }
+                                });
+                                match_t_node.update({
+                                    id: sim_t_block,
+                                    color: {
+                                        border: "#ffca2b",
+                                        background: "#ffe699",
+                                        highlight: {border: "#ffca2b", background: "#ffe699"}
+                                    }
+                                });
+                                // });match_b_node.update({
+                                //     id: sim_b_block,
+                                //     color: {
+                                //         border: "green",
+                                //         background: "#ddf969",
+                                //         highlight: {border: "green", background: "#ddf969"}
+                                //     }
+                                // });
+                                // match_t_node.update({
+                                //     id: sim_t_block,
+                                //     color: {
+                                //         border: "green",
+                                //         background: "#ddf969",
+                                //         highlight: {border: "green", background: "#ddf969"}
+                                //     }
+                                // });
+                            }
+                            console.log('asdf');
+
+                        }
                         if (match_json[filename][t].hasOwnProperty(fname)) {
                             targetlist.push([t, match_json[filename][t][fname][0]]);
                             var match_target_node = postoffice[t][[match_json[filename][t][fname][0]]][0];
@@ -230,6 +278,15 @@
                                         }
                                     });
                                 } else {
+                                    match_base_node.update({
+                                        id: match_json[filename][t][fname][1][addr][0],
+                                        color: {
+                                            border: "green",
+                                            background: "lightgreen",
+                                            highlight: {border: "green", background: "lightgreen"}
+                                        }
+                                    });
+
                                     match_target_node.update({
                                         id: addr,
                                         color: {
@@ -321,7 +378,6 @@
                         if (3 == match_json[basefile][targetfile][basefunc].length) {
                             var similarity = document.createElement("span");
                             let simdict = match_json[basefile][targetfile][basefunc][2];
-                            console.log(simdict);
                             for (let b_cnt in simdict) {
                                 for (let t_cnt in simdict[b_cnt]) {
                                     for (let m_cnt in simdict[b_cnt][t_cnt])

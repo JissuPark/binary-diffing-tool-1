@@ -18,5 +18,11 @@ urlpatterns = [
     path('cg', views.cg, name='cg'),
     path('error', views.call_main, name='error'),
     path('about', views.about, name='about'),
+    path('recent', views.recent, name='recent'),
+    path('anda', views.andarial, name='anda'),
+    path('gand', views.gandcrab, name='gand'),
+    path('moon', views.blackmoon, name='moon'),
+    path('scar', views.scarcruft, name='scar'),
+    path('blue', views.bluenroff, name='blue'),
     # path('signup', views.signup, name='signup'),
 ]
