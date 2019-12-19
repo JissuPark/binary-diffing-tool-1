@@ -205,7 +205,7 @@ class AnalyzeFlowchart:
         for baseFunc in mutex_dic:
             best = max(mutex_dic[baseFunc].values())
             for targetFunc in mutex_dic[baseFunc]:
-                if best == mutex_dic[baseFunc][targetFunc] and best > 0.1:
+                if best == mutex_dic[baseFunc][targetFunc]:
                     if baseFunc not in mutex_list and targetFunc not in mutex_list:
                         mutex_list.append(baseFunc)
                         mutex_list.append(targetFunc)
