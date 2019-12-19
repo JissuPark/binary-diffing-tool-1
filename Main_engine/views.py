@@ -103,7 +103,7 @@ def loading(request):
             print(file.path)
             count += 1
             flag2 = main_engine.pe2idb.pe_check(file.path)
-            if flag2 == -1 or -2:
+            if flag2 is -1 or flag2 is -2:
                 flag = False
                 error_count += 1
                 print(f"base file :: {os.path.basename(file.path)}")
