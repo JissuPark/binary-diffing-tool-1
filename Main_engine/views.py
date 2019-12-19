@@ -127,6 +127,7 @@ def call_main(request):
             result = json.loads(result_file.read())
             result_file.close()
         else:
+            main_engine.create_folder()
             result = main_engine.start_engine()
 
             with open(r"C:\malware\all_result\result.txt", 'w') as res:
