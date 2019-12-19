@@ -27,7 +27,6 @@ def getFileProperties(fname):
                         for entry in st.entries.items():
                             pe_string[entry[0].decode()] = entry[1].decode()
                             if "TODO" in entry[1].decode():
-                                #print(entry[0].encode("ascii",'backslashreplace'), ":", entry[0].encode("ascii",'backslashreplace'))
                                 pe_string[entry[0].decode()] = "-"
     except:
         pass

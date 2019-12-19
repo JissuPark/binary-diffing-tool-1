@@ -205,7 +205,7 @@ class AnalyzeFlowchart:
         for baseFunc in mutex_dic:
             best = max(mutex_dic[baseFunc].values())
             for targetFunc in mutex_dic[baseFunc]:
-                if best == mutex_dic[baseFunc][targetFunc] and best > 0.1:
+                if best == mutex_dic[baseFunc][targetFunc]:
                     if baseFunc not in mutex_list and targetFunc not in mutex_list:
                         mutex_list.append(baseFunc)
                         mutex_list.append(targetFunc)
@@ -404,9 +404,8 @@ class AnalyzeFlowchart:
 
     def analyze_constant(self, standard, target, true_bb_const_sim):
         const_score = list()
-        const_socre_2 = self.get_all_const_similer(standard['constant'],target['constant'])
-        const_score.append(true_bb_const_sim)
-        const_score.append(const_socre_2)
+        const_score.append(self.get_const_similarity(true_bb_const_sim))
+        const_score.append(self.get_all_const_similer(standard['constant'],target['constant']))
         return const_score
 
     def parser_all_constants(self, _list):

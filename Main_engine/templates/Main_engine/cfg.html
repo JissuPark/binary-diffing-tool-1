@@ -56,6 +56,20 @@
 {% endblock head %}
 
 {% block section %}
+<div class="mb-3" style="float: right;">
+    <img src="{% static 'Main_engine/images/green.png' %}" alt="..." width="20"
+         height="20"/><span> Matched &nbsp</span> <!--&nbsp : 뒤에 빈공간 생기게 해줌
+             -->
+    <img src="{% static 'Main_engine/images/yellow.png' %}" alt="..." width="20"
+         height="20"/><span> Similarity&nbsp </span>
+    <img src="{% static 'Main_engine/images/white.png' %}" alt="..." width="20"
+         height="20"/><span> White List&nbsp </span>
+    <img src="{% static 'Main_engine/images/red.png' %}" alt="..." width="20"
+         height="20"/><span> Unmatched&nbsp </span>
+    <img src="{% static 'Main_engine/images/blue.png' %}" alt="..." width="20"
+         height="20"/><span> Unmatched Constant&nbsp </span>
+</div>
+
 <div class="paint">
     <div class="graph-outer">
         <div id="test" class="graph-inner">

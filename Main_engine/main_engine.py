@@ -319,7 +319,7 @@ def start_engine():
     IDB_PATH = r"C:\malware\mal_idb"
 
     # 0. 없는 폴더 먼저 생성
-    create_folder()
+    #create_folder()
 
     # 1. pe 해시 체크 (동일한 파일 필터), 2.패킹 체크
     print("1) hash check")
