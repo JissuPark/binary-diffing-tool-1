@@ -404,30 +404,23 @@ class RsrcParser:
         pe = pefile.PE(self.filename)
         pkcs_dict = dict()
         try:
-            # 절대 경로를 통해서 받아옴
             totsize = os.path.getsize(self.filename)
-            #ape = pefile.PE(self.filename, fast_load=True)
 
-            # 절대 경로를 통해서 받아옴
             self.pe.parse_data_directories(directories=[pefile.DIRECTORY_ENTRY['IMAGE_DIRECTORY_ENTRY_SECURITY']])
             sigoff = 0
             siglen = 0
 
-            # 구조체 형태로 정보를 저장
             for s in self.pe.__structures__:
                 if s.name == 'IMAGE_DIRECTORY_ENTRY_SECURITY':
                     sigoff = s.VirtualAddress
                     siglen = s.Size
 
-            # 인증서가 있는 부분부터 읽어옴
             if sigoff < totsize:
                 f = open(self.filename, 'rb')
                 f.seek(sigoff)
                 thesig = f.read(siglen)
                 f.close()
-                #print("printing thesig", thesig[8:].decode('Latin-1'))
 
-                # 제대로 인증서를 찾으면 반환
                 if 'sign' in str(thesig[8:]).lower() or 'root' in str(thesig[8:]).lower() or 'global' in str(thesig[8:]).lower():
                     pkcs_dict['dwLength'] = struct.unpack('<L', thesig[0:4])[0]
                     pkcs_dict['wRevision'] = find_wRevision(struct.unpack('<h', thesig[4:6])[0])
@@ -435,8 +428,6 @@ class RsrcParser:
                     pkcs_dict['VirtualAddress'] = hex(sigoff)
                     pkcs_dict['totalsize'] = totsize
 
-                    #인증서 해시화 성공
-                    #thesig = ssdeep.hash(thesig)
                     thesig = hashlib.md5(thesig).hexdigest().upper()
                     pkcs_dict['hash'] = thesig
                 address = pe.OPTIONAL_HEADER.DATA_DIRECTORY[pefile.DIRECTORY_ENTRY['IMAGE_DIRECTORY_ENTRY_SECURITY']].VirtualAddress
