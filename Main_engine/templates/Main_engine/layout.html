@@ -32,6 +32,7 @@
             src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
     <script src="{% static 'Main_engine/plugins/slimscrollbar/jquery.slimscroll.min.js' %}"></script>
 
+
     <!-- PLUGINS CSS STYLE -->
 
     <link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet">
@@ -268,14 +269,14 @@
                 <div class="mt-1" style="display:inline-flex; width:70%;">
                     <p class="file_text" style="font-family: 'Poppins', sans-serif; margin-top: 12px;">BASE
                         FILE</p>
-                    <select id="select_base" class="selectpicker" data-live-search="true" data-width="20%"
+                    <select id="select_base" class="selectpicker show-tick" data-live-search="true" data-width="20%"
                             data-size="5"
                             title="Choose base"></select>
                     <p class="file_text" style="font-family: 'Poppins', sans-serif; margin-top: 12px; ">
                         TARGET FILE</p>
 
-                    <select id="select_target" class="selectpicker" data-actions-box="true" data-width="20%"
-                            data-size="5" multiple title="Choose targets"></select>
+                    <select id="select_target" class="selectpicker show-tick" data-actions-box="true" data-width="20%"
+                            data-size="5" multiple data-selected-text-format="count" title="Choose targets"></select>
 
                     <button id="select-oper"
                             style="font-family: 'Poppins', sans-serif; font-weight: bolder; color: white">
