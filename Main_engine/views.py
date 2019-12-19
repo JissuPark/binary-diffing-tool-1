@@ -2,7 +2,7 @@ import timeit
 from django.shortcuts import get_object_or_404, render, render_to_response, redirect
 from Main_engine import main_engine
 from Main_engine.Extract_Engine.PE_feature import extract_pe
-from .models import PE_info
+from .models import PE_info #, Login
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import json
 import os
@@ -10,6 +10,8 @@ import os
 check_file_flag = 0
 no_pe_file =""
 all_file_error = 0
+INPUTFILES = []
+
 
 def showindex(request):
     global check_file_flag
@@ -57,9 +59,12 @@ def cg(request):
     cg_dict = dict()
     PATH = r'C:\malware\all_result\cg'
     for file in os.listdir(PATH):
-        file_path = os.path.join(PATH, file)
-        with open(file_path, 'rb') as cg:
-            cg_dict[file] = json.loads(cg.read())
+        print(file[:-4])
+        print(INPUTFILES)
+        if file[:-4] in INPUTFILES:
+            file_path = os.path.join(PATH, file)
+            with open(file_path, 'rb') as cg:
+                cg_dict[file] = json.loads(cg.read())
 
     return render(request, 'Main_engine/cg.html', {'cg': cg_dict})
 
@@ -98,7 +103,7 @@ def loading(request):
             print(file.path)
             count += 1
             flag2 = main_engine.pe2idb.pe_check(file.path)
-            if flag2 == -1:
+            if flag2 is -1 or flag2 is -2:
                 flag = False
                 error_count += 1
                 print(f"base file :: {os.path.basename(file.path)}")
@@ -121,53 +126,56 @@ def loading(request):
 
 def call_main(request):
     start = timeit.default_timer()
-    try:
-        if os.path.isfile(r"C:\malware\all_result\result.txt"):  # 경로가 파일인지 아닌지 검사
-            result_file = open(r"C:\malware\all_result\result.txt", 'rb')
-            result = json.loads(result_file.read())
-            result_file.close()
-        else:
-            result = main_engine.start_engine()
+#try:
+    if os.path.isfile(r"C:\malware\all_result\result.txt"):  # 경로가 파일인지 아닌지 검사
+        result_file = open(r"C:\malware\all_result\result.txt", 'rb')
+        result = json.loads(result_file.read())
+        result_file.close()
+    else:
+        main_engine.create_folder()
+        result = main_engine.start_engine()
 
-            with open(r"C:\malware\all_result\result.txt", 'w') as res:
-                json.dump(result, res, ensure_ascii=False, indent='\t')
+        with open(r"C:\malware\all_result\result.txt", 'w') as res:
+            json.dump(result, res, ensure_ascii=False, indent='\t')
 
-        h_paginator = Paginator(result, 4)
+    h_paginator = Paginator(result, 4)
 
-        pe_ = PE_info.objects.order_by('timenum').all()
+    pe_ = PE_info.objects.order_by('timenum').all()
 
-        p_basic = dict()
+    p_basic = dict()
 
-        pe_result_list = os.listdir(r"C:\malware\all_result\pe_r")
-        for file in pe_result_list:
-            if os.path.isfile(r"C:\malware\all_result\pe_r" + "\\" + file):
-                with open(r"C:\malware\all_result\pe_r" + "\\" + file, 'rb') as f:
-                    result_pe = f.read()
-                    pe_data = json.loads(result_pe, encoding='utf-8')
-                    # print(json.dumps(pe_data, indent=4))
-                    for item1, item2 in pe_data.items():
-                        if item1 == 'basic prop':
-                            p_basic[pe_data['file_name']] = item2
+    pe_result_list = os.listdir(r"C:\malware\all_result\pe_r")
+    for file in pe_result_list:
+        if os.path.isfile(r"C:\malware\all_result\pe_r" + "\\" + file):
+            with open(r"C:\malware\all_result\pe_r" + "\\" + file, 'rb') as f:
+                result_pe = f.read()
+                pe_data = json.loads(result_pe, encoding='utf-8')
+                # print(json.dumps(pe_data, indent=4))
+                for item1, item2 in pe_data.items():
+                    if item1 == 'basic prop':
+                        p_basic[pe_data['file_name']] = item2
 
-        stop = timeit.default_timer()
-        print('time is ????')
-        print(stop - start)
-        return render(request, 'Main_engine/result.html', {'result': result, 'pe_': pe_, 'p_basic': p_basic})
+    stop = timeit.default_timer()
+    print('time is ????')
+    print(stop - start)
+    return render(request, 'Main_engine/result.html', {'result': result, 'pe_': pe_, 'p_basic': p_basic})
 
-    except Exception as e:
-        print(f'[Debug]page error by {e}')
-        return render(request, 'Main_engine/error.html')
+# except Exception as e:
+#     print(f'[DEBUG]Page error by {e}')
+#
+#     return render(request, 'Main_engine/error.html')
 
 
 def upload_file_dropzone(request):
+    INPUTFILES.clear()
     if request.method == 'POST':
         for filekey in request.FILES:
             file = request.FILES[filekey]
             with open('C:\\malware\\mal_exe\\' + file.name, 'wb+') as uploaded_file:
+                INPUTFILES.append(file.name)
                 for chunk in file.chunks():
                     uploaded_file.write(chunk)
-    # return render(request, 'Main_engine/index.html', {'input': flag})
-    # loading(request)
+
     return redirect('loading')
 
 
@@ -197,3 +205,18 @@ def file_check():
     #         return False
     # # 전부 돌았는데 false가 반환되지 않았다면 true 반환
     return True
+
+
+# def signup(request):
+#     if request.method == "POST":
+#         user_id = request.POST['ID']
+#         user_pw = request.POST['PW']
+#         # pw_check = request.POST['PWcheck']
+#
+#         user = Login(
+#             id=user_id,
+#             password=user_pw
+#         )
+#         user.save()
+#
+#         return render(request, "index.html")

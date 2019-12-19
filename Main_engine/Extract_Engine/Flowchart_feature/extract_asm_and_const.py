@@ -19,12 +19,13 @@ except_list = set()
 err_log = list()
 
 
-def extract_basic_block_info(fva, funcName, func_ext_dict):
+def extract_basic_block_info(fva, funcName, func_ext_dict, tag):
     global api
     global imageBase
     global glo_MinEA
     global glo_MaxEA
     global glo_Constants
+    global filename
     global err_log
     global except_list
 
@@ -130,7 +131,7 @@ def extract_basic_block_info(fva, funcName, func_ext_dict):
                 func_ext_const.append(temp)
                 glo_Constants.append(temp)
                 del temp
-            del basicblock_dic, constants, opcodes, disasms, hex_opcodes
+            del constants, opcodes, disasms, hex_opcodes
     except Exception as e:
         # print(f'[debug] Extract_ {e}')
         err_log.append("Extract_" + str(e))
@@ -142,8 +143,20 @@ def extract_basic_block_info(fva, funcName, func_ext_dict):
         func_ext_dict[funcName] = bb_ext_dict
     del bb_ext_dict
 
+    tagging = dict()
 
-def main():
+    if basicblock_dic['block_sha256'] in tag:
+        for tag_hash, tag_const in tag.items():
+            for tag_group, set in tag_const.items():
+                tagging['tagging'] = set
+    else:
+            tagging['tagging'] = {}
+
+    return tagging
+
+    del basicblock_dic
+
+def main(tag):
     global filename
     global api
     global imageBase
@@ -167,7 +180,7 @@ def main():
     for fva in api.idautils.Functions():
         FuncName = api.idc.GetFunctionName(fva).lower()
         if FuncName[:3] == 'sub' or "start" in FuncName or "main" in FuncName or "dllentry" in FuncName:
-            extract_basic_block_info(fva, FuncName, func_ext_dict)
+            tagging = extract_basic_block_info(fva, FuncName, func_ext_dict, tag)
             func_name.append(FuncName)
 
             for addr in api.idautils.XrefsTo(fva, 0):
@@ -183,15 +196,15 @@ def main():
     cg_info_dict['f_branch'] = func_branch
 
     # saved block flow graph
-    with open("C:\\malware\\all_result\\cg\\"+filename, 'w') as makefile:
+    with open("C:\\malware\\all_result\\cg\\"+filename+".txt", 'w') as makefile:
         json.dump(cg_info_dict, makefile, ensure_ascii=False, indent='\t')
 
     del func_name, func_branch, cg_info_dict
 
-    return func_ext_dict
+    return func_ext_dict, tagging
 
 
-def basicblock_info_extraction(FROM_FILE):
+def basicblock_info_extraction(FROM_FILE, tag):
     global api
     global filetype
 
@@ -202,12 +215,12 @@ def basicblock_info_extraction(FROM_FILE):
     # print(f"[INFO][Extract Binary][MD5]{api.idc.GetInputMD5()}")
     print(f'[INFO][Extract Binary] {filename}')
 
-    func_ext_dict = main()
+    func_ext_dict, tagging = main(tag)
 
-    result_dic = ({"file_name": filename, "type" : filetype,"func_name": func_ext_dict, "constant": glo_Constants})
+    result_dic = ({"file_name": filename, "type" : filetype,"func_name": func_ext_dict, "constant": glo_Constants, "tagging" :tagging['tagging']} )
 
 
-    return result_dic
+    return result_dic, tagging
 
 
 def open_idb(FROM_FILE):

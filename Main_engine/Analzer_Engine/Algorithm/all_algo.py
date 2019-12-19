@@ -12,7 +12,8 @@ def get_string_similarity(standard, target):  # input json path string 1, 2
     # print(f'[+]Stand Binary(length {len(s)}) ::: target Binary(length {len(t)})')
 
     for i in range(1, 6):
-        # print(f"{i}-GRam: {NGram.compare(s, t, N=i)}")
+        print(f"ngram base :: {standard}")
+        print(f"ngram target :: {target}")
         result.update({str(i) + "-Gram": NGram.compare(standard, target, N=i)})
     return result
 

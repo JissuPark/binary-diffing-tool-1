@@ -136,9 +136,10 @@ class Pe_Feature:
 
         file_size = os.path.getsize(self.file_name)
         file_size = self.convert_size(file_size)
-        MD5 = hashlib.md5(open(self.file_name, 'rb').read()).hexdigest().upper()
-        sha1 = hashlib.sha1(open(self.file_name, 'rb').read()).hexdigest()
-        sha256 = hashlib.sha256(open(self.file_name, 'rb').read()).hexdigest()
+        with open(self.file_name, 'rb') as p:
+            MD5 = hashlib.md5(p.read()).hexdigest().upper()
+            sha1 = hashlib.sha1(p.read()).hexdigest()
+            sha256 = hashlib.sha256(p.read()).hexdigest()
         ImpHash = imphash.upper()
         ssdeep_hash = ssdeep.hash_from_file(self.file_name)
         TimeStamp = time_info
@@ -178,7 +179,7 @@ class Pe_Feature:
         pe_features = {
             #'file_path': self.file_name,
             'file_name': f_name,
-            'file_hash': hashlib.sha256(open(self.file_name, 'rb').read()).hexdigest(),
+            'file_hash': sha256,
             'imp_hash': imphash,
             'Imports': implist,
             'cmp_section': cmp_section_data,
@@ -218,10 +219,10 @@ class Pe_Feature:
         pdb_age = PDB['pe_pdb_Age']
         pdb_path = PDB['pe_pdb_Pdbpath']
 
-        PE_info.objects.create(filename=f_name, imphash=ImpHash, filesize=file_size, filetype=file_type, sha_256=sha256,
-                               timestamp=TimeStamp, year=Year, timenum=TimeInNum,
-                               ssdeep=ssdeep_hash, sha_1=sha1, md5=MD5, Targetmachine=mac, EntryPoint=Ent_point,
-                               ContainedSections=Section_num, pdbname=pdb_name, pdbguid=pdb_guid, pdbage=pdb_age, pdbpath=pdb_path)
+        # PE_info.objects.create(filename=f_name, imphash=ImpHash, filesize=file_size, filetype=file_type, sha_256=sha256,
+        #                        timestamp=TimeStamp, year=Year, timenum=TimeInNum,
+        #                        ssdeep=ssdeep_hash, sha_1=sha1, md5=MD5, Targetmachine=mac, EntryPoint=Ent_point,
+        #                        ContainedSections=Section_num, pdbname=pdb_name, pdbguid=pdb_guid, pdbage=pdb_age, pdbpath=pdb_path)
 
         f_name_hash.close()
 
@@ -241,5 +242,3 @@ def pe_into_file():
             f.close()
 
     return p_dict
-# if __name__ == "__main__":
-#     pe = Pe_Feature(r"C:\malware\mid_GandCrab_exe\test")

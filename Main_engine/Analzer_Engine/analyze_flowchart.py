@@ -43,6 +43,7 @@ class AnalyzeFlowchart:
                     flow_const_dict.update({x: bloc_dict["func_name"][x]["flow_constants"]})
                 elif y != "flow_constants" and y != "flow_branches":
                     block_hash = bloc_dict["func_name"][x][y]['block_sha256']
+
                     if block_hash in white.list:
                         # print(f'[sensing] white_list -> {block_hash} : {white.list[block_hash]}')
                         matched_dic[x].update({y: {block_hash: white.list[block_hash]}})
@@ -204,7 +205,7 @@ class AnalyzeFlowchart:
         for baseFunc in mutex_dic:
             best = max(mutex_dic[baseFunc].values())
             for targetFunc in mutex_dic[baseFunc]:
-                if best == mutex_dic[baseFunc][targetFunc] and best > 0.1:
+                if best == mutex_dic[baseFunc][targetFunc]:
                     if baseFunc not in mutex_list and targetFunc not in mutex_list:
                         mutex_list.append(baseFunc)
                         mutex_list.append(targetFunc)
@@ -221,7 +222,7 @@ class AnalyzeFlowchart:
             for matched_count, sim in similer_info[baseFunc][targetFunc].items():
                 # print(f'{base_count} - {target_count} - {matched_count} - {sim}')
                 # (matched_count / target_count)
-                func_dic.update({baseFunc: {targetFunc: {base_count: {target_count: {matched_count: {(matched_count / target_count)}}}}}})
+                func_dic.update({baseFunc: {targetFunc: {base_count: {target_count: {matched_count: (matched_count / target_count)}}}}})
         return func_dic
 
     def compare_bbh(self, s_flow_data, t_flow_data, flow_const):
@@ -284,7 +285,7 @@ class AnalyzeFlowchart:
                 del const_matched_bb_dic[baseFunc]
 
 
-        return dict({s_name: s_hash_dict[s_name]['bbh']}), dict({t_name: t_hash_dict[t_name]['bbh']}), const_matched_bb_dic
+        return dict({s_name: s_hash_dict[s_name]['bbh']}), dict({t_name: t_hash_dict[t_name]['bbh']}), const_matched_bb_dic, func_sim_info
 
     def compare_bb_const(self, stand_list, target_list, s_hash_dict, t_hash_dict):
 
@@ -326,7 +327,7 @@ class AnalyzeFlowchart:
 
         return (matched / total_len)
 
-    def get_match_func_level(self, _dict):
+    def get_match_func_level(self, _dict, sim_dict):
 
         bb_count = 0
         func_match_dic = dict()
@@ -356,10 +357,15 @@ class AnalyzeFlowchart:
 
                 # print(f'{func} -> matched -> {vote_func}')
                 # print(f' ㄴ[debug] {temp} vote -> -> {vote_func}')
-                func_match_dic.update({func: [vote_func, block_match]})
+                # print(f"[DEBUG] if {sim_dict[func][vote_func]}")
+
+                func_match_dic.update({func: [vote_func, block_match, sim_dict[func][vote_func]]})
+
             else:
                 # print(f'{func} -> matched -> {temp_result[0]}')
-                func_match_dic.update({func: [temp_result[0], block_match]})
+                # print(f"[DEBUG] else {sim_dict[func][temp_result[0]]}")
+
+                func_match_dic.update({func: [temp_result[0], block_match, sim_dict[func][temp_result[0]]]})
 
         return func_match_dic
 
@@ -381,24 +387,96 @@ class AnalyzeFlowchart:
         basic block hash(함수 대표값)을 비교해서 점수에 가중치를 매겨 반환하는 함수
         '''
 
-        s_cmp_dic, whitelist_matched_dic1, s_flow_const_dict = self.parser_bbh(s_flow_data)
-        t_cmp_dic, whitelist_matched_dic2, t_flow_const_dict = self.parser_bbh(t_flow_data)
+        s_cmp_dic, whitelist_matched_dic1, s_flow_const_dict, = self.parser_bbh(s_flow_data)
+        t_cmp_dic, whitelist_matched_dic2, t_flow_const_dict, = self.parser_bbh(t_flow_data)
 
         flow_const_dict = dict()
         flow_const_dict.update({"base": s_flow_const_dict})
         flow_const_dict.update({"target": t_flow_const_dict})
 
-        cmp_s, cmp_t, true_bb_const_sim = self.compare_bbh(s_cmp_dic, t_cmp_dic, flow_const_dict)
+        cmp_s, cmp_t, true_bb_const_sim, func_sim = self.compare_bbh(s_cmp_dic, t_cmp_dic, flow_const_dict)
 
         #c_score = self.compare_prime(self.parser_bbh_T_F(cmp_s, ), self.parser_bbh_T_F(cmp_t, ), s_flow_data, t_flow_data)
 
-        func_match_dict = self.get_match_func_level(true_bb_const_sim)
+        func_match_dict = self.get_match_func_level(true_bb_const_sim, func_sim)
 
-        return algo.get_bbh_similarity(cmp_s, ), func_match_dict, whitelist_matched_dic1
+        base_F_set = self.parser_bbh_T_F(cmp_s, False)
+        target_F_set = self.parser_bbh_T_F(cmp_t, False)
 
-    def analyze_constant(self, standard, target):
-        const_score = algo.get_string_similarity(standard['constant'][0], target['constant'][0])
-        return const_score['2-Gram']
+        base_name = list(s_cmp_dic.keys())[0]
+        target_name = list(t_cmp_dic.keys())[0]
+        #########################################################################
+
+        print(f"{type(base_name)}, {base_name}")
+        print(f"{type(target_name)}, {target_name}")
+
+        good_func={}
+
+        find_similar_dic = dict()
+        for base_F_func in base_F_set[base_name]:
+            if base_F_func in func_match_dict:
+                matched_func = func_match_dict[base_F_func][0]
+                for base_F_block in base_F_set[base_name][base_F_func]:
+                    base_opcodes = "".join(s_flow_data['func_name'][base_F_func][base_F_block]['opcodes'])
+                    for target_F_block in target_F_set[target_name][matched_func]:
+                        target_opcodes = "".join(t_flow_data['func_name'][matched_func][target_F_block]['opcodes'])
+                        sim = NGram.compare(base_opcodes, target_opcodes, N=2)
+                        if sim > 0.75:  # opcodes similar over 75%
+                            const_sim = self.compare_bb_const(list([base_F_func, base_F_block]),
+                                                         list([matched_func, target_F_block]) \
+                                                         , s_cmp_dic[base_name]['constant'],
+                                                         t_cmp_dic[target_name]['constant'])
+                            if const_sim > 0.7:
+                                find_similar_dic.update(
+                                    {base_F_func + '-' + base_F_block: matched_func + '-' + target_F_block})
+
+        good_func['similar'] = find_similar_dic
+        func_match_dict.update(good_func)
+
+        return algo.get_bbh_similarity(cmp_s, len(func_match_dict)), func_match_dict, whitelist_matched_dic1, true_bb_const_sim
+
+    def analyze_constant(self, standard, target, true_bb_const_sim):
+        const_score = list()
+        const_score.append(self.get_const_similarity(true_bb_const_sim))
+        const_score.append(self.get_all_const_similer(standard['constant'],target['constant']))
+        return const_score
+
+    def parser_all_constants(self, _list):
+        temp_list = list()
+        for i in _list:
+            for temp in i.split(" "):
+                temp_list.append(temp)
+
+        temp_dic = dict()
+        for i in temp_list:
+            if i in temp_dic:
+                temp_dic[i] = temp_dic[i] + 1
+            else:
+                temp_dic.update({i: 1})
+
+        return temp_dic
+
+    def get_all_const_similer(self,_base, _target):
+        base_const = self.parser_all_constants(_base)
+        target_const = self.parser_all_constants(_target)
+        const_total_count = len(base_const) + len(target_const)
+
+        diff_dic = dict()
+        for base in base_const:
+            if base in target_const:
+                if base_const[base] < target_const[base]:
+                    diff_count = target_const[base] - base_const[base]
+                    if diff_count != 0:
+                        diff_dic.update({base: diff_count})
+                elif base_const[base] > target_const[base]:
+                    diff_count = base_const[base] - target_const[base]
+                    if diff_count != 0:
+                        diff_dic.update({base: diff_count})
+                elif base_const[base] == target_const[base]:
+                    pass
+        const_diff_count = len(diff_dic)
+
+        return ((const_total_count - const_diff_count) / const_total_count)
 
     def compare_prime(self, base, target, base_idb, target_idb):
         s_cm_dic, whitelist_dic1 = self.parser_bbh(base_idb)
@@ -485,9 +563,8 @@ class AnalyzeFlowchart:
                 if index_1 == index_2:
                     continue
 
-                idb_t['bbh'], idb_func_s[idb_info_t['file_name']], idb_func_s['whitelist'] = self.analyze_bbh(idb_info_s, idb_info_t)
-                # 이부분 !!
-                idb_t['const_value'] = self.analyze_constant(idb_info_s, idb_info_t)
+                idb_t['bbh'], idb_func_s[idb_info_t['file_name']], idb_func_s['whitelist'], true_bb_const_sim = self.analyze_bbh(idb_info_s, idb_info_t)
+                idb_t['const_value'] = self.analyze_constant(idb_info_s, idb_info_t, true_bb_const_sim)
 
                 idb_s[idb_info_t['file_name']] = idb_t
 

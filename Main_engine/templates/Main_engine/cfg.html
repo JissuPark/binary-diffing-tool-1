@@ -3,38 +3,41 @@
 {% block title %}CFG  {% endblock %}
 {% block head %}
 {% load static %}
-    <link href="{% static 'Main_engine/images/logo_diffeye.png' %}" rel="shortcut icon"/> <!--title logo 부분 -->
+<link href="{% static 'Main_engine/images/logo_diffeye.png' %}" rel="shortcut icon"/> <!--title logo 부분 -->
 <link href="{% static 'Main_engine/css/styles.css' %}" rel="stylesheet">
-<link rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.js"></script>
-<script src="{% static 'Main_engine/js/defaults-ko_KR.min.js' %}"></script>
+<script src="{% static 'Main_engine/js/bootstrap-select.min.js' %}"></script>
+<link href="{% static 'Main_engine/css/bootstrap-select.min.css' %}" rel="stylesheet">
 
 <style>
     * {
         font-family: 'Poppins', sans-serif;
     }
+
     .graph-outer {
         height: 100%;
         width: 100%;
         overflow: hidden;
     }
+
     .graph-inner {
         width: 100%;
         height: 100%;
         overflow-x: scroll;
         display: flex;
     }
+
     .paint {
         display: block;
         width: 100%;
         height: 95%;
     }
+
     div.blur {
         height: 100%;
         background-color: black;
         opacity: 0.4;
     }
+
     p.blur {
         margin-top: 60%;
         text-align: center;
@@ -42,6 +45,7 @@
         font-weight: bold;
         color: ghostwhite;
     }
+
     p.seonea {
         margin-top: 50%;
         text-align: center;
@@ -52,6 +56,20 @@
 {% endblock head %}
 
 {% block section %}
+<div class="mb-3" style="float: right;">
+    <img src="{% static 'Main_engine/images/green.png' %}" alt="..." width="20"
+         height="20"/><span> Matched &nbsp</span> <!--&nbsp : 뒤에 빈공간 생기게 해줌
+             -->
+    <img src="{% static 'Main_engine/images/yellow.png' %}" alt="..." width="20"
+         height="20"/><span> Similarity&nbsp </span>
+    <img src="{% static 'Main_engine/images/white.png' %}" alt="..." width="20"
+         height="20"/><span> White List&nbsp </span>
+    <img src="{% static 'Main_engine/images/red.png' %}" alt="..." width="20"
+         height="20"/><span> Unmatched&nbsp </span>
+    <img src="{% static 'Main_engine/images/blue.png' %}" alt="..." width="20"
+         height="20"/><span> Unmatched Constant&nbsp </span>
+</div>
+
 <div class="paint">
     <div class="graph-outer">
         <div id="test" class="graph-inner">
@@ -74,15 +92,17 @@
         var match_text = matchdata.replace(/\n/gi, "\\n").replace(/\t/gi, "\\t").replace(/&#39;/gi, '"');
         var match_json = JSON.parse(match_text);
         var postoffice = {};
+
         var pickerclass = document.getElementsByClassName("selectpicker");
         for (var picker = 0; picker < pickerclass.length; picker++) {
             for (var standard in match_json) {
                 var option = document.createElement("option");
                 option.value = standard;
-                option.text = standard;
+                option.text = standard.substring(0,20)+"...";
                 pickerclass.item(picker).appendChild(option);
             }
         }
+
         /* 함수이름 버튼 만드는 함수 */
         function makebt(file, fname) {
             var li = document.createElement("li");
@@ -97,6 +117,7 @@
             a.textContent = fname;
             document.getElementById("li_" + fname).appendChild(a);
         }
+
         /* 그래프 그리기 위한 변수 생성 */
         function boxing(array, branches) {
             var nodes = [];
@@ -143,6 +164,7 @@
             var Edges = new vis.DataSet(edges);
             return [Nodes, Edges];
         }
+
         /* 버튼 클릭하면 데이터 변하게 하는 함수 */
         $("#select-oper").click(function () {
             $("#func_menu").empty();
@@ -159,9 +181,10 @@
             }
         });
         /* 기준이 바뀌면 대상에 disable 거는 함수 */
-        $(".selectpicker").on("changed.bs.select", function () {
-            var selected = $("#select_base").children("option:selected").text();        // 기준 파일명을 가져옴
+        $("#select_base").on("changed.bs.select", function () {
+            var selected = $("#select_base").children("option:selected").val();        // 기준 파일명을 가져옴
             $("#select_target option").prop('disabled', false);                         // 전체 초기화
+            $("#select_target option").prop('selected', true);                         // 전체 초기화
             $('#select_target').find('[value="' + selected + '"]').prop('selected', false);// 체크도 해제
             $("#select_target").find('[value="' + selected + '"]').prop('disabled', true);// 기준과 같은 옵션 disable
             $("#select_target").selectpicker('refresh');                                // 새로고침
@@ -192,27 +215,27 @@
                                 match_base_node.update({
                                     id: match_json[filename][t][fname][1][addr][0],
                                     color: {
-                                        border: "black",
-                                        background: "white",
-                                        highlight: {border: "black", background: "white"}
+                                        border: "green",
+                                        background: "lightgreen",
+                                        highlight: {border: "green", background: "lightgreen"}
                                     }
                                 });
                                 if (match_json[filename][t][fname][1][addr][1] == 1) {
                                     match_target_node.update({
                                         id: addr,
                                         color: {
-                                            border: "black",
-                                            background: "white",
-                                            highlight: {border: "black", background: "white"}
+                                            border: "green",
+                                            background: "lightgreen",
+                                            highlight: {border: "green", background: "lightgreen"}
                                         }
                                     });
                                 } else {
                                     match_target_node.update({
                                         id: addr,
                                         color: {
-                                            border: "green",
-                                            background: "lightgreen",
-                                            highlight: {border: "green", background: "lightgreen"}
+                                            border: "#3f35c2",
+                                            background: "#e5e9ff",
+                                            highlight: {border: "#3f35c2", background: "#e5e9ff"}
                                         }
                                     });
                                 }
@@ -222,16 +245,16 @@
                         }
                     }
                 }
-                for (white_func in match_json[filename]['whitelist'][filename]) {console.log(white_func);
+                for (white_func in match_json[filename]['whitelist'][filename]) {
                     for (white_addr in match_json[filename]['whitelist'][filename][white_func]) {
                         var match_node = postoffice[filename][white_func][0];
 
                         match_node.update({
                             id: white_addr,
                             color: {
-                                border: "#3f35c2",
-                                background: "#e5e9ff",
-                                highlight: {border: "#3f35c2", background: "#e5e9ff"}
+                                border: "black",
+                                background: "white",
+                                highlight: {border: "black", background: "white"}
                             }
                         });
                     }
@@ -258,8 +281,11 @@
                 // 파일명, 함수명, 유사도 추가
                 var name_label = document.createElement('div');
                 name_label.id = 'name_' + index;
-                if (index == 0){name_label.style.borderBottom = " 2px solid #fe5461";}
-                else{name_label.style.borderBottom = " 2px solid black";}
+                if (index == 0) {
+                    name_label.style.borderBottom = " 2px solid #fe5461";
+                } else {
+                    name_label.style.borderBottom = " 2px solid black";
+                }
                 name_label.style.overflow = "hidden";
                 name_label.style.whiteSpace = "nowrap";
                 name_label.style.textOverflow = "ellipsis";
@@ -268,6 +294,7 @@
                 name_label.style.display = "block";
                 name_label.style.padding = "0.2rem";
                 document.getElementById('div_' + index).appendChild(name_label);
+
                 //파일구분 뱃지
                 var filename_info = document.createElement("span");
                 if (index == 0) {
@@ -280,27 +307,54 @@
                     filename_info.textContent = "target file";
                 }
                 filename_info.style.marginLeft = "2px";
-                filename_info.style.padding = "0.2rem";
+                // filename_info.style.padding = "0.2rem";
                 filename_info.style.fontSize = "100";
                 document.getElementById("name_" + index).appendChild(filename_info);
+
+
+                if (index != 0) {
+                    let basefile = targetlist[0][0];
+                    let basefunc = targetlist[0][1];
+                    let targetfile = targetlist[index][0];
+                    let targetfunc = targetlist[index][1];
+                    if (targetfunc != 'none') {
+                        if (3 == match_json[basefile][targetfile][basefunc].length) {
+                            var similarity = document.createElement("span");
+                            let simdict = match_json[basefile][targetfile][basefunc][2];
+                            console.log(simdict);
+                            for (let b_cnt in simdict) {
+                                for (let t_cnt in simdict[b_cnt]) {
+                                    for (let m_cnt in simdict[b_cnt][t_cnt])
+                                        similarity.textContent = Math.floor(simdict[b_cnt][t_cnt][m_cnt] * 100) + "% (" + m_cnt + "/" + t_cnt + ")";
+                                }
+                            }
+                            similarity.className = 'badge badge-warning';
+                            document.getElementById('name_' + index).appendChild(similarity);
+                        }
+                    }
+                }
+
                 var br = document.createElement('br');
                 document.getElementById("name_" + index).appendChild(br);
+
                 //파일 명
                 var filename = document.createElement("span");
-                filename.textContent = "FileName : "+ targetlist[index][0];
+                filename.textContent = "FileName : " + targetlist[index][0];
                 document.getElementById("name_" + index).appendChild(filename);
                 var br = document.createElement('br');
                 document.getElementById("name_" + index).appendChild(br);
+
                 //함수 명
                 var funcname = document.createElement('span');
                 funcname.textContent = "Function : " + targetlist[index][1];
                 document.getElementById("name_" + index).appendChild(funcname);
+
                 //그림그릴 장소 생성
                 var div = document.createElement('div');
                 div.id = "graph_" + index;
-                var hei = document.getElementById('div_'+index).offsetHeight - document.getElementById('name_'+index).offsetHeight-10;
+                var hei = document.getElementById('div_' + index).offsetHeight - document.getElementById('name_' + index).offsetHeight - 10;
                 div.style.width = '100%';
-                div.style.height = hei+"px";console.log(hei);
+                div.style.height = hei + "px";
                 document.getElementById('div_' + index).appendChild(div);
                 //매칭 함수가 없는 경우 따로 표시
                 if (targetlist[index][1] == 'none') {
@@ -409,8 +463,8 @@
         var first_base = $("#select_base").find('option:first');
         first_base.attr('selected', 'selected');
         $('#select_target option').prop('selected', true);
-        $('#select_target').find('[value="' + first_base.text() + '"]').prop('selected', false);
-        $('#select_target').find('[value="' + first_base.text() + '"]').prop('disabled', true);
+        $('#select_target').find('[value="' + first_base.val() + '"]').prop('selected', false);
+        $('#select_target').find('[value="' + first_base.val() + '"]').prop('disabled', true);
         $draw(first_file, first_func);
     })(jQuery);
 </script>

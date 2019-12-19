@@ -32,6 +32,7 @@
             src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
     <script src="{% static 'Main_engine/plugins/slimscrollbar/jquery.slimscroll.min.js' %}"></script>
 
+
     <!-- PLUGINS CSS STYLE -->
 
     <link href="{% static 'Main_engine/css/style.css' %}" rel="stylesheet">
@@ -44,6 +45,26 @@
     {% block head %}
     {% endblock head %}
     <style>
+        a.rollover img {
+            border-width: 0px;
+            display: inline;
+        }
+
+        a.rollover img.over {
+            display: none;
+        }
+
+        a.rollover:hover {
+            border: 0px
+        }
+
+        a.rollover:hover img {
+            display: none;
+        }
+
+        a.rollover:hover img.over {
+            display: inline;
+        }
         button#select-oper, #select-pe {
             background-color: rgba(0, 0, 0, 0.8);
             border-radius: 5px;
@@ -82,9 +103,14 @@
         <div class="sidebar sidebar-with-footer" id="sidebar">
             <!-- Aplication Brand -->
             <div class="app-brand" style="background-color: rgb(9, 51, 110);">
-                <a href="result">
-                    <img alt="...." src="{% static 'Main_engine/images/logo2_diffeye(w).png' %}" style="width: 36%;
-    margin-left: -27px;">
+                <a href="result" class="rollover" style="float: left">
+
+                    <img src="{% static 'Main_engine/images/01(w).png' %}" alt="..." style="margin-left: -1.7rem; opacity: 0.9"/>
+                    <img src="{% static 'Main_engine/images/02(w).png' %}" class="over" alt="..."
+                         style="margin-left: -1.7rem; opacity: 0.9"/>
+                    <div>
+                        <img src="{% static 'Main_engine/images/result_logo(w).png' %}" alt="..." style="display: block;"/>
+                    </div>
                 </a>
             </div>
             <!-- begin sidebar scrollbar -->
@@ -243,14 +269,14 @@
                 <div class="mt-1" style="display:inline-flex; width:70%;">
                     <p class="file_text" style="font-family: 'Poppins', sans-serif; margin-top: 12px;">BASE
                         FILE</p>
-                    <select id="select_base" class="selectpicker" data-live-search="true" data-width="20%"
+                    <select id="select_base" class="selectpicker show-tick" data-live-search="true" data-width="20%"
                             data-size="5"
                             title="Choose base"></select>
                     <p class="file_text" style="font-family: 'Poppins', sans-serif; margin-top: 12px; ">
                         TARGET FILE</p>
 
-                    <select id="select_target" class="selectpicker" data-actions-box="true" data-width="20%"
-                            data-size="5" multiple title="Choose targets"></select>
+                    <select id="select_target" class="selectpicker show-tick" data-actions-box="true" data-width="20%"
+                            data-size="5" multiple data-selected-text-format="count" title="Choose targets"></select>
 
                     <button id="select-oper"
                             style="font-family: 'Poppins', sans-serif; font-weight: bolder; color: white">
@@ -284,6 +310,13 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(".has-sub").click(function () {
+    $(".has-sub").removeClass(" active");
+    $(this).addClass(" active");
+    });
+</script>
 
 </body>
 </html>
