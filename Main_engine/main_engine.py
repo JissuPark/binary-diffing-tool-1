@@ -104,7 +104,7 @@ def convert_idb(PATH,IDB_PATH):
     # idb 변환
     return pe2idb.create_idb(PATH, IDB_PATH)
 
-def multiprocess_file(q, return_dict, flag):
+def multiprocess_file(q, return_dict, flag, tag):
     while q.empty() != True:
         f_path = q.get()
 
@@ -127,7 +127,7 @@ def multiprocess_file(q, return_dict, flag):
                 fd1.close()
                 #print('idb존재함')
             elif file is None:
-                info = extract_asm_and_const.basicblock_info_extraction(f_path)  # 함수대표값 및 상수값 출력
+                info, tagging = extract_asm_and_const.basicblock_info_extraction(f_path, tag)  # 함수대표값 및 상수값 출력
                 with open(r"C:\malware\all_result\idb" + "\\" + file_filter + ".txt", 'w') as makefile:
                     json.dump(info, makefile, ensure_ascii=False, indent='\t')
                 Filter.objects.create(filehash=info['file_name'], idb_filepath=idb_file_path + file_filter)
@@ -136,6 +136,7 @@ def multiprocess_file(q, return_dict, flag):
         elif flag == 'pe':
 
             file_filter2 = f_path[f_path.rfind('\\') + 1:]
+            #print()
 
             try:
                 pe_file = Filter.objects.get(filehash=file_filter2)
@@ -157,23 +158,23 @@ def multiprocess_file(q, return_dict, flag):
                     json.dump(info, makefile, ensure_ascii=False, indent='\t')
                 print('pe존재함')
             elif pe_f is None:
-                try:
-                    pe = pefile.PE(f_path)
-                    info, pe_info_DB = extract_pe.Pe_Feature(f_path, pe).all()  # pe 속성 출력
-                    with open(r"C:\malware\all_result\pe" + "\\" + file_filter2 + ".txt", 'w', -1, "utf-8") as makefile:
-                        json.dump(info, makefile, ensure_ascii=False, indent='\t')
+            #try:
+                pe = pefile.PE(f_path)
+                info, pe_info_DB = extract_pe.Pe_Feature(f_path, pe).all()  # pe 속성 출력
+                with open(r"C:\malware\all_result\pe" + "\\" + file_filter2 + ".txt", 'w', -1, "utf-8") as makefile:
+                    json.dump(info, makefile, ensure_ascii=False, indent='\t')
 
-                    with open(r"C:\malware\all_result\pe_r" + "\\" + file_filter2 + ".txt", 'w', -1, "utf-8") as makefile:
-                        json.dump(info, makefile, ensure_ascii=False, indent='\t')
+                with open(r"C:\malware\all_result\pe_r" + "\\" + file_filter2 + ".txt", 'w', -1, "utf-8") as makefile:
+                    json.dump(info, makefile, ensure_ascii=False, indent='\t')
 
-                    pe_file.pe_filepath = pe_file_path + file_filter2
-                    pe_file.save()
-                    pe.close()
-                    print('pe없음')
-                except Exception as e:
-                    print('pe error !')
-                    print(e)
-                    continue
+                pe_file.pe_filepath = pe_file_path + file_filter2
+                pe_file.save()
+                pe.close()
+                print('pe없음')
+            #except Exception as e:
+                # print('pe error !')
+                # print(e)
+                # continue
 
         return_dict[f_path] = info
 
@@ -182,6 +183,10 @@ class Exract_Feature:
     def __init__(self, path, idb_path):
         self.path = path
         self.idb_path = idb_path
+
+        with open(r"C:\malware\malware.hashSet", 'rb') as f:
+            result_pe = f.read()
+            self.tag = json.loads(result_pe)
 
     def export_by_multi(self, flag):
 
@@ -195,9 +200,10 @@ class Exract_Feature:
             manager = Manager()
             pe2idb.exe_list_to_queue(path, q)
             return_dict = manager.dict()
+
             procs = list()
             for i in range(os.cpu_count() // 2 + 1):
-                proc = Process(target=multiprocess_file, args=[q, return_dict, flag])
+                proc = Process(target=multiprocess_file, args=[q, return_dict, flag, self.tag])
                 procs.append(proc)
                 proc.start()
             for p in procs:
@@ -243,11 +249,12 @@ class Analyze_files:
             idb_final_score = dict()
             pe_final_score = dict()
             for value_i, value_pe in zip(key_i[1].items(), key_pe[1].items()):
+
                 semifinal = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
                 semifinal[0] = (value_pe[1]['file_hash'])
                 semifinal[1] = (value_pe[1]['time_date_stamp'])
                 semifinal[2] = (value_i[1]['bbh'])
-                semifinal[3] = (value_i[1]['const_value'])
+                semifinal[3] = (value_i[1]['const_value'][1])
                 semifinal[4] = (value_pe[1]['section_score'])
                 semifinal[5] = (value_pe[1]['cert_score'])
                 semifinal[6] = (value_pe[1]['pdb_score'])
@@ -255,12 +262,13 @@ class Analyze_files:
                 semifinal[8] = (value_pe[1]['rich'])
                 semifinal[9] = (value_pe[1]['rsrc'])
                 semifinal[10] = (value_pe[1]['pe_all_score'])
-                semifinal[11] = (value_i[1]['bbh'] + value_i[1]['const_value'] + value_pe[1]['pe_all_score'])
+                semifinal[11] = (value_i[1]['bbh'] + value_i[1]['const_value'][1] + value_pe[1]['pe_all_score'])
 
                 idb_final_score[value_i[0]] = semifinal
                 pe_final_score[value_pe[0]] = semifinal
 
             sorted(idb_final_score.items(), key=(lambda i: i[1][11]), reverse=True)
+
             real_final[key_i[0]] = idb_final_score
             real_final[key_pe[0]] = pe_final_score
 
