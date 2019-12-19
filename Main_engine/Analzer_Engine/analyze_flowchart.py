@@ -400,7 +400,40 @@ class AnalyzeFlowchart:
 
         func_match_dict = self.get_match_func_level(true_bb_const_sim, func_sim)
 
-        return algo.get_bbh_similarity(cmp_s, ), func_match_dict, whitelist_matched_dic1, true_bb_const_sim
+        base_F_set = self.parser_bbh_T_F(cmp_s, False)
+        target_F_set = self.parser_bbh_T_F(cmp_t, False)
+
+        base_name = list(s_cmp_dic.keys())[0]
+        target_name = list(t_cmp_dic.keys())[0]
+        #########################################################################
+
+        print(f"{type(base_name)}, {base_name}")
+        print(f"{type(target_name)}, {target_name}")
+
+        good_func={}
+
+        find_similar_dic = dict()
+        for base_F_func in base_F_set[base_name]:
+            if base_F_func in func_match_dict:
+                matched_func = func_match_dict[base_F_func][0]
+                for base_F_block in base_F_set[base_name][base_F_func]:
+                    base_opcodes = "".join(s_flow_data['func_name'][base_F_func][base_F_block]['opcodes'])
+                    for target_F_block in target_F_set[target_name][matched_func]:
+                        target_opcodes = "".join(t_flow_data['func_name'][matched_func][target_F_block]['opcodes'])
+                        sim = NGram.compare(base_opcodes, target_opcodes, N=2)
+                        if sim > 0.75:  # opcodes similar over 75%
+                            const_sim = self.compare_bb_const(list([base_F_func, base_F_block]),
+                                                         list([matched_func, target_F_block]) \
+                                                         , s_cmp_dic[base_name]['constant'],
+                                                         t_cmp_dic[target_name]['constant'])
+                            if const_sim > 0.7:
+                                find_similar_dic.update(
+                                    {base_F_func + '-' + base_F_block: matched_func + '-' + target_F_block})
+
+        good_func['similar'] = find_similar_dic
+        func_match_dict.update(good_func)
+
+        return algo.get_bbh_similarity(cmp_s, len(func_match_dict)), func_match_dict, whitelist_matched_dic1, true_bb_const_sim
 
     def analyze_constant(self, standard, target, true_bb_const_sim):
         const_score = list()
