@@ -104,7 +104,6 @@ def loading(request):
             print(file.path)
             count += 1
             flag2 = main_engine.pe2idb.pe_check(file.path)
-            print(f'flag2 is {flag2}')
             if flag2 is -1 or flag2 is -2:
                 flag = False
                 error_count += 1
