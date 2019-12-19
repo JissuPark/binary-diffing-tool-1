@@ -104,7 +104,7 @@ def convert_idb(PATH,IDB_PATH):
     # idb 변환
     return pe2idb.create_idb(PATH, IDB_PATH)
 
-def multiprocess_file(q, return_dict,return_dict2, flag, tag):
+def multiprocess_file(q, return_dict, flag, tag):
     while q.empty() != True:
         f_path = q.get()
 
@@ -200,11 +200,10 @@ class Exract_Feature:
             manager = Manager()
             pe2idb.exe_list_to_queue(path, q)
             return_dict = manager.dict()
-            return_dict2 = manager.dict()
 
             procs = list()
             for i in range(os.cpu_count() // 2 + 1):
-                proc = Process(target=multiprocess_file, args=[q, return_dict,return_dict2, flag, self.tag])
+                proc = Process(target=multiprocess_file, args=[q, return_dict, flag, self.tag])
                 procs.append(proc)
                 proc.start()
             for p in procs:
@@ -250,11 +249,12 @@ class Analyze_files:
             idb_final_score = dict()
             pe_final_score = dict()
             for value_i, value_pe in zip(key_i[1].items(), key_pe[1].items()):
+
                 semifinal = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
                 semifinal[0] = (value_pe[1]['file_hash'])
                 semifinal[1] = (value_pe[1]['time_date_stamp'])
                 semifinal[2] = (value_i[1]['bbh'])
-                semifinal[3] = (value_i[1]['const_value'])
+                semifinal[3] = (value_i[1]['const_value'][1])
                 semifinal[4] = (value_pe[1]['section_score'])
                 semifinal[5] = (value_pe[1]['cert_score'])
                 semifinal[6] = (value_pe[1]['pdb_score'])
@@ -262,11 +262,13 @@ class Analyze_files:
                 semifinal[8] = (value_pe[1]['rich'])
                 semifinal[9] = (value_pe[1]['rsrc'])
                 semifinal[10] = (value_pe[1]['pe_all_score'])
-                semifinal[11] = (value_i[1]['bbh'] + value_i[1]['const_value'] + value_pe[1]['pe_all_score'])
+                semifinal[11] = (value_i[1]['bbh'] + value_i[1]['const_value'][1] + value_pe[1]['pe_all_score'])
+
                 idb_final_score[value_i[0]] = semifinal
                 pe_final_score[value_pe[0]] = semifinal
 
             sorted(idb_final_score.items(), key=(lambda i: i[1][11]), reverse=True)
+
             real_final[key_i[0]] = idb_final_score
             real_final[key_pe[0]] = pe_final_score
 

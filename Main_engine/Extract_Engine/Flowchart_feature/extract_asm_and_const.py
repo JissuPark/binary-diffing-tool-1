@@ -149,6 +149,9 @@ def extract_basic_block_info(fva, funcName, func_ext_dict, tag):
         for tag_hash, tag_const in tag.items():
             for tag_group, set in tag_const.items():
                 tagging['tagging'] = set
+    else:
+            tagging['tagging'] = {}
+
     return tagging
 
     del basicblock_dic
