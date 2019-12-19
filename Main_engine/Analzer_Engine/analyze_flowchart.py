@@ -405,7 +405,6 @@ class AnalyzeFlowchart:
 
         base_name = list(s_cmp_dic.keys())[0]
         target_name = list(t_cmp_dic.keys())[0]
-        #########################################################################
 
         print(f"{type(base_name)}, {base_name}")
         print(f"{type(target_name)}, {target_name}")
@@ -439,6 +438,7 @@ class AnalyzeFlowchart:
         const_score = list()
         const_score.append(self.get_const_similarity(true_bb_const_sim))
         const_score.append(self.get_all_const_similer(standard['constant'],target['constant']))
+
         return const_score
 
     def parser_all_constants(self, _list):

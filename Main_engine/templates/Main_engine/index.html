@@ -103,43 +103,6 @@
 </div>
 
 <!--&lt;!&ndash; Modal button &ndash;&gt;-->
-<!--<button type="button" class='btn btn-primary' data-toggle="modal" data-target="#myModal"> sign up</button>-->
-<!--&lt;!&ndash; Modal page &ndash;&gt;-->
-<!--<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">-->
-<!--    <div class="modal-dialog modal-dialog-centered" role="document">-->
-<!--        <div class="modal-content">-->
-<!--            <div class="modal-header">-->
-<!--                <h4 class="modal-title" id="myModalLabel">Sign up</h4>-->
-<!--                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span-->
-<!--                        aria-hidden="true">&times;</span></button>-->
-<!--            </div>-->
-<!--            <div class="modal-body">-->
-<!--                <form method="POST" action=".">-->
-<!--                    {% csrf_token %}-->
-<!--                    <div class="form-group">-->
-<!--                        <label for="ID">ID</label>-->
-<!--                        <input type="text" class="form-control" id="ID" name="ID" placeholder="ID"-->
-<!--                               aria-describedby="IDhelp">-->
-<!--                        <small id="IDhelp" class="form-text text-muted">User ID can't be duplicated</small>-->
-<!--                    </div>-->
-<!--                    <div class="form-group">-->
-<!--                        <label for="PW">Password</label>-->
-<!--                        <input type="password" class="form-control" id="PW" name="PW" placeholder="Password">-->
-<!--                    </div>-->
-<!--                    &lt;!&ndash;                       <div class="form-group">&ndash;&gt;-->
-<!--                    &lt;!&ndash;                            <label for="PWcheck">Password check</label>&ndash;&gt;-->
-<!--                    &lt;!&ndash;                           <input type="password" class="form-control" id="PWcheck" name="PWcheck" placeholder="Confirm password">&ndash;&gt;-->
-<!--                    &lt;!&ndash;                       </div>&ndash;&gt;-->
-<!--                </form>-->
-<!--            </div>-->
-<!--            <div class="modal-footer">-->
-<!--                <button type="submit" class="btn btn-primary">Submit</button>-->
-<!--                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-
 {% load static %}
 <script>
     Dropzone.options.myAwesomeDropzone = {
@@ -188,7 +151,7 @@
 <footer style="text-align: center">
 
      <span style="text-align: center; font-size: 1.2rem; color: #cacaca; cursor: pointer"
-           onclick="location.href='{% url 'result' %}'"><strong>RECENT SCAN | </strong></span>
+          onclick="location.href='{% url 'result' %}'"><strong>RECENT SCAN | </strong></span>
     <span style="text-align: center; font-size: 1.2rem; color: #cacaca; cursor: pointer"
           onclick="location.href='{% url 'about' %}'"><strong>About</strong></span>
     <p style="text-align: center; font-size: 0.9rem; color: #cacaca; margin-top: 1rem">© 2019 Best of the Best Team.
