@@ -104,7 +104,7 @@ def convert_idb(PATH,IDB_PATH):
     # idb 변환
     return pe2idb.create_idb(PATH, IDB_PATH)
 
-def multiprocess_file(q, return_dict, flag, tag):
+def multiprocess_file(q, return_dict, flag):
     while q.empty() != True:
         f_path = q.get()
 
@@ -127,7 +127,7 @@ def multiprocess_file(q, return_dict, flag, tag):
                 fd1.close()
                 #print('idb존재함')
             elif file is None:
-                info, tagging = extract_asm_and_const.basicblock_info_extraction(f_path, tag)  # 함수대표값 및 상수값 출력
+                info = extract_asm_and_const.basicblock_info_extraction(f_path)  # 함수대표값 및 상수값 출력
                 with open(r"C:\malware\all_result\idb" + "\\" + file_filter + ".txt", 'w') as makefile:
                     json.dump(info, makefile, ensure_ascii=False, indent='\t')
                 Filter.objects.create(filehash=info['file_name'], idb_filepath=idb_file_path + file_filter)
@@ -184,10 +184,6 @@ class Exract_Feature:
         self.path = path
         self.idb_path = idb_path
 
-        with open(r"C:\malware\malware.hashSet", 'rb') as f:
-            result_pe = f.read()
-            self.tag = json.loads(result_pe)
-
     def export_by_multi(self, flag):
 
         if flag == 'idb':
@@ -203,7 +199,7 @@ class Exract_Feature:
 
             procs = list()
             for i in range(os.cpu_count() // 2 + 1):
-                proc = Process(target=multiprocess_file, args=[q, return_dict, flag, self.tag])
+                proc = Process(target=multiprocess_file, args=[q, return_dict, flag])
                 procs.append(proc)
                 proc.start()
             for p in procs:
