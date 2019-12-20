@@ -207,7 +207,6 @@ def basicblock_info_extraction(FROM_FILE):
 
     result_dic = ({"file_name": filename, "type" : filetype,"func_name": func_ext_dict, "constant": glo_Constants})
 
-
     return result_dic
 
 

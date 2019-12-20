@@ -8,7 +8,6 @@ from Main_engine.Extract_Engine.Flowchart_feature import const_filter_indexs
 from collections import OrderedDict
 from fractions import Fraction
 from ngram import NGram
-from Main_engine.Analzer_Engine import malwarehashSet
 from pprint import pprint
 
 class AnalyzeFlowchart:
