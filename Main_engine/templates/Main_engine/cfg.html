@@ -91,6 +91,9 @@
         var matchdata = "{{matching}}";
         var match_text = matchdata.replace(/\n/gi, "\\n").replace(/\t/gi, "\\t").replace(/&#39;/gi, '"');
         var match_json = JSON.parse(match_text);
+        var tagdata = "{{tagging}}";
+        var tag_text = tagdata.replace(/\n/gi, '\\n').replace(/\t/gi, '\\t').replace(/&#39;/gi, '"');
+        var tag_json = JSON.parse(tag_text);
         var postoffice = {};
 
         var pickerclass = document.getElementsByClassName("selectpicker");
@@ -252,8 +255,6 @@
                                 //     }
                                 // });
                             }
-                            console.log('asdf');
-
                         }
                         if (match_json[filename][t].hasOwnProperty(fname)) {
                             targetlist.push([t, match_json[filename][t][fname][0]]);
@@ -384,9 +385,20 @@
                                         similarity.textContent = Math.floor(simdict[b_cnt][t_cnt][m_cnt] * 100) + "% (" + m_cnt + "/" + t_cnt + ")";
                                 }
                             }
-                            similarity.className = 'badge badge-warning';
+                            similarity.className = 'badge badge-success';
                             document.getElementById('name_' + index).appendChild(similarity);
                         }
+                    }
+                }
+
+                if (tag_json[targetlist[index][0]].hasOwnProperty(targetlist[index][1])){
+                    var taglist = tag_json[targetlist[index][0]][targetlist[index][1]];
+                    console.log(taglist);
+                    for (var tag_i = 0; tag_i < taglist.length; tag_i++) {
+                        var tag = document.createElement('span');
+                        tag.className = 'badge badge-primary';
+                        tag.textContent = taglist[tag_i];
+                        document.getElementById('name_' + index).appendChild(tag);
                     }
                 }
 

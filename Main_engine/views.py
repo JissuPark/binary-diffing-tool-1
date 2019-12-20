@@ -42,6 +42,7 @@ def pe(request):
 
 def cfg(request):
     cfg_dict = dict()
+    tag_dict = dict()
     cfg_file = open(r'C:\malware\all_result\cfg\result_cfg.txt', 'rb')
     match_cfg = json.loads(cfg_file.read())
     cfg_file.close()
@@ -53,7 +54,14 @@ def cfg(request):
                 cfg = open(file_path, 'rb')
                 cfg_dict[file] = json.loads(cfg.read())
                 cfg.close()
-    return render(request, 'Main_engine/cfg.html', {'cfg': cfg_dict, 'matching': match_cfg})
+    TAGPATH = r'C:\malware\all_result\tagging'
+    if os.path.exists(TAGPATH):
+        for file in os.listdir(TAGPATH):
+            tag_path = os.path.join(TAGPATH, file)
+            tagging = open(tag_path, 'rb')
+            tag_dict[file[:-4]] = json.loads(tagging.read())
+            tagging.close()
+    return render(request, 'Main_engine/cfg.html', {'cfg': cfg_dict, 'matching': match_cfg, 'tagging': tag_dict})
 
 
 def cg(request):
