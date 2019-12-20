@@ -126,43 +126,43 @@ def loading(request):
 
 def call_main(request):
     start = timeit.default_timer()
-    try:
-        if os.path.isfile(r"C:\malware\all_result\result.txt"):  # 경로가 파일인지 아닌지 검사
-            result_file = open(r"C:\malware\all_result\result.txt", 'rb')
-            result = json.loads(result_file.read())
-            result_file.close()
-        else:
-            main_engine.create_folder()
-            result = main_engine.start_engine()
+#try:
+    if os.path.isfile(r"C:\malware\all_result\result.txt"):  # 경로가 파일인지 아닌지 검사
+        result_file = open(r"C:\malware\all_result\result.txt", 'rb')
+        result = json.loads(result_file.read())
+        result_file.close()
+    else:
+        main_engine.create_folder()
+        result = main_engine.start_engine()
 
-            with open(r"C:\malware\all_result\result.txt", 'w') as res:
-                json.dump(result, res, ensure_ascii=False, indent='\t')
+        with open(r"C:\malware\all_result\result.txt", 'w') as res:
+            json.dump(result, res, ensure_ascii=False, indent='\t')
 
-        h_paginator = Paginator(result, 4)
+    h_paginator = Paginator(result, 4)
 
-        pe_ = PE_info.objects.order_by('timenum').all()
+    pe_ = PE_info.objects.order_by('timenum').all()
 
-        p_basic = dict()
+    p_basic = dict()
 
-        pe_result_list = os.listdir(r"C:\malware\all_result\pe_r")
-        for file in pe_result_list:
-            if os.path.isfile(r"C:\malware\all_result\pe_r" + "\\" + file):
-                with open(r"C:\malware\all_result\pe_r" + "\\" + file, 'rb') as f:
-                    result_pe = f.read()
-                    pe_data = json.loads(result_pe, encoding='utf-8')
-                    # print(json.dumps(pe_data, indent=4))
-                    for item1, item2 in pe_data.items():
-                        if item1 == 'basic prop':
-                            p_basic[pe_data['file_name']] = item2
+    pe_result_list = os.listdir(r"C:\malware\all_result\pe_r")
+    for file in pe_result_list:
+        if os.path.isfile(r"C:\malware\all_result\pe_r" + "\\" + file):
+            with open(r"C:\malware\all_result\pe_r" + "\\" + file, 'rb') as f:
+                result_pe = f.read()
+                pe_data = json.loads(result_pe, encoding='utf-8')
+                # print(json.dumps(pe_data, indent=4))
+                for item1, item2 in pe_data.items():
+                    if item1 == 'basic prop':
+                        p_basic[pe_data['file_name']] = item2
 
-        stop = timeit.default_timer()
-        print('time is ????')
-        print(stop - start)
-        return render(request, 'Main_engine/result.html', {'result': result, 'pe_': pe_, 'p_basic': p_basic})
+    stop = timeit.default_timer()
+    print('time is ????')
+    print(stop - start)
+    return render(request, 'Main_engine/result.html', {'result': result, 'pe_': pe_, 'p_basic': p_basic})
 
-    except Exception as e:
-        print(f'[DEBUG]Page error by {e}')
-        return render(request, 'Main_engine/error.html')
+# except Exception as e:
+#     print(f'[DEBUG]Page error by {e}')
+#     return render(request, 'Main_engine/error.html')
 
 
 def upload_file_dropzone(request):
