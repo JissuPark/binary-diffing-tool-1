@@ -457,10 +457,10 @@ class AnalyzeFlowchart:
                         for target_F_block in target_F_set[target_name][target_F_func]:
                             target_opcodes = "".join(t_flow_data['func_name'][target_F_func][target_F_block]['opcodes'])
                             sim = NGram.compare(base_opcodes, target_opcodes, N=2)
-                            if sim > 0.75:  # opcodes similar over 75%
+                            if sim > 0.60:  # opcodes similar over 75%
                                 const_sim = self.compare_bb_const(list([base_F_func, base_F_block]), list([target_F_func, target_F_block]),\
                                                                   s_cmp_dic[base_name]['constant'], t_cmp_dic[target_name]['constant'])
-                                if const_sim > 0.7:
+                                if const_sim > 0.34:
                                     find_similar_dic.update({base_F_func + '-' + base_F_block: target_F_func + '-' + target_F_block})
 
         func_match_dict.update({'similar' : find_similar_dic})
