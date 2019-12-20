@@ -71,7 +71,7 @@ def Calc_Without_Pdb_and_Rsrc(pe_t):
 def Calc_Without_Pdb_and_Cert(pe_t):
     score = 0
     #pdb, cert가 없는 경우
-    score += pe_t['imphash'] * 0.25
+    score += pe_t['imphash'] * 0.35
     score += pe_t['rich'] * 0.31
     score += pe_t['section_score'] * 0.14
     score += pe_t['rsrc'] * 0.20
