@@ -112,11 +112,6 @@ class AnalyzeFlowchart:
         bbh_result_dic[file_name].update({"bbh": block_hash_dic})
         bbh_result_dic[file_name].update({"constant": block_constants_dic})
 
-        bbh_result_dic = dict()
-        bbh_result_dic[file_name] = dict()
-        bbh_result_dic[file_name].update({"bbh": block_hash_dic})
-        bbh_result_dic[file_name].update({"constant": block_constants_dic})
-
         #t = timeit.default_timer()
 
         if os.path.isfile(r"C:\malware\all_result\tagging" + "\\" + file_name + ".txt"):
