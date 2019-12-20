@@ -118,11 +118,10 @@ class AnalyzeFlowchart:
         if os.path.isfile(r"C:\malware\all_result\tagging" + "\\" + file_name + ".txt"):
             pass
         else:
-            # with open(r"C:\malware\malware.hashSet", 'rb') as f:
-            #     tag = f.read()
-            #     tag_data = json.loads(tag, encoding='utf-8')
+            with open(r"C:\malware\malware.hashSet", 'rb') as f:
+                tag = f.read()
+                tag_data = json.loads(tag, encoding='utf-8')
 
-            tag_data = malwarehashSet
             tag_dic = dict()
             for func, value in block_hash_dic.items():
                 tag_dic[func] = dict()
