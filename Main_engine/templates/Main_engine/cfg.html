@@ -113,12 +113,18 @@
             li.onclick = function () {
                 $draw(file, fname);
             }; //button click 하면 함수 그려주기
-            document.getElementById('func_menu').appendChild(li);
+            document.getElementById('sub-menu').appendChild(li);
             var a = document.createElement("a");
             a.id = "a_" + fname;
             a.className = "sidenav-item-link";
             a.textContent = fname;
             document.getElementById("li_" + fname).appendChild(a);
+            if (tag_json[file].hasOwnProperty(fname)) {
+                var tag_b = document.createElement('span');
+                tag_b.className = 'badge badge-warning';
+                tag_b.textContent = tag_json[file][fname][0];
+                document.getElementById('a_'+fname).appendChild(tag_b);
+            }
         }
 
         /* 그래프 그리기 위한 변수 생성 */
@@ -170,7 +176,7 @@
 
         /* 버튼 클릭하면 데이터 변하게 하는 함수 */
         $("#select-oper").click(function () {
-            $("#func_menu").empty();
+            $("#sub-menu").empty();
             for (file in json_res) {
                 var selected = $("#select_base").val();
                 if (json_res[file]['file_name'] == selected) {
@@ -357,7 +363,7 @@
                 var filename_info = document.createElement("span");
                 if (index == 0) {
                     filename_info.id = "base_info";
-                    filename_info.className = 'badge badge-danger';
+                    filename_info.className = 'badge badge-primary';
                     filename_info.textContent = "base file";
                 } else {
                     filename_info.id = "target_info_" + index;
@@ -391,12 +397,13 @@
                     }
                 }
 
+                //악성코드 태깅
                 if (tag_json[targetlist[index][0]].hasOwnProperty(targetlist[index][1])){
                     var taglist = tag_json[targetlist[index][0]][targetlist[index][1]];
                     console.log(taglist);
                     for (var tag_i = 0; tag_i < taglist.length; tag_i++) {
                         var tag = document.createElement('span');
-                        tag.className = 'badge badge-primary';
+                        tag.className = 'badge badge-danger';
                         tag.textContent = taglist[tag_i];
                         document.getElementById('name_' + index).appendChild(tag);
                     }

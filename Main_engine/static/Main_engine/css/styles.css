@@ -5386,7 +5386,7 @@ button.close {
     z-index: 1060;
     display: block;
     max-width: 276px;
-   font-family: 'Poppins', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-style: normal;
     font-weight: 400;
     line-height: 1.5;
@@ -9147,10 +9147,6 @@ a.text-dark:hover, a.text-dark:focus {
         display: none
     }
 
-    .badge {
-        border: 1px solid #000
-    }
-
     .table {
         border-collapse: collapse !important
     }
@@ -9637,11 +9633,13 @@ label {
     background-color: #f5f6fa
 }
 
-.badge {
-    text-transform: uppercase;
-    color: #fff;
-    padding-top: .75em
+.badge{
+    padding: 3px 4.8px;
+    font-weight: 600;
+    margin-left: .4rem;
+    !important;
 }
+
 
 .badge-sm {
     padding-top: .5em;
@@ -12009,10 +12007,6 @@ div.copied {
     margin-right: auto
 }
 
-.sidebar .sidenav-item-link .badge {
-    padding: .4em .6em
-}
-
 .sidebar-minified .left-sidebar {
     width: 250px;
     z-index: 1050;
@@ -12498,9 +12492,10 @@ div.copied {
     }
 }
 
-*{
+* {
     font-family: Poppins;
 }
+
 .mobile-sticky-body-overlay {
     position: fixed;
     top: 0;
@@ -12530,7 +12525,7 @@ div.copied {
 }
 
 .sidebar-dark .sidebar .sub-menu {
-    background: rgba(10,10,10,0.7)
+    background: rgba(10, 10, 10, 0.7)
 }
 
 .sidebar-dark .sidebar .sub-menu > li > a {

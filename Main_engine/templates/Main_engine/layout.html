@@ -88,10 +88,6 @@
         .btn:not(:disabled):not(.disabled) {
             cursor: pointer;
         }
-
-        .badge-warning {
-            background-color: #fec400;
-        }
     </style>
 </head>
 <body class="sidebar-fixed sidebar-dark header-light header-fixed" id="body">
@@ -200,21 +196,8 @@
                         </a>
                         <ul class="collapse" data-parent="#sidebar-menu"
                             id="charts">
-                            <div class="sub-menu"
-                                 style="background: rgba(10,10,10,0.7)">
-                                <li class="has-sub">
-                                    <a aria-controls="authentication"
-                                       aria-expanded="false" class="sidenav-item-link"
-                                       data-target="#authentication"
-                                       data-toggle="collapse" href="javascript:void(0)">
-                                        <span class="nav-text">Function_name</span> <b
-                                            class="caret"></b>
-                                    </a>
-                                    <ul class="collapse" id="authentication">
-                                        <div class="sub-menu" id="func_menu"
-                                             style="background: rgba(10,10,10,0.7)"></div>
-                                    </ul>
-                                </li>
+                            <div class="sub-menu" id="sub-menu"
+                                 style="padding-left:2rem; background: rgba(10,10,10,0.7)">
                             </div>
                         </ul>
                     </li>
@@ -232,21 +215,21 @@
                         <ul class="collapse" data-parent="#sidebar-menu"
                             id="cg_menu">
 
-                            <div class="sub-menu"
+                            <div class="sub-menu" id ="cg-menu"
                                  style="background: rgba(10,10,10,0.7)">
-                                <li class="has-sub">
-                                    <a aria-controls="CG"
-                                       aria-expanded="false" class="sidenav-item-link"
-                                       data-target="#CG"
-                                       data-toggle="collapse" href="javascript:void(0)">
-                                        <span class="nav-text">File_name</span><b
-                                            class="caret"></b>
-                                    </a>
-                                    <ul class="collapse" id="CG">
-                                        <div class="sub-menu" id="nav-cg"
-                                             style="background: rgba(10,10,10,0.7)"></div>
-                                    </ul>
-                                </li>
+<!--                                <li class="has-sub">-->
+<!--                                    <a aria-controls="CG"-->
+<!--                                       aria-expanded="false" class="sidenav-item-link"-->
+<!--                                       data-target="#CG"-->
+<!--                                       data-toggle="collapse" href="javascript:void(0)">-->
+<!--                                        <span class="nav-text">File_name</span><b-->
+<!--                                            class="caret"></b>-->
+<!--                                    </a>-->
+<!--                                    <ul class="collapse" id="CG">-->
+<!--                                        <div class="sub-menu" id="nav-cg"-->
+<!--                                             style="background: rgba(10,10,10,0.7)"></div>-->
+<!--                                    </ul>-->
+<!--                                </li>-->
                             </div>
                         </ul>
 
