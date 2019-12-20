@@ -186,8 +186,7 @@ def main(tag):
             for addr in api.idautils.XrefsTo(fva, 0):
                 try:
                     if addr.type is 17:
-                        func_branch.append(
-                            (api.ida_funcs.get_func_name(api.ida_funcs.get_func(addr.src).startEA), FuncName))
+                        func_branch.append((api.ida_funcs.get_func_name(api.ida_funcs.get_func(addr.src).startEA), FuncName))
                 except Exception as e:
                     err_log.append("XrefsTo_" + str(e))
             del FuncName

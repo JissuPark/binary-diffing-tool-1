@@ -6,6 +6,7 @@ from .models import PE_info #, Login
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import json
 import os
+import shutil
 
 check_file_flag = 0
 no_pe_file =""
@@ -30,7 +31,7 @@ def about(request):
 
 
 def recent(request):
-    return render(request, 'Main_engine/index.html')
+    return render(request, 'Main_engine/recent.html')
 
 
 def pe(request):
@@ -220,3 +221,35 @@ def file_check():
 #         user.save()
 #
 #         return render(request, "index.html")
+
+def andarial(request):
+    # all_result의 내용 다 지우고 폴더 및 파일 이동
+    print('andarial')
+    shutil.rmtree('C:\\malware\\all_result')
+    shutil.copytree('C:\\malware\\anda', 'C:\\malware\\all_result')
+    return redirect('result')
+
+def gandcrab(request):
+    # all_result의 내용 다 지우고 폴더 및 파일 이동
+    print('gandcrab')
+    shutil.rmtree('C:\\malware\\all_result')
+    shutil.copytree('C:\\malware\\gand', 'C:\\malware\\all_result')
+    return redirect('result')
+def blackmoon(request):
+    # all_result의 내용 다 지우고 폴더 및 파일 이동
+    print('blackmoon')
+    shutil.rmtree('C:\\malware\\all_result')
+    shutil.copytree('C:\\malware\\moon', 'C:\\malware\\all_result')
+    return redirect('result')
+def scarcruft(request):
+    # all_result의 내용 다 지우고 폴더 및 파일 이동
+    print('scarcruft')
+    shutil.rmtree('C:\\malware\\all_result')
+    shutil.copytree('C:\\malware\\scar', 'C:\\malware\\all_result')
+    return redirect('result')
+def bluenroff(request):
+    # all_result의 내용 다 지우고 폴더 및 파일 이동
+    print('bluenroff')
+    shutil.rmtree('C:\\malware\\all_result')
+    shutil.copytree('C:\\malware\\blue', 'C:\\malware\\all_result')
+    return redirect('result')

@@ -418,17 +418,18 @@ class AnalyzeFlowchart:
                 matched_func = func_match_dict[base_F_func][0]
                 for base_F_block in base_F_set[base_name][base_F_func]:
                     base_opcodes = "".join(s_flow_data['func_name'][base_F_func][base_F_block]['opcodes'])
-                    for target_F_block in target_F_set[target_name][matched_func]:
-                        target_opcodes = "".join(t_flow_data['func_name'][matched_func][target_F_block]['opcodes'])
-                        sim = NGram.compare(base_opcodes, target_opcodes, N=2)
-                        if sim > 0.75:  # opcodes similar over 75%
-                            const_sim = self.compare_bb_const(list([base_F_func, base_F_block]),
-                                                         list([matched_func, target_F_block]) \
-                                                         , s_cmp_dic[base_name]['constant'],
-                                                         t_cmp_dic[target_name]['constant'])
-                            if const_sim > 0.7:
-                                find_similar_dic.update(
-                                    {base_F_func + '-' + base_F_block: matched_func + '-' + target_F_block})
+                    if matched_func in target_F_set[target_name]:
+                        for target_F_block in target_F_set[target_name][matched_func]:
+                            target_opcodes = "".join(t_flow_data['func_name'][matched_func][target_F_block]['opcodes'])
+                            sim = NGram.compare(base_opcodes, target_opcodes, N=2)
+                            if sim > 0.75:  # opcodes similar over 75%
+                                const_sim = self.compare_bb_const(list([base_F_func, base_F_block]),
+                                                             list([matched_func, target_F_block]) \
+                                                             , s_cmp_dic[base_name]['constant'],
+                                                             t_cmp_dic[target_name]['constant'])
+                                if const_sim > 0.7:
+                                    find_similar_dic.update(
+                                        {base_F_func + '-' + base_F_block: matched_func + '-' + target_F_block})
 
         good_func['similar'] = find_similar_dic
         func_match_dict.update(good_func)
