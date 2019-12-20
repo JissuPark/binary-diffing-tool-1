@@ -136,10 +136,12 @@ class Pe_Feature:
 
         file_size = os.path.getsize(self.file_name)
         file_size = self.convert_size(file_size)
-        with open(self.file_name, 'rb') as p:
-            MD5 = hashlib.md5(p.read()).hexdigest().upper()
-            sha1 = hashlib.sha1(p.read()).hexdigest()
-            sha256 = hashlib.sha256(p.read()).hexdigest()
+        f = open(self.file_name, 'rb')
+        hash = f.read()
+        f.close()
+        MD5 = hashlib.md5(hash).hexdigest().upper()
+        sha1 = hashlib.sha1(hash).hexdigest()
+        sha256 = hashlib.sha256(hash).hexdigest()
         ImpHash = imphash.upper()
         ssdeep_hash = ssdeep.hash_from_file(self.file_name)
         TimeStamp = time_info
