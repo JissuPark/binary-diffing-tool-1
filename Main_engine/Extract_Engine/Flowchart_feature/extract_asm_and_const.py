@@ -19,7 +19,7 @@ except_list = set()
 err_log = list()
 
 
-def extract_basic_block_info(fva, funcName, func_ext_dict, tag):
+def extract_basic_block_info(fva, funcName, func_ext_dict):
     global api
     global imageBase
     global glo_MinEA
@@ -143,20 +143,9 @@ def extract_basic_block_info(fva, funcName, func_ext_dict, tag):
         func_ext_dict[funcName] = bb_ext_dict
     del bb_ext_dict
 
-    tagging = dict()
-
-    if basicblock_dic['block_sha256'] in tag:
-        for tag_hash, tag_const in tag.items():
-            for tag_group, set in tag_const.items():
-                tagging['tagging'] = set
-    else:
-            tagging['tagging'] = {}
-
-    return tagging
-
     del basicblock_dic
 
-def main(tag):
+def main():
     global filename
     global api
     global imageBase
@@ -180,7 +169,7 @@ def main(tag):
     for fva in api.idautils.Functions():
         FuncName = api.idc.GetFunctionName(fva).lower()
         if FuncName[:3] == 'sub' or "start" in FuncName or "main" in FuncName or "dllentry" in FuncName:
-            tagging = extract_basic_block_info(fva, FuncName, func_ext_dict, tag)
+            extract_basic_block_info(fva, FuncName, func_ext_dict)
             func_name.append(FuncName)
 
             for addr in api.idautils.XrefsTo(fva, 0):
@@ -200,10 +189,10 @@ def main(tag):
 
     del func_name, func_branch, cg_info_dict
 
-    return func_ext_dict, tagging
+    return func_ext_dict
 
 
-def basicblock_info_extraction(FROM_FILE, tag):
+def basicblock_info_extraction(FROM_FILE):
     global api
     global filetype
 
@@ -214,12 +203,12 @@ def basicblock_info_extraction(FROM_FILE, tag):
     # print(f"[INFO][Extract Binary][MD5]{api.idc.GetInputMD5()}")
     print(f'[INFO][Extract Binary] {filename}')
 
-    func_ext_dict, tagging = main(tag)
+    func_ext_dict = main()
 
-    result_dic = ({"file_name": filename, "type" : filetype,"func_name": func_ext_dict, "constant": glo_Constants, "tagging" :tagging['tagging']} )
+    result_dic = ({"file_name": filename, "type" : filetype,"func_name": func_ext_dict, "constant": glo_Constants})
 
 
-    return result_dic, tagging
+    return result_dic
 
 
 def open_idb(FROM_FILE):
