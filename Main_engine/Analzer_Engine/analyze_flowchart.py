@@ -20,6 +20,31 @@ class AnalyzeFlowchart:
         for f_name, f_info in idb_dict:
             self.idb_list.append(f_info)
 
+    def best_tag(self, _dict):
+
+        count_dict = dict()
+        for funcName, value in _dict.items():
+            count_dict[funcName] = dict()
+            for sAddr, tag in value.items():
+                if tag in count_dict[funcName]:
+                    count_dict[funcName][tag] = count_dict[funcName][tag] + 1
+                else:
+                    count_dict[funcName].update({tag: 1})
+        tag_match = dict()
+        for funcName in count_dict:
+            best = max(count_dict[funcName].values())
+            tag_match[funcName] = []
+            for tag in count_dict[funcName]:
+                if best != 1 and count_dict[funcName][tag] == best:
+                    if tag in tag_match[funcName]:
+                        pass
+                    else:
+                        tag_match[funcName].append(tag)
+            if not tag_match[funcName]:
+                del tag_match[funcName]
+
+        return tag_match
+
     def parser_bbh(self, bloc_dict):
         file_name = bloc_dict["file_name"]
         # print(f'[info] {file_name} WhiteList Filtering & Block hash/constants SET Create')
@@ -87,6 +112,38 @@ class AnalyzeFlowchart:
         bbh_result_dic[file_name] = dict()
         bbh_result_dic[file_name].update({"bbh": block_hash_dic})
         bbh_result_dic[file_name].update({"constant": block_constants_dic})
+
+        bbh_result_dic = dict()
+        bbh_result_dic[file_name] = dict()
+        bbh_result_dic[file_name].update({"bbh": block_hash_dic})
+        bbh_result_dic[file_name].update({"constant": block_constants_dic})
+
+        #t = timeit.default_timer()
+
+        if os.path.isfile(r"C:\malware\all_result\tagging" + "\\" + file_name + ".txt"):
+            pass
+        else:
+            tag_data = read_json(r"C:\malware\malware.hashSet")
+
+            tag_dic = dict()
+            for func, value in block_hash_dic.items():
+                tag_dic[func] = dict()
+                for addr, value_2 in value.items():
+                    for hash in value_2:
+                        if hash in tag_data:
+                            for const, tag_value in tag_data[hash].items():
+                                for taginfo, etc in tag_value.items():
+                                    tag_dic[func].update({addr: taginfo})
+                if not tag_dic[func]:
+                    del tag_dic[func]
+
+            return_dic = dict()
+            return_dic.update({file_name: self.best_tag(tag_dic)})
+
+            with open(r"C:\malware\all_result\tagging" + "\\" + file_name + ".txt") as makefile:
+                json.dump(return_dic, makefile, ensure_ascii=False, indent='\t')
+
+        #print(f'[Timer] Make tag set {timeit.default_timer() - st}')
 
 
         return bbh_result_dic, whitelist_matched_dic, flow_const_dict
