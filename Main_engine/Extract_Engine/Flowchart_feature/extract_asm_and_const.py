@@ -143,7 +143,6 @@ def extract_basic_block_info(fva, funcName, func_ext_dict):
         func_ext_dict[funcName] = bb_ext_dict
     del bb_ext_dict
 
-    del basicblock_dic
 
 def main():
     global filename
