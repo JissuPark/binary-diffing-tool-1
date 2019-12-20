@@ -133,11 +133,11 @@ class AnalyzeFlowchart:
                 if not tag_dic[func]:
                     del tag_dic[func]
 
-            return_dic = dict()
-            return_dic.update({file_name: self.best_tag(tag_dic)})
+            # return_dic = dict()
+            # return_dic.update({file_name: self.best_tag(tag_dic)})
 
             with open(r"C:\malware\all_result\tagging" + "\\" + file_name + ".txt", 'w') as makefile:
-                json.dump(return_dic, makefile, ensure_ascii=False, indent='\t')
+                json.dump(self.best_tag(tag_dic), makefile, ensure_ascii=False, indent='\t')
 
         #print(f'[Timer] Make tag set {timeit.default_timer() - st}')
 
