@@ -1,57 +1,722 @@
-{% extends 'Main_engine/layout.html' %}
+{% extends "Main_engine/layout.html" %}
 
-{% block title %} For demonstration {% endblock %}
+{% block title %}DiffEye{% endblock %}
 
 {% block head %}
-<style>
-    .group-list {
-        display: inline-flex;
-        width: 100%;
-        height: 70%;
-        margin-top: 5rem;
-    }
 
-    .vertical-box {
-        margin: 5px;
-        padding-top: 5%;
-        background-color: #1c416e;
-        color: gold;
-        border: #1c315e 10px solid;
-        width: 20%;
-        height: 70%;
-        text-align: center;
-    }
-</style>
-{% endblock %}
+    {% load static %} <!-- static files are loaded -->
+    <script src="{% static 'Main_engine/js/bootstrap-select.min.js' %}"></script>
+    <link href="{% static 'Main_engine/css/bootstrap-select.min.css' %}" rel="stylesheet">
+    <!--    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/js/bootstrap-select.min.js"></script>-->
+    <!--    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.9/dist/css/bootstrap-select.min.css">-->
+    <!--    <script src="{% static 'Main_engine/js/defaults-ko_KR.min.js' %}"></script>-->
+
+    <style>
+
+        .table-borderless tbody tr:first-child td {
+            padding-top: 1rem;
+        }
+
+        .table-borderless tbody tr:last-child td {
+            padding-bottom: 1rem;
+        }
+
+        .table-borderless tbody td:first-child {
+            width: 40%;
+            padding-left: 0;
+        }
+
+        /************************양쪽 next.prev 부분 쓰이는 css ************/
+
+        .previous {
+            color: black;
+            position: relative;
+            right: 40px;
+            top: -130px;
+        }
+
+        .next {
+            color: black;
+            position: relative;
+            left: 97%;
+            top: -130px;
+        }
+
+        .round {
+            border-radius: 36%;
+        }
+
+        /************************양쪽 next.prev 부분 쓰이는 css ************/
+
+        .col-1, .col-2, .col-3, .col-4, .col-5, .col-6, .col-7, .col-8, .col-9, .col-10, .col-11, .col-12, .col, .col-auto, .col-sm-1, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7, .col-sm-8, .col-sm-9, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm, .col-sm-auto, .col-md-1, .col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-10, .col-md-11, .col-md-12, .col-md, .col-md-auto, .col-lg-1, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5, .col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg, .col-lg-auto, .col-xl-1, .col-xl-2, .col-xl-3, .col-xl-4, .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8, .col-xl-9, .col-xl-10, .col-xl-11, .col-xl-12, .col-xl, .col-xl-auto, .col-xxl-1, .col-xxl-2, .col-xxl-3, .col-xxl-4, .col-xxl-5, .col-xxl-6, .col-xxl-7, .col-xxl-8, .col-xxl-9, .col-xxl-10, .col-xxl-11, .col-xxl-12, .col-xxl, .col-xxl-auto {
+            position: relative;
+            width: 100%;
+            min-height: 1px;
+            padding-right: 0.2px;
+            padding-left: 0.2px;
+        }
+
+
+        .card-outer {
+            height: 14rem;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .card-inner {
+            width: 100%; /*662.344*/
+            height: 300px;
+            overflow-x: scroll;
+            display: flex;
+            padding-top: 10px;
+        }
+
+        .card-deck .card {
+            display: flex;
+            flex: 1 0 0%;
+            flex-direction: column;
+            margin-right: 0px;
+            margin-bottom: 0;
+            margin-left: 10px;
+        }
+
+    </style>
+
+{% endblock head %}
 
 {% block section %}
-{% load static %}
-<div class="row mb-4">
-    <div class="col-lg-5">
-        <h2 class="display-4 font-weight-light">Malware sample</h2>
+
+    {% load static %}
+
+    <h4 id="Similarity" style="font-weight: bold;">SIMILARITY SCORE</h4>
+    <hr class="my-hr3" style="margin-top: 9px">
+
+    <!--원래 있던 차트 부분-->
+    <div class="card-deck ml-2 mr-2 mt-2">
+        <div class="card-outer">
+            <div id="test" class="card-inner">
+
+            </div>
+        </div>
     </div>
-</div>
-<hr>
-<div class="group-list">
-    <div class="vertical-box" onclick="location.href = '{% url 'anda' %}'">
-        <img class="mb-5" src="{% static 'Main_engine/images/test2.png' %}">
-        <h2>Andariel</h2>
+    <a id="prev" class="previous round"
+       style="z-index: 1; text-decoration: none; display: inline-block; padding: 7px 12px;"
+       onmouseover="this.style.background='#ddd'" onmouseout="this.style.background=''"><i class="fas fa-angle-left"
+                                                                                           style="font-size: x-large;"></i></a>
+
+    <a id="next" class="next round"
+       style="z-index: 1; text-decoration: none; display: inline-block; padding: 7px 12px; margin-left: 10px"
+       onmouseover="this.style.background='#ddd'" onmouseout="this.style.background=''"><i class="fas fa-angle-right"
+                                                                                           style="font-size: x-large;"></i></a>
+
+    <h4 id="Detail" class="mt-2 mb-3" style="font-weight: bold;">DETAIL</h4>
+    <hr class="my-hr3">
+
+    <div class="container-fluid"> <!--style="float:left;-->
+        <!--<div class="card-deck"> -->
+        <div class="card col-12 pl-4 pr-4">
+            <div class="table-responsive" style="display: block">
+                {% csrf_token %}
+                {% if result %}
+                    <div id="result_json">
+                        <table id="detail_table" class="table table-borderless table-hover"
+                               style="text-align: center; font-family: 'Poppins', sans-serif;">
+                            <thead>
+                            <tr>
+                                <th rowspan="2" align=center
+                                    style="color: black; font-weight: bold; padding-top: 20px">
+                                    FILENAME
+                                </th>
+                                <th colspan="2" style="color: black; font-weight: bold; padding-top: 20px">ALGORITHM
+                                </th>
+                                <th colspan="6" style="color: black; font-weight: bold;  padding-top: 20px">PE META
+                                    DATA
+                                </th>
+                            </tr>
+                            <tr>
+                                <th style="color: black; font-weight: bold; padding-top: 20px">BASIC BLOCK</th>
+                                <th style="color: black; font-weight: bold; padding-top: 20px">CONSTANT</th>
+                                <th style="color: black; font-weight: bold; padding-top: 20px">SECTION DATA</th>
+                                <th style="color: black; font-weight: bold; padding-top: 20px">CERTIFICATE</th>
+                                <th style="color: black; font-weight: bold; padding-top: 20px">PDB</th>
+                                <th style="color: black; font-weight: bold; padding-top: 20px">IMPHASH</th>
+                                <th style="color: black; font-weight: bold; padding-top: 20px">RICH HEADER</th>
+                                <th style="color: black; font-weight: bold; padding-top: 20px">RESOURCE</th>
+                                <!-- <th>file_info</th> -->
+                            </tr>
+                            </thead>
+                            <tbody id="result_table">
+
+                            <!----dropdown --->
+
+                            <!----dropdown --->
+                            </tbody>
+
+                        </table>
+                    </div>
+                    </div>
+                    <!--</div> -->
+                    <!-- <div class="card col-3" style="float: right">
+                        <div>
+                            <div class="card-body" id="cardbody" style="padding: 0.5rem;">
+
+                            </div>
+                            <div>
+                            </div>
+                        </div>
+                    </div> -->
+                    <script>
+                        (function ($) {
+                                /* 엔진에서 받아온 값 */
+                                var result = "{{result}}";
+                                /* JSON.parse()에서 따옴표, nan 기타 등등 있으면 오류남 */
+                                var text_res = result.replace(/&#39;/gi, '"').replace(/\t/gi, "\\t").replace(/\r/gi, "\\r").replace(/\n/gi, "\\n").replace(/nan/gi, '"nan"');
+                                /* 결과값 파싱해서 테이블 추가하는 부분 */
+                                /* 테이블 불러오기 */
+                                var res_table = document.getElementById("result_table");
+                                var dat_table = document.getElementById("detail_table");
+                                /* 결과 데이터 파싱 */
+
+                                var json_res = JSON.parse(text_res);
+
+                                // console.log(json_res["630d925fd51964cae86892647069f3555874f48cba2f7be0920c9293b376f0af"]);
+                                /* 파일에 맞게 동적으로 dropdown에 option 추가해주는 부분 */
+                                var pickerclass = document.getElementsByClassName("selectpicker");
+                                for (var picker = 0; picker < pickerclass.length; picker++) {
+                                    for (var standard in json_res) {
+                                        var option = document.createElement("option");
+                                        option.value = standard;
+                                        option.text = standard.substring(0, 20) + "...";
+                                        pickerclass.item(picker).appendChild(option);
+
+                                    }
+                                }
+                                /* 버튼 클릭하면 데이터 변하게 하는 함수 */
+                                $("#select-oper").click(function () {
+                                    $all_select();
+                                });
+
+
+                                /* 기준이 바뀌면 대상에 disable 거는 함수 */
+                                $("#select_base").on("changed.bs.select", function () {
+                                    var selected = $("#select_base").children("option:selected").val();// 기준 파일명을 가져옴
+                                    $("#select_target option").prop('selected', true);                         // 전체 초기화
+                                    $("#select_target option").prop('disabled', false);                         // 전체 초기화
+                                    $('#select_target').find('[value="' + selected + '"]').prop('selected', false);// 체크도 해제
+                                    $("#select_target").find('[value="' + selected + '"]').prop('disabled', true);// 기준과 같은 옵션 disable
+                                    $("#select_target").selectpicker('refresh');                                // 새로고침
+                                });
+
+                                // $("#select_target").on("change.bs.select", function () {
+                                //     var select_t = $("#select_target option:selected");console.log(select_t);
+                                //     for (var tdex = 0; tdex < select_t.length; tdex++){console.log(select_t[tdex]);
+                                //         select_t[tdex].style.backgroundColor = '#c24035';
+                                //     }
+                                // });
+
+                                var length = 11;
+                                var base_length = 18;
+                                var i = 0;
+                                var array = [" pink", "", " yellow-b"];
+                                var b_array = [" pink", " green", " yellow-b"];
+                                var bar_title = ["BASICBLOCK", "CONSTANT", "PE"];
+
+                                var total_score = [];
+                                /* 기준이 변하면 테이블이 변경될 수 있도록 */
+                                $all_select = function () {
+                                    var targets = $('#select_target').val();
+                                    $("#test").empty();
+                                    /* 기준이 변할때마다 테이블을 지우고 새로 시작 */
+                                    for (var row = dat_table.rows.length - 1; row > 1; row--) {
+                                        dat_table.deleteRow(row);
+                                    }
+                                    for (var standard in json_res) {
+                                        var height = [];
+                                        var selected = $("#select_base").children("option:selected").val();
+                                        if (standard == selected) {
+                                            var base_col = document.createElement("div");
+                                            base_col.id = "col";
+                                            base_col.className = "col-xl-2 col-lg-3 col-12";
+                                            base_col.style.position = "sticky";
+                                            base_col.style.zIndex = "1";
+                                            base_col.style.top = "0px";
+                                            base_col.style.left = "0px";
+                                            document.getElementById("test").appendChild(base_col);
+
+                                            var base_card = document.createElement("div");
+                                            base_card.id = "card";
+                                            base_card.className = "card";
+                                            document.getElementById("col").appendChild(base_card);
+
+                                            var base_panel = document.createElement("section");
+                                            base_panel.id = "panel";
+                                            base_panel.className = "panel";
+                                            base_panel.style.height = "12.8rem";
+                                            document.getElementById("card").appendChild(base_panel);
+
+                                            var base_panel_body = document.createElement("div");
+                                            base_panel_body.id = "panel_body";
+                                            base_panel_body.className = "panel-body";
+                                            document.getElementById("panel").appendChild(base_panel_body);
+
+                                            var base_top_stats_panel = document.createElement("div");
+                                            base_top_stats_panel.id = "top_stats_panel";
+                                            base_top_stats_panel.className = "top-stats-panel";
+                                            document.getElementById("panel_body").appendChild(base_top_stats_panel);
+
+                                            /*                                        var base_bar_stats = document.createElement("div");
+                                                                                    base_bar_stats.id = "bar_stats";
+                                                                                    base_bar_stats.className = "bar-stats";
+                                                                                    base_bar_stats.style.height = "120px";
+                                                                                    base_bar_stats.style.marginTop = "5px";
+                                                                                    base_bar_stats.style.borderBottom = "white";
+                                                                                    document.getElementById("top_stats_panel").appendChild(base_bar_stats); // 이부분실행하면 밑에 공간이 생김*/
+
+                                            //////////////////////////////////////////base file name ////////////////////////////////
+
+                                            var pe_result = "{{p_basic}}";
+
+                                            var text_pe_res = pe_result.replace(/&#39;/gi, '"').replace(/\t/gi, "\\t").replace(/\r/gi, "\\r").replace(/\n/gi, "\\n").replace(/None/gi, '"none"').replace(/\\/gi, '/');
+
+                                            var json_pe = JSON.parse(text_pe_res);
+
+                                            for (var fileName in json_pe) {
+                                                if (standard == fileName) {
+                                                    ///////////////////////////////////////////////////////////base file info start///////////////////////////////////////////////////////////////////////
+                                                    var base_filename_info = document.createElement("span");
+                                                    base_filename_info.id = "base_info";
+                                                    base_filename_info.className = "badge badge-warning";
+                                                    base_filename_info.textContent = "base file";
+                                                    base_filename_info.style.color = "black";
+                                                    base_filename_info.style.marginRight = "7px";
+                                                    base_filename_info.style.padding = "0.2rem";
+                                                    base_filename_info.style.fontWeight = "600";
+                                                    //    padding: 0.2rem;   font-weight: 600;
+                                                    document.getElementById("top_stats_panel").appendChild(base_filename_info);
+
+                                                    var base_file_name = document.createElement("span");
+                                                    var file_name_text = base_file_name.textContent = standard;
+                                                    //console.log(file_name_text); -> ok
+                                                    base_file_name.style.fontSize = "12.5px";
+                                                    if (file_name_text.length > length) {
+                                                        base_file_name.setAttribute("data-toggle", "tooltip");
+                                                        base_file_name.setAttribute("data-placement", "bottom");
+                                                        base_file_name.setAttribute("title", file_name_text);
+                                                        base_file_name.textContent = file_name_text.substring(0, length).toUpperCase() + "...";
+                                                    } else {
+                                                        base_file_name.textContent = file_name_text.toUpperCase();
+                                                    }
+                                                    document.getElementById("top_stats_panel").appendChild(base_file_name);
+
+                                                    var base_info_br = document.createElement("br");
+                                                    document.getElementById("top_stats_panel").appendChild(base_info_br);
+
+
+                                                    ///////////////////////////////////////////////////////////////////////////////////////////////
+                                                    var base_size_info = document.createElement("span");
+                                                    base_size_info.className = "badge badge-warning";
+                                                    base_size_info.textContent = "file size";
+                                                    base_size_info.style.color = "black";
+                                                    base_size_info.style.marginTop = "10px";
+                                                    base_size_info.style.marginRight = "7px";
+                                                    base_size_info.style.padding = "0.2rem";
+                                                    base_size_info.style.fontWeight = "600";
+                                                    document.getElementById("top_stats_panel").appendChild(base_size_info);
+                                                    // document.write(sel.selectedIndex + " is " + "<br>");
+
+                                                    var base_file_size = document.createElement("span");
+                                                    base_file_size.textContent = json_pe[fileName]['file size'];
+                                                    base_file_size.style.fontSize = "12.7px";
+                                                    document.getElementById("top_stats_panel").appendChild(base_file_size);
+                                                    ///////////////////////////////////////////////////////////////////////////////////////////////
+
+                                                    //////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                                    var base_type_br = document.createElement("br");
+                                                    document.getElementById("top_stats_panel").appendChild(base_type_br);
+
+                                                    var base_sha256_info = document.createElement("span");
+                                                    base_sha256_info.className = "badge badge-warning";
+                                                    base_sha256_info.textContent = "sha256";
+                                                    base_sha256_info.style.color = "black";
+                                                    base_sha256_info.style.marginTop = "10px";
+                                                    base_sha256_info.style.marginRight = "7px";
+                                                    base_sha256_info.style.padding = "0.2rem";
+                                                    base_sha256_info.style.fontWeight = "600";
+                                                    document.getElementById("top_stats_panel").appendChild(base_sha256_info);
+
+                                                    var base_sha256 = document.createElement("span");
+                                                    var sha256_text = base_sha256.textContent = json_pe[fileName]['SHA-256 hash'];
+                                                    base_sha256.style.fontSize = "12.5px";
+                                                    if (sha256_text.length > length) {
+                                                        base_sha256.setAttribute("data-toggle", "tooltip");
+                                                        base_sha256.setAttribute("data-placement", "bottom");
+                                                        base_sha256.setAttribute("title", sha256_text);
+                                                        base_sha256.textContent = sha256_text.substring(0, length).toUpperCase() + "...";
+                                                    } else {
+                                                        base_sha256.textContent = sha256_text.toUpperCase();
+                                                    }
+                                                    document.getElementById("top_stats_panel").appendChild(base_sha256);
+
+
+                                                    //////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                                    var base_sha256_br = document.createElement("br");
+                                                    document.getElementById("top_stats_panel").appendChild(base_sha256_br);
+
+                                                    var base_md5_info = document.createElement("span");
+                                                    base_md5_info.className = "badge badge-warning";
+                                                    base_md5_info.textContent = "md5";
+                                                    base_md5_info.style.color = "black";
+                                                    base_md5_info.style.marginTop = "10px";
+                                                    base_md5_info.style.marginRight = "7px";
+                                                    base_md5_info.style.padding = "0.2rem";
+                                                    base_sha256_info.style.fontWeight = "600";
+                                                    document.getElementById("top_stats_panel").appendChild(base_md5_info);
+
+                                                    var base_md5 = document.createElement("span");
+                                                    var md5_text = base_md5.textContent = json_pe[fileName]['MD5 hash'];
+                                                    base_md5.style.fontSize = "12.5px";
+                                                    if (md5_text.length > length) {
+                                                        base_md5.setAttribute("data-toggle", "tooltip");
+                                                        base_md5.setAttribute("data-placement", "bottom");
+                                                        base_md5.setAttribute("title", md5_text);
+                                                        base_md5.textContent = md5_text.substring(0, length).toUpperCase() + "...";
+                                                    } else {
+                                                        base_md5.textContent = md5_text.toUpperCase();
+                                                    }
+                                                    document.getElementById("top_stats_panel").appendChild(base_md5);
+
+
+                                                    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                                    var base_ssdeep_br = document.createElement("br");
+                                                    document.getElementById("top_stats_panel").appendChild(base_ssdeep_br);
+/*
+                                                    var base_ssdeep_info = document.createElement("span");
+                                                    base_ssdeep_info.className = "badge badge-warning";
+                                                    base_ssdeep_info.textContent = "ssdeep";
+                                                    base_ssdeep_info.style.color = "black";
+                                                    base_ssdeep_info.style.marginTop = "10px";
+                                                    base_ssdeep_info.style.marginRight = "7px";
+                                                    base_ssdeep_info.style.padding = "0.2rem";
+                                                    base_ssdeep_info.style.fontWeight = "600";
+                                                    document.getElementById("top_stats_panel").appendChild(base_ssdeep_info);
+
+                                                    var base_ssdeep_text = document.createElement("span");
+                                                    var ssdeep_text = base_ssdeep_text.textContent = json_pe[fileName]['SSDEEP hash'];
+                                                    base_ssdeep_text.style.fontSize = "12.5px";
+                                                    if (ssdeep_text.length > length) {
+                                                        base_ssdeep_text.setAttribute("data-toggle", "tooltip");
+                                                        base_ssdeep_text.setAttribute("data-placement", "bottom");
+                                                        base_ssdeep_text.setAttribute("title", ssdeep_text);
+                                                        base_ssdeep_text.textContent = ssdeep_text.substring(0, length).toUpperCase() + "...";
+                                                    } else {
+                                                        base_ssdeep_text.textContent = ssdeep_text.toUpperCase();
+                                                    }
+                                                    document.getElementById("top_stats_panel").appendChild(base_ssdeep_text);*/
+
+                                                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+                                                    var base_timestamp_info = document.createElement("span");
+                                                    base_timestamp_info.className = "badge badge-warning";
+                                                    base_timestamp_info.textContent = "year";
+                                                    base_timestamp_info.style.color = "black";
+                                                    base_timestamp_info.style.marginTop = "10px";
+                                                    base_timestamp_info.style.marginRight = "7px";
+                                                    base_timestamp_info.style.padding = "0.2rem";
+                                                    base_timestamp_info.style.fontWeight = "600";
+                                                    document.getElementById("top_stats_panel").appendChild(base_timestamp_info);
+
+                                                    var base_timestamp_text = document.createElement("span");
+                                                    base_timestamp_text.textContent = json_pe[fileName]['time_date_stamp'].substr(4);
+                                                    base_timestamp_text.style.fontSize = "12.5px";
+                                                    document.getElementById("top_stats_panel").appendChild(base_timestamp_text);
+
+                                                }
+                                            }
+                                            ///////////////////////////////////////////////////base file info_end///////////////////////////////////////////////////////////////////////////////
+                                            /* 대상이 변할때마다 */
+                                            /* 타겟의 유사도 스코어에 따라 오름차순으로 딕셔너리 정렬
+                                               참고 http://dudmy.net/javascript/2015/11/16/javascript-sort/  */
+                                            /*var json_res_total = [];
+                                            for (var target in json_res[standard]) {
+                                                json_res_total.push(json_res[standard][target]);
+                                            }
+                                            var sort_test = json_res_total.sort(function (a, b) {
+                                                return a[2] + a[3] + a[9] > b[2] + b[3] + b[9] ? -1 :
+                                                    a[2] + a[3] + a[9] < b[2] + b[3] + b[9] ? 1 : 0;
+                                            });
+    //                                        console.log(json_res_total);
+                                            console.log(sort_test);
+
+                                            //console.log(json_res_array);
+                                            for (var test1 in sort_test) {
+                                                console.log("test1 ----------> " + sort_test[test1][0]);
+
+
+
+
+
+
+                                            }
+*/
+                                            for (var target in json_res[standard]) {
+                                                /*for (var t in target) {
+                                                    var test_array = sort_test[target];
+                                                    console.log("target ==> " + test_array);
+                                                    //sort_test.forEach(function (target) {*/
+                                                for (var t in targets) {
+                                                    // 선택된 대상에 대해서만 보여줌
+                                                    //if (target == targets[t]) {
+                                                    if (target == targets[t]) { //요상해~~~~~~~~~~~
+                                                        //console.log("Aaaa");
+                                                        /* 하단에 행 추가 */
+                                                        var new_row = res_table.insertRow(res_table.rows.length);
+                                                        new_row.id = "tr" + i;
+                                                        /* 행에 열 추가 */
+                                                        var filename = new_row.insertCell(0);
+                                                        var bbh = new_row.insertCell(1);
+                                                        var constvalue = new_row.insertCell(2);
+                                                        var section = new_row.insertCell(3);
+                                                        var cert = new_row.insertCell(4);
+                                                        var pdb = new_row.insertCell(5);
+                                                        var imph = new_row.insertCell(6);
+                                                        var rich = new_row.insertCell(7);
+                                                        var resource = new_row.insertCell(8);
+
+                                                        /* 열에 데이터 입력 */
+                                                        var bbh_value = json_res[standard][target][2];
+                                                        //var bbh_value = target[2];
+                                                        /*filename.innerHTML = json_res[standard][target][0].toUpperCase();*/
+                                                        filename.innerHTML = target.toUpperCase();
+                                                        bbh.innerHTML = Math.floor(bbh_value * 10000) / 100;
+                                                        bbh.innerHTML = Math.floor(bbh_value * 10000) / 100;
+                                                        var const_value = json_res[standard][target][3];
+                                                        constvalue.innerHTML = Math.floor(const_value * 10000) / 100;
+                                                        section.innerHTML = json_res[standard][target][4];
+                                                        cert.innerHTML = json_res[standard][target][5];
+                                                        pdb.innerHTML = json_res[standard][target][6];
+                                                        imph.innerHTML = json_res[standard][target][7];
+                                                        rich.innerHTML = json_res[standard][target][8];
+                                                        resource.innerHTML = json_res[standard][target][9];
+                                                        /*test*/
+
+                                                        /*test */
+                                                        /*출력해서 맞는지 확인
+                                                        for(var data in json_res[standard][target]){
+                                                            document.write("data is "+ data +" "+ json_res[standard][target][data] + "<br>");
+                                                            console.log(typeof json_res[standard][target][data])
+                                                        }
+                                                        */
+
+                                                        var basic_block_value = json_res[standard][target][2];
+                                                        var basic_block = Math.floor(basic_block_value * 10000) / 100; //basic_block 최종 스코어
+                                                        var constant_value = json_res[standard][target][3];
+                                                        var constant = Math.floor(constant_value * 10000) / 100; //constant 최종 스코어
+                                                        //var f_name = json_res[standard][target][0];
+                                                        var pe_all_score = json_res[standard][target][10]; //pe 최종 스코어
+                                                        height = [basic_block + "%", constant + "%", pe_all_score + "%"];
+
+                                                        var col = document.createElement("div");
+                                                        col.id = "col" + i;
+                                                        col.className = " col-xl-2 col-lg-4 col-12 ";
+                                                        document.getElementById("test").appendChild(col);
+
+                                                        var card = document.createElement("div");
+                                                        card.id = "card" + i;
+                                                        card.className = "card";
+                                                        document.getElementById("col" + i).appendChild(card);
+
+                                                        var panel = document.createElement("section");
+                                                        panel.id = "panel" + i;
+                                                        panel.className = "panel";
+                                                        panel.style.height = "12.8rem";
+                                                        document.getElementById("card" + i).appendChild(panel);
+
+                                                        var panel_body = document.createElement("div");
+                                                        panel_body.id = "panel_body" + i;
+                                                        panel_body.className = "panel-body";
+                                                        document.getElementById("panel" + i).appendChild(panel_body);
+
+                                                        var top_stats_panel = document.createElement("div");
+                                                        top_stats_panel.id = "top_stats_panel" + i;
+                                                        top_stats_panel.className = "top-stats-panel";
+                                                        document.getElementById("panel_body" + i).appendChild(top_stats_panel);
+
+                                                        var h4 = document.createElement("h4");
+                                                        h4.id = "widget-h";
+                                                        h4.className = "widget-h";
+                                                        h4.style.color = "rgba(0,0,0,0.7)";
+                                                        if (target.length > length) {
+                                                            h4.setAttribute("data-toggle", "tooltip");
+                                                            h4.setAttribute("data-placement", "bottom");
+                                                            h4.setAttribute("title", target); //타겟 정보 가져옴
+                                                            h4.textContent = target.substring(0, length).toUpperCase() + "...";
+                                                        } else {
+                                                            h4.textContent = target.toUpperCase();
+                                                        }
+                                                        document.getElementById("top_stats_panel" + i).appendChild(h4);
+
+                                                        var bar_stats = document.createElement("div");
+                                                        bar_stats.id = "bar_stats" + i;
+                                                        bar_stats.className = "bar-stats";
+                                                        document.getElementById("top_stats_panel" + i).appendChild(bar_stats);
+
+                                                        var progress_stat_bar = document.createElement("ul");
+                                                        progress_stat_bar.id = "progress_stat_bar" + i;
+                                                        progress_stat_bar.className = "progress-stat-bar clearfix";
+                                                        progress_stat_bar.style.cssFloat = "left";
+                                                        document.getElementById("bar_stats" + i).appendChild(progress_stat_bar);
+
+                                                        //막대 바 부분
+                                                        for (var a = i * 3; a <= (i * 3) + 2; a++) {
+                                                            var percent = document.createElement("li");
+                                                            percent.id = "percent" + a;
+                                                            percent.setAttribute("data-percent", "50%");
+                                                            document.getElementById("progress_stat_bar" + i).appendChild(percent);
+
+                                                            var percent_span = document.createElement("span");
+                                                            percent_span.id = "percent_span" + a;
+                                                            percent_span.className = "progress-stat-percent" + array[(a % 3)];
+                                                            percent_span.style = "height: " + height[(a % 3)];
+                                                            percent_span.setAttribute("data-toggle", "tooltip");
+                                                            percent_span.setAttribute("data-placement", "left");
+                                                            percent_span.setAttribute("title", height[(a % 3)]);
+                                                            document.getElementById("percent" + a).appendChild(percent_span);
+                                                        }
+
+
+                                                        var bar_legend = document.createElement("ul");
+                                                        bar_legend.id = "bar_legend" + i;
+                                                        bar_legend.className = "bar-legend";
+                                                        bar_legend.style.cssFloat = "right";
+                                                        bar_legend.style.marginTop = "0.3rem";
+                                                        document.getElementById("bar_stats" + i).appendChild(bar_legend);
+
+                                                        // //표시부분
+                                                        for (var b = i * 3; b <= (i * 3) + 2; b++) {
+                                                            //li생성
+                                                            var legend_pointer = document.createElement("li");
+                                                            legend_pointer.id = "legend_pointer" + b;
+                                                            document.getElementById("bar_legend" + i).appendChild(legend_pointer);
+
+                                                            //span 생성
+                                                            var legend_span = document.createElement("span");
+                                                            legend_span.id = "legend_span";
+                                                            legend_span.className = "bar-legend-pointer" + b_array[(b % 3)];
+                                                            document.getElementById("legend_pointer" + b).appendChild(legend_span);
+
+                                                            var title = document.createElement("p");
+                                                            title.textContent = bar_title[(b % 3)] + " " + height[(b % 3)];
+                                                            title.style.fontSize = "9px";
+                                                            title.style.cssFloat = "right";
+                                                            //test = document.createTextNode(bar_title[(b % 3)] + " " + height[(b % 3)]); //베이직블록 유사도 : pe 유사도, 상수 유사도 -> string fix, values 동적 할당
+                                                            document.getElementById("legend_pointer" + b).appendChild(title);
+                                                        }
+                                                        /* var new_line = "#tr" + i;
+                                                         //console.log(new_line);
+
+
+                                                         $(new_line).each(function () {
+                                                             //console.log(new_line);
+                                                             $(new_line).click(function () {
+                                                                 $("#cardbody").empty();
+                                                                 var card_body_img = document.createElement("img");
+                                                                 card_body_img.id = "body_img";
+                                                                 card_body_img.src = "
+                                                        {% static "Main_engine/images/skull.png" %}";
+                                                                    card_body_img.alt = "...";
+                                                                    card_body_img.style.width = "37px";
+                                                                    card_body_img.style.opacity = "0.8";
+                                                                    card_body_img.style.cssFloat = "left";
+                                                                    //card_body_span.style.marginTop = '10px';
+                                                                    document.getElementById("cardbody").appendChild(card_body_img);
+
+                                                                    var progress_bar = document.createElement("div");
+                                                                    progress_bar.id = "progress_bar";
+                                                                    progress_bar.className = "progress";
+                                                                    progress_bar.style.height = "3px";
+                                                                    progress_bar.style.marginTop = "1rem";
+                                                                    progress_bar.style.width = "10rem";
+                                                                    progress_bar.style.cssFloat = "left";
+                                                                    document.getElementById("cardbody").appendChild(progress_bar);
+
+                                                                    var progress_bar_color = document.createElement("div");
+                                                                    progress_bar_color.id = "progress_bar_color";
+                                                                    progress_bar_color.className = "progress-bar";
+                                                                    progress_bar_color.style.width = "40%";
+                                                                    progress_bar_color.style.height = "10px";
+                                                                    document.getElementById("progress_bar").appendChild(progress_bar_color);
+
+                                                                    var progress_bar_text = document.createElement('p');
+                                                                    progress_bar_text.id = 'progress_bar_text';
+                                                                    progress_bar_text.textContent = "120/500";
+                                                                    progress_bar_text.style.fontSize = "12px";
+                                                                    progress_bar_text.style.marginLeft = "13rem";
+                                                                    progress_bar_text.style.marginTop = "0.6rem";
+                                                                    document.getElementById("cardbody").appendChild(progress_bar_text);
+                                                                })
+                                                            });*/
+
+
+                                                    }
+
+                                                    //var count = 0;
+
+
+                                                    /*참고 사이트  : https://yunzema.tistory.com/49 .off()*/
+
+
+                                                    i++;
+                                                }
+                                                i = 0;
+
+                                                $(function () {
+                                                    $('[data-toggle="tooltip"]').tooltip()
+                                                });
+                                            }
+
+
+                                        }
+                                    }
+                                }
+                                ;
+                                // 페이지가 처음 뜰 때 기준은 처음으로 대상은 전부 선택해서 보여주도록
+
+
+                                var first_base = $("#select_base").find('option:first');
+                                first_base.attr('selected', 'selected');
+                                $('#select_target option').prop('selected', true);
+                                $('#select_target').find('[value="' + first_base.val() + '"]').prop('selected', false);
+                                $('#select_target').find('[value="' + first_base.val() + '"]').prop('disabled', true);
+                                $all_select();
+                            }
+                        )(jQuery);
+
+
+                        $(document).ready(function () {
+                            /*그래프 카드 넘어가는 부분*/
+                            var width = $("#col").width();
+                            console.log(width);
+                            $("#prev").click(function () {
+                                console.log("left" + $("#test").scrollLeft() + "=>" + width);
+                                $("#test").animate({scrollLeft: $("#test").scrollLeft() - width}, 800);
+                            });
+                            $("#next").click(function () {
+                                console.log("right" + $("#test").scrollLeft() + "=>" + width);
+                                $("#test").animate({scrollLeft: $("#test").scrollLeft() + width}, 800);
+                            });
+                        })
+
+
+                    </script>
+
+                    </div>
+                {% else %}
+                    <h1>There is no result!</h1>
+                {% endif %}
     </div>
-    <div class="vertical-box" onclick="location.href = '{% url 'gand' %}'">
-        <img class="mb-5" src="{% static 'Main_engine/images/test2.png' %}">
-        <h2>GandGrab</h2>
-    </div>
-    <div class="vertical-box" onclick="location.href = '{% url 'moon' %}'">
-        <img class="mb-5" src="{% static 'Main_engine/images/test2.png' %}">
-        <h2>wannacry</h2>
-    </div>
-    <div class="vertical-box" onclick="location.href = '{% url 'scar' %}'">
-        <img class="mb-5" src="{% static 'Main_engine/images/test2.png' %}">
-        <h2>Scarcruft</h2>
-    </div>
-    <div class="vertical-box" onclick="location.href = '{% url 'blue' %}'">
-        <img class="mb-5" src="{% static 'Main_engine/images/test2.png' %}">
-        <h2>Bluenoroff</h2>
-    </div>
-</div>
-{% endblock %}
+
+{% endblock section %}
