@@ -287,7 +287,7 @@ def create_folder():
     # mal_exe는 drag&drop할 때 먼저 생성됨
     # mal_idb, all_result(idb, pe) 가 없으면 생성
 
-    default_path = ["C:\\malware\\mal_idb\\","C:\\malware\\all_result\\", "C:\\malware\\all_result\\idb", "C:\\malware\\all_result\\pe\\", "C:\\malware\\all_result\\pe_r\\", "C:\\malware\\all_result\\cg\\", "C:\\malware\\all_result\\cfg\\","C:\\malware\\error\\"]
+    default_path = ["C:\\malware\\mal_idb\\","C:\\malware\\all_result\\", "C:\\malware\\all_result\\idb", "C:\\malware\\all_result\\pe\\", "C:\\malware\\all_result\\pe_r\\", "C:\\malware\\all_result\\cg\\", "C:\\malware\\all_result\\cfg\\","C:\\malware\\error\\","C:\\malware\\tagging\\"]
     for path in default_path:
         if os.path.exists(path):
             continue
