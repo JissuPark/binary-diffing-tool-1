@@ -22,7 +22,5 @@ urlpatterns = [
     path('anda', views.andarial, name='anda'),
     path('gand', views.gandcrab, name='gand'),
     path('moon', views.blackmoon, name='moon'),
-    path('scar', views.scarcruft, name='scar'),
-    path('blue', views.bluenroff, name='blue'),
     # path('signup', views.signup, name='signup'),
 ]

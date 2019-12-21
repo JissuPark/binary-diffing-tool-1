@@ -70,10 +70,10 @@ def cg(request):
     for file in os.listdir(PATH):
         print(file[:-4])
         print(INPUTFILES)
-        if file[:-4] in INPUTFILES:
-            file_path = os.path.join(PATH, file)
-            with open(file_path, 'rb') as cg:
-                cg_dict[file] = json.loads(cg.read())
+        # if file[:-4] in INPUTFILES:
+        file_path = os.path.join(PATH, file)
+        with open(file_path, 'rb') as cg:
+            cg_dict[file] = json.loads(cg.read())
 
     return render(request, 'Main_engine/cg.html', {'cg': cg_dict})
 
@@ -232,32 +232,21 @@ def file_check():
 
 def andarial(request):
     # all_result의 내용 다 지우고 폴더 및 파일 이동
-    print('andarial')
     shutil.rmtree('C:\\malware\\all_result')
+    # os.makedirs('C:\\malware\\all_result')
     shutil.copytree('C:\\malware\\anda', 'C:\\malware\\all_result')
     return redirect('result')
 
+
 def gandcrab(request):
     # all_result의 내용 다 지우고 폴더 및 파일 이동
-    print('gandcrab')
     shutil.rmtree('C:\\malware\\all_result')
     shutil.copytree('C:\\malware\\gand', 'C:\\malware\\all_result')
     return redirect('result')
+
+
 def blackmoon(request):
     # all_result의 내용 다 지우고 폴더 및 파일 이동
-    print('blackmoon')
     shutil.rmtree('C:\\malware\\all_result')
     shutil.copytree('C:\\malware\\moon', 'C:\\malware\\all_result')
-    return redirect('result')
-def scarcruft(request):
-    # all_result의 내용 다 지우고 폴더 및 파일 이동
-    print('scarcruft')
-    shutil.rmtree('C:\\malware\\all_result')
-    shutil.copytree('C:\\malware\\scar', 'C:\\malware\\all_result')
-    return redirect('result')
-def bluenroff(request):
-    # all_result의 내용 다 지우고 폴더 및 파일 이동
-    print('bluenroff')
-    shutil.rmtree('C:\\malware\\all_result')
-    shutil.copytree('C:\\malware\\blue', 'C:\\malware\\all_result')
     return redirect('result')

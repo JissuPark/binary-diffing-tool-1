@@ -87,7 +87,7 @@
     (function ($) {
         var cfgdata = "{{cfg}}";
         var text_res = cfgdata.replace(/\n/gi, '\\n').replace(/&#39;/gi, '"').replace(/\t/gi, '\\t');
-        var json_res = JSON.parse(text_res);
+        var json_res = JSON.parse(text_res);console.log(json_res);
         var matchdata = "{{matching}}";
         var match_text = matchdata.replace(/\n/gi, "\\n").replace(/\t/gi, "\\t").replace(/&#39;/gi, '"');
         var match_json = JSON.parse(match_text);
@@ -114,17 +114,27 @@
                 $draw(file, fname);
             }; //button click 하면 함수 그려주기
             document.getElementById('sub-menu').appendChild(li);
+
+
+
             var a = document.createElement("a");
             a.id = "a_" + fname;
             a.className = "sidenav-item-link";
             a.textContent = fname;
             document.getElementById("li_" + fname).appendChild(a);
-            if (tag_json[file].hasOwnProperty(fname)) {
-                var tag_b = document.createElement('span');
-                tag_b.className = 'badge badge-warning';
-                tag_b.textContent = tag_json[file][fname][0];
-                document.getElementById('a_'+fname).appendChild(tag_b);
+            var funct = json_res[file+'.txt']['func_name'];
+
+            var block_cnt = 0;
+
+            for(blocks in funct[fname]){
+                block_cnt += 1;
             }
+
+            var tag_b = document.createElement('span');
+            tag_b.className = 'badge badge-warning';
+            tag_b.textContent = block_cnt;
+            document.getElementById('a_'+fname).appendChild(tag_b);
+
         }
 
         /* 그래프 그리기 위한 변수 생성 */
@@ -214,18 +224,21 @@
                 if (file == filename) {
                     //체크된 대상 파일들 중에서
                     for (target in targets) {
+
                         var t = targets[target];
+                        // if(match_json[filename][t].hasOwnProperty(fname)) {
+                        //     for (block in match_json[filename][t][fname][2]) {console.log(block);
+                        //         var a_func = document.getElementById('a_' + fname);
+                        //         a_func.textContent = fname + ' [' + block + '] ';
+                        //     }
+                        // }
                         //대상 중에서 기준 함수명을 찾는다.
                         if (match_json[filename][t].hasOwnProperty('similar')) {
                             for (basesim in match_json[filename][t]['similar']) {
                                 let sim_b_func = basesim.split('-')[0];
-                                console.log(sim_b_func);
                                 let sim_b_block = basesim.split('-')[1];
-                                console.log(sim_b_block);
                                 let sim_t_func = match_json[filename][t]['similar'][basesim].split('-')[0];
-                                console.log(sim_t_func);
                                 let sim_t_block = match_json[filename][t]['similar'][basesim].split('-')[1];
-                                console.log(sim_b_block);
                                 var match_b_node = postoffice[filename][sim_b_func][0];
                                 var match_t_node = postoffice[t][sim_t_func][0];
                                 match_b_node.update({
@@ -363,7 +376,7 @@
                 var filename_info = document.createElement("span");
                 if (index == 0) {
                     filename_info.id = "base_info";
-                    filename_info.className = 'badge badge-primary';
+                    filename_info.className = 'badge badge-danger';
                     filename_info.textContent = "base file";
                 } else {
                     filename_info.id = "target_info_" + index;
@@ -400,10 +413,9 @@
                 //악성코드 태깅
                 if (tag_json[targetlist[index][0]].hasOwnProperty(targetlist[index][1])){
                     var taglist = tag_json[targetlist[index][0]][targetlist[index][1]];
-                    console.log(taglist);
                     for (var tag_i = 0; tag_i < taglist.length; tag_i++) {
                         var tag = document.createElement('span');
-                        tag.className = 'badge badge-danger';
+                        tag.className = 'badge badge-warning';
                         tag.textContent = taglist[tag_i];
                         document.getElementById('name_' + index).appendChild(tag);
                     }

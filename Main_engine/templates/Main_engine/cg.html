@@ -84,7 +84,7 @@
 
             var cgdata = "{{cg}}";
             var text_res = cgdata.replace(/\n/gi, '\\n').replace(/&#39;/gi, '"').replace(/\t/gi, '\\t');
-            var json_res = JSON.parse(text_res);
+            var json_res = JSON.parse(text_res);console.log(json_res);
 
             var array = {};
             var branches = [];
