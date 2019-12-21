@@ -115,7 +115,14 @@
             }; //button click 하면 함수 그려주기
             document.getElementById('sub-menu').appendChild(li);
 
-            var funct = json_res[file+'.txt']['func_name'];console.log(funct);
+
+
+            var a = document.createElement("a");
+            a.id = "a_" + fname;
+            a.className = "sidenav-item-link";
+            a.textContent = fname;
+            document.getElementById("li_" + fname).appendChild(a);
+            var funct = json_res[file+'.txt']['func_name'];
 
             var block_cnt = 0;
 
@@ -123,17 +130,11 @@
                 block_cnt += 1;
             }
 
-            var a = document.createElement("a");
-            a.id = "a_" + fname;
-            a.className = "sidenav-item-link";
-            a.textContent = fname + " ["+block_cnt+"] ";
-            document.getElementById("li_" + fname).appendChild(a);
-            if (tag_json[file].hasOwnProperty(fname)) {
-                var tag_b = document.createElement('span');
-                tag_b.className = 'badge badge-warning';
-                tag_b.textContent = tag_json[file][fname][0];
-                document.getElementById('a_'+fname).appendChild(tag_b);
-            }
+            var tag_b = document.createElement('span');
+            tag_b.className = 'badge badge-warning';
+            tag_b.textContent = block_cnt;
+            document.getElementById('a_'+fname).appendChild(tag_b);
+
         }
 
         /* 그래프 그리기 위한 변수 생성 */
