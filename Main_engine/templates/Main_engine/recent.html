@@ -9,6 +9,7 @@
         width: 100%;
         height: 70%;
         margin-top: 5rem;
+        align-content: center;
     }
 
     .vertical-box {
@@ -17,7 +18,7 @@
         background-color: #1c416e;
         color: gold;
         border: #1c315e 10px solid;
-        width: 20%;
+        width: 25%;
         height: 70%;
         text-align: center;
     }
@@ -35,23 +36,15 @@
 <div class="group-list">
     <div class="vertical-box" onclick="location.href = '{% url 'anda' %}'">
         <img class="mb-5" src="{% static 'Main_engine/images/test2.png' %}">
-        <h2>Andariel</h2>
+        <h2>SET 1</h2>3files<br>(2 are similar, 1 is different)
     </div>
     <div class="vertical-box" onclick="location.href = '{% url 'gand' %}'">
         <img class="mb-5" src="{% static 'Main_engine/images/test2.png' %}">
-        <h2>GandGrab</h2>
+        <h2>SET 2</h2>2files<br>(2 are extreamly similar)
     </div>
     <div class="vertical-box" onclick="location.href = '{% url 'moon' %}'">
         <img class="mb-5" src="{% static 'Main_engine/images/test2.png' %}">
-        <h2>wannacry</h2>
-    </div>
-    <div class="vertical-box" onclick="location.href = '{% url 'scar' %}'">
-        <img class="mb-5" src="{% static 'Main_engine/images/test2.png' %}">
-        <h2>Scarcruft</h2>
-    </div>
-    <div class="vertical-box" onclick="location.href = '{% url 'blue' %}'">
-        <img class="mb-5" src="{% static 'Main_engine/images/test2.png' %}">
-        <h2>Bluenoroff</h2>
+        <h2>SET 3</h2>3files<br>(3 are almost same)
     </div>
 </div>
 {% endblock %}

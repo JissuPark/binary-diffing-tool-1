@@ -363,7 +363,7 @@
                 var filename_info = document.createElement("span");
                 if (index == 0) {
                     filename_info.id = "base_info";
-                    filename_info.className = 'badge badge-primary';
+                    filename_info.className = 'badge badge-danger';
                     filename_info.textContent = "base file";
                 } else {
                     filename_info.id = "target_info_" + index;
@@ -403,7 +403,7 @@
                     console.log(taglist);
                     for (var tag_i = 0; tag_i < taglist.length; tag_i++) {
                         var tag = document.createElement('span');
-                        tag.className = 'badge badge-danger';
+                        tag.className = 'badge badge-warning';
                         tag.textContent = taglist[tag_i];
                         document.getElementById('name_' + index).appendChild(tag);
                     }
