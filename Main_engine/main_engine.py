@@ -11,10 +11,9 @@ from Main_engine.Analzer_Engine import analyze_pe, analyze_flowchart
 from Main_engine.Check_Packing import Packer_Detect2
 from Main_engine.Unpacking import unpack_module
 from Main_engine.models import *
-from Main_engine.ML import new_getinfo_pe
+
 
 import os
-# from sklearn.externals import joblib
 import json
 from multiprocessing import Process, current_process, Queue, Pool
 
