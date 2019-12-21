@@ -470,7 +470,7 @@ class AnalyzeFlowchart:
     def analyze_constant(self, standard, target, true_bb_const_sim):
         const_score = list()
         const_score.append(self.get_const_similarity(true_bb_const_sim))
-        const_score.append(self.get_all_const_similer(standard['constant'],target['constant']))
+        const_score.append(self.get_all_const_similer(standard['constant'], target['constant']))
 
         return const_score
 

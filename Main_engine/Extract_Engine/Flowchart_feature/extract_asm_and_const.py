@@ -133,7 +133,7 @@ def extract_basic_block_info(fva, funcName, func_ext_dict):
                 del temp
             del constants, opcodes, disasms, hex_opcodes
     except Exception as e:
-        # print(f'[debug] Extract_ {e}')
+        print(f'[debug] Extract_ {e}')
         err_log.append("Extract_" + str(e))
 
     bb_ext_dict.update({'flow_constants': func_ext_const})
